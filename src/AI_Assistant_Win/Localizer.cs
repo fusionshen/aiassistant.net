@@ -1,21 +1,3 @@
-// COPYRIGHT (C) Tom. ALL RIGHTS RESERVED.
-// THE AntdUI PROJECT IS AN WINFORM LIBRARY LICENSED UNDER THE Apache-2.0 License.
-// LICENSED UNDER THE Apache License, VERSION 2.0 (THE "License")
-// YOU MAY NOT USE THIS FILE EXCEPT IN COMPLIANCE WITH THE License.
-// YOU MAY OBTAIN A COPY OF THE LICENSE AT
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING, SOFTWARE
-// DISTRIBUTED UNDER THE LICENSE IS DISTRIBUTED ON AN "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.
-// SEE THE LICENSE FOR THE SPECIFIC LANGUAGE GOVERNING PERMISSIONS AND
-// LIMITATIONS UNDER THE License.
-// GITEE: https://gitee.com/antdui/AntdUI
-// GITHUB: https://github.com/AntdUI/AntdUI
-// CSDN: https://blog.csdn.net/v_132
-// QQ: 17379620
-
 namespace AI_Assistant_Win
 {
     public class Localizer : AntdUI.ILocalization
@@ -26,7 +8,6 @@ namespace AI_Assistant_Win
             {
                 case "ID":
                     return "en-US";
-
                 case "Cancel":
                     return "Cancel";
                 case "OK":
@@ -43,8 +24,12 @@ namespace AI_Assistant_Win
 
                 #region AI_Assistant_Win
 
-                case "Overview.txt_search":
+                case "Workbench.txt_search":
                     return "Keywords to search";
+                case "Workbench.windowBar":
+                    return "AI Assistant" + " " + MainWindow.PRODUCT_VERSION;
+                case "Workbench.windowBar.subText":
+                    return "Workbench";
                 case "CopyOK":
                     return "copied";
                 case "CopyFailed":

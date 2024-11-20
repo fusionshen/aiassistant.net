@@ -2,7 +2,7 @@
   "profiles": {
     "AI_Assistant_Win": {
       "commandName": "Project",
-      "commandLineArgs": "t"
+      "commandLineArgs": "prod"
     }
   }
 }
