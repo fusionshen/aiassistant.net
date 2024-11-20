@@ -2,8 +2,9 @@ using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
+using Yolov8.Net;
 
-namespace Yolov8Net.test
+namespace Yolov8.Net_Test
 {
     public class Yolov8Test
     {
@@ -28,7 +29,7 @@ namespace Yolov8Net.test
             Directory.CreateDirectory(outputPath);
 
 
-            using var yolo = YoloV8Predictor.Create("./assets/bobbers_v9_yolov8.onnx", new string[] { "bobber" });
+            using var yolo = YoloV8Predictor.Create("./assets/bobbers_v9_yolov8.onnx", ["bobber"]);
             Assert.NotNull(yolo);
 
             var inputFiles = Directory.GetFiles("./assets/", "bob*.jpg");
@@ -108,6 +109,23 @@ namespace Yolov8Net.test
             image.Save("result.jpg");
         }
 
+        [Fact]
+        public void Blackness_Test()
+        {
+            var labels = File.ReadAllLines("Assets/Blackness/labels.txt");
+            using var yolo = YoloV8Predictor.Create("./assets/blackness/model.onnx", labels, false);
+            Assert.NotNull(yolo);
+
+            using var image = Image.Load("Assets/blackness/IMG_20240923_153458.jpg");
+            var predictions = yolo.Predict(image);
+
+            Assert.NotNull(predictions);
+
+            DrawBoxes(yolo.ModelInputHeight, yolo.ModelInputWidth, image, predictions);
+
+            image.Save("blackness_result.jpg");
+        }
+
         private void DrawBoxes(int modelInputHeight, int modelInputWidth, Image image, Prediction[] predictions)
         {
             foreach (var pred in predictions)
@@ -130,7 +148,7 @@ namespace Yolov8Net.test
                     new Rectangle(x, y, width, height)));
 
                 image.Mutate(d => d.DrawText(text, font, Color.Yellow, new Point(x, (int)(y - size.Height - 1))));
-                    
+
             }
         }
     }

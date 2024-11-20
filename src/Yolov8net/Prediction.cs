@@ -1,6 +1,6 @@
 ﻿using SixLabors.ImageSharp;
 
-namespace Yolov8Net
+namespace Yolov8.Net
 {
     public class Prediction
     {

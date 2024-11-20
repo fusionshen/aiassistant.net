@@ -1,4 +1,4 @@
-﻿namespace Yolov8Net
+﻿namespace Yolov8.Net
 {
     public class Label
     {

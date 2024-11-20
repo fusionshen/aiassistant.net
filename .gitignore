@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/src/AI_Assistant_WinForms/MLModel/IMG_20240923_153458.jpg
+/src/AI_Assistant_WinForms/MLModel/labels.txt
+/src/AI_Assistant_WinForms/MLModel/model.onnx
+/test/Yolov8net.test/Assets/Blackness/IMG_20240923_153458.jpg
+/test/Yolov8net.test/Assets/Blackness/labels.txt
+/test/Yolov8net.test/Assets/Blackness/model.onnx

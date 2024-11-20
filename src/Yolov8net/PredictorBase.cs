@@ -1,16 +1,16 @@
 ﻿using Microsoft.ML.OnnxRuntime;
 using Microsoft.ML.OnnxRuntime.Tensors;
 using SixLabors.ImageSharp;
-using Yolov8Net.Extentions;
+using Yolov8.Net.Extentions;
 
-namespace Yolov8Net
+namespace Yolov8.Net
 {
     abstract public class PredictorBase
         : IPredictor
     {
         protected readonly InferenceSession _inferenceSession;
         protected string[] modelOutputs;
-        protected Label[] Labels { get; set; } = new Label[] { };
+        protected Label[] Labels { get; set; } = [];
 
 
         public float Confidence { get; protected set; } = 0.20f;
@@ -49,10 +49,7 @@ namespace Yolov8Net
         public int ModelInputHeight { get; protected set; }
         public int ModelInputWidth { get; protected set; }
 
-        public void Dispose()
-        {
-            _inferenceSession?.Dispose();
-        }
+        public void Dispose() => _inferenceSession?.Dispose();
 
         protected void GetInputDetails()
         {
@@ -66,7 +63,7 @@ namespace Yolov8Net
             OutputColumnName = _inferenceSession.OutputMetadata.Keys.First();
             modelOutputs = _inferenceSession.OutputMetadata.Keys.ToArray();
             ModelOutputDimensions = _inferenceSession.OutputMetadata[modelOutputs[0]].Dimensions[1];
-            UseDetect = !(modelOutputs.Any(x => x == "score"));
+            UseDetect = !modelOutputs.Any(x => x == "score");
         }
 
         protected Prediction[] Suppress(List<Prediction> predictions)
@@ -97,7 +94,7 @@ namespace Yolov8Net
                 }
             }
 
-            return result.ToArray();
+            return [.. result];
         }
 
         protected void UseCustomLabels(string[] labels)
@@ -143,7 +140,7 @@ namespace Yolov8Net
                 output.Add(result.First(x => x.Name == item).Value as DenseTensor<float>);
             };
 
-            return output.ToArray();
+            return [.. output];
         }
 
         public virtual Prediction[] Predict(Image image)

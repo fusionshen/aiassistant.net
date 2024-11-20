@@ -29,6 +29,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\Blackness\IMG_20240923_153458.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Blackness\labels.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Blackness\model.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\bobber-48.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

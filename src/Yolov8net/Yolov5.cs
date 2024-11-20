@@ -1,9 +1,9 @@
 ﻿using Microsoft.ML.OnnxRuntime.Tensors;
 using SixLabors.ImageSharp;
 using System.Collections.Concurrent;
-using Yolov8Net.Extentions;
+using Yolov8.Net.Extentions;
 
-namespace Yolov8Net
+namespace Yolov8.Net
 {
     public class YoloV5Predictor
         : PredictorBase, IPredictor
@@ -23,23 +23,23 @@ namespace Yolov8Net
         private YoloV5Predictor(string modelPath, string[]? labels = null, bool useCuda = false)
             : base(modelPath, labels, useCuda) { }
 
-        public int[] Strides { get; set; } = new int[] { 8, 16, 32 };
+        public int[] Strides { get; set; } = [8, 16, 32];
 
-        public int[][][] Anchors { get; set; } = new int[][][]
-        {
-            new int[][] { new int[] { 010, 13 }, new int[] { 016, 030 }, new int[] { 033, 023 } },
-            new int[][] { new int[] { 030, 61 }, new int[] { 062, 045 }, new int[] { 059, 119 } },
-            new int[][] { new int[] { 116, 90 }, new int[] { 156, 198 }, new int[] { 373, 326 } }
-        };
+        public int[][][] Anchors { get; set; } =
+        [
+            [[010, 13], [016, 030], [033, 023]],
+            [[030, 61], [062, 045], [059, 119]],
+            [[116, 90], [156, 198], [373, 326]]
+        ];
 
-        public int[] Shapes { get; set; } = new int[] { 80, 40, 20 };
+        public int[] Shapes { get; set; } = [80, 40, 20];
 
         override protected void GetOutputDetails()
         {
             OutputColumnName = _inferenceSession.OutputMetadata.Keys.First();
             modelOutputs = _inferenceSession.OutputMetadata.Keys.ToArray();
             ModelOutputDimensions = _inferenceSession.OutputMetadata[modelOutputs[0]].Dimensions[2];
-            UseDetect = !(modelOutputs.Any(x => x == "score"));
+            UseDetect = !modelOutputs.Any(x => x == "score");
         }
 
         private List<Prediction> ParseDetect(DenseTensor<float> output, Image image)
@@ -63,10 +63,10 @@ namespace Yolov8Net
                 {
                     if (output[0, i, k] <= MulConfidence) return; // skip low mul_conf results
 
-                    float xMin = ((output[0, i, 0] - output[0, i, 2] / 2) - xPad) / xGain; // unpad bbox tlx to original
-                    float yMin = ((output[0, i, 1] - output[0, i, 3] / 2) - yPad) / yGain; // unpad bbox tly to original
-                    float xMax = ((output[0, i, 0] + output[0, i, 2] / 2) - xPad) / xGain; // unpad bbox brx to original
-                    float yMax = ((output[0, i, 1] + output[0, i, 3] / 2) - yPad) / yGain; // unpad bbox bry to original
+                    float xMin = (output[0, i, 0] - output[0, i, 2] / 2 - xPad) / xGain; // unpad bbox tlx to original
+                    float yMin = (output[0, i, 1] - output[0, i, 3] / 2 - yPad) / yGain; // unpad bbox tly to original
+                    float xMax = (output[0, i, 0] + output[0, i, 2] / 2 - xPad) / xGain; // unpad bbox brx to original
+                    float yMax = (output[0, i, 1] + output[0, i, 3] / 2 - yPad) / yGain; // unpad bbox bry to original
 
                     xMin = Utils.Clamp(xMin, 0, w - 0); // clip bbox tlx to boundaries
                     yMin = Utils.Clamp(yMin, 0, h - 0); // clip bbox tly to boundaries
@@ -86,7 +86,7 @@ namespace Yolov8Net
                 });
             });
 
-            return result.ToList();
+            return [.. result];
         }
 
         private List<Prediction> ParseSigmoid(DenseTensor<float>[] output, Image image)
@@ -127,7 +127,7 @@ namespace Yolov8Net
                             float rawW = (float)Math.Pow(buffer[2] * 2, 2) * Anchors[i][a][0]; // predicted bbox w
                             float rawH = (float)Math.Pow(buffer[3] * 2, 2) * Anchors[i][a][1]; // predicted bbox h
 
-                            float[] xyxy = Utils.Xywh2xyxy(new float[] { rawX, rawY, rawW, rawH });
+                            float[] xyxy = Utils.Xywh2xyxy([rawX, rawY, rawW, rawH]);
 
                             float xMin = Utils.Clamp((xyxy[0] - xPad) / gain, 0, w - 0); // unpad, clip tlx
                             float yMin = Utils.Clamp((xyxy[1] - yPad) / gain, 0, h - 0); // unpad, clip tly
@@ -149,7 +149,7 @@ namespace Yolov8Net
                 });
             });
 
-            return result.ToList();
+            return [.. result];
         }
 
         protected List<Prediction> ParseOutput(DenseTensor<float>[] output, Image image)

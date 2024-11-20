@@ -5,7 +5,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 using System.Diagnostics;
 
-namespace Yolov8Net.Extentions
+namespace Yolov8.Net.Extentions
 {
     public static class Utils
     {
@@ -21,20 +21,21 @@ namespace Yolov8Net.Extentions
             return result;
         }
 
-        public static Image ResizeImage(Image image,int target_width,int target_height)
+        public static Image ResizeImage(Image image, int target_width, int target_height)
         {
-            return image.Clone(x => x.Resize(target_width,target_height));
+            return image.Clone(x => x.Resize(target_width, target_height));
         }
 
         public static Tensor<float> ExtractPixels(Image image)
         {
-            var tensor = new DenseTensor<float>(new[] { 1, 3, image.Height, image.Width });
+            var tensor = new DenseTensor<float>([1, 3, image.Height, image.Width]);
 
             using (var img = image.CloneAs<Rgb24>())
             {
-                Parallel.For(0, img.Height, y => {
-                    var pixelSpan = img.DangerousGetPixelRowMemory((int)y).Span;
-                    for(int x = 0; x < img.Width;x++)
+                Parallel.For(0, img.Height, y =>
+                {
+                    var pixelSpan = img.DangerousGetPixelRowMemory(y).Span;
+                    for (int x = 0; x < img.Width; x++)
                     {
                         tensor[0, 0, y, x] = pixelSpan[x].R / 255.0F; // r
                         tensor[0, 1, y, x] = pixelSpan[x].G / 255.0F; // g
@@ -47,7 +48,7 @@ namespace Yolov8Net.Extentions
 
         public static float Clamp(float value, float min, float max)
         {
-            return (value < min) ? min : (value > max) ? max : value;
+            return value < min ? min : value > max ? max : value;
         }
 
         public static float Sigmoid(float value)

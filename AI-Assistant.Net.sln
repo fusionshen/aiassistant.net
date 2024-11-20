@@ -1,0 +1,218 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32616.157
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yolov8.Net", "src\Yolov8net\Yolov8.Net.csproj", "{7864954C-DB16-4C4F-9DEA-6C8BBF3F1163}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Yolov8.Net Test", "test\Yolov8net.test\Yolov8.Net Test.csproj", "{A3A4B630-0D0F-4BA2-9AEC-EDA2651DD8DD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-Docs", "1-Docs", "{91C281D8-6E91-4FCB-9D7C-01CB08FA8D4E}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_Assistant_WinForms", "src\AI_Assistant_WinForms\AI_Assistant_WinForms.csproj", "{24AA3949-F74A-481A-BB98-7A1157CD8F49}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-UI", "3-UI", "{7C6011AB-3241-4909-A2C2-1207426E8104}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Model", "2-Model", "{2AF7F77D-94AE-43DA-B4BE-CF9CF2EB6005}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4-Tests", "4-Tests", "{7E75BB15-FAC6-4908-9560-633FD53B0CF2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "antdui", "antdui", "{6EF10FC2-E61F-4B69-AC21-73E50D58A15C}"
+	ProjectSection(SolutionItems) = preProject
+		docs\antdui_wiki\zh\BlurredFont.md = docs\antdui_wiki\zh\BlurredFont.md
+		docs\antdui_wiki\zh\Config.md = docs\antdui_wiki\zh\Config.md
+		docs\antdui_wiki\zh\DropdownStyles.md = docs\antdui_wiki\zh\DropdownStyles.md
+		docs\antdui_wiki\zh\Home.md = docs\antdui_wiki\zh\Home.md
+		docs\antdui_wiki\zh\InstallOldVersionFramework.md = docs\antdui_wiki\zh\InstallOldVersionFramework.md
+		docs\antdui_wiki\zh\SVG.md = docs\antdui_wiki\zh\SVG.md
+		docs\antdui_wiki\zh\Theme.md = docs\antdui_wiki\zh\Theme.md
+		docs\antdui_wiki\zh\UpdateLog.md = docs\antdui_wiki\zh\UpdateLog.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Control", "Control", "{CBC95C1E-FDB9-462C-9523-CCD5193A4A64}"
+	ProjectSection(SolutionItems) = preProject
+		docs\antdui_wiki\zh\Control\Alert.md = docs\antdui_wiki\zh\Control\Alert.md
+		docs\antdui_wiki\zh\Control\Avatar.md = docs\antdui_wiki\zh\Control\Avatar.md
+		docs\antdui_wiki\zh\Control\Badge.md = docs\antdui_wiki\zh\Control\Badge.md
+		docs\antdui_wiki\zh\Control\Battery.md = docs\antdui_wiki\zh\Control\Battery.md
+		docs\antdui_wiki\zh\Control\Breadcrumb.md = docs\antdui_wiki\zh\Control\Breadcrumb.md
+		docs\antdui_wiki\zh\Control\Button.md = docs\antdui_wiki\zh\Control\Button.md
+		docs\antdui_wiki\zh\Control\ButtonStyle.png = docs\antdui_wiki\zh\Control\ButtonStyle.png
+		docs\antdui_wiki\zh\Control\ButtonStyleRound.png = docs\antdui_wiki\zh\Control\ButtonStyleRound.png
+		docs\antdui_wiki\zh\Control\Calendar.md = docs\antdui_wiki\zh\Control\Calendar.md
+		docs\antdui_wiki\zh\Control\Carousel.md = docs\antdui_wiki\zh\Control\Carousel.md
+		docs\antdui_wiki\zh\Control\Checkbox.md = docs\antdui_wiki\zh\Control\Checkbox.md
+		docs\antdui_wiki\zh\Control\Collapse.md = docs\antdui_wiki\zh\Control\Collapse.md
+		docs\antdui_wiki\zh\Control\ColorPicker.md = docs\antdui_wiki\zh\Control\ColorPicker.md
+		docs\antdui_wiki\zh\Control\ContextMenuStrip.md = docs\antdui_wiki\zh\Control\ContextMenuStrip.md
+		docs\antdui_wiki\zh\Control\ContextMenuStripDemo.png = docs\antdui_wiki\zh\Control\ContextMenuStripDemo.png
+		docs\antdui_wiki\zh\Control\DatePicker.md = docs\antdui_wiki\zh\Control\DatePicker.md
+		docs\antdui_wiki\zh\Control\Divider.md = docs\antdui_wiki\zh\Control\Divider.md
+		docs\antdui_wiki\zh\Control\Drawer.md = docs\antdui_wiki\zh\Control\Drawer.md
+		docs\antdui_wiki\zh\Control\Dropdown.md = docs\antdui_wiki\zh\Control\Dropdown.md
+		docs\antdui_wiki\zh\Control\Enum.md = docs\antdui_wiki\zh\Control\Enum.md
+		docs\antdui_wiki\zh\Control\FloatButton.md = docs\antdui_wiki\zh\Control\FloatButton.md
+		docs\antdui_wiki\zh\Control\FlowPanel.md = docs\antdui_wiki\zh\Control\FlowPanel.md
+		docs\antdui_wiki\zh\Control\GridPanel.md = docs\antdui_wiki\zh\Control\GridPanel.md
+		docs\antdui_wiki\zh\Control\Input.md = docs\antdui_wiki\zh\Control\Input.md
+		docs\antdui_wiki\zh\Control\Label.md = docs\antdui_wiki\zh\Control\Label.md
+		docs\antdui_wiki\zh\Control\LabelTime.md = docs\antdui_wiki\zh\Control\LabelTime.md
+		docs\antdui_wiki\zh\Control\Menu.md = docs\antdui_wiki\zh\Control\Menu.md
+		docs\antdui_wiki\zh\Control\Message.md = docs\antdui_wiki\zh\Control\Message.md
+		docs\antdui_wiki\zh\Control\Modal.md = docs\antdui_wiki\zh\Control\Modal.md
+		docs\antdui_wiki\zh\Control\Notification.md = docs\antdui_wiki\zh\Control\Notification.md
+		docs\antdui_wiki\zh\Control\PageHeader.md = docs\antdui_wiki\zh\Control\PageHeader.md
+		docs\antdui_wiki\zh\Control\Pagination.md = docs\antdui_wiki\zh\Control\Pagination.md
+		docs\antdui_wiki\zh\Control\Panel.md = docs\antdui_wiki\zh\Control\Panel.md
+		docs\antdui_wiki\zh\Control\Popover.md = docs\antdui_wiki\zh\Control\Popover.md
+		docs\antdui_wiki\zh\Control\Popover.TextRow.jpg = docs\antdui_wiki\zh\Control\Popover.TextRow.jpg
+		docs\antdui_wiki\zh\Control\Preview.md = docs\antdui_wiki\zh\Control\Preview.md
+		docs\antdui_wiki\zh\Control\Progress.md = docs\antdui_wiki\zh\Control\Progress.md
+		docs\antdui_wiki\zh\Control\Radio.md = docs\antdui_wiki\zh\Control\Radio.md
+		docs\antdui_wiki\zh\Control\Rate.md = docs\antdui_wiki\zh\Control\Rate.md
+		docs\antdui_wiki\zh\Control\Segmented.md = docs\antdui_wiki\zh\Control\Segmented.md
+		docs\antdui_wiki\zh\Control\Select.md = docs\antdui_wiki\zh\Control\Select.md
+		docs\antdui_wiki\zh\Control\Signal.md = docs\antdui_wiki\zh\Control\Signal.md
+		docs\antdui_wiki\zh\Control\Slider.md = docs\antdui_wiki\zh\Control\Slider.md
+		docs\antdui_wiki\zh\Control\Spin.md = docs\antdui_wiki\zh\Control\Spin.md
+		docs\antdui_wiki\zh\Control\SpinRun.png = docs\antdui_wiki\zh\Control\SpinRun.png
+		docs\antdui_wiki\zh\Control\StackPanel.md = docs\antdui_wiki\zh\Control\StackPanel.md
+		docs\antdui_wiki\zh\Control\Steps.md = docs\antdui_wiki\zh\Control\Steps.md
+		docs\antdui_wiki\zh\Control\Switch.md = docs\antdui_wiki\zh\Control\Switch.md
+		docs\antdui_wiki\zh\Control\Table.md = docs\antdui_wiki\zh\Control\Table.md
+		docs\antdui_wiki\zh\Control\Tabs.md = docs\antdui_wiki\zh\Control\Tabs.md
+		docs\antdui_wiki\zh\Control\Tag.md = docs\antdui_wiki\zh\Control\Tag.md
+		docs\antdui_wiki\zh\Control\Timeline.md = docs\antdui_wiki\zh\Control\Timeline.md
+		docs\antdui_wiki\zh\Control\TimePicker.md = docs\antdui_wiki\zh\Control\TimePicker.md
+		docs\antdui_wiki\zh\Control\Tooltip.md = docs\antdui_wiki\zh\Control\Tooltip.md
+		docs\antdui_wiki\zh\Control\Tree.md = docs\antdui_wiki\zh\Control\Tree.md
+		docs\antdui_wiki\zh\Control\UploadDragger.md = docs\antdui_wiki\zh\Control\UploadDragger.md
+		docs\antdui_wiki\zh\Control\WindowBar.md = docs\antdui_wiki\zh\Control\WindowBar.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Form", "Form", "{812F9AD6-051D-4760-ADF2-3D4CF2C9BEFF}"
+	ProjectSection(SolutionItems) = preProject
+		docs\antdui_wiki\zh\Form\BaseForm.md = docs\antdui_wiki\zh\Form\BaseForm.md
+		docs\antdui_wiki\zh\Form\BorderlessForm.md = docs\antdui_wiki\zh\Form\BorderlessForm.md
+		docs\antdui_wiki\zh\Form\Window.md = docs\antdui_wiki\zh\Form\Window.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icon", "Icon", "{AB1FC7F1-D09B-48E8-BCE1-EA320BA10046}"
+	ProjectSection(SolutionItems) = preProject
+		docs\antdui_wiki\zh\Icon\Breadcrumb.jpg = docs\antdui_wiki\zh\Icon\Breadcrumb.jpg
+		docs\antdui_wiki\zh\Icon\Button.jpg = docs\antdui_wiki\zh\Icon\Button.jpg
+		docs\antdui_wiki\zh\Icon\Divider.jpg = docs\antdui_wiki\zh\Icon\Divider.jpg
+		docs\antdui_wiki\zh\Icon\Dropdown.jpg = docs\antdui_wiki\zh\Icon\Dropdown.jpg
+		docs\antdui_wiki\zh\Icon\FloatButton.jpg = docs\antdui_wiki\zh\Icon\FloatButton.jpg
+		docs\antdui_wiki\zh\Icon\FlowPanel.jpg = docs\antdui_wiki\zh\Icon\FlowPanel.jpg
+		docs\antdui_wiki\zh\Icon\GridPanel.jpg = docs\antdui_wiki\zh\Icon\GridPanel.jpg
+		docs\antdui_wiki\zh\Icon\StackPanel.jpg = docs\antdui_wiki\zh\Icon\StackPanel.jpg
+		docs\antdui_wiki\zh\Icon\UploadDragger.jpg = docs\antdui_wiki\zh\Icon\UploadDragger.jpg
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Image", "Image", "{00C3F02F-52BE-488C-8AB8-AE68CC70C127}"
+	ProjectSection(SolutionItems) = preProject
+		docs\antdui_wiki\zh\Img\BlurredFont.png = docs\antdui_wiki\zh\Img\BlurredFont.png
+		docs\antdui_wiki\zh\Img\CorrectionTextRendering.jpg = docs\antdui_wiki\zh\Img\CorrectionTextRendering.jpg
+		docs\antdui_wiki\zh\Img\DownCode.png = docs\antdui_wiki\zh\Img\DownCode.png
+		docs\antdui_wiki\zh\Img\InstallOldVersionFramework_1.png = docs\antdui_wiki\zh\Img\InstallOldVersionFramework_1.png
+		docs\antdui_wiki\zh\Img\InstallOldVersionFramework_2.png = docs\antdui_wiki\zh\Img\InstallOldVersionFramework_2.png
+		docs\antdui_wiki\zh\Img\InstallOldVersionFramework_3.png = docs\antdui_wiki\zh\Img\InstallOldVersionFramework_3.png
+		docs\antdui_wiki\zh\Img\InstallOldVersionFramework_4.png = docs\antdui_wiki\zh\Img\InstallOldVersionFramework_4.png
+		docs\antdui_wiki\zh\Img\InstallOldVersionFramework_5.png = docs\antdui_wiki\zh\Img\InstallOldVersionFramework_5.png
+		docs\antdui_wiki\zh\Img\InstallOldVersionFramework_6.png = docs\antdui_wiki\zh\Img\InstallOldVersionFramework_6.png
+		docs\antdui_wiki\zh\Img\NuGet.png = docs\antdui_wiki\zh\Img\NuGet.png
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AntdUI", "src\AntdUI\AntdUI.csproj", "{81635726-ADAB-439B-8E74-F813A131E6B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{6C1542BD-7580-452C-86A3-B59E30D0234B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChatUI", "src\ChatUI\ChatUI.csproj", "{A1E74F05-92B7-4DF8-98E5-AD818C26F223}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "src\Demo\Demo.csproj", "{26972707-2D60-4D4D-BB15-4216BF322654}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FontTest", "src\FontTest\FontTest.csproj", "{0525A263-2A3A-4EEB-B8F1-858C655272A6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SVGView", "src\SVGView\SVGView.csproj", "{A55585B0-79B0-472E-8F19-204B17F805FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{1A90FB63-EDA3-446A-9C8E-9278CF4AE661}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI_Assistant_Win", "src\AI_Assistant_Win\AI_Assistant_Win.csproj", "{3B32F243-99D5-4B47-AACF-39A8D7EC027F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "yolov8net", "yolov8net", "{5333E73B-B7AF-4DF9-8072-D3DDFCAFDBE2}"
+	ProjectSection(SolutionItems) = preProject
+		docs\yolov8.net\README.md = docs\yolov8.net\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7864954C-DB16-4C4F-9DEA-6C8BBF3F1163}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7864954C-DB16-4C4F-9DEA-6C8BBF3F1163}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7864954C-DB16-4C4F-9DEA-6C8BBF3F1163}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7864954C-DB16-4C4F-9DEA-6C8BBF3F1163}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3A4B630-0D0F-4BA2-9AEC-EDA2651DD8DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3A4B630-0D0F-4BA2-9AEC-EDA2651DD8DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3A4B630-0D0F-4BA2-9AEC-EDA2651DD8DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3A4B630-0D0F-4BA2-9AEC-EDA2651DD8DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24AA3949-F74A-481A-BB98-7A1157CD8F49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24AA3949-F74A-481A-BB98-7A1157CD8F49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24AA3949-F74A-481A-BB98-7A1157CD8F49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24AA3949-F74A-481A-BB98-7A1157CD8F49}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81635726-ADAB-439B-8E74-F813A131E6B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81635726-ADAB-439B-8E74-F813A131E6B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81635726-ADAB-439B-8E74-F813A131E6B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81635726-ADAB-439B-8E74-F813A131E6B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1E74F05-92B7-4DF8-98E5-AD818C26F223}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1E74F05-92B7-4DF8-98E5-AD818C26F223}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1E74F05-92B7-4DF8-98E5-AD818C26F223}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1E74F05-92B7-4DF8-98E5-AD818C26F223}.Release|Any CPU.Build.0 = Release|Any CPU
+		{26972707-2D60-4D4D-BB15-4216BF322654}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{26972707-2D60-4D4D-BB15-4216BF322654}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{26972707-2D60-4D4D-BB15-4216BF322654}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{26972707-2D60-4D4D-BB15-4216BF322654}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0525A263-2A3A-4EEB-B8F1-858C655272A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0525A263-2A3A-4EEB-B8F1-858C655272A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0525A263-2A3A-4EEB-B8F1-858C655272A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0525A263-2A3A-4EEB-B8F1-858C655272A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A55585B0-79B0-472E-8F19-204B17F805FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A55585B0-79B0-472E-8F19-204B17F805FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A55585B0-79B0-472E-8F19-204B17F805FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A55585B0-79B0-472E-8F19-204B17F805FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B32F243-99D5-4B47-AACF-39A8D7EC027F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B32F243-99D5-4B47-AACF-39A8D7EC027F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B32F243-99D5-4B47-AACF-39A8D7EC027F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B32F243-99D5-4B47-AACF-39A8D7EC027F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7864954C-DB16-4C4F-9DEA-6C8BBF3F1163} = {2AF7F77D-94AE-43DA-B4BE-CF9CF2EB6005}
+		{A3A4B630-0D0F-4BA2-9AEC-EDA2651DD8DD} = {7E75BB15-FAC6-4908-9560-633FD53B0CF2}
+		{24AA3949-F74A-481A-BB98-7A1157CD8F49} = {1A90FB63-EDA3-446A-9C8E-9278CF4AE661}
+		{6EF10FC2-E61F-4B69-AC21-73E50D58A15C} = {91C281D8-6E91-4FCB-9D7C-01CB08FA8D4E}
+		{CBC95C1E-FDB9-462C-9523-CCD5193A4A64} = {6EF10FC2-E61F-4B69-AC21-73E50D58A15C}
+		{812F9AD6-051D-4760-ADF2-3D4CF2C9BEFF} = {6EF10FC2-E61F-4B69-AC21-73E50D58A15C}
+		{AB1FC7F1-D09B-48E8-BCE1-EA320BA10046} = {6EF10FC2-E61F-4B69-AC21-73E50D58A15C}
+		{00C3F02F-52BE-488C-8AB8-AE68CC70C127} = {6EF10FC2-E61F-4B69-AC21-73E50D58A15C}
+		{81635726-ADAB-439B-8E74-F813A131E6B5} = {7C6011AB-3241-4909-A2C2-1207426E8104}
+		{6C1542BD-7580-452C-86A3-B59E30D0234B} = {7C6011AB-3241-4909-A2C2-1207426E8104}
+		{A1E74F05-92B7-4DF8-98E5-AD818C26F223} = {6C1542BD-7580-452C-86A3-B59E30D0234B}
+		{26972707-2D60-4D4D-BB15-4216BF322654} = {6C1542BD-7580-452C-86A3-B59E30D0234B}
+		{0525A263-2A3A-4EEB-B8F1-858C655272A6} = {6C1542BD-7580-452C-86A3-B59E30D0234B}
+		{A55585B0-79B0-472E-8F19-204B17F805FF} = {6C1542BD-7580-452C-86A3-B59E30D0234B}
+		{1A90FB63-EDA3-446A-9C8E-9278CF4AE661} = {2AF7F77D-94AE-43DA-B4BE-CF9CF2EB6005}
+		{5333E73B-B7AF-4DF9-8072-D3DDFCAFDBE2} = {91C281D8-6E91-4FCB-9D7C-01CB08FA8D4E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E2819BD4-F465-4B50-ABD5-4CA91DCCD8E8}
+	EndGlobalSection
+EndGlobal

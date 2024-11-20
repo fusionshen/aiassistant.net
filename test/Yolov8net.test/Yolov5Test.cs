@@ -2,9 +2,10 @@ using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
+using Yolov8.Net;
 
 
-namespace Yolov8Net.test
+namespace Yolov8.Net_Test
 {
     public class Yolov5Test
     {
@@ -28,7 +29,7 @@ namespace Yolov8Net.test
             Directory.CreateDirectory(outputPath);
 
 
-            using var yolo = YoloV5Predictor.Create("./assets/bobbers_v5_m.onnx", new string[] { "bobber" });
+            using var yolo = YoloV5Predictor.Create("./assets/bobbers_v5_m.onnx", ["bobber"]);
             Assert.NotNull(yolo);
 
             var inputFiles = Directory.GetFiles("./assets/", "bob*.jpg");
