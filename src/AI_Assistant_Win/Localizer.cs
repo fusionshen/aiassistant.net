@@ -43,7 +43,7 @@ namespace AI_Assistant_Win
 
                 #region AI_Assistant_Win
 
-                case "Overview.txt_search"://����ؼ�������...
+                case "Overview.txt_search":
                     return "Keywords to search";
                 case "CopyOK":
                     return "copied";
