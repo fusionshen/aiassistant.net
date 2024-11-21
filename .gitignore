@@ -367,3 +367,5 @@ FodyWeavers.xsd
 /test/Yolov8net.test/Assets/Blackness/IMG_20240923_153458.jpg
 /test/Yolov8net.test/Assets/Blackness/labels.txt
 /test/Yolov8net.test/Assets/Blackness/model.onnx
+/src/AI_Assistant_Win/Resources/Blackness/labels.txt
+/src/AI_Assistant_Win/Resources/Blackness/model.onnx

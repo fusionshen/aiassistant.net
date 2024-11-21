@@ -18,9 +18,14 @@ namespace AI_Assistant_Win
                     return "Today";
                 case "NoData":
                     return "No data";
-
                 case "ItemsPerPage":
                     return "Per/Page";
+                case "UploadImage":
+                    return "Upload Image";
+                case "Predict":
+                    return "Predict";
+                case "CameraCapture":
+                    return "Camera Capture";
 
                 #region AI_Assistant_Win
 
@@ -33,6 +38,8 @@ namespace AI_Assistant_Win
                 case "CopyFailed":
                     return "copy failed";
 
+                case "Application":
+                    return "Application";
                 case "General":
                     return "General";
                 case "Layout":
@@ -56,6 +63,12 @@ namespace AI_Assistant_Win
                     return "Popup in the window";
                 case "ScrollBarHidden":
                     return "ScrollBar Hidden Style";
+
+                //BlacknessMethod ----------------------------
+                case "BlacknessMethod.Text":
+                    return "V60 Blackness Method On GA Sheet";
+                case "BlacknessMethod.Description":
+                    return "This method is applicable to the blackness rating of adhesive tape after the V60 test for the adhesion test of zinc coating on GA plates.";
 
                 //Alert ----------------------------
                 case "Alert.Text":
