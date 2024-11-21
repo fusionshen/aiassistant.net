@@ -28,8 +28,6 @@ namespace AI_Assistant_Win
                     return "Keywords to search";
                 case "Workbench.windowBar":
                     return "AI Assistant" + " " + MainWindow.PRODUCT_VERSION;
-                case "Workbench.windowBar.subText":
-                    return "Workbench";
                 case "CopyOK":
                     return "copied";
                 case "CopyFailed":

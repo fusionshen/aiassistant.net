@@ -109,7 +109,7 @@ namespace AI_Assistant_Win
             windowBar.Dock = DockStyle.Top;
             windowBar.Font = new Font("Microsoft YaHei UI", 12F);
             windowBar.Icon = Properties.Resources.logo;
-            windowBar.LocalizationSubText = "Workbench.{id}.subText";
+            windowBar.LocalizationSubText = "";
             windowBar.LocalizationText = "Workbench.{id}";
             windowBar.Location = new Point(0, 0);
             windowBar.Name = "windowBar";
@@ -156,7 +156,7 @@ namespace AI_Assistant_Win
             MinimumSize = new Size(660, 400);
             Name = "MainWindow";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "AntdUI Overview";
+            Text = "AI Assistant Workbench";
             windowBar.ResumeLayout(false);
             ResumeLayout(false);
         }
