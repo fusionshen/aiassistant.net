@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-
-namespace AI_Assistant_WinForms.Models
+﻿namespace AI_Assistant_WinForms.Models
 {
     public class BoundingBoxDimensions
     {

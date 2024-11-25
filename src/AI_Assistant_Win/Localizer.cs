@@ -26,6 +26,8 @@ namespace AI_Assistant_Win
                     return "Predict";
                 case "CameraCapture":
                     return "Camera Capture";
+                case "Save":
+                    return "Save";
 
                 #region AI_Assistant_Win
 

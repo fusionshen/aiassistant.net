@@ -1,18 +1,16 @@
-using System.Drawing;
-using System;
-using System.Windows.Forms;
-using System.IO;
-using Yolov8.Net;
+using AI_Assistant_Win.Entities;
+using AI_Assistant_Win.Entities.Enums;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
-using SixLabors.Fonts;
-using FontStyle = SixLabors.Fonts.FontStyle;
-using AntdUI;
-using System.Threading;
-using static System.Net.Mime.MediaTypeNames;
-using SixLabors.ImageSharp.Formats.Jpeg;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Windows.Forms;
+using Yolov8.Net;
+using FontStyle = SixLabors.Fonts.FontStyle;
 
 namespace AI_Assistant_Win.Controls
 {
@@ -27,7 +25,7 @@ namespace AI_Assistant_Win.Controls
         public BlacknessMethod(MainWindow _form)
         {
             var fontCollection = new FontCollection();
-            var fontFamily = fontCollection.Add("./Resources/CONSOLA.TTF");
+            var fontFamily = fontCollection.Add("./Resources/SourceHanSansCN-Regular.ttf");
             font = fontFamily.CreateFont(48, FontStyle.Bold);
             form = _form;
             InitializeComponent();
@@ -115,16 +113,46 @@ namespace AI_Assistant_Win.Controls
 
                 using var image = SixLabors.ImageSharp.Image.Load(originImagePath);
                 var predictions = yolo.Predict(image);
-
-                DrawBoxes(yolo.ModelInputHeight, yolo.ModelInputWidth, image, predictions);
-                AntdUI.Notification.success(form, "成功", "识别成功！", AntdUI.TAlignFrom.BR, Font);
-                image.Save("ai_assistant_blackness_result.jpg");
-                blacknessMethod_RenderImage.Image = System.Drawing.Image.FromFile("ai_assistant_blackness_result.jpg");
+                if (predictions.Length == 6)
+                {
+                    AntdUI.Notification.success(form, "成功", "识别成功！", AntdUI.TAlignFrom.BR, Font);
+                    DrawBoxes(yolo.ModelInputHeight, yolo.ModelInputWidth, image, predictions);
+                    OutputTexts(predictions);
+                    image.Save("ai_assistant_blackness_result.jpg");
+                    blacknessMethod_RenderImage.Image = System.Drawing.Image.FromFile("ai_assistant_blackness_result.jpg");
+                }
+                else
+                {
+                    AntdUI.Notification.error(form, "错误", "请使用正确的黑度样板图片进行识别", AntdUI.TAlignFrom.BR, Font);
+                }
             }, () =>
             {
                 if (btn.IsDisposed) return;
                 btn.Loading = false;
             });
+        }
+
+        private void OutputTexts(Prediction[] predictions)
+        {
+            var sorted = predictions.OrderByDescending(t => t.Rectangle.X).ToArray();
+            // TODO: 现场根据X具体位置判断，因为可能出现未贴完6个部位或者未识别出六个部位的情况
+            var resultList = new List<Blackness>
+                {
+                    new(Entities.Enums.BlacknessLocationKind.SURFACE_OP, sorted[0]),
+                    new(Entities.Enums.BlacknessLocationKind.SURFACE_CE, sorted[1]),
+                    new(Entities.Enums.BlacknessLocationKind.SURFACE_DR, sorted[2]),
+                    new(Entities.Enums.BlacknessLocationKind.INSIDE_OP, sorted[3]),
+                    new(Entities.Enums.BlacknessLocationKind.INSIDE_CE, sorted[4]),
+                    new(Entities.Enums.BlacknessLocationKind.INSIDE_DR, sorted[5])
+                };
+
+            input_Surface_OP.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Description;
+            input_Surface_CE.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Description;
+            input_Surface_DR.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Description;
+            input_Inside_OP.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Description;
+            input_Inside_CE.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Description;
+            input_Inside_DR.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Description;
+            radio_Result_OK.Checked = resultList.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level)); // [1，2] not exit，otherwise，NG is checked
         }
 
         private void DrawBoxes(int modelInputHeight, int modelInputWidth, SixLabors.ImageSharp.Image image, Prediction[] predictions)
@@ -138,24 +166,23 @@ namespace AI_Assistant_Win.Controls
                 var y = (int)Math.Max(pred.Rectangle.Y, 0);
                 var width = (int)Math.Min(originalImageWidth - x, pred.Rectangle.Width);
                 var height = (int)Math.Min(originalImageHeight - y, pred.Rectangle.Height);
-
                 //Note that the output is already scaled to the original image height and width.
 
                 // Bounding Box Text
-                string text = $"{pred.Label.Name} [{pred.Score}]";
+                string number = new(pred.Label.Name.Where(char.IsDigit).ToArray());
+                string text = $"等级{number}，宽度：{pred.Rectangle.Height:F2}mm";
                 var size = TextMeasurer.MeasureSize(text, new TextOptions(font));
-                var retangleColor = GetRetangleColorByLabelName(pred.Label.Name);
-                image.Mutate(d => d.Draw(SixLabors.ImageSharp.Drawing.Processing.Pens.Solid(retangleColor, 5),
-                    new SixLabors.ImageSharp.Rectangle(x, y, width, height)));
+                var color = GetRetangleColorByNumber(number);
 
-                image.Mutate(d => d.DrawText(text, font, SixLabors.ImageSharp.Color.Black, new SixLabors.ImageSharp.Point(x, (int)(y - size.Height - 1))));
+                image.Mutate(d => d.Draw(SixLabors.ImageSharp.Drawing.Processing.Pens.Solid(color, 5),
+                    new SixLabors.ImageSharp.Rectangle(x, y, width, height)));
+                image.Mutate(d => d.DrawText(text, font, color, new SixLabors.ImageSharp.Point(x, (int)(y - size.Height - 1))));
             }
         }
 
-        private SixLabors.ImageSharp.Color GetRetangleColorByLabelName(string labelName)
+        private static SixLabors.ImageSharp.Color GetRetangleColorByNumber(string number)
         {
             var color = SixLabors.ImageSharp.Color.Black;
-            string number = new string(labelName.Where(char.IsDigit).ToArray());
             switch (number)
             {
                 case "1":
