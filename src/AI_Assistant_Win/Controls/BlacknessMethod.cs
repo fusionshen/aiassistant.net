@@ -183,5 +183,10 @@ namespace AI_Assistant_Win.Controls
         {
             AntdUI.Notification.warn(form, "警告", "开发中，敬请期待！", AntdUI.TAlignFrom.BR, Font);
         }
+
+        private void Btn_Save_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
