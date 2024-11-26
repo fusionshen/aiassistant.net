@@ -16,6 +16,7 @@
 // CSDN: https://blog.csdn.net/v_132
 // QQ: 17379620
 
+using AI_Assistant_Win.Controls.Base;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -50,21 +51,21 @@ namespace AI_Assistant_Win
         private void InitializeComponent()
         {
             panel_primary = new AntdUI.Panel();
-            color_primary = new AntdUI.ColorPanelLeft();
+            color_primary = new ColorPanelLeft();
             tablePanel = new TableLayoutPanel();
-            colorPanel10 = new AntdUI.ColorPanel();
-            colorPanel9 = new AntdUI.ColorPanel();
-            colorPanel8 = new AntdUI.ColorPanel();
-            colorPanel7 = new AntdUI.ColorPanel();
-            colorPanel6 = new AntdUI.ColorPanel();
-            colorPanel5 = new AntdUI.ColorPanel();
-            colorPanel4 = new AntdUI.ColorPanel();
-            colorPanel3 = new AntdUI.ColorPanel();
-            colorPanel2 = new AntdUI.ColorPanel();
-            colorPanel1 = new AntdUI.ColorPanel();
+            colorPanel10 = new ColorPanel();
+            colorPanel9 = new ColorPanel();
+            colorPanel8 = new ColorPanel();
+            colorPanel7 = new ColorPanel();
+            colorPanel6 = new ColorPanel();
+            colorPanel5 = new ColorPanel();
+            colorPanel4 = new ColorPanel();
+            colorPanel3 = new ColorPanel();
+            colorPanel2 = new ColorPanel();
+            colorPanel1 = new ColorPanel();
             textBox1 = new AntdUI.Input();
             panel11 = new AntdUI.Panel();
-            color_dark = new AntdUI.ColorPanelLeft();
+            color_dark = new ColorPanelLeft();
             panel_primary.SuspendLayout();
             tablePanel.SuspendLayout();
             panel11.SuspendLayout();
@@ -332,17 +333,17 @@ namespace AI_Assistant_Win
         private TableLayoutPanel tablePanel;
         private AntdUI.Input textBox1;
         private AntdUI.Panel panel11;
-        private AntdUI.ColorPanel colorPanel1;
-        private AntdUI.ColorPanel colorPanel10;
-        private AntdUI.ColorPanel colorPanel9;
-        private AntdUI.ColorPanel colorPanel8;
-        private AntdUI.ColorPanel colorPanel7;
-        private AntdUI.ColorPanel colorPanel6;
-        private AntdUI.ColorPanel colorPanel5;
-        private AntdUI.ColorPanel colorPanel4;
-        private AntdUI.ColorPanel colorPanel3;
-        private AntdUI.ColorPanel colorPanel2;
-        private AntdUI.ColorPanelLeft color_primary;
-        private AntdUI.ColorPanelLeft color_dark;
+        private ColorPanel colorPanel1;
+        private ColorPanel colorPanel10;
+        private ColorPanel colorPanel9;
+        private ColorPanel colorPanel8;
+        private ColorPanel colorPanel7;
+        private ColorPanel colorPanel6;
+        private ColorPanel colorPanel5;
+        private ColorPanel colorPanel4;
+        private ColorPanel colorPanel3;
+        private ColorPanel colorPanel2;
+        private ColorPanelLeft color_primary;
+        private ColorPanelLeft color_dark;
     }
 }

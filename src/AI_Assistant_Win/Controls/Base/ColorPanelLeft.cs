@@ -16,11 +16,12 @@
 // CSDN: https://blog.csdn.net/v_132
 // QQ: 17379620
 
+using AntdUI;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace AntdUI
+namespace AI_Assistant_Win.Controls.Base
 {
     [DefaultProperty("Text")]
     public class ColorPanelLeft : IControl

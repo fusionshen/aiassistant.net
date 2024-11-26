@@ -16,6 +16,7 @@
 // CSDN: https://blog.csdn.net/v_132
 // QQ: 17379620
 
+using AI_Assistant_Win.Controls.Base;
 using AntdUI;
 using System;
 using System.Drawing;

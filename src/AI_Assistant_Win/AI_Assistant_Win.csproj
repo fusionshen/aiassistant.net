@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	  <Version>0.1.2</Version>
+	  <Version>0.2.0</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winform Client</AssemblyTitle>
     <Description>Winform Client with antdUI and yolov8.net</Description>
@@ -40,6 +40,7 @@
     <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.19.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
     <PackageReference Include="VC-LTL" Version="5.1.1" />
     <PackageReference Include="WinFormsComInterop" Version="0.5.0" />
     <PackageReference Include="YY-Thunks" Version="1.1.4" />
@@ -96,6 +97,9 @@
     </None>
     <None Update="Resources\CONSOLA.TTF">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\database.sqlite">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\SourceHanSansCN-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

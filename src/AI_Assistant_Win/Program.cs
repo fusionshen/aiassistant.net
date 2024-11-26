@@ -23,8 +23,8 @@ namespace AI_Assistant_Win
             AntdUI.Config.SetCorrectionTextRendering("Microsoft YaHei UI");
             if (command == "m") Application.Run(new Main());
             else if (command == "color") Application.Run(new Colors());
-            else if (command == "t") Application.Run(new Overview(command == "t"));
-            else Application.Run(new MainWindow(command == "prod"));
+            else if (command == "overview") Application.Run(new Overview(false));
+            else Application.Run(new MainWindow(command == "t"));
         }
     }
 }

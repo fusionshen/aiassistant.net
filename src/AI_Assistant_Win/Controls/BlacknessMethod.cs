@@ -1,3 +1,4 @@
+using AI_Assistant_Win.DataBase;
 using AI_Assistant_Win.Entities;
 using AI_Assistant_Win.Entities.Enums;
 using SixLabors.Fonts;
@@ -213,7 +214,7 @@ namespace AI_Assistant_Win.Controls
 
         private void Btn_Save_Click(object sender, EventArgs e)
         {
-
+            _ = new DatabaseHandler();
         }
     }
 }
