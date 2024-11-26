@@ -1,7 +1,7 @@
 ﻿using SQLite;
 using System;
 
-namespace AI_Assistant_Win.Entities.Demo
+namespace AI_Assistant_Win.Models.Demo
 {
     [Table("Valuation")]
     public class Valuation

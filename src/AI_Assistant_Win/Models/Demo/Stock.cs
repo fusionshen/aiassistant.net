@@ -1,6 +1,6 @@
 ﻿using SQLite;
 
-namespace AI_Assistant_Win.Entities.Demo
+namespace AI_Assistant_Win.Models.Demo
 {
     [Table("Stocks")]
     public class Stock

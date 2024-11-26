@@ -148,6 +148,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "yolov8net", "yolov8net", "{
 		docs\yolov8.net\README.md = docs\yolov8.net\README.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sqlitenet", "sqlitenet", "{E2260E64-0654-402C-B075-EC3EF54CC18F}"
+	ProjectSection(SolutionItems) = preProject
+		docs\sqlite.net\README.md = docs\sqlite.net\README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -211,6 +216,7 @@ Global
 		{A55585B0-79B0-472E-8F19-204B17F805FF} = {6C1542BD-7580-452C-86A3-B59E30D0234B}
 		{1A90FB63-EDA3-446A-9C8E-9278CF4AE661} = {2AF7F77D-94AE-43DA-B4BE-CF9CF2EB6005}
 		{5333E73B-B7AF-4DF9-8072-D3DDFCAFDBE2} = {91C281D8-6E91-4FCB-9D7C-01CB08FA8D4E}
+		{E2260E64-0654-402C-B075-EC3EF54CC18F} = {91C281D8-6E91-4FCB-9D7C-01CB08FA8D4E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E2819BD4-F465-4B50-ABD5-4CA91DCCD8E8}

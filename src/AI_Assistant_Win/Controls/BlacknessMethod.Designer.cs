@@ -69,17 +69,17 @@ namespace AI_Assistant_Win.Controls
             panel17 = new AntdUI.Panel();
             btn_Save = new AntdUI.Button();
             panel16 = new AntdUI.Panel();
-            input10 = new AntdUI.Input();
-            label11 = new Label();
+            input_Size = new AntdUI.Input();
+            label_Size = new Label();
             panel15 = new AntdUI.Panel();
-            input9 = new AntdUI.Input();
-            label10 = new Label();
+            input_Coil_Number = new AntdUI.Input();
+            label_Coil_Number = new Label();
             panel14 = new AntdUI.Panel();
-            select1 = new AntdUI.Select();
-            label9 = new Label();
+            select_Analyst = new AntdUI.Select();
+            label_Analyst = new Label();
             panel8 = new AntdUI.Panel();
-            select5 = new AntdUI.Select();
-            label8 = new Label();
+            select_Work_Group = new AntdUI.Select();
+            label_Work_Group = new Label();
             divider2 = new AntdUI.Divider();
             panel13 = new AntdUI.Panel();
             radio_Result_NG = new AntdUI.Radio();
@@ -392,8 +392,8 @@ namespace AI_Assistant_Win.Controls
             // 
             panel16.Back = Color.Transparent;
             panel16.BackColor = Color.Transparent;
-            panel16.Controls.Add(input10);
-            panel16.Controls.Add(label11);
+            panel16.Controls.Add(input_Size);
+            panel16.Controls.Add(label_Size);
             panel16.Dock = DockStyle.Top;
             panel16.Location = new Point(9, 403);
             panel16.Name = "panel16";
@@ -401,32 +401,32 @@ namespace AI_Assistant_Win.Controls
             panel16.Size = new Size(342, 33);
             panel16.TabIndex = 25;
             // 
-            // input10
+            // input_Size
             // 
-            input10.Font = new Font("Microsoft YaHei UI", 10F);
-            input10.Location = new Point(78, -1);
-            input10.Name = "input10";
-            input10.Size = new Size(261, 34);
-            input10.TabIndex = 17;
+            input_Size.Font = new Font("Microsoft YaHei UI", 10F);
+            input_Size.Location = new Point(78, -1);
+            input_Size.Name = "input_Size";
+            input_Size.Size = new Size(261, 34);
+            input_Size.TabIndex = 17;
             // 
-            // label11
+            // label_Size
             // 
-            label11.BackColor = Color.Transparent;
-            label11.Dock = DockStyle.Left;
-            label11.Font = new Font("Microsoft YaHei UI", 10F);
-            label11.Location = new Point(0, 0);
-            label11.Name = "label11";
-            label11.Size = new Size(72, 33);
-            label11.TabIndex = 16;
-            label11.Text = "尺寸：";
-            label11.TextAlign = ContentAlignment.MiddleRight;
+            label_Size.BackColor = Color.Transparent;
+            label_Size.Dock = DockStyle.Left;
+            label_Size.Font = new Font("Microsoft YaHei UI", 10F);
+            label_Size.Location = new Point(0, 0);
+            label_Size.Name = "label_Size";
+            label_Size.Size = new Size(72, 33);
+            label_Size.TabIndex = 16;
+            label_Size.Text = "尺寸：";
+            label_Size.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel15
             // 
             panel15.Back = Color.Transparent;
             panel15.BackColor = Color.Transparent;
-            panel15.Controls.Add(input9);
-            panel15.Controls.Add(label10);
+            panel15.Controls.Add(input_Coil_Number);
+            panel15.Controls.Add(label_Coil_Number);
             panel15.Dock = DockStyle.Top;
             panel15.Location = new Point(9, 370);
             panel15.Name = "panel15";
@@ -434,32 +434,32 @@ namespace AI_Assistant_Win.Controls
             panel15.Size = new Size(342, 33);
             panel15.TabIndex = 24;
             // 
-            // input9
+            // input_Coil_Number
             // 
-            input9.Font = new Font("Microsoft YaHei UI", 10F);
-            input9.Location = new Point(78, -1);
-            input9.Name = "input9";
-            input9.Size = new Size(261, 34);
-            input9.TabIndex = 17;
+            input_Coil_Number.Font = new Font("Microsoft YaHei UI", 10F);
+            input_Coil_Number.Location = new Point(78, -1);
+            input_Coil_Number.Name = "input_Coil_Number";
+            input_Coil_Number.Size = new Size(261, 34);
+            input_Coil_Number.TabIndex = 17;
             // 
-            // label10
+            // label_Coil_Number
             // 
-            label10.BackColor = Color.Transparent;
-            label10.Dock = DockStyle.Left;
-            label10.Font = new Font("Microsoft YaHei UI", 10F);
-            label10.Location = new Point(0, 0);
-            label10.Name = "label10";
-            label10.Size = new Size(72, 33);
-            label10.TabIndex = 16;
-            label10.Text = "钢卷号：";
-            label10.TextAlign = ContentAlignment.MiddleRight;
+            label_Coil_Number.BackColor = Color.Transparent;
+            label_Coil_Number.Dock = DockStyle.Left;
+            label_Coil_Number.Font = new Font("Microsoft YaHei UI", 10F);
+            label_Coil_Number.Location = new Point(0, 0);
+            label_Coil_Number.Name = "label_Coil_Number";
+            label_Coil_Number.Size = new Size(72, 33);
+            label_Coil_Number.TabIndex = 16;
+            label_Coil_Number.Text = "钢卷号：";
+            label_Coil_Number.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel14
             // 
             panel14.Back = Color.Transparent;
             panel14.BackColor = Color.Transparent;
-            panel14.Controls.Add(select1);
-            panel14.Controls.Add(label9);
+            panel14.Controls.Add(select_Analyst);
+            panel14.Controls.Add(label_Analyst);
             panel14.Dock = DockStyle.Top;
             panel14.Location = new Point(9, 337);
             panel14.Name = "panel14";
@@ -467,39 +467,39 @@ namespace AI_Assistant_Win.Controls
             panel14.Size = new Size(342, 33);
             panel14.TabIndex = 23;
             // 
-            // select1
+            // select_Analyst
             // 
-            select1.AllowClear = true;
-            select1.Dock = DockStyle.Left;
-            select1.DropDownArrow = true;
-            select1.Font = new Font("Microsoft YaHei UI", 10F);
-            select1.Items.AddRange(new object[] { "Lucy", "Tom", "AduSkin", "WangLi", "HUAWEI", "XIAOMI" });
-            select1.LocalizationPlaceholderText = "Select.{id}";
-            select1.Location = new Point(72, 0);
-            select1.Name = "select1";
-            select1.Padding = new Padding(5, 0, 0, 0);
-            select1.PlaceholderText = "请选择分析人员";
-            select1.Size = new Size(267, 33);
-            select1.TabIndex = 18;
+            select_Analyst.AllowClear = true;
+            select_Analyst.Dock = DockStyle.Left;
+            select_Analyst.DropDownArrow = true;
+            select_Analyst.Font = new Font("Microsoft YaHei UI", 10F);
+            select_Analyst.Items.AddRange(new object[] { "00001-刘一", "00002-陈二", "00003-张三", "00004-李四", "00005-王五", "00006-赵六", "00007-孙七", "00008-周八", "00009-吴九", "00010-郑十" });
+            select_Analyst.LocalizationPlaceholderText = "Select.{id}";
+            select_Analyst.Location = new Point(72, 0);
+            select_Analyst.Name = "select_Analyst";
+            select_Analyst.Padding = new Padding(5, 0, 0, 0);
+            select_Analyst.PlaceholderText = "请选择分析人员";
+            select_Analyst.Size = new Size(267, 33);
+            select_Analyst.TabIndex = 18;
             // 
-            // label9
+            // label_Analyst
             // 
-            label9.BackColor = Color.Transparent;
-            label9.Dock = DockStyle.Left;
-            label9.Font = new Font("Microsoft YaHei UI", 10F);
-            label9.Location = new Point(0, 0);
-            label9.Name = "label9";
-            label9.Size = new Size(72, 33);
-            label9.TabIndex = 16;
-            label9.Text = "分析人：";
-            label9.TextAlign = ContentAlignment.MiddleRight;
+            label_Analyst.BackColor = Color.Transparent;
+            label_Analyst.Dock = DockStyle.Left;
+            label_Analyst.Font = new Font("Microsoft YaHei UI", 10F);
+            label_Analyst.Location = new Point(0, 0);
+            label_Analyst.Name = "label_Analyst";
+            label_Analyst.Size = new Size(72, 33);
+            label_Analyst.TabIndex = 16;
+            label_Analyst.Text = "分析人：";
+            label_Analyst.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel8
             // 
             panel8.Back = Color.Transparent;
             panel8.BackColor = Color.Transparent;
-            panel8.Controls.Add(select5);
-            panel8.Controls.Add(label8);
+            panel8.Controls.Add(select_Work_Group);
+            panel8.Controls.Add(label_Work_Group);
             panel8.Dock = DockStyle.Top;
             panel8.Location = new Point(9, 304);
             panel8.Name = "panel8";
@@ -507,32 +507,32 @@ namespace AI_Assistant_Win.Controls
             panel8.Size = new Size(342, 33);
             panel8.TabIndex = 22;
             // 
-            // select5
+            // select_Work_Group
             // 
-            select5.AllowClear = true;
-            select5.Dock = DockStyle.Left;
-            select5.DropDownArrow = true;
-            select5.Font = new Font("Microsoft YaHei UI", 10F);
-            select5.Items.AddRange(new object[] { "Lucy", "Tom", "AduSkin", "WangLi", "HUAWEI", "XIAOMI" });
-            select5.LocalizationPlaceholderText = "Select.{id}";
-            select5.Location = new Point(72, 0);
-            select5.Name = "select5";
-            select5.Padding = new Padding(5, 0, 0, 0);
-            select5.PlaceholderText = "请选择班组";
-            select5.Size = new Size(267, 33);
-            select5.TabIndex = 17;
+            select_Work_Group.AllowClear = true;
+            select_Work_Group.Dock = DockStyle.Left;
+            select_Work_Group.DropDownArrow = true;
+            select_Work_Group.Font = new Font("Microsoft YaHei UI", 10F);
+            select_Work_Group.Items.AddRange(new object[] { "甲-白", "甲-夜", "乙-白", "乙-夜", "丙-白", "丙-夜", "丁-白", "丁-夜" });
+            select_Work_Group.LocalizationPlaceholderText = "Select.{id}";
+            select_Work_Group.Location = new Point(72, 0);
+            select_Work_Group.Name = "select_Work_Group";
+            select_Work_Group.Padding = new Padding(5, 0, 0, 0);
+            select_Work_Group.PlaceholderText = "请选择班组";
+            select_Work_Group.Size = new Size(267, 33);
+            select_Work_Group.TabIndex = 17;
             // 
-            // label8
+            // label_Work_Group
             // 
-            label8.BackColor = Color.Transparent;
-            label8.Dock = DockStyle.Left;
-            label8.Font = new Font("Microsoft YaHei UI", 10F);
-            label8.Location = new Point(0, 0);
-            label8.Name = "label8";
-            label8.Size = new Size(72, 33);
-            label8.TabIndex = 16;
-            label8.Text = "班组：";
-            label8.TextAlign = ContentAlignment.MiddleRight;
+            label_Work_Group.BackColor = Color.Transparent;
+            label_Work_Group.Dock = DockStyle.Left;
+            label_Work_Group.Font = new Font("Microsoft YaHei UI", 10F);
+            label_Work_Group.Location = new Point(0, 0);
+            label_Work_Group.Name = "label_Work_Group";
+            label_Work_Group.Size = new Size(72, 33);
+            label_Work_Group.TabIndex = 16;
+            label_Work_Group.Text = "班组：";
+            label_Work_Group.TextAlign = ContentAlignment.MiddleRight;
             // 
             // divider2
             // 
@@ -604,7 +604,6 @@ namespace AI_Assistant_Win.Controls
             // 
             // input_Inside_DR
             // 
-            input_Inside_DR.Enabled = false;
             input_Inside_DR.Font = new Font("Microsoft YaHei UI", 10F);
             input_Inside_DR.Location = new Point(78, -1);
             input_Inside_DR.Name = "input_Inside_DR";
@@ -638,7 +637,6 @@ namespace AI_Assistant_Win.Controls
             // 
             // input_Inside_CE
             // 
-            input_Inside_CE.Enabled = false;
             input_Inside_CE.Font = new Font("Microsoft YaHei UI", 10F);
             input_Inside_CE.Location = new Point(78, -1);
             input_Inside_CE.Name = "input_Inside_CE";
@@ -672,7 +670,6 @@ namespace AI_Assistant_Win.Controls
             // 
             // input_Inside_OP
             // 
-            input_Inside_OP.Enabled = false;
             input_Inside_OP.Font = new Font("Microsoft YaHei UI", 10F);
             input_Inside_OP.Location = new Point(78, -1);
             input_Inside_OP.Name = "input_Inside_OP";
@@ -706,7 +703,6 @@ namespace AI_Assistant_Win.Controls
             // 
             // input_Surface_DR
             // 
-            input_Surface_DR.Enabled = false;
             input_Surface_DR.Font = new Font("Microsoft YaHei UI", 10F);
             input_Surface_DR.Location = new Point(78, -1);
             input_Surface_DR.Name = "input_Surface_DR";
@@ -740,7 +736,6 @@ namespace AI_Assistant_Win.Controls
             // 
             // input_Surface_CE
             // 
-            input_Surface_CE.Enabled = false;
             input_Surface_CE.Font = new Font("Microsoft YaHei UI", 10F);
             input_Surface_CE.Location = new Point(78, -1);
             input_Surface_CE.Name = "input_Surface_CE";
@@ -774,7 +769,6 @@ namespace AI_Assistant_Win.Controls
             // 
             // input_Surface_OP
             // 
-            input_Surface_OP.Enabled = false;
             input_Surface_OP.Font = new Font("Microsoft YaHei UI", 10F);
             input_Surface_OP.Location = new Point(78, -1);
             input_Surface_OP.Name = "input_Surface_OP";
@@ -895,18 +889,18 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Radio radio_Result_NG;
         private AntdUI.Divider divider2;
         private AntdUI.Panel panel16;
-        private AntdUI.Input input10;
-        private Label label11;
+        private AntdUI.Input input_Size;
+        private Label label_Size;
         private AntdUI.Panel panel15;
-        private AntdUI.Input input9;
-        private Label label10;
+        private AntdUI.Input input_Coil_Number;
+        private Label label_Coil_Number;
         private AntdUI.Panel panel14;
-        private Label label9;
+        private Label label_Analyst;
         private AntdUI.Panel panel8;
-        private Label label8;
+        private Label label_Work_Group;
         private Label label12;
         private AntdUI.Panel panel17;
-        private AntdUI.Select select5;
-        private AntdUI.Select select1;
+        private AntdUI.Select select_Work_Group;
+        private AntdUI.Select select_Analyst;
     }
 }

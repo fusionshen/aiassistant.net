@@ -1,8 +1,7 @@
-using AI_Assistant_Win.DataBase;
-using AI_Assistant_Win.Entities;
-using AI_Assistant_Win.Entities.Enums;
+using AI_Assistant_Win.Business;
+using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Models.Enums;
 using SixLabors.Fonts;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -23,11 +22,19 @@ namespace AI_Assistant_Win.Controls
 
         private string originImagePath = string.Empty;
 
+        private string renderImagePath = string.Empty;
+
+        private readonly BlacknessMethodBLL blacknessMethodBLL;
+
+        private readonly ImageProcessBLL imageProcessBLL;
+
         public BlacknessMethod(MainWindow _form)
         {
             var fontCollection = new FontCollection();
             var fontFamily = fontCollection.Add("./Resources/SourceHanSansCN-Regular.ttf");
             font = fontFamily.CreateFont(48, FontStyle.Bold);
+            blacknessMethodBLL = new BlacknessMethodBLL();
+            imageProcessBLL = new ImageProcessBLL();
             form = _form;
             InitializeComponent();
         }
@@ -40,14 +47,13 @@ namespace AI_Assistant_Win.Controls
         private void BlacknessMethod_renderImage_Click(object sender, EventArgs e)
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, blacknessMethod_RenderImage.Image));
-
         }
 
         private void Btn_UploadImage_Click(object sender, System.EventArgs e)
         {
             if (blacknessMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
-                originImagePath = blacknessMethod_OpenFileDialog.FileName;
+                originImagePath = imageProcessBLL.SaveOriginImageAndReturnPath(blacknessMethod_OpenFileDialog.FileName);
                 AntdUI.Button btn = (AntdUI.Button)sender;
                 btn.LoadingWaveValue = 0;
                 btn.Loading = true;
@@ -119,8 +125,8 @@ namespace AI_Assistant_Win.Controls
                     AntdUI.Notification.success(form, "成功", "识别成功！", AntdUI.TAlignFrom.BR, Font);
                     DrawBoxes(yolo.ModelInputHeight, yolo.ModelInputWidth, image, predictions);
                     OutputTexts(predictions);
-                    image.Save("ai_assistant_blackness_result.jpg");
-                    blacknessMethod_RenderImage.Image = System.Drawing.Image.FromFile("ai_assistant_blackness_result.jpg");
+                    renderImagePath = imageProcessBLL.SaveRenderImageAndReturnPath(image);
+                    blacknessMethod_RenderImage.Image = System.Drawing.Image.FromFile(renderImagePath);
                 }
                 else
                 {
@@ -135,18 +141,7 @@ namespace AI_Assistant_Win.Controls
 
         private void OutputTexts(Prediction[] predictions)
         {
-            var sorted = predictions.OrderByDescending(t => t.Rectangle.X).ToArray();
-            // TODO: 现场根据X具体位置判断，因为可能出现未贴完6个部位或者未识别出六个部位的情况
-            var resultList = new List<Blackness>
-                {
-                    new(Entities.Enums.BlacknessLocationKind.SURFACE_OP, sorted[0]),
-                    new(Entities.Enums.BlacknessLocationKind.SURFACE_CE, sorted[1]),
-                    new(Entities.Enums.BlacknessLocationKind.SURFACE_DR, sorted[2]),
-                    new(Entities.Enums.BlacknessLocationKind.INSIDE_OP, sorted[3]),
-                    new(Entities.Enums.BlacknessLocationKind.INSIDE_CE, sorted[4]),
-                    new(Entities.Enums.BlacknessLocationKind.INSIDE_DR, sorted[5])
-                };
-
+            var resultList = blacknessMethodBLL.ParsePredictions(predictions);
             input_Surface_OP.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Description;
             input_Surface_CE.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Description;
             input_Surface_DR.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Description;
@@ -214,7 +209,68 @@ namespace AI_Assistant_Win.Controls
 
         private void Btn_Save_Click(object sender, EventArgs e)
         {
-            _ = new DatabaseHandler();
+            // 数据验证
+            if (blacknessMethodBLL.GetResultList() == null)
+            {
+                AntdUI.Notification.error(form, "错误", "请进行识别后再保存", AntdUI.TAlignFrom.BR, Font);
+                return;
+            }
+            if (select_Work_Group.SelectedValue == null)
+            {
+                AntdUI.Notification.error(form, "错误", "请选择班组", AntdUI.TAlignFrom.BR, Font);
+                return;
+            }
+            if (select_Analyst.SelectedValue == null)
+            {
+                AntdUI.Notification.error(form, "错误", "请选择分析人员", AntdUI.TAlignFrom.BR, Font);
+                return;
+            }
+            if (string.IsNullOrEmpty(input_Coil_Number.Text))
+            {
+                AntdUI.Notification.error(form, "错误", "请输入正确的钢卷号", AntdUI.TAlignFrom.BR, Font);
+                return;
+            }
+            if (string.IsNullOrEmpty(input_Size.Text))
+            {
+                AntdUI.Notification.error(form, "错误", "请输入正确的尺寸", AntdUI.TAlignFrom.BR, Font);
+                return;
+            }
+            if (AntdUI.Modal.open(form, "请确认", "是否保存本次黑度检测结果？") == DialogResult.OK)
+            {
+                AntdUI.Button btn = (AntdUI.Button)sender;
+                btn.LoadingWaveValue = 0;
+                btn.Loading = true;
+                AntdUI.ITask.Run(() =>
+                {
+                    // 构造黑度测试数据
+                    var blacknessMethodResult = new BlacknessMethodResult
+                    {
+                        CoilNumber = input_Coil_Number.Text,
+                        Size = input_Size.Text,
+                        OriginImagePath = originImagePath,
+                        RenderImagePath = renderImagePath,
+                        WorkGroup = select_Work_Group.SelectedValue.ToString(),
+                        Analyst = select_Analyst.SelectedValue.ToString(),
+                    };
+                    var result = blacknessMethodBLL.SaveResult(blacknessMethodResult);
+                    if (result == 0)
+                    {
+                        AntdUI.Notification.error(form, "错误", "保存失败！", AntdUI.TAlignFrom.BR, Font);
+                        return;
+                    }
+                    else
+                    {
+                        AntdUI.Notification.success(form, "成功", "保存成功！", AntdUI.TAlignFrom.BR, Font);
+                        return;
+                    }
+                }, () =>
+                {
+                    if (btn.IsDisposed) return;
+                    btn.Loading = false;
+                    // 防止多次点击，操作相同的数据，TODO:检测数据变化后，进行新增或更新操作
+                    btn.Enabled = false;
+                });
+            }
         }
     }
 }

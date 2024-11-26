@@ -1,8 +1,8 @@
-﻿using AI_Assistant_Win.Entities.Enums;
+﻿using AI_Assistant_Win.Models.Enums;
 using System.Linq;
 using Yolov8.Net;
 
-namespace AI_Assistant_Win.Entities
+namespace AI_Assistant_Win.Models.Middle
 {
     public class Blackness(BlacknessLocationKind location, Prediction prediction)
     {

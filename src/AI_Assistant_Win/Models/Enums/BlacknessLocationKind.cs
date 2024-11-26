@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace AI_Assistant_Win.Entities.Enums
+namespace AI_Assistant_Win.Models.Enums
 {
     public enum BlacknessLocationKind
     {

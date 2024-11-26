@@ -118,7 +118,6 @@ namespace AI_Assistant_Win.Controls
             // 
             tabPage1.Controls.Add(carousel2);
             tabPage1.Controls.Add(label1);
-            tabPage1.Dock = DockStyle.Fill;
             tabPage1.Location = new Point(7, 36);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
@@ -156,8 +155,7 @@ namespace AI_Assistant_Win.Controls
             // tabPage2
             // 
             tabPage2.Controls.Add(label2);
-            tabPage2.Dock = DockStyle.Fill;
-            tabPage2.Location = new Point(4, 29);
+            tabPage2.Location = new Point(-192, -67);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new Padding(3);
             tabPage2.Size = new Size(192, 67);
@@ -170,15 +168,14 @@ namespace AI_Assistant_Win.Controls
             label2.Dock = DockStyle.Top;
             label2.Location = new Point(3, 3);
             label2.Name = "label2";
-            label2.Size = new Size(41, 17);
+            label2.Size = new Size(49, 20);
             label2.TabIndex = 1;
             label2.Text = "Tab 2";
             // 
             // tabPage3
             // 
             tabPage3.Controls.Add(label3);
-            tabPage3.Dock = DockStyle.Fill;
-            tabPage3.Location = new Point(4, 29);
+            tabPage3.Location = new Point(-192, -67);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new Padding(3);
             tabPage3.Size = new Size(192, 67);
@@ -191,15 +188,14 @@ namespace AI_Assistant_Win.Controls
             label3.Dock = DockStyle.Top;
             label3.Location = new Point(3, 3);
             label3.Name = "label3";
-            label3.Size = new Size(41, 17);
+            label3.Size = new Size(49, 20);
             label3.TabIndex = 1;
             label3.Text = "Tab 3";
             // 
             // tabPage4
             // 
             tabPage4.Controls.Add(label4);
-            tabPage4.Dock = DockStyle.Fill;
-            tabPage4.Location = new Point(4, 29);
+            tabPage4.Location = new Point(-192, -67);
             tabPage4.Name = "tabPage4";
             tabPage4.Padding = new Padding(3);
             tabPage4.Size = new Size(192, 67);
@@ -212,7 +208,7 @@ namespace AI_Assistant_Win.Controls
             label4.Dock = DockStyle.Top;
             label4.Location = new Point(3, 3);
             label4.Name = "label4";
-            label4.Size = new Size(41, 17);
+            label4.Size = new Size(49, 20);
             label4.TabIndex = 1;
             label4.Text = "Tab 4";
             // 
@@ -235,7 +231,6 @@ namespace AI_Assistant_Win.Controls
             // tabPage5
             // 
             tabPage5.Controls.Add(label5);
-            tabPage5.Dock = DockStyle.Fill;
             tabPage5.Location = new Point(83, 8);
             tabPage5.Name = "tabPage5";
             tabPage5.Padding = new Padding(3);
@@ -256,9 +251,8 @@ namespace AI_Assistant_Win.Controls
             // tabPage6
             // 
             tabPage6.Controls.Add(label6);
-            tabPage6.Dock = DockStyle.Fill;
             tabPage6.IconSvg = resources.GetString("tabPage6.IconSvg");
-            tabPage6.Location = new Point(85, 3);
+            tabPage6.Location = new Point(-575, -156);
             tabPage6.Name = "tabPage6";
             tabPage6.Padding = new Padding(3);
             tabPage6.Size = new Size(575, 156);
@@ -271,16 +265,15 @@ namespace AI_Assistant_Win.Controls
             label6.Dock = DockStyle.Top;
             label6.Location = new Point(3, 3);
             label6.Name = "label6";
-            label6.Size = new Size(41, 17);
+            label6.Size = new Size(49, 20);
             label6.TabIndex = 1;
             label6.Text = "Tab 2";
             // 
             // tabPage7
             // 
             tabPage7.Controls.Add(label7);
-            tabPage7.Dock = DockStyle.Fill;
             tabPage7.IconSvg = resources.GetString("tabPage7.IconSvg");
-            tabPage7.Location = new Point(85, 3);
+            tabPage7.Location = new Point(-575, -156);
             tabPage7.Name = "tabPage7";
             tabPage7.Padding = new Padding(3);
             tabPage7.Size = new Size(575, 156);
@@ -293,7 +286,7 @@ namespace AI_Assistant_Win.Controls
             label7.Dock = DockStyle.Top;
             label7.Location = new Point(3, 3);
             label7.Name = "label7";
-            label7.Size = new Size(41, 17);
+            label7.Size = new Size(49, 20);
             label7.TabIndex = 1;
             label7.Text = "Tab 3";
             // 
