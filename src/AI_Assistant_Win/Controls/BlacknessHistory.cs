@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Controls
@@ -8,16 +9,16 @@ namespace AI_Assistant_Win.Controls
     public partial class BlacknessHistory : UserControl
     {
         private readonly Form form;
+
+        private List<AntdUI.AntItem[]> dataList;
         public BlacknessHistory(Form _form)
         {
             form = _form;
             InitializeComponent();
-            tabPage1.Text = AntdUI.Localization.Get("Table.Tab1", "常规");
-            tabPage2.Text = AntdUI.Localization.Get("Table.Tab2", "分页");
-            table1.EditMode = table2.EditMode = AntdUI.TEditMode.DoubleClick;
+            table1.EditMode = AntdUI.TEditMode.DoubleClick;
 
+            pagination1.PageSizeOptions = new int[] { 10, 20, 30, 50, 100 };
             #region Table 1
-
             table1.Columns = new AntdUI.ColumnCollection {
                 new AntdUI.ColumnCheck("check"){ Fixed=true},
                 new AntdUI.Column("name","名称"){ Fixed=true},
@@ -36,7 +37,7 @@ namespace AI_Assistant_Win.Controls
             };
 
             // 
-            var list = new List<AntdUI.AntItem[]>(10) {
+            dataList = new List<AntdUI.AntItem[]>(25) {
                 new AntdUI.AntItem[]{
                     new AntdUI.AntItem("no",1),
                     new AntdUI.AntItem("key",1),
@@ -79,7 +80,7 @@ namespace AI_Assistant_Win.Controls
                 }
             };
             // 
-            for (int i = 0; i < 8; i++)
+            for (int i = 0; i < 23; i++)
             {
                 AntdUI.CellBadge online;
                 AntdUI.CellLink[] btns;
@@ -122,7 +123,7 @@ namespace AI_Assistant_Win.Controls
                         new AntdUI.CellLink("delete","Delete")
                     };
                 }
-                list.Add(new AntdUI.AntItem[]{
+                dataList.Add(new AntdUI.AntItem[]{
                     new AntdUI.AntItem("no",2+i),
                     new AntdUI.AntItem("key",2+i),
                     new AntdUI.AntItem("check",false),
@@ -138,24 +139,10 @@ namespace AI_Assistant_Win.Controls
                     new AntdUI.AntItem("btns", btns),
                 });
             }
-
-            table1.DataSource = list;
-
-            #endregion
-
-            #region Table 2
-
-            table2.Columns = new AntdUI.ColumnCollection {
-                new AntdUI.Column("no","编号",AntdUI.ColumnAlign.Right){ Width="auto"},
-                new AntdUI.Column("name","姓名"),
-                new AntdUI.Column("age","年纪",AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("address","地址"),
-                new AntdUI.Column("tag","Tag"){ Width="auto"}
-            };
-
-            table2.DataSource = GetPageData(pagination1.Current, pagination1.PageSize);
-            pagination1.PageSizeOptions = new int[] { 10, 20, 30, 50, 100 };
-
+            //table1.DataSource = dataList;
+            pagination1.Total = dataList.Count;
+            var pagedList = GetPageData(pagination1.Current, pagination1.PageSize);
+            table1.DataSource = pagedList;
             #endregion
         }
 
@@ -275,25 +262,13 @@ namespace AI_Assistant_Win.Controls
 
         object GetPageData(int current, int pageSize)
         {
-            var list = new List<AntdUI.AntItem[]>();
-            int start = Math.Abs(current - 1) * pageSize;
-            for (int i = 0; i < pageSize; i++)
-            {
-                int index = start + i;
-                list.Add(new AntdUI.AntItem[]{
-                    new AntdUI.AntItem("no",index+1),
-                    new AntdUI.AntItem("name","人员" + index),
-                    new AntdUI.AntItem("age", (index + 20)),
-                    new AntdUI.AntItem("address", "大象村" + (index + 1) + "号"),
-                    new AntdUI.AntItem("tag",index % 2 == 0 ? new AntdUI.CellTag("YES" + index, AntdUI.TTypeMini.Success) : new AntdUI.CellTag("NO" +index, AntdUI.TTypeMini.Error))
-                });
-            }
-            return list;
+            var pagedList = dataList.Skip(pageSize * Math.Abs(current - 1)).Take(pageSize).ToList();
+            return pagedList;
         }
 
         void Pagination1_ValueChanged(object sender, AntdUI.PagePageEventArgs e)
         {
-            table2.DataSource = GetPageData(e.Current, e.PageSize);
+            table1.DataSource = GetPageData(e.Current, e.PageSize);
         }
 
         private string Pagination1_ShowTotalChanged(object sender, AntdUI.PagePageEventArgs e)
