@@ -31,7 +31,7 @@ namespace AI_Assistant_Win.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            AntdUI.Tabs.StyleLine styleLine2 = new AntdUI.Tabs.StyleLine();
+            AntdUI.Tabs.StyleLine styleLine1 = new AntdUI.Tabs.StyleLine();
             header1 = new AntdUI.PageHeader();
             pagination1 = new AntdUI.Pagination();
             table2 = new AntdUI.Table();
@@ -79,8 +79,8 @@ namespace AI_Assistant_Win.Controls
             pagination1.Size = new Size(1288, 40);
             pagination1.TabIndex = 5;
             pagination1.Total = 100;
-            pagination1.ValueChanged += pagination1_ValueChanged;
-            pagination1.ShowTotalChanged += pagination1_ShowTotalChanged;
+            pagination1.ValueChanged += Pagination1_ValueChanged;
+            pagination1.ShowTotalChanged += Pagination1_ShowTotalChanged;
             // 
             // table2
             // 
@@ -103,8 +103,8 @@ namespace AI_Assistant_Win.Controls
             table1.Radius = 6;
             table1.Size = new Size(1288, 508);
             table1.TabIndex = 0;
-            table1.CellClick += table1_CellClick;
-            table1.CellButtonClick += table1_CellButtonClick;
+            table1.CellClick += Table1_CellClick;
+            table1.CellButtonClick += Table1_CellButtonClick;
             // 
             // tabs1
             // 
@@ -117,15 +117,15 @@ namespace AI_Assistant_Win.Controls
             tabs1.Pages.Add(tabPage1);
             tabs1.Pages.Add(tabPage2);
             tabs1.Size = new Size(1300, 602);
-            styleLine2.Radius = 2;
-            tabs1.Style = styleLine2;
+            styleLine1.Radius = 2;
+            tabs1.Style = styleLine1;
             tabs1.TabIndex = 0;
             // 
             // tabPage1
             // 
             tabPage1.Controls.Add(table1);
             tabPage1.Controls.Add(panel1);
-            tabPage1.Location = new Point(3, 42);
+            tabPage1.Location = new Point(-1294, -557);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new Padding(3);
             tabPage1.Size = new Size(1294, 557);
@@ -162,7 +162,7 @@ namespace AI_Assistant_Win.Controls
             checkVisibleHeader.Size = new Size(115, 43);
             checkVisibleHeader.TabIndex = 6;
             checkVisibleHeader.Text = "显示表头";
-            checkVisibleHeader.CheckedChanged += checkVisibleHeader_CheckedChanged;
+            checkVisibleHeader.CheckedChanged += CheckVisibleHeader_CheckedChanged;
             // 
             // checkEnableHeaderResizing
             // 
@@ -175,7 +175,7 @@ namespace AI_Assistant_Win.Controls
             checkEnableHeaderResizing.Size = new Size(181, 43);
             checkEnableHeaderResizing.TabIndex = 5;
             checkEnableHeaderResizing.Text = "手动调整列头宽度";
-            checkEnableHeaderResizing.CheckedChanged += checkEnableHeaderResizing_CheckedChanged;
+            checkEnableHeaderResizing.CheckedChanged += CheckEnableHeaderResizing_CheckedChanged;
             // 
             // checkSortOrder
             // 
@@ -188,7 +188,7 @@ namespace AI_Assistant_Win.Controls
             checkSortOrder.Size = new Size(115, 43);
             checkSortOrder.TabIndex = 4;
             checkSortOrder.Text = "年龄排序";
-            checkSortOrder.CheckedChanged += checkSortOrder_CheckedChanged;
+            checkSortOrder.CheckedChanged += CheckSortOrder_CheckedChanged;
             // 
             // checkSetRowStyle
             // 
@@ -201,7 +201,7 @@ namespace AI_Assistant_Win.Controls
             checkSetRowStyle.Size = new Size(98, 43);
             checkSetRowStyle.TabIndex = 3;
             checkSetRowStyle.Text = "奇偶列";
-            checkSetRowStyle.CheckedChanged += checkSetRowStyle_CheckedChanged;
+            checkSetRowStyle.CheckedChanged += CheckSetRowStyle_CheckedChanged;
             // 
             // checkBordered
             // 
@@ -214,7 +214,7 @@ namespace AI_Assistant_Win.Controls
             checkBordered.Size = new Size(131, 43);
             checkBordered.TabIndex = 2;
             checkBordered.Text = "显示列边框";
-            checkBordered.CheckedChanged += checkBordered_CheckedChanged;
+            checkBordered.CheckedChanged += CheckBordered_CheckedChanged;
             // 
             // checkColumnDragSort
             // 
@@ -227,7 +227,7 @@ namespace AI_Assistant_Win.Controls
             checkColumnDragSort.Size = new Size(131, 43);
             checkColumnDragSort.TabIndex = 1;
             checkColumnDragSort.Text = "列拖拽排序";
-            checkColumnDragSort.CheckedChanged += checkColumnDragSort_CheckedChanged;
+            checkColumnDragSort.CheckedChanged += CheckColumnDragSort_CheckedChanged;
             // 
             // checkFixedHeader
             // 
@@ -241,7 +241,7 @@ namespace AI_Assistant_Win.Controls
             checkFixedHeader.Size = new Size(115, 43);
             checkFixedHeader.TabIndex = 0;
             checkFixedHeader.Text = "固定表头";
-            checkFixedHeader.CheckedChanged += checkFixedHeader_CheckedChanged;
+            checkFixedHeader.CheckedChanged += CheckFixedHeader_CheckedChanged;
             // 
             // tabPage2
             // 
