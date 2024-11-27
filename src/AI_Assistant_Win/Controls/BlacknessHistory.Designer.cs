@@ -41,7 +41,7 @@ namespace AI_Assistant_Win.Controls
             checkBordered = new AntdUI.Checkbox();
             checkColumnDragSort = new AntdUI.Checkbox();
             checkFixedHeader = new AntdUI.Checkbox();
-            table1 = new AntdUI.Table();
+            table_Blackness_History = new AntdUI.Table();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -185,24 +185,24 @@ namespace AI_Assistant_Win.Controls
             checkFixedHeader.Text = "固定表头";
             checkFixedHeader.CheckedChanged += CheckFixedHeader_CheckedChanged;
             // 
-            // table1
+            // table_Blackness_History
             // 
-            table1.AutoSizeColumnsMode = AntdUI.ColumnsMode.Fill;
-            table1.Dock = DockStyle.Bottom;
-            table1.Font = new Font("Microsoft YaHei UI", 11F);
-            table1.Location = new Point(0, 128);
-            table1.Name = "table1";
-            table1.Radius = 6;
-            table1.Size = new Size(1300, 508);
-            table1.TabIndex = 0;
-            table1.CellClick += Table1_CellClick;
-            table1.CellButtonClick += Table1_CellButtonClick;
+            table_Blackness_History.AutoSizeColumnsMode = AntdUI.ColumnsMode.Fill;
+            table_Blackness_History.Dock = DockStyle.Bottom;
+            table_Blackness_History.Font = new Font("Microsoft YaHei UI", 11F);
+            table_Blackness_History.Location = new Point(0, 128);
+            table_Blackness_History.Name = "table_Blackness_History";
+            table_Blackness_History.Radius = 6;
+            table_Blackness_History.Size = new Size(1300, 508);
+            table_Blackness_History.TabIndex = 0;
+            table_Blackness_History.CellClick += Table1_CellClick;
+            table_Blackness_History.CellButtonClick += Table1_CellButtonClick;
             // 
             // BlacknessHistory
             // 
             Controls.Add(panel1);
             Controls.Add(header1);
-            Controls.Add(table1);
+            Controls.Add(table_Blackness_History);
             Controls.Add(pagination1);
             Font = new Font("Microsoft YaHei UI", 16F);
             Name = "BlacknessHistory";
@@ -223,6 +223,6 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Checkbox checkBordered;
         private AntdUI.Checkbox checkColumnDragSort;
         private AntdUI.Checkbox checkFixedHeader;
-        private AntdUI.Table table1;
+        private AntdUI.Table table_Blackness_History;
     }
 }

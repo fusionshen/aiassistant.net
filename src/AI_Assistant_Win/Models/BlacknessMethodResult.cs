@@ -137,6 +137,11 @@ namespace AI_Assistant_Win.Models
         [Column("uploader")]
         public string Uploader { get; set; }
         /// <summary>
+        /// 上传时间
+        /// </summary>
+        [Column("upload_time")]
+        public DateTime UploadTime { get; set; }
+        /// <summary>
         /// 班组
         /// </summary>
         [Column("work_group")]

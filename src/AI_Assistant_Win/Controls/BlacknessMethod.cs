@@ -210,7 +210,7 @@ namespace AI_Assistant_Win.Controls
         private void Btn_Save_Click(object sender, EventArgs e)
         {
             // 数据验证
-            if (blacknessMethodBLL.GetResultList() == null)
+            if (blacknessMethodBLL.GetTempMethodResultList() == null)
             {
                 AntdUI.Notification.error(form, "错误", "请进行识别后再保存", AntdUI.TAlignFrom.BR, Font);
                 return;
