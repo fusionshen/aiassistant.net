@@ -29,7 +29,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// </summary>
         public string Description
         {
-            get { return $"等级{Level}，宽度：{Prediction.Rectangle.Height:F2}mm"; }
+            get { return $"等级{Level}，宽度{Prediction.Rectangle.Height:F2}mm"; }
         }
         /// <summary>
         /// 识别结果

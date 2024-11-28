@@ -140,7 +140,7 @@ namespace AI_Assistant_Win.Models
         /// 上传时间
         /// </summary>
         [Column("upload_time")]
-        public DateTime UploadTime { get; set; }
+        public DateTime? UploadTime { get; set; }
         /// <summary>
         /// 班组
         /// </summary>
@@ -155,7 +155,7 @@ namespace AI_Assistant_Win.Models
         /// 创建时间
         /// </summary>
         [Column("create_time")]
-        public DateTime CreateTime { get; set; }
+        public DateTime? CreateTime { get; set; }
         /// <summary>
         /// 最近修改人
         /// </summary>
@@ -165,6 +165,6 @@ namespace AI_Assistant_Win.Models
         /// 最近修改时间
         /// </summary>
         [Column("last_modified_time")]
-        public DateTime LastModifiedTime { get; set; }
+        public DateTime? LastModifiedTime { get; set; }
     }
 }
