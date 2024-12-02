@@ -188,7 +188,6 @@ namespace AI_Assistant_Win.Controls
             // table_Blackness_History
             // 
             table_Blackness_History.AutoSizeColumnsMode = AntdUI.ColumnsMode.Fill;
-            table_Blackness_History.Dock = DockStyle.Bottom;
             table_Blackness_History.Font = new Font("Microsoft YaHei UI", 11F);
             table_Blackness_History.Location = new Point(0, 128);
             table_Blackness_History.Name = "table_Blackness_History";

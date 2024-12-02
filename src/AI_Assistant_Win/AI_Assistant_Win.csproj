@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.3.3</Version>
+	<Version>0.3.4</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winform Client</AssemblyTitle>
     <Description>Winform Client with antdUI and yolov8.net</Description>
@@ -37,6 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="itext7" Version="9.0.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.0.0" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.19.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.5" />
     <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
@@ -57,6 +59,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\BlacknessHistory.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\BlacknessReport.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
