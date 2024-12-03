@@ -172,7 +172,7 @@ namespace AI_Assistant_Win.Controls
             // blacknessMethod_RenderImage
             // 
             blacknessMethod_RenderImage.Dock = DockStyle.Top;
-            blacknessMethod_RenderImage.Image = Properties.Resources.img1;
+            blacknessMethod_RenderImage.Image = Properties.Resources.blackness_template;
             blacknessMethod_RenderImage.Location = new Point(9, 39);
             blacknessMethod_RenderImage.Name = "blacknessMethod_RenderImage";
             blacknessMethod_RenderImage.Radius = 6;
@@ -249,7 +249,7 @@ namespace AI_Assistant_Win.Controls
             // blacknessMethod_OriginImage
             // 
             blacknessMethod_OriginImage.Dock = DockStyle.Top;
-            blacknessMethod_OriginImage.Image = Properties.Resources.img1;
+            blacknessMethod_OriginImage.Image = Properties.Resources.blackness_template;
             blacknessMethod_OriginImage.Location = new Point(9, 39);
             blacknessMethod_OriginImage.Name = "blacknessMethod_OriginImage";
             blacknessMethod_OriginImage.Radius = 6;

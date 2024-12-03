@@ -27,7 +27,7 @@ namespace AI_Assistant_Win.Controls
                 System.Threading.Thread.Sleep(1000);
                 if (floatButton == null)
                 {
-                    floatButton = AntdUI.FloatButton.open(new AntdUI.FloatButton.Config(form, [
+                    var config = new AntdUI.FloatButton.Config(form, [
                             new("preview", "SearchOutlined", true){
                                 Tooltip = "打印预览"
                             },
@@ -43,7 +43,6 @@ namespace AI_Assistant_Win.Controls
                             }
                     ], btn =>
                     {
-                        floatButton.TopMost = true;
                         switch (btn.Name)
                         {
                             case "preview":
@@ -94,7 +93,10 @@ namespace AI_Assistant_Win.Controls
                                 AntdUI.Message.info(form, "点击了：" + btn.Name, Font);
                                 break;
                         }
-                    }));
+                    });
+                    config.Vertical = false;  //  不遮挡内容
+                    config.TopMost = true;
+                    floatButton = AntdUI.FloatButton.open(config);
                 }
                 else
                 {

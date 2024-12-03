@@ -148,11 +148,10 @@ namespace AI_Assistant_Win.Controls
                         });
                         break;
                     case "report":
-                        var align = AntdUI.TAlignMini.Right;
                         AntdUI.Drawer.open(form, new BlacknessReport(form)
                         {
-                            Size = new Size(800, 640)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
-                        }, align);
+                            Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
+                        }, AntdUI.TAlignMini.Right);
                         break;
                     default:
                         if (AntdUI.Modal.open(new AntdUI.Modal.Config(form, "提示", new AntdUI.Modal.TextLine[] {
