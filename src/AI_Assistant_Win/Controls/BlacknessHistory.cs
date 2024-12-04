@@ -148,7 +148,8 @@ namespace AI_Assistant_Win.Controls
                         });
                         break;
                     case "report":
-                        AntdUI.Drawer.open(form, new BlacknessReport(form)
+                        var id = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
+                        AntdUI.Drawer.open(form, new BlacknessReport(form, id)
                         {
                             Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                         }, AntdUI.TAlignMini.Right);

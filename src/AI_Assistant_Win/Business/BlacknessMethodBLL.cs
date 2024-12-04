@@ -98,5 +98,16 @@ namespace AI_Assistant_Win.Business
             var query = connection.Table<BlacknessMethodResult>().ToList();
             return query;
         }
+
+        public BlacknessMethodResult GetResultById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentNullException("blacknesss method item id is none!");
+            }
+            // if t.Id.ToString()Equals(id), will throw not function toString(), funny!
+            var item = connection.Table<BlacknessMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
+            return item;
+        }
     }
 }

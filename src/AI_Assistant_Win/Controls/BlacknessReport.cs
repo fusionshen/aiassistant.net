@@ -1,3 +1,4 @@
+using AI_Assistant_Win.Business;
 using iText.IO.Image;
 using iText.Kernel.Pdf;
 using iText.Layout;
@@ -13,14 +14,18 @@ namespace AI_Assistant_Win.Controls
     {
         private Form form;
 
+        private readonly BlacknessMethodBLL blacknessMethodBLL;
+
         Bitmap memoryImage;
 
         AntdUI.FormFloatButton floatButton = null;
 
-        public BlacknessReport(Form _form)
+        public BlacknessReport(Form _form, string id)
         {
             form = _form;
+            blacknessMethodBLL = new BlacknessMethodBLL();
             InitializeComponent();
+            LoadData(id);
             Disposed += BlacknessReport_Disposed;
             AntdUI.ITask.Run(() =>
             {
@@ -107,6 +112,154 @@ namespace AI_Assistant_Win.Controls
 
         }
 
+        private void LoadData(string id)
+        {
+            var result = blacknessMethodBLL.GetResultById(id);
+            if (result == null)
+            {
+                AntdUI.Notification.error(form, "错误", "不存在该黑度报告", AntdUI.TAlignFrom.BR, Font);
+                return;
+            }
+            label_Date.Text = result.CreateTime?.ToString("yyyy 年 MM 月 dd 日");
+            #region workGroup
+            switch (result.WorkGroup)
+            {
+                case "甲-白":
+                    checkbox_Jia_Day.Checked = true;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+                case "甲-夜":
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = true;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+                case "乙-白":
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = true;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+                case "乙-夜":
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = true;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+                case "丙-白":
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = true;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+                case "丙-夜":
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = true;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+                case "丁-白":
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = true;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+                case "丁-夜":
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = true;
+                    break;
+                default:
+                    checkbox_Jia_Day.Checked = false;
+                    checkbox_Jia_Night.Checked = false;
+                    checkbox_Yi_Day.Checked = false;
+                    checkbox_Yi_Night.Checked = false;
+                    checkbox_Bing_Day.Checked = false;
+                    checkbox_Bing_Night.Checked = false;
+                    checkbox_Ding_Day.Checked = false;
+                    checkbox_Ding_Night.Checked = false;
+                    break;
+            }
+            #endregion
+            label_Analyst.Text = result.Analyst;
+            label_Coil_Number.Text = result.CoilNumber;
+            label_Size.Text = result.Size;
+            #region OK/NG
+            if (result.IsOK)
+            {
+                checkbox_OK.Checked = true;
+                checkbox_NG.Checked = false;
+            }
+            else
+            {
+                checkbox_OK.Checked = false;
+                checkbox_NG.Checked = true;
+            }
+            #endregion
+            #region uploaded
+            if (result.IsUploaded)
+            {
+                checkbox_Uploaded.Checked = true;
+                checkbox_Not_Uploaded.Checked = false;
+            }
+            else
+            {
+                checkbox_Uploaded.Checked = false;
+                checkbox_Not_Uploaded.Checked = true;
+            }
+            #endregion
+            #region image
+            blacknessReport_RenderImage.Image = System.Drawing.Image.FromFile(result.RenderImagePath);
+            #endregion
+            label_Surface_OP_Level.Text = result.SurfaceOPLevel;
+            label_Surface_OP_Width.Text = $"{result.SurfaceOPWidth:F2}";
+            label_Surface_CE_Level.Text = result.SurfaceCELevel;
+            label_Surface_CE_Width.Text = $"{result.SurfaceCEWidth:F2}";
+            label_Surface_DR_Level.Text = result.SurfaceDRLevel;
+            label_Surface_DR_Width.Text = $"{result.SurfaceDRWidth:F2}";
+            label_Inside_OP_Level.Text = result.InsideOPLevel;
+            label_Inside_OP_Width.Text = $"{result.InsideOPWidth:F2}";
+            label_Inside_CE_Level.Text = result.InsideCELevel;
+            label_Inside_CE_Width.Text = $"{result.InsideCEWidth:F2}";
+            label_Inside_DR_Level.Text = result.InsideDRLevel;
+            label_Inside_DR_Width.Text = $"{result.InsideDRWidth:F2}";
+        }
+
         private void BlacknessReport_Disposed(object sender, EventArgs e)
         {
             if (floatButton != null)
@@ -116,6 +269,11 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
+        /// <summary>
+        /// TODO：只能固定小的长宽才能在页面完全显示，打印像素又过低。大的长宽，打印又不能显示完全：）
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void PrintDocument1_PrintPage(object sender, System.Drawing.Printing.PrintPageEventArgs e)
         {
             memoryImage = new Bitmap(this.Width, this.Height);
