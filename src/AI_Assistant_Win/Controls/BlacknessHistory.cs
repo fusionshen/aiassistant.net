@@ -19,9 +19,9 @@ namespace AI_Assistant_Win.Controls
             form = _form;
             blacknessMethodBLL = new BlacknessMethodBLL();
             InitializeComponent();
-            table_Blackness_History.EditMode = AntdUI.TEditMode.DoubleClick;
+            // table_Blackness_History.EditMode = AntdUI.TEditMode.DoubleClick;
             pagination1.PageSizeOptions = [10, 20, 30, 50, 100];
-
+            selectMultiple_Table_Setting.SelectedValue = ["显示表头", "固定表头"];
             #region table header
             table_Blackness_History.Columns = new AntdUI.ColumnCollection {
                 new AntdUI.ColumnCheck("check"){ Fixed = true },
@@ -51,63 +51,6 @@ namespace AI_Assistant_Win.Controls
             #endregion
 
         }
-
-        #region 事件
-
-        void CheckFixedHeader_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
-        {
-            table_Blackness_History.FixedHeader = e.Value;
-        }
-
-        void CheckColumnDragSort_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
-        {
-            table_Blackness_History.ColumnDragSort = e.Value;
-        }
-
-        void CheckBordered_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
-        {
-            table_Blackness_History.Bordered = e.Value;
-        }
-
-        #region 行状态
-
-        void CheckSetRowStyle_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
-        {
-            if (e.Value) table_Blackness_History.SetRowStyle += Table1_SetRowStyle;
-            else table_Blackness_History.SetRowStyle -= Table1_SetRowStyle;
-            table_Blackness_History.Invalidate();
-        }
-        AntdUI.Table.CellStyleInfo Table1_SetRowStyle(object sender, AntdUI.TableSetRowStyleEventArgs e)
-        {
-            if (e.RowIndex % 2 == 0)
-            {
-                return new AntdUI.Table.CellStyleInfo
-                {
-                    BackColor = AntdUI.Style.Db.ErrorBg,
-                    ForeColor = AntdUI.Style.Db.Error
-                };
-            }
-            return null;
-        }
-
-        #endregion
-
-        void CheckSortOrder_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
-        {
-            if (table_Blackness_History.Columns != null) table_Blackness_History.Columns[6].SortOrder = table_Blackness_History.Columns[7].SortOrder = e.Value;
-        }
-
-        void CheckEnableHeaderResizing_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
-        {
-            table_Blackness_History.EnableHeaderResizing = e.Value;
-        }
-
-        void CheckVisibleHeader_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
-        {
-            table_Blackness_History.VisibleHeader = e.Value;
-        }
-
-        #endregion
 
         #region 单元格事件
 
@@ -271,6 +214,81 @@ namespace AI_Assistant_Win.Controls
         private string Pagination1_ShowTotalChanged(object sender, AntdUI.PagePageEventArgs e)
         {
             return $"{e.PageSize} / {e.Total} 共 {e.PageTotal} 页";
+        }
+        #endregion
+        #region 表格设置
+        /// <summary>
+        /// 显示表头
+        /// 固定表头
+        /// 显示列边框
+        /// 奇偶列
+        /// 部分列排序
+        /// 手动调整列头宽度
+        /// 列拖拽
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SelectMultiple_Table_Setting_SelectedValueChanged(object sender, AntdUI.ObjectsEventArgs e)
+        {
+            var visibleHeader = e.Value.Any(t => "显示表头".Equals(t.ToString()));
+            CheckVisibleHeader_CheckedChanged(null, new AntdUI.BoolEventArgs(visibleHeader));
+            var fixedHeader = e.Value.Any(t => "固定表头".Equals(t.ToString()));
+            CheckFixedHeader_CheckedChanged(null, new AntdUI.BoolEventArgs(fixedHeader));
+            var bordered = e.Value.Any(t => "显示列边框".Equals(t.ToString()));
+            CheckBordered_CheckedChanged(null, new AntdUI.BoolEventArgs(bordered));
+            var setRowStyle = e.Value.Any(t => "奇偶列".Equals(t.ToString()));
+            CheckSetRowStyle_CheckedChanged(null, new AntdUI.BoolEventArgs(setRowStyle));
+            var sortOrder = e.Value.Any(t => "部分列排序".Equals(t.ToString()));
+            CheckSortOrder_CheckedChanged(null, new AntdUI.BoolEventArgs(sortOrder));
+            var enableHeaderResizing = e.Value.Any(t => "手动调整列头宽度".Equals(t.ToString()));
+            CheckEnableHeaderResizing_CheckedChanged(null, new AntdUI.BoolEventArgs(enableHeaderResizing));
+            var columnDragSort = e.Value.Any(t => "列拖拽".Equals(t.ToString()));
+            CheckColumnDragSort_CheckedChanged(null, new AntdUI.BoolEventArgs(columnDragSort));
+            return;
+        }
+        void CheckVisibleHeader_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            table_Blackness_History.VisibleHeader = e.Value;
+        }
+        void CheckFixedHeader_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            table_Blackness_History.FixedHeader = e.Value;
+        }
+        void CheckBordered_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            table_Blackness_History.Bordered = e.Value;
+        }
+        #region 行状态
+        void CheckSetRowStyle_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            if (e.Value) table_Blackness_History.SetRowStyle += Table1_SetRowStyle;
+            else table_Blackness_History.SetRowStyle -= Table1_SetRowStyle;
+            table_Blackness_History.Invalidate();
+        }
+        AntdUI.Table.CellStyleInfo Table1_SetRowStyle(object sender, AntdUI.TableSetRowStyleEventArgs e)
+        {
+            if (e.RowIndex % 2 == 0)
+            {
+                return new AntdUI.Table.CellStyleInfo
+                {
+                    BackColor = AntdUI.Style.Db.ErrorBg,
+                    ForeColor = AntdUI.Style.Db.Error
+                };
+            }
+            return null;
+        }
+        #endregion
+        void CheckSortOrder_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            if (table_Blackness_History.Columns != null) table_Blackness_History.Columns[2].SortOrder = table_Blackness_History.Columns[3].SortOrder = e.Value;
+        }
+        void CheckEnableHeaderResizing_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            table_Blackness_History.EnableHeaderResizing = e.Value;
+        }
+        void CheckColumnDragSort_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            table_Blackness_History.ColumnDragSort = e.Value;
         }
         #endregion
     }

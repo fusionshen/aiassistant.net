@@ -34,15 +34,14 @@ namespace AI_Assistant_Win.Controls
             header1 = new AntdUI.PageHeader();
             pagination1 = new AntdUI.Pagination();
             panel1 = new AntdUI.Panel();
-            checkVisibleHeader = new AntdUI.Checkbox();
-            checkEnableHeaderResizing = new AntdUI.Checkbox();
-            checkSortOrder = new AntdUI.Checkbox();
-            checkSetRowStyle = new AntdUI.Checkbox();
-            checkBordered = new AntdUI.Checkbox();
-            checkColumnDragSort = new AntdUI.Checkbox();
-            checkFixedHeader = new AntdUI.Checkbox();
+            selectMultiple_Table_Setting = new AntdUI.SelectMultiple();
+            panel6 = new System.Windows.Forms.Panel();
+            input9 = new AntdUI.Input();
+            button2 = new AntdUI.Button();
+            inputRange1 = new AntdUI.DatePickerRange();
             table_Blackness_History = new AntdUI.Table();
             panel1.SuspendLayout();
+            panel6.SuspendLayout();
             SuspendLayout();
             // 
             // header1
@@ -76,13 +75,9 @@ namespace AI_Assistant_Win.Controls
             // 
             // panel1
             // 
-            panel1.Controls.Add(checkVisibleHeader);
-            panel1.Controls.Add(checkEnableHeaderResizing);
-            panel1.Controls.Add(checkSortOrder);
-            panel1.Controls.Add(checkSetRowStyle);
-            panel1.Controls.Add(checkBordered);
-            panel1.Controls.Add(checkColumnDragSort);
-            panel1.Controls.Add(checkFixedHeader);
+            panel1.Controls.Add(selectMultiple_Table_Setting);
+            panel1.Controls.Add(panel6);
+            panel1.Controls.Add(inputRange1);
             panel1.Dock = DockStyle.Top;
             panel1.Font = new Font("Microsoft YaHei UI", 12F);
             panel1.Location = new Point(0, 74);
@@ -92,107 +87,68 @@ namespace AI_Assistant_Win.Controls
             panel1.TabIndex = 1;
             panel1.Text = "panel1";
             // 
-            // checkVisibleHeader
+            // selectMultiple_Table_Setting
             // 
-            checkVisibleHeader.AutoCheck = true;
-            checkVisibleHeader.AutoSizeMode = AntdUI.TAutoSize.Width;
-            checkVisibleHeader.Checked = true;
-            checkVisibleHeader.Dock = DockStyle.Left;
-            checkVisibleHeader.LocalizationText = "Table.{id}";
-            checkVisibleHeader.Location = new Point(781, 0);
-            checkVisibleHeader.Name = "checkVisibleHeader";
-            checkVisibleHeader.Size = new Size(115, 43);
-            checkVisibleHeader.TabIndex = 6;
-            checkVisibleHeader.Text = "显示表头";
-            checkVisibleHeader.CheckedChanged += CheckVisibleHeader_CheckedChanged;
+            selectMultiple_Table_Setting.Items.AddRange(new object[] { "显示表头", "固定表头", "显示列边框", "奇偶列", "部分列排序", "手动调整列头宽度", "列拖拽" });
+            selectMultiple_Table_Setting.Location = new Point(1, -1);
+            selectMultiple_Table_Setting.Name = "selectMultiple_Table_Setting";
+            selectMultiple_Table_Setting.PlaceholderText = "表格设置";
+            selectMultiple_Table_Setting.Size = new Size(243, 46);
+            selectMultiple_Table_Setting.SuffixText = "";
+            selectMultiple_Table_Setting.TabIndex = 27;
+            selectMultiple_Table_Setting.SelectedValueChanged += SelectMultiple_Table_Setting_SelectedValueChanged;
             // 
-            // checkEnableHeaderResizing
+            // panel6
             // 
-            checkEnableHeaderResizing.AutoCheck = true;
-            checkEnableHeaderResizing.AutoSizeMode = AntdUI.TAutoSize.Width;
-            checkEnableHeaderResizing.Dock = DockStyle.Left;
-            checkEnableHeaderResizing.LocalizationText = "Table.{id}";
-            checkEnableHeaderResizing.Location = new Point(600, 0);
-            checkEnableHeaderResizing.Name = "checkEnableHeaderResizing";
-            checkEnableHeaderResizing.Size = new Size(181, 43);
-            checkEnableHeaderResizing.TabIndex = 5;
-            checkEnableHeaderResizing.Text = "手动调整列头宽度";
-            checkEnableHeaderResizing.CheckedChanged += CheckEnableHeaderResizing_CheckedChanged;
+            panel6.Controls.Add(input9);
+            panel6.Controls.Add(button2);
+            panel6.Location = new Point(1080, -2);
+            panel6.Name = "panel6";
+            panel6.Size = new Size(220, 46);
+            panel6.TabIndex = 26;
+            panel6.Text = "panel4";
             // 
-            // checkSortOrder
+            // input9
             // 
-            checkSortOrder.AutoCheck = true;
-            checkSortOrder.AutoSizeMode = AntdUI.TAutoSize.Width;
-            checkSortOrder.Dock = DockStyle.Left;
-            checkSortOrder.LocalizationText = "Table.{id}";
-            checkSortOrder.Location = new Point(485, 0);
-            checkSortOrder.Name = "checkSortOrder";
-            checkSortOrder.Size = new Size(115, 43);
-            checkSortOrder.TabIndex = 4;
-            checkSortOrder.Text = "年龄排序";
-            checkSortOrder.CheckedChanged += CheckSortOrder_CheckedChanged;
+            input9.Dock = DockStyle.Fill;
+            input9.JoinRight = true;
+            input9.LocalizationPlaceholderText = "Input.{id}";
+            input9.Location = new Point(0, 0);
+            input9.Name = "input9";
+            input9.PlaceholderText = "输入点什么搜索";
+            input9.Size = new Size(170, 46);
+            input9.TabIndex = 0;
             // 
-            // checkSetRowStyle
+            // button2
             // 
-            checkSetRowStyle.AutoCheck = true;
-            checkSetRowStyle.AutoSizeMode = AntdUI.TAutoSize.Width;
-            checkSetRowStyle.Dock = DockStyle.Left;
-            checkSetRowStyle.LocalizationText = "Table.{id}";
-            checkSetRowStyle.Location = new Point(387, 0);
-            checkSetRowStyle.Name = "checkSetRowStyle";
-            checkSetRowStyle.Size = new Size(98, 43);
-            checkSetRowStyle.TabIndex = 3;
-            checkSetRowStyle.Text = "奇偶列";
-            checkSetRowStyle.CheckedChanged += CheckSetRowStyle_CheckedChanged;
+            button2.Dock = DockStyle.Right;
+            button2.IconSvg = "SearchOutlined";
+            button2.JoinLeft = true;
+            button2.Location = new Point(170, 0);
+            button2.Name = "button2";
+            button2.Size = new Size(50, 46);
+            button2.TabIndex = 1;
+            button2.Type = AntdUI.TTypeMini.Primary;
             // 
-            // checkBordered
+            // inputRange1
             // 
-            checkBordered.AutoCheck = true;
-            checkBordered.AutoSizeMode = AntdUI.TAutoSize.Width;
-            checkBordered.Dock = DockStyle.Left;
-            checkBordered.LocalizationText = "Table.{id}";
-            checkBordered.Location = new Point(256, 0);
-            checkBordered.Name = "checkBordered";
-            checkBordered.Size = new Size(131, 43);
-            checkBordered.TabIndex = 2;
-            checkBordered.Text = "显示列边框";
-            checkBordered.CheckedChanged += CheckBordered_CheckedChanged;
-            // 
-            // checkColumnDragSort
-            // 
-            checkColumnDragSort.AutoCheck = true;
-            checkColumnDragSort.AutoSizeMode = AntdUI.TAutoSize.Width;
-            checkColumnDragSort.Dock = DockStyle.Left;
-            checkColumnDragSort.LocalizationText = "Table.{id}";
-            checkColumnDragSort.Location = new Point(125, 0);
-            checkColumnDragSort.Name = "checkColumnDragSort";
-            checkColumnDragSort.Size = new Size(131, 43);
-            checkColumnDragSort.TabIndex = 1;
-            checkColumnDragSort.Text = "列拖拽排序";
-            checkColumnDragSort.CheckedChanged += CheckColumnDragSort_CheckedChanged;
-            // 
-            // checkFixedHeader
-            // 
-            checkFixedHeader.AutoCheck = true;
-            checkFixedHeader.AutoSizeMode = AntdUI.TAutoSize.Width;
-            checkFixedHeader.Checked = true;
-            checkFixedHeader.Dock = DockStyle.Left;
-            checkFixedHeader.LocalizationText = "Table.{id}";
-            checkFixedHeader.Location = new Point(10, 0);
-            checkFixedHeader.Name = "checkFixedHeader";
-            checkFixedHeader.Size = new Size(115, 43);
-            checkFixedHeader.TabIndex = 0;
-            checkFixedHeader.Text = "固定表头";
-            checkFixedHeader.CheckedChanged += CheckFixedHeader_CheckedChanged;
+            inputRange1.LocalizationPlaceholderEnd = "DatePicker.PlaceholderE";
+            inputRange1.LocalizationPlaceholderStart = "DatePicker.PlaceholderS";
+            inputRange1.Location = new Point(777, -1);
+            inputRange1.Name = "inputRange1";
+            inputRange1.PlaceholderEnd = "结束时间";
+            inputRange1.PlaceholderStart = "开始时间";
+            inputRange1.Size = new Size(300, 46);
+            inputRange1.TabIndex = 25;
             // 
             // table_Blackness_History
             // 
             table_Blackness_History.AutoSizeColumnsMode = AntdUI.ColumnsMode.Fill;
             table_Blackness_History.Font = new Font("Microsoft YaHei UI", 11F);
-            table_Blackness_History.Location = new Point(0, 128);
+            table_Blackness_History.Location = new Point(3, 123);
             table_Blackness_History.Name = "table_Blackness_History";
             table_Blackness_History.Radius = 6;
-            table_Blackness_History.Size = new Size(1300, 508);
+            table_Blackness_History.Size = new Size(1297, 550);
             table_Blackness_History.TabIndex = 0;
             table_Blackness_History.CellClick += Table1_CellClick;
             table_Blackness_History.CellButtonClick += Table1_CellButtonClick;
@@ -207,7 +163,7 @@ namespace AI_Assistant_Win.Controls
             Name = "BlacknessHistory";
             Size = new Size(1300, 676);
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
+            panel6.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -215,13 +171,11 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.PageHeader header1;
         private AntdUI.Pagination pagination1;
         private AntdUI.Panel panel1;
-        private AntdUI.Checkbox checkVisibleHeader;
-        private AntdUI.Checkbox checkEnableHeaderResizing;
-        private AntdUI.Checkbox checkSortOrder;
-        private AntdUI.Checkbox checkSetRowStyle;
-        private AntdUI.Checkbox checkBordered;
-        private AntdUI.Checkbox checkColumnDragSort;
-        private AntdUI.Checkbox checkFixedHeader;
         private AntdUI.Table table_Blackness_History;
+        private AntdUI.DatePickerRange inputRange1;
+        private System.Windows.Forms.Panel panel6;
+        private AntdUI.Input input9;
+        private AntdUI.Button button2;
+        private AntdUI.SelectMultiple selectMultiple_Table_Setting;
     }
 }
