@@ -24,9 +24,12 @@ namespace AI_Assistant_Win.Controls
         private IFrameOut frameForSave;                         // ch:获取到的帧信息, 用于保存图像 | en:Frame for save image
         private readonly object saveImageLock = new object();
 
-        public CameraSetting(Form _form, string id)
+        private nint imageHandle;  // ch:提供图像接收的handle | enProvide a handle for image reception
+
+        public CameraSetting(Form _form, nint _imageHandle)
         {
             form = _form;
+            imageHandle = _imageHandle;
             InitializeComponent();
             SDKSystem.Initialize();
 
@@ -108,7 +111,7 @@ namespace AI_Assistant_Win.Controls
             RefreshDeviceList();
         }
 
-        private void bnOpen_Click(object sender, EventArgs e)
+        private void BnOpen_Click(object sender, EventArgs e)
         {
             if (deviceInfoList.Count == 0 || cbDeviceList.SelectedIndex == -1)
             {
@@ -168,7 +171,7 @@ namespace AI_Assistant_Win.Controls
             SetCtrlWhenOpen();
 
             // ch:获取参数 | en:Get parameters
-            bnGetParam_Click(null, null);
+            BnGetParam_Click(null, null);
         }
 
         private void SetCtrlWhenOpen()
@@ -218,7 +221,7 @@ namespace AI_Assistant_Win.Controls
             //bnStopRecord.Enabled = false;
         }
 
-        private void bnGetParam_Click(object sender, EventArgs e)
+        private void BnGetParam_Click(object sender, EventArgs e)
         {
             GetTriggerMode();
 
@@ -294,12 +297,12 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-        private void bnClose_Click(object sender, EventArgs e)
+        private void BnClose_Click(object sender, EventArgs e)
         {
             // ch:取流标志位清零 | en:Reset flow flag bit
             if (isGrabbing == true)
             {
-                bnStopGrab_Click(sender, e);
+                BnStopGrab_Click(sender, e);
             }
 
             // ch:关闭设备 | en:Close Device
@@ -313,7 +316,7 @@ namespace AI_Assistant_Win.Controls
             SetCtrlWhenClose();
         }
 
-        private void bnStopGrab_Click(object sender, EventArgs e)
+        private void BnStopGrab_Click(object sender, EventArgs e)
         {
             if (isRecord)
             {
@@ -350,7 +353,7 @@ namespace AI_Assistant_Win.Controls
             //bnStopRecord.Enabled = false;
         }
 
-        private void bnStartGrab_Click(object sender, EventArgs e)
+        private void BnStartGrab_Click(object sender, EventArgs e)
         {
             try
             {
@@ -431,8 +434,7 @@ namespace AI_Assistant_Win.Controls
                     }
 
 #if !GDI_RENDER
-                    var control = form.Controls[0].Controls[0].Controls[0].Controls[1];
-                    device.ImageRender.DisplayOneFrame(control.Handle, frameOut.Image);
+                    device.ImageRender.DisplayOneFrame(imageHandle, frameOut.Image);
 #else
                     // 使用GDI绘制图像
                     try
@@ -467,6 +469,74 @@ namespace AI_Assistant_Win.Controls
                         Thread.Sleep(5);
                     }
                 }
+            }
+        }
+
+        private void BnTriggerMode_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            // ch:打开触发模式 | en:Open Trigger Mode
+            if (bnTriggerMode.Checked)
+            {
+                device.Parameters.SetEnumValueByString("TriggerMode", "On");
+
+                // ch:触发源选择:0 - Line0; | en:Trigger source select:0 - Line0;
+                //           1 - Line1;
+                //           2 - Line2;
+                //           3 - Line3;
+                //           4 - Counter;
+                //           7 - Software;
+                if (cbSoftTrigger.Checked)
+                {
+                    device.Parameters.SetEnumValueByString("TriggerSource", "Software");
+                    if (isGrabbing)
+                    {
+                        bnTriggerExec.Enabled = true;
+                    }
+                }
+                else
+                {
+                    device.Parameters.SetEnumValueByString("TriggerSource", "Line0");
+                }
+                cbSoftTrigger.Enabled = true;
+            }
+        }
+
+
+        private void BnContinuesMode_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            if (bnContinuesMode.Checked)
+            {
+                device.Parameters.SetEnumValueByString("TriggerMode", "Off");
+                cbSoftTrigger.Enabled = false;
+                bnTriggerExec.Enabled = false;
+            }
+        }
+
+        private void CbSoftTrigger_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            if (cbSoftTrigger.Checked)
+            {
+                // ch:触发源设为软触发 | en:Set trigger source as Software
+                device.Parameters.SetEnumValueByString("TriggerSource", "Software");
+                if (isGrabbing)
+                {
+                    bnTriggerExec.Enabled = true;
+                }
+            }
+            else
+            {
+                device.Parameters.SetEnumValueByString("TriggerSource", "Line0");
+                bnTriggerExec.Enabled = false;
+            }
+        }
+
+        private void BnTriggerExec_Click(object sender, EventArgs e)
+        {
+            // ch:触发命令 | en:Trigger command
+            int result = device.Parameters.SetCommandValue("TriggerSoftware");
+            if (result != MvError.MV_OK)
+            {
+                ShowErrorMsg("Trigger Software Fail!", result);
             }
         }
     }

@@ -230,7 +230,7 @@ namespace AI_Assistant_Win.Controls
             bnGetParam.TabIndex = 6;
             bnGetParam.Text = "参数获取";
             bnGetParam.Type = AntdUI.TTypeMini.Primary;
-            bnGetParam.Click += bnGetParam_Click;
+            bnGetParam.Click += BnGetParam_Click;
             // 
             // button11
             // 
@@ -432,6 +432,7 @@ namespace AI_Assistant_Win.Controls
             bnTriggerExec.TabIndex = 6;
             bnTriggerExec.Text = "软触发一次";
             bnTriggerExec.Type = AntdUI.TTypeMini.Primary;
+            bnTriggerExec.Click += BnTriggerExec_Click;
             // 
             // cbSoftTrigger
             // 
@@ -444,6 +445,7 @@ namespace AI_Assistant_Win.Controls
             cbSoftTrigger.Size = new Size(98, 46);
             cbSoftTrigger.TabIndex = 1;
             cbSoftTrigger.Text = "软触发";
+            cbSoftTrigger.CheckedChanged += CbSoftTrigger_CheckedChanged;
             // 
             // button7
             // 
@@ -479,7 +481,7 @@ namespace AI_Assistant_Win.Controls
             bnStopGrab.TabIndex = 6;
             bnStopGrab.Text = "停止采集";
             bnStopGrab.Type = AntdUI.TTypeMini.Error;
-            bnStopGrab.Click += bnStopGrab_Click;
+            bnStopGrab.Click += BnStopGrab_Click;
             // 
             // bnStartGrab
             // 
@@ -492,7 +494,7 @@ namespace AI_Assistant_Win.Controls
             bnStartGrab.TabIndex = 5;
             bnStartGrab.Text = "开始采集";
             bnStartGrab.Type = AntdUI.TTypeMini.Primary;
-            bnStartGrab.Click += bnStartGrab_Click;
+            bnStartGrab.Click += BnStartGrab_Click;
             // 
             // bnTriggerMode
             // 
@@ -505,6 +507,7 @@ namespace AI_Assistant_Win.Controls
             bnTriggerMode.Size = new Size(106, 48);
             bnTriggerMode.TabIndex = 3;
             bnTriggerMode.Text = "触发模式";
+            bnTriggerMode.CheckedChanged += BnTriggerMode_CheckedChanged;
             // 
             // bnContinuesMode
             // 
@@ -517,6 +520,7 @@ namespace AI_Assistant_Win.Controls
             bnContinuesMode.Size = new Size(106, 48);
             bnContinuesMode.TabIndex = 2;
             bnContinuesMode.Text = "连续模式";
+            bnContinuesMode.CheckedChanged += BnContinuesMode_CheckedChanged;
             // 
             // button5
             // 
@@ -559,7 +563,7 @@ namespace AI_Assistant_Win.Controls
             bnClose.TabIndex = 5;
             bnClose.Text = "关闭设备";
             bnClose.Type = AntdUI.TTypeMini.Error;
-            bnClose.Click += bnClose_Click;
+            bnClose.Click += BnClose_Click;
             // 
             // bnOpen
             // 
@@ -570,7 +574,7 @@ namespace AI_Assistant_Win.Controls
             bnOpen.TabIndex = 4;
             bnOpen.Text = "打开设备";
             bnOpen.Type = AntdUI.TTypeMini.Primary;
-            bnOpen.Click += bnOpen_Click;
+            bnOpen.Click += BnOpen_Click;
             // 
             // panel8
             // 

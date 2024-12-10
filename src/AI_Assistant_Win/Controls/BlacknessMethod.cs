@@ -278,7 +278,7 @@ namespace AI_Assistant_Win.Controls
         {
             try
             {
-                AntdUI.Drawer.open(form, new CameraSetting(form, "")
+                AntdUI.Drawer.open(form, new CameraSetting(form, blacknessMethod_OriginImage.Handle)
                 {
                     Size = new Size(420, 600)
                 }, AntdUI.TAlignMini.Right);
