@@ -1,6 +1,7 @@
 using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
+using AI_Assistant_Win.Models.Middle;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
@@ -9,12 +10,17 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Yolov8.Net;
 using FontStyle = SixLabors.Fonts.FontStyle;
 
 namespace AI_Assistant_Win.Controls
 {
+    /// <summary>
+    /// init camera, if camera was binded, origin image zone will show the image.
+    /// reconnect camera
+    /// </summary>
     public partial class BlacknessMethod : UserControl
     {
         private readonly MainWindow form;
@@ -29,6 +35,9 @@ namespace AI_Assistant_Win.Controls
 
         private readonly ImageProcessBLL imageProcessBLL;
 
+        private readonly CameraBLL cameraBLL;
+
+
         public BlacknessMethod(MainWindow _form)
         {
             var fontCollection = new FontCollection();
@@ -36,13 +45,31 @@ namespace AI_Assistant_Win.Controls
             font = fontFamily.CreateFont(48, FontStyle.Bold);
             blacknessMethodBLL = new BlacknessMethodBLL();
             imageProcessBLL = new ImageProcessBLL();
+            cameraBLL = new CameraBLL();
             form = _form;
             InitializeComponent();
+            this.Load += async (s, e) => await InitializeCameraAsync();
         }
 
-        private void OriginImage_Click(object sender, System.EventArgs e)
+        private async Task InitializeCameraAsync()
         {
-            AntdUI.Preview.open(new AntdUI.Preview.Config(form, blacknessMethod_OriginImage.Image));
+            var result = cameraBLL.StartGrabbing(new CameraGrabbing { Application = "blackness", ImageHandle = avatarOriginImage.Handle });
+            switch (result)
+            {
+                case "NoCameraSettings":
+                    AntdUI.Notification.warn(form, "提示", "请设置摄像头进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
+                    // 延迟2秒
+                    await Task.Delay(1000);
+                    BtnCameraSetting_Click(null, null);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void AvatarOriginImage_Click(object sender, System.EventArgs e)
+        {
+            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image));
         }
 
         private void BlacknessMethod_renderImage_Click(object sender, EventArgs e)
@@ -60,7 +87,7 @@ namespace AI_Assistant_Win.Controls
                 btn.Loading = true;
                 AntdUI.ITask.Run(() =>
                 {
-                    blacknessMethod_OriginImage.Image = System.Drawing.Image.FromFile(originImagePath);
+                    avatarOriginImage.Image = System.Drawing.Image.FromFile(originImagePath);
                     if (btn.IsDisposed) return;
                     btn.Loading = false;
                     AntdUI.Notification.success(form, "成功", "上传成功！", AntdUI.TAlignFrom.BR, Font);
@@ -274,11 +301,11 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-        private void Blackness_Camera_Setting_Click(object sender, EventArgs e)
+        private void BtnCameraSetting_Click(object sender, EventArgs e)
         {
             try
             {
-                AntdUI.Drawer.open(form, new CameraSetting(form, blacknessMethod_OriginImage.Handle)
+                AntdUI.Drawer.open(form, new CameraSetting(form, cameraBLL)
                 {
                     Size = new Size(420, 600)
                 }, AntdUI.TAlignMini.Right);
