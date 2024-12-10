@@ -92,10 +92,17 @@ namespace AI_Assistant_Win.Controls
                         break;
                     case "report":
                         var id = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
-                        AntdUI.Drawer.open(form, new BlacknessReport(form, id)
+                        try
                         {
-                            Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
-                        }, AntdUI.TAlignMini.Right);
+                            AntdUI.Drawer.open(form, new BlacknessReport(form, id)
+                            {
+                                Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
+                            }, AntdUI.TAlignMini.Right);
+                        }
+                        catch (Exception error)
+                        {
+                            AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                        }
                         break;
                     default:
                         if (AntdUI.Modal.open(new AntdUI.Modal.Config(form, "提示", new AntdUI.Modal.TextLine[] {

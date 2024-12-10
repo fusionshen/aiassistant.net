@@ -42,6 +42,7 @@ namespace AI_Assistant_Win.Controls
             blacknessMethod_OriginImage_Text = new Label();
             blacknessMethod_OriginImage = new AntdUI.Avatar();
             panel5 = new AntdUI.Panel();
+            blackness_Camera_Setting = new AntdUI.Button();
             btn_CameraCapture = new AntdUI.Button();
             btn_UploadImage = new AntdUI.Button();
             blacknessMethod_OriginImage_Zone = new Label();
@@ -243,6 +244,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel5.Back = Color.Transparent;
             panel5.BackColor = Color.Transparent;
+            panel5.Controls.Add(blackness_Camera_Setting);
             panel5.Controls.Add(btn_CameraCapture);
             panel5.Controls.Add(btn_UploadImage);
             panel5.Dock = DockStyle.Bottom;
@@ -251,6 +253,18 @@ namespace AI_Assistant_Win.Controls
             panel5.Radius = 0;
             panel5.Size = new Size(422, 40);
             panel5.TabIndex = 13;
+            // 
+            // blackness_Camera_Setting
+            // 
+            blackness_Camera_Setting.IconSvg = "SettingOutlined";
+            blackness_Camera_Setting.LoadingWaveVertical = true;
+            blackness_Camera_Setting.Location = new Point(0, 0);
+            blackness_Camera_Setting.Name = "blackness_Camera_Setting";
+            blackness_Camera_Setting.Shape = AntdUI.TShape.Circle;
+            blackness_Camera_Setting.Size = new Size(40, 40);
+            blackness_Camera_Setting.TabIndex = 2;
+            blackness_Camera_Setting.Type = AntdUI.TTypeMini.Primary;
+            blackness_Camera_Setting.Click += Blackness_Camera_Setting_Click;
             // 
             // btn_CameraCapture
             // 
@@ -884,5 +898,6 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Panel panel17;
         private AntdUI.Select select_Work_Group;
         private AntdUI.Select select_Analyst;
+        private AntdUI.Button blackness_Camera_Setting;
     }
 }

@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.3.8</Version>
+	<Version>0.4.0</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolov8.net</Description>
@@ -55,10 +55,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="MvCameraControl.Net">
+      <HintPath>\Resources\MvCameraControl.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Controls\BlacknessMethod.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\BlacknessHistory.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\CameraSetting.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\BlacknessReport.cs">
@@ -82,6 +91,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Controls\CameraSetting.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

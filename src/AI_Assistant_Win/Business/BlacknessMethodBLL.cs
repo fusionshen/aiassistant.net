@@ -32,7 +32,7 @@ namespace AI_Assistant_Win.Business
 
         public List<Blackness> ParsePredictions(Prediction[] predictions)
         {
-            var sorted = predictions.OrderByDescending(t => t.Rectangle.X).ToArray();
+            var sorted = predictions.OrderBy(t => t.Rectangle.Y).ToArray();
             // TODO: 现场根据X具体位置判断，因为可能出现未贴完6个部位或者未识别出六个部位的情况
             tempMethodResultList =
                 [

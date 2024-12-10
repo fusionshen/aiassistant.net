@@ -6,6 +6,7 @@ using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -271,6 +272,22 @@ namespace AI_Assistant_Win.Controls
                     btn.Enabled = false;
                 });
             }
+        }
+
+        private void Blackness_Camera_Setting_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AntdUI.Drawer.open(form, new CameraSetting(form, "")
+                {
+                    Size = new Size(420, 600)
+                }, AntdUI.TAlignMini.Right);
+            }
+            catch (Exception error)
+            {
+                AntdUI.Notification.error(form, "´íÎó", error.Message, AntdUI.TAlignFrom.BR, Font);
+            }
+
         }
     }
 }
