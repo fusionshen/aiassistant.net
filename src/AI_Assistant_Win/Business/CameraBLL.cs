@@ -6,6 +6,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -13,6 +14,7 @@ namespace AI_Assistant_Win.Business
 {
     public class CameraBLL
     {
+        CameraBinding binding = null;
         IDevice device = null;
 
         readonly DeviceTLayerType enumTLayerType = DeviceTLayerType.MvGigEDevice |
@@ -24,6 +26,7 @@ namespace AI_Assistant_Win.Business
         private CameraGrabbing cameraGrabbing;
 
         Thread receiveThread = null;    // ch:接收图像线程 | en: Receive image thread
+        private bool IsOpen { get; set; } = false;
         public bool IsGrabbing { get; set; } = false;   // ch:是否正在取图 | en: Grabbing flag
         public bool IsRecording { get; set; } = false;       // ch:是否正在录像 | en: Video record flag
         public bool IsTriggerMode { get; set; } = false;
@@ -43,12 +46,43 @@ namespace AI_Assistant_Win.Business
         {
             cameraGrabbing = _cameraGrabbing;
             // 查询数据库是否存在摄像头绑定
-            var item = connection.Table<CameraBinding>().FirstOrDefault(t => t.Application.Equals(cameraGrabbing.Application));
-            if (item == null)
+            binding = connection.Table<CameraBinding>().FirstOrDefault(t => t.Application.Equals(cameraGrabbing.Application));
+            if (binding == null)
             {
                 return "NoCameraSettings";
             }
-            return string.Empty;
+            if (!binding.IsOpen)
+            {
+                return "NoCameraOpen";
+            }
+            // get device list
+            GetDeviceList();
+            // open camera
+            var deviceIndex = deviceInfoList.FindIndex(t => t.SerialNumber.Equals(binding.SerialNumber));
+            OpenDevice(deviceIndex);
+            if (binding.IsGrabbing)
+            {
+                // start grabbing
+                StartGrabbing();
+                if (binding.IsTriggerMode)
+                {
+                    // set software trigger
+                    IsTriggerMode = true;
+                    device.Parameters.SetEnumValueByString("TriggerMode", "On");
+                    // ch:触发源设为软触发 | en:Set trigger source as Software
+                    device.Parameters.SetEnumValueByString("TriggerSource", "Software");
+                    return "TriggerMode";
+                }
+                // set continuous  mode
+                // ch:设置采集连续模式 | en:Set Continues Aquisition Mode
+                device.Parameters.SetEnumValueByString("AcquisitionMode", "Continuous");
+                device.Parameters.SetEnumValueByString("TriggerMode", "Off");
+                return "ContinuousMode";
+            }
+            else
+            {
+                return "NoCameraGrabbing";
+            }
         }
 
         public CameraGrabbing GetCameraGrabbing()
@@ -73,7 +107,6 @@ namespace AI_Assistant_Win.Business
         {
             // ch:获取选择的设备信息 | en:Get selected device information
             IDeviceInfo deviceInfo = deviceInfoList[selectedIndex];
-
             try
             {
                 // ch:打开设备 | en:Open device
@@ -81,8 +114,7 @@ namespace AI_Assistant_Win.Business
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Create Device fail!" + ex.Message);
-                return;
+                throw new CameraSDKException("Create Device fail!" + ex.Message);
             }
 
             int result = device.Open();
@@ -117,6 +149,7 @@ namespace AI_Assistant_Win.Business
             // ch:设置采集连续模式 | en:Set Continues Aquisition Mode
             device.Parameters.SetEnumValueByString("AcquisitionMode", "Continuous");
             device.Parameters.SetEnumValueByString("TriggerMode", "Off");
+            IsOpen = true;
         }
         public IDevice GetDevice()
         {
@@ -240,7 +273,64 @@ namespace AI_Assistant_Win.Business
             {
                 device.Close();
                 device.Dispose();
+                IsOpen = false;
             }
+        }
+
+        public CameraBinding GetConfig()
+        {
+            return binding;
+        }
+
+        public int SaveConfig()
+        {
+            if (binding == null)
+            {
+                binding = new CameraBinding();
+                binding.CreateTime = DateTime.Now;
+            }
+            #region 构造实体
+            binding.Application = cameraGrabbing.Application;
+            binding.SerialNumber = device.DeviceInfo.SerialNumber;
+            binding.DeviceInfo = JsonSerializer.Serialize(device.DeviceInfo);
+            binding.IsOpen = IsOpen;
+            binding.IsGrabbing = IsGrabbing;
+            int result = device.Parameters.GetEnumValue("TriggerMode", out IEnumValue enumValue);
+            if (result == MvError.MV_OK)
+            {
+                if (enumValue.CurEnumEntry.Symbolic == "On")
+                {
+                    binding.IsTriggerMode = true;
+                }
+                else
+                {
+                    binding.IsTriggerMode = false;
+                }
+            }
+            result = device.Parameters.GetFloatValue("ExposureTime", out IFloatValue floatValue);
+            if (result == MvError.MV_OK)
+            {
+                binding.ExposureTime = floatValue.CurValue;
+            }
+            result = device.Parameters.GetFloatValue("Gain", out floatValue);
+            if (result == MvError.MV_OK)
+            {
+                binding.Gain = floatValue.CurValue;
+            }
+            result = device.Parameters.GetFloatValue("ResultingFrameRate", out floatValue);
+            if (result == MvError.MV_OK)
+            {
+                binding.ResultingFrameRate = floatValue.CurValue;
+            }
+            result = device.Parameters.GetEnumValue("PixelFormat", out enumValue);
+            if (result == MvError.MV_OK)
+            {
+                binding.PixelFormat = enumValue.CurEnumEntry.Symbolic;
+            }
+            binding.LastModifiedTime = DateTime.Now;
+            #endregion
+            var ok = binding.Id == 0 ? connection.Insert(binding) : connection.Update(binding);
+            return ok;
         }
     }
 }

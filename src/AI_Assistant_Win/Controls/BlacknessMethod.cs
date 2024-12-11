@@ -2,6 +2,7 @@ using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
+using AI_Assistant_Win.Utils;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
@@ -49,22 +50,59 @@ namespace AI_Assistant_Win.Controls
             form = _form;
             InitializeComponent();
             this.Load += async (s, e) => await InitializeCameraAsync();
+            this.HandleDestroyed += async (s, e) => await CloseCameraAsync();
         }
+
+        private async Task CloseCameraAsync()
+        {
+            await Task.Delay(1000);
+            cameraBLL.CloseDevice();
+        }
+
 
         private async Task InitializeCameraAsync()
         {
-            var result = cameraBLL.StartGrabbing(new CameraGrabbing { Application = "blackness", ImageHandle = avatarOriginImage.Handle });
-            switch (result)
+            try
             {
-                case "NoCameraSettings":
-                    AntdUI.Notification.warn(form, "提示", "请设置摄像头进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
-                    // 延迟2秒
-                    await Task.Delay(1000);
-                    BtnCameraSetting_Click(null, null);
-                    break;
-                default:
-                    break;
+                var result = cameraBLL.StartGrabbing(new CameraGrabbing { Application = "blackness", ImageHandle = avatarOriginImage.Handle });
+                switch (result)
+                {
+                    case "NoCameraSettings":
+                        AntdUI.Notification.warn(form, "提示", "请设置摄像头进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
+                        // 延迟1秒
+                        await Task.Delay(1000);
+                        BtnCameraSetting_Click(null, null);
+                        break;
+                    case "NoCameraOpen":
+                        AntdUI.Notification.warn(form, "提示", "请打开摄像头进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
+                        // 延迟1秒
+                        await Task.Delay(1000);
+                        BtnCameraSetting_Click(null, null);
+                        break;
+                    case "NoCameraGrabbing":
+                        AntdUI.Notification.warn(form, "提示", "请开启采集进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
+                        // 延迟1秒
+                        await Task.Delay(1000);
+                        BtnCameraSetting_Click(null, null);
+                        break;
+                    case "TriggerMode":
+                        AntdUI.Notification.success(form, "成功", "触发模式", AntdUI.TAlignFrom.BR, Font);
+                        break;
+                    case "ContinuousMode":
+                        AntdUI.Notification.success(form, "成功", "实时模式", AntdUI.TAlignFrom.BR, Font);
+                        await Task.Delay(1000);
+                        //BtnCameraSetting_Click(null, null);
+                        break;
+                    default:
+                        AntdUI.Notification.error(form, "错误", "请联系管理员", AntdUI.TAlignFrom.BR, Font);
+                        break;
+                }
             }
+            catch (CameraSDKException error)
+            {
+                CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
+            }
+
         }
 
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
@@ -307,7 +345,7 @@ namespace AI_Assistant_Win.Controls
             {
                 AntdUI.Drawer.open(form, new CameraSetting(form, cameraBLL)
                 {
-                    Size = new Size(420, 600)
+                    Size = new Size(420, 555)
                 }, AntdUI.TAlignMini.Right);
             }
             catch (Exception error)

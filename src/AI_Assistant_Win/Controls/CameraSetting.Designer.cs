@@ -33,11 +33,6 @@ namespace AI_Assistant_Win.Controls
         {
             panel1 = new System.Windows.Forms.Panel();
             panel3 = new System.Windows.Forms.Panel();
-            panel10 = new System.Windows.Forms.Panel();
-            panel16 = new AntdUI.Panel();
-            button14 = new AntdUI.Button();
-            button15 = new AntdUI.Button();
-            divider4 = new AntdUI.Divider();
             panel7 = new System.Windows.Forms.Panel();
             panel14 = new AntdUI.Panel();
             bnSetParam = new AntdUI.Button();
@@ -82,8 +77,6 @@ namespace AI_Assistant_Win.Controls
             button17 = new AntdUI.Button();
             panel1.SuspendLayout();
             panel3.SuspendLayout();
-            panel10.SuspendLayout();
-            panel16.SuspendLayout();
             panel7.SuspendLayout();
             panel14.SuspendLayout();
             panel13.SuspendLayout();
@@ -105,14 +98,12 @@ namespace AI_Assistant_Win.Controls
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(420, 625);
+            panel1.Size = new Size(420, 560);
             panel1.TabIndex = 6;
             // 
             // panel3
             // 
             panel3.AutoSize = true;
-            panel3.Controls.Add(panel10);
-            panel3.Controls.Add(divider4);
             panel3.Controls.Add(panel7);
             panel3.Controls.Add(divider3);
             panel3.Controls.Add(panel4);
@@ -123,61 +114,8 @@ namespace AI_Assistant_Win.Controls
             panel3.Dock = DockStyle.Fill;
             panel3.Location = new Point(0, 0);
             panel3.Name = "panel3";
-            panel3.Size = new Size(420, 625);
+            panel3.Size = new Size(420, 560);
             panel3.TabIndex = 1;
-            // 
-            // panel10
-            // 
-            panel10.Controls.Add(panel16);
-            panel10.Dock = DockStyle.Top;
-            panel10.Location = new Point(0, 572);
-            panel10.Name = "panel10";
-            panel10.Size = new Size(420, 51);
-            panel10.TabIndex = 15;
-            // 
-            // panel16
-            // 
-            panel16.Controls.Add(button14);
-            panel16.Controls.Add(button15);
-            panel16.Dock = DockStyle.Top;
-            panel16.Location = new Point(0, 0);
-            panel16.Name = "panel16";
-            panel16.Padding = new Padding(160, 0, 0, 0);
-            panel16.Radius = 0;
-            panel16.Size = new Size(420, 48);
-            panel16.TabIndex = 30;
-            panel16.Text = "panel16";
-            // 
-            // button14
-            // 
-            button14.AutoSizeMode = AntdUI.TAutoSize.Auto;
-            button14.Dock = DockStyle.Fill;
-            button14.Location = new Point(160, 0);
-            button14.Name = "button14";
-            button14.Size = new Size(100, 47);
-            button14.TabIndex = 6;
-            button14.Text = "保存配置";
-            button14.Type = AntdUI.TTypeMini.Primary;
-            // 
-            // button15
-            // 
-            button15.Location = new Point(0, 0);
-            button15.Name = "button15";
-            button15.Size = new Size(0, 0);
-            button15.TabIndex = 0;
-            // 
-            // divider4
-            // 
-            divider4.Dock = DockStyle.Top;
-            divider4.Font = new Font("Microsoft YaHei UI", 10F);
-            divider4.LocalizationText = "";
-            divider4.Location = new Point(0, 544);
-            divider4.Name = "divider4";
-            divider4.Orientation = AntdUI.TOrientation.Left;
-            divider4.Size = new Size(420, 28);
-            divider4.TabIndex = 14;
-            divider4.TabStop = false;
-            divider4.Text = "保存";
             // 
             // panel7
             // 
@@ -187,7 +125,7 @@ namespace AI_Assistant_Win.Controls
             panel7.Controls.Add(panel9);
             panel7.Controls.Add(panel15);
             panel7.Dock = DockStyle.Top;
-            panel7.Location = new Point(0, 331);
+            panel7.Location = new Point(0, 349);
             panel7.Name = "panel7";
             panel7.Padding = new Padding(5);
             panel7.Size = new Size(420, 213);
@@ -388,10 +326,10 @@ namespace AI_Assistant_Win.Controls
             divider3.Dock = DockStyle.Top;
             divider3.Font = new Font("Microsoft YaHei UI", 10F);
             divider3.LocalizationText = "";
-            divider3.Location = new Point(0, 303);
+            divider3.Location = new Point(0, 315);
             divider3.Name = "divider3";
             divider3.Orientation = AntdUI.TOrientation.Left;
-            divider3.Size = new Size(420, 28);
+            divider3.Size = new Size(420, 34);
             divider3.TabIndex = 12;
             divider3.TabStop = false;
             divider3.Text = "参数设置";
@@ -401,7 +339,7 @@ namespace AI_Assistant_Win.Controls
             panel4.Controls.Add(panel11);
             panel4.Controls.Add(panel5);
             panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 198);
+            panel4.Location = new Point(0, 210);
             panel4.Name = "panel4";
             panel4.Padding = new Padding(5);
             panel4.Size = new Size(420, 105);
@@ -534,10 +472,10 @@ namespace AI_Assistant_Win.Controls
             divider2.Dock = DockStyle.Top;
             divider2.Font = new Font("Microsoft YaHei UI", 10F);
             divider2.LocalizationText = "";
-            divider2.Location = new Point(0, 170);
+            divider2.Location = new Point(0, 176);
             divider2.Name = "divider2";
             divider2.Orientation = AntdUI.TOrientation.Left;
-            divider2.Size = new Size(420, 28);
+            divider2.Size = new Size(420, 34);
             divider2.TabIndex = 10;
             divider2.TabStop = false;
             divider2.Text = "图像采集";
@@ -548,7 +486,7 @@ namespace AI_Assistant_Win.Controls
             panel2.Controls.Add(bnOpen);
             panel2.Controls.Add(panel8);
             panel2.Dock = DockStyle.Top;
-            panel2.Location = new Point(0, 102);
+            panel2.Location = new Point(0, 108);
             panel2.Name = "panel2";
             panel2.Size = new Size(420, 68);
             panel2.TabIndex = 9;
@@ -618,7 +556,7 @@ namespace AI_Assistant_Win.Controls
             divider1.Location = new Point(0, 74);
             divider1.Name = "divider1";
             divider1.Orientation = AntdUI.TOrientation.Left;
-            divider1.Size = new Size(420, 28);
+            divider1.Size = new Size(420, 34);
             divider1.TabIndex = 8;
             divider1.TabStop = false;
             divider1.Text = "设备查找";
@@ -687,13 +625,10 @@ namespace AI_Assistant_Win.Controls
             Controls.Add(panel1);
             Font = new Font("Microsoft YaHei UI", 12F);
             Name = "CameraSetting";
-            Size = new Size(420, 625);
+            Size = new Size(420, 560);
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             panel3.ResumeLayout(false);
-            panel10.ResumeLayout(false);
-            panel16.ResumeLayout(false);
-            panel16.PerformLayout();
             panel7.ResumeLayout(false);
             panel14.ResumeLayout(false);
             panel14.PerformLayout();
@@ -728,8 +663,6 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Divider divider3;
         private System.Windows.Forms.Panel panel4;
         private AntdUI.Divider divider2;
-        private System.Windows.Forms.Panel panel10;
-        private AntdUI.Divider divider4;
         private AntdUI.Button bnOpen;
         private AntdUI.Button bnClose;
         private AntdUI.Panel panel5;
@@ -758,9 +691,6 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Button button11;
         private AntdUI.Button bnSetParam;
         private AntdUI.Button bnGetParam;
-        private AntdUI.Panel panel16;
-        private AntdUI.Button button15;
-        private AntdUI.Button button14;
         private AntdUI.Panel panel17;
         private AntdUI.Button button13;
         private AntdUI.Button button16;

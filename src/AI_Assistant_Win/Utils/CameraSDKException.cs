@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AI_Assistant_Win.Models.Middle
+namespace AI_Assistant_Win.Utils
 {
     public class CameraSDKException : Exception
     {

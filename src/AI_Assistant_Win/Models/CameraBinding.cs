@@ -31,12 +31,17 @@ namespace AI_Assistant_Win.Models
         public bool IsOpen { get; set; }
         /// <summary>
         /// 设备是否正在采集
-        /// 采集状态下只要接入设备，就一直是连续模式采集图片，点了拍摄按钮之后，其实是触动了一次软触发模式。
-        /// 可以设置成停止采集，这样可以释放资源不让摄像头继续被占用
-        /// TODO：需要增加按钮重新在页面开启连续模式
+        /// 采集状态下可以是连续模式和触发模式，触发模式只支持software软触发，TODO:针脚line0暂不支持。
+        /// 唯一的区别是连续模式，画面是动态的，触发模式只支持一次触发，即看不到实时画面，但是点击按钮后会拍摄当前照片。
+        /// TODO：需要增加按钮重新在页面开启采集模式。
         /// </summary>
         [Column("is_grabbing")]
-        public string IsGrabbing { get; set; }
+        public bool IsGrabbing { get; set; }
+        /// <summary>
+        /// 是否是触发模式，现只支持软触发。
+        /// </summary>
+        [Column("is_trigger_mode")]
+        public bool IsTriggerMode { get; set; }
         #region 参数设置，仅供查询纠错
         /// <summary>
         /// 曝光时间

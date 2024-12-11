@@ -1,25 +1,72 @@
 using AI_Assistant_Win.Business;
-using AI_Assistant_Win.Models.Middle;
+using AI_Assistant_Win.Utils;
 using MvCameraControl;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Controls
 {
     public partial class CameraSetting : UserControl
     {
-        private Form form;
-        private CameraBLL cameraBLL = null;
+        private readonly Form form;
+        private readonly CameraBLL cameraBLL = null;
         public CameraSetting(Form _form, CameraBLL _cameraBLL)
         {
             form = _form;
             cameraBLL = _cameraBLL;
             InitializeComponent();
-            RefreshDeviceList();
+            LoadConfig();
             Control.CheckForIllegalCrossThreadCalls = false;
         }
 
-        private void RefreshDeviceList()
+        private void LoadConfig()
+        {
+            var config = cameraBLL.GetConfig();
+            if (config == null)
+            {
+                RefreshDeviceList();
+                return;
+            }
+            RefreshDeviceList(cameraBLL.GetDeviceList().FindIndex(t => t.SerialNumber.Equals(config.SerialNumber)));
+            if (config.IsOpen)
+            {
+                // ch:控件操作 | en:Control operation
+                SetCtrlWhenOpen();
+                // ch:获取参数 | en:Get parameters
+                BnGetParam_Click(null, null);
+                if (config.IsGrabbing)
+                {
+                    // ch:控件操作 | en:Control Operation
+                    SetCtrlWhenStartGrab();
+                    if (config.IsTriggerMode)
+                    {
+                        cbSoftTrigger.Checked = true;
+                        if (cameraBLL.IsGrabbing)
+                        {
+                            bnTriggerExec.Enabled = true;
+                        }
+                    }
+                    else
+                    {
+                        cbSoftTrigger.Checked = false;
+                        bnTriggerExec.Enabled = false;
+                    }
+                }
+                else
+                {
+                    // ch:控件操作 | en:Control Operation
+                    SetCtrlWhenStopGrab();
+                }
+            }
+            else
+            {
+                // ch:控件操作 | en:Control Operation
+                SetCtrlWhenClose();
+            }
+        }
+
+        private void RefreshDeviceList(int selectedIndex = 0)
         {
             try
             {
@@ -43,12 +90,12 @@ namespace AI_Assistant_Win.Controls
                 // ch:选择第一项 | en:Select the first item
                 if (deviceInfoList.Count != 0)
                 {
-                    cbDeviceList.SelectedIndex = 0;
+                    cbDeviceList.SelectedIndex = selectedIndex;
                 }
             }
             catch (CameraSDKException error)
             {
-                ShowErrorMsg(error.Message, error.ErrorCode);
+                CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
             }
         }
 
@@ -61,16 +108,27 @@ namespace AI_Assistant_Win.Controls
         {
             if (cameraBLL.GetDeviceList().Count == 0 || cbDeviceList.SelectedIndex == -1)
             {
-                ShowErrorMsg("No device, please select", 0);
+                CameraHelper.ShowErrorMsg(form, "No device, please select", 0);
                 return;
             }
-            cameraBLL.OpenDevice(cbDeviceList.SelectedIndex);
+            try
+            {
+                cameraBLL.OpenDevice(cbDeviceList.SelectedIndex);
+            }
+            catch (CameraSDKException error)
+            {
+                CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
+                return;
+            }
 
             // ch:控件操作 | en:Control operation
             SetCtrlWhenOpen();
 
             // ch:获取参数 | en:Get parameters
             BnGetParam_Click(null, null);
+
+            // save config
+            _ = SaveConfigAsync();
         }
 
         private void SetCtrlWhenOpen()
@@ -82,7 +140,6 @@ namespace AI_Assistant_Win.Controls
             bnContinuesMode.Enabled = true;
             bnContinuesMode.Checked = true;
             bnTriggerMode.Enabled = true;
-            cbSoftTrigger.Enabled = false;
             bnTriggerExec.Enabled = false;
 
             tbExposure.Enabled = true;
@@ -101,7 +158,6 @@ namespace AI_Assistant_Win.Controls
             bnStopGrab.Enabled = false;
             bnContinuesMode.Enabled = false;
             bnTriggerMode.Enabled = false;
-            cbSoftTrigger.Enabled = false;
             bnTriggerExec.Enabled = false;
 
             //bnSaveBmp.Enabled = false;
@@ -122,13 +178,11 @@ namespace AI_Assistant_Win.Controls
         {
             GetTriggerMode();
             var device = cameraBLL.GetDevice();
-            IFloatValue floatValue;
-            int result = device.Parameters.GetFloatValue("ExposureTime", out floatValue);
+            int result = device.Parameters.GetFloatValue("ExposureTime", out IFloatValue floatValue);
             if (result == MvError.MV_OK)
             {
                 tbExposure.Text = floatValue.CurValue.ToString("F1");
             }
-
             result = device.Parameters.GetFloatValue("Gain", out floatValue);
             if (result == MvError.MV_OK)
             {
@@ -142,8 +196,7 @@ namespace AI_Assistant_Win.Controls
             }
 
             cbPixelFormat.Items.Clear();
-            IEnumValue enumValue;
-            result = device.Parameters.GetEnumValue("PixelFormat", out enumValue);
+            result = device.Parameters.GetEnumValue("PixelFormat", out IEnumValue enumValue);
             if (result == MvError.MV_OK)
             {
                 foreach (var item in enumValue.SupportEnumEntries)
@@ -178,7 +231,6 @@ namespace AI_Assistant_Win.Controls
                     {
                         if (enumValue.CurEnumEntry.Symbolic == "TriggerSoftware")
                         {
-                            cbSoftTrigger.Enabled = true;
                             cbSoftTrigger.Checked = true;
                             if (cameraBLL.IsGrabbing)
                             {
@@ -212,17 +264,28 @@ namespace AI_Assistant_Win.Controls
             cameraBLL.CloseDevice();
             // ch:控件操作 | en:Control Operation
             SetCtrlWhenClose();
+            // save config
+            _ = SaveConfigAsync();
         }
 
         private void BnStopGrab_Click(object sender, EventArgs e)
         {
-            if (cameraBLL.IsRecording)
+            try
             {
-                //bnStopRecord_Click(sender, e);
+                if (cameraBLL.IsRecording)
+                {
+                    //bnStopRecord_Click(sender, e);
+                }
+                cameraBLL.StopGrabbing();
+                // ch:控件操作 | en:Control Operation
+                SetCtrlWhenStopGrab();
+                // save config
+                _ = SaveConfigAsync();
             }
-            cameraBLL.StopGrabbing();
-            // ch:控件操作 | en:Control Operation
-            SetCtrlWhenStopGrab();
+            catch (CameraSDKException error)
+            {
+                CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
+            }
         }
 
         private void SetCtrlWhenStopGrab()
@@ -245,13 +308,15 @@ namespace AI_Assistant_Win.Controls
             try
             {
                 cameraBLL.StartGrabbing();
+                // ch:控件操作 | en:Control Operation
+                SetCtrlWhenStartGrab();
+                // save config
+                _ = SaveConfigAsync();
             }
             catch (CameraSDKException error)
             {
-                ShowErrorMsg(error.Message, error.ErrorCode);
+                CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
             }
-            // ch:控件操作 | en:Control Operation
-            SetCtrlWhenStartGrab();
         }
 
         private void SetCtrlWhenStartGrab()
@@ -283,27 +348,22 @@ namespace AI_Assistant_Win.Controls
             {
                 cameraBLL.IsTriggerMode = true;
                 device.Parameters.SetEnumValueByString("TriggerMode", "On");
-
                 // ch:触发源选择:0 - Line0; | en:Trigger source select:0 - Line0;
-                //           1 - Line1;
-                //           2 - Line2;
+                //           0 - Line0;      6-pin P7管脚定义   黄   OPTO_IN   Line 0+  光耦隔离输入 意思是可接入快门设备？
+                //           1 - Line1;                        蓝   OPTO_OUT  Line 1+  光耦隔离输出 
+                //           2 - Line2;                        紫   GPIO      Line 2+  可配置输入或输出 
                 //           3 - Line3;
                 //           4 - Counter;
                 //           7 - Software;
-                if (cbSoftTrigger.Checked)
+                cbSoftTrigger.Checked = true;
+                device.Parameters.SetEnumValueByString("TriggerSource", "Software");
+                if (cameraBLL.IsGrabbing)
                 {
-                    device.Parameters.SetEnumValueByString("TriggerSource", "Software");
-                    if (cameraBLL.IsGrabbing)
-                    {
-                        bnTriggerExec.Enabled = true;
-                    }
+                    bnTriggerExec.Enabled = true;
                 }
-                else
-                {
-                    device.Parameters.SetEnumValueByString("TriggerSource", "Line0");
-                }
-                cbSoftTrigger.Enabled = true;
             }
+            // save config
+            _ = SaveConfigAsync();
         }
 
 
@@ -313,9 +373,11 @@ namespace AI_Assistant_Win.Controls
             if (bnContinuesMode.Checked)
             {
                 device.Parameters.SetEnumValueByString("TriggerMode", "Off");
-                cbSoftTrigger.Enabled = false;
+                cbSoftTrigger.Checked = false;
                 bnTriggerExec.Enabled = false;
             }
+            // save config
+            _ = SaveConfigAsync();
         }
 
         private void CbSoftTrigger_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
@@ -330,11 +392,6 @@ namespace AI_Assistant_Win.Controls
                     bnTriggerExec.Enabled = true;
                 }
             }
-            else
-            {
-                device.Parameters.SetEnumValueByString("TriggerSource", "Line0");
-                bnTriggerExec.Enabled = false;
-            }
         }
 
         private void BnTriggerExec_Click(object sender, EventArgs e)
@@ -344,44 +401,18 @@ namespace AI_Assistant_Win.Controls
             int result = device.Parameters.SetCommandValue("TriggerSoftware");
             if (result != MvError.MV_OK)
             {
-                ShowErrorMsg("Trigger Software Fail!", result);
+                CameraHelper.ShowErrorMsg(form, "Trigger Software Fail!", result);
             }
         }
 
-        // ch:显示错误信息 | en:Show error message
-        private void ShowErrorMsg(string message, int errorCode)
+        private async Task SaveConfigAsync()
         {
-            string errorMsg;
-            if (errorCode == 0)
+            await Task.Delay(2000);
+            var result = cameraBLL.SaveConfig();
+            if (result == 0)
             {
-                errorMsg = message;
+                AntdUI.Notification.error(form, "失败", "摄像头配置保存失败！", AntdUI.TAlignFrom.BR, Font);
             }
-            else
-            {
-                errorMsg = message + ": Error =" + String.Format("{0:X}", errorCode);
-            }
-
-            switch (errorCode)
-            {
-                case MvError.MV_E_HANDLE: errorMsg += " Error or invalid handle "; break;
-                case MvError.MV_E_SUPPORT: errorMsg += " Not supported function "; break;
-                case MvError.MV_E_BUFOVER: errorMsg += " Cache is full "; break;
-                case MvError.MV_E_CALLORDER: errorMsg += " Function calling order error "; break;
-                case MvError.MV_E_PARAMETER: errorMsg += " Incorrect parameter "; break;
-                case MvError.MV_E_RESOURCE: errorMsg += " Applying resource failed "; break;
-                case MvError.MV_E_NODATA: errorMsg += " No data "; break;
-                case MvError.MV_E_PRECONDITION: errorMsg += " Precondition error, or running environment changed "; break;
-                case MvError.MV_E_VERSION: errorMsg += " Version mismatches "; break;
-                case MvError.MV_E_NOENOUGH_BUF: errorMsg += " Insufficient memory "; break;
-                case MvError.MV_E_UNKNOW: errorMsg += " Unknown error "; break;
-                case MvError.MV_E_GC_GENERIC: errorMsg += " General error "; break;
-                case MvError.MV_E_GC_ACCESS: errorMsg += " Node accessing condition error "; break;
-                case MvError.MV_E_ACCESS_DENIED: errorMsg += " No permission "; break;
-                case MvError.MV_E_BUSY: errorMsg += " Device is busy, or network disconnected "; break;
-                case MvError.MV_E_NETER: errorMsg += " Network error "; break;
-            }
-
-            AntdUI.Notification.error(form, "失败", errorMsg, AntdUI.TAlignFrom.BR, Font);
         }
     }
 }
