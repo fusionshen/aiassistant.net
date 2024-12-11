@@ -28,6 +28,8 @@ namespace AI_Assistant_Win
                     return "Camera Capture";
                 case "Save":
                     return "Save";
+                case "CameraRecover":
+                    return "Camera Recover";
 
                 #region AI_Assistant_Win
 

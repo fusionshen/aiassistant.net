@@ -38,7 +38,6 @@ namespace AI_Assistant_Win.Controls
 
         private readonly CameraBLL cameraBLL;
 
-
         public BlacknessMethod(MainWindow _form)
         {
             var fontCollection = new FontCollection();
@@ -55,7 +54,7 @@ namespace AI_Assistant_Win.Controls
 
         private async Task CloseCameraAsync()
         {
-            await Task.Delay(1000);
+            await Task.Delay(50);
             cameraBLL.CloseDevice();
         }
 
@@ -90,8 +89,6 @@ namespace AI_Assistant_Win.Controls
                         break;
                     case "ContinuousMode":
                         AntdUI.Notification.success(form, "成功", "实时模式", AntdUI.TAlignFrom.BR, Font);
-                        await Task.Delay(1000);
-                        //BtnCameraSetting_Click(null, null);
                         break;
                     default:
                         AntdUI.Notification.error(form, "错误", "请联系管理员", AntdUI.TAlignFrom.BR, Font);
@@ -115,7 +112,7 @@ namespace AI_Assistant_Win.Controls
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, blacknessMethod_RenderImage.Image));
         }
 
-        private void Btn_UploadImage_Click(object sender, System.EventArgs e)
+        private void BtnUploadImage_Click(object sender, System.EventArgs e)
         {
             if (blacknessMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
@@ -125,6 +122,8 @@ namespace AI_Assistant_Win.Controls
                 btn.Loading = true;
                 AntdUI.ITask.Run(() =>
                 {
+                    // stop realtime image render
+                    cameraBLL.StopGrabbing();
                     avatarOriginImage.Image = System.Drawing.Image.FromFile(originImagePath);
                     if (btn.IsDisposed) return;
                     btn.Loading = false;
@@ -268,11 +267,6 @@ namespace AI_Assistant_Win.Controls
             return color;
         }
 
-        private void Btn_CameraCapture_Click(object sender, EventArgs e)
-        {
-            AntdUI.Notification.warn(form, "警告", "开发中，敬请期待！", AntdUI.TAlignFrom.BR, Font);
-        }
-
         private void Btn_Save_Click(object sender, EventArgs e)
         {
             // 数据验证
@@ -353,6 +347,30 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
             }
 
+        }
+
+        private void BtnCameraRecover_Click(object sender, EventArgs e)
+        {
+            // start realtime image render
+            cameraBLL.StartGrabbing();
+        }
+
+        private void BtnCameraCapture_Click(object sender, EventArgs e)
+        {
+            originImagePath = cameraBLL.SaveImage();
+            AntdUI.Button btn = (AntdUI.Button)sender;
+            btn.LoadingWaveValue = 0;
+            btn.Loading = true;
+            AntdUI.ITask.Run(() =>
+            {
+                // stop realtime image render
+                cameraBLL.StopGrabbing();
+                avatarOriginImage.Image = System.Drawing.Image.FromFile(originImagePath);
+                if (btn.IsDisposed) return;
+                btn.Loading = false;
+                AntdUI.Notification.success(form, "成功", "拍摄成功！", AntdUI.TAlignFrom.BR, Font);
+                Btn_Predict_Click(btn_Predict, null);  // auto predict
+            });
         }
     }
 }

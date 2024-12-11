@@ -33,7 +33,6 @@ namespace AI_Assistant_Win.Models
         /// 设备是否正在采集
         /// 采集状态下可以是连续模式和触发模式，触发模式只支持software软触发，TODO:针脚line0暂不支持。
         /// 唯一的区别是连续模式，画面是动态的，触发模式只支持一次触发，即看不到实时画面，但是点击按钮后会拍摄当前照片。
-        /// TODO：需要增加按钮重新在页面开启采集模式。
         /// </summary>
         [Column("is_grabbing")]
         public bool IsGrabbing { get; set; }

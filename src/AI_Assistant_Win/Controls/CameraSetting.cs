@@ -16,8 +16,9 @@ namespace AI_Assistant_Win.Controls
             form = _form;
             cameraBLL = _cameraBLL;
             InitializeComponent();
-            LoadConfig();
             Control.CheckForIllegalCrossThreadCalls = false;
+            LoadConfig();
+            this.HandleDestroyed += async (s, e) => await SaveConfigAsync();
         }
 
         private void LoadConfig()
@@ -35,17 +36,15 @@ namespace AI_Assistant_Win.Controls
                 SetCtrlWhenOpen();
                 // ch:获取参数 | en:Get parameters
                 BnGetParam_Click(null, null);
-                if (config.IsGrabbing)
+                // 如果存在配置，但是在本地上次图片或者拍摄照片后导致采集停止了，此时页面会与真实情况有差异
+                if (cameraBLL.IsGrabbing)
                 {
                     // ch:控件操作 | en:Control Operation
                     SetCtrlWhenStartGrab();
                     if (config.IsTriggerMode)
                     {
                         cbSoftTrigger.Checked = true;
-                        if (cameraBLL.IsGrabbing)
-                        {
-                            bnTriggerExec.Enabled = true;
-                        }
+                        bnTriggerExec.Enabled = true;
                     }
                     else
                     {
@@ -126,9 +125,6 @@ namespace AI_Assistant_Win.Controls
 
             // ch:获取参数 | en:Get parameters
             BnGetParam_Click(null, null);
-
-            // save config
-            _ = SaveConfigAsync();
         }
 
         private void SetCtrlWhenOpen()
@@ -215,9 +211,8 @@ namespace AI_Assistant_Win.Controls
         /// </summary>
         private void GetTriggerMode()
         {
-            IEnumValue enumValue;
             var device = cameraBLL.GetDevice();
-            int result = device.Parameters.GetEnumValue("TriggerMode", out enumValue);
+            int result = device.Parameters.GetEnumValue("TriggerMode", out IEnumValue enumValue);
             if (result == MvError.MV_OK)
             {
                 if (enumValue.CurEnumEntry.Symbolic == "On")
@@ -248,11 +243,6 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-        /// <summary>
-        /// TODO: 关闭应用页面时需要关闭设备
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BnClose_Click(object sender, EventArgs e)
         {
             // ch:取流标志位清零 | en:Reset flow flag bit
@@ -264,8 +254,6 @@ namespace AI_Assistant_Win.Controls
             cameraBLL.CloseDevice();
             // ch:控件操作 | en:Control Operation
             SetCtrlWhenClose();
-            // save config
-            _ = SaveConfigAsync();
         }
 
         private void BnStopGrab_Click(object sender, EventArgs e)
@@ -279,8 +267,6 @@ namespace AI_Assistant_Win.Controls
                 cameraBLL.StopGrabbing();
                 // ch:控件操作 | en:Control Operation
                 SetCtrlWhenStopGrab();
-                // save config
-                _ = SaveConfigAsync();
             }
             catch (CameraSDKException error)
             {
@@ -310,8 +296,6 @@ namespace AI_Assistant_Win.Controls
                 cameraBLL.StartGrabbing();
                 // ch:控件操作 | en:Control Operation
                 SetCtrlWhenStartGrab();
-                // save config
-                _ = SaveConfigAsync();
             }
             catch (CameraSDKException error)
             {
@@ -338,8 +322,6 @@ namespace AI_Assistant_Win.Controls
             //bnStopRecord.Enabled = false;
         }
 
-
-
         private void BnTriggerMode_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
         {
             var device = cameraBLL.GetDevice();
@@ -362,8 +344,6 @@ namespace AI_Assistant_Win.Controls
                     bnTriggerExec.Enabled = true;
                 }
             }
-            // save config
-            _ = SaveConfigAsync();
         }
 
 
@@ -376,8 +356,6 @@ namespace AI_Assistant_Win.Controls
                 cbSoftTrigger.Checked = false;
                 bnTriggerExec.Enabled = false;
             }
-            // save config
-            _ = SaveConfigAsync();
         }
 
         private void CbSoftTrigger_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
@@ -405,9 +383,13 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
+        /// <summary>
+        /// 如果使用各种按钮触发保存，那样保存次数太多
+        /// </summary>
+        /// <returns></returns>
         private async Task SaveConfigAsync()
         {
-            await Task.Delay(2000);
+            await Task.Delay(50);
             var result = cameraBLL.SaveConfig();
             if (result == 0)
             {

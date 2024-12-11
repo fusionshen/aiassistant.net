@@ -42,9 +42,10 @@ namespace AI_Assistant_Win.Controls
             blacknessMethod_OriginImage_Text = new Label();
             avatarOriginImage = new AntdUI.Avatar();
             panel5 = new AntdUI.Panel();
+            btnCameraRecover = new AntdUI.Button();
             btnCameraSetting = new AntdUI.Button();
-            btn_CameraCapture = new AntdUI.Button();
-            btn_UploadImage = new AntdUI.Button();
+            btnCameraCapture = new AntdUI.Button();
+            btnUploadImage = new AntdUI.Button();
             blacknessMethod_OriginImage_Zone = new Label();
             flowLayoutPanel1 = new FlowLayoutPanel();
             panel6 = new AntdUI.Panel();
@@ -244,15 +245,29 @@ namespace AI_Assistant_Win.Controls
             // 
             panel5.Back = Color.Transparent;
             panel5.BackColor = Color.Transparent;
+            panel5.Controls.Add(btnCameraRecover);
             panel5.Controls.Add(btnCameraSetting);
-            panel5.Controls.Add(btn_CameraCapture);
-            panel5.Controls.Add(btn_UploadImage);
+            panel5.Controls.Add(btnCameraCapture);
+            panel5.Controls.Add(btnUploadImage);
             panel5.Dock = DockStyle.Bottom;
             panel5.Location = new Point(9, 535);
             panel5.Name = "panel5";
             panel5.Radius = 0;
             panel5.Size = new Size(422, 40);
             panel5.TabIndex = 13;
+            // 
+            // btnCameraRecover
+            // 
+            btnCameraRecover.Dock = DockStyle.Right;
+            btnCameraRecover.Font = new Font("Microsoft YaHei UI", 10F);
+            btnCameraRecover.LocalizationText = "CameraRecover";
+            btnCameraRecover.Location = new Point(73, 0);
+            btnCameraRecover.Name = "btnCameraRecover";
+            btnCameraRecover.Size = new Size(119, 40);
+            btnCameraRecover.TabIndex = 3;
+            btnCameraRecover.Text = "恢复拍摄";
+            btnCameraRecover.Type = AntdUI.TTypeMini.Primary;
+            btnCameraRecover.Click += BtnCameraRecover_Click;
             // 
             // btnCameraSetting
             // 
@@ -266,31 +281,31 @@ namespace AI_Assistant_Win.Controls
             btnCameraSetting.Type = AntdUI.TTypeMini.Primary;
             btnCameraSetting.Click += BtnCameraSetting_Click;
             // 
-            // btn_CameraCapture
+            // btnCameraCapture
             // 
-            btn_CameraCapture.Dock = DockStyle.Right;
-            btn_CameraCapture.Font = new Font("Microsoft YaHei UI", 10F);
-            btn_CameraCapture.LocalizationText = "CameraCapture";
-            btn_CameraCapture.Location = new Point(192, 0);
-            btn_CameraCapture.Name = "btn_CameraCapture";
-            btn_CameraCapture.Size = new Size(119, 40);
-            btn_CameraCapture.TabIndex = 1;
-            btn_CameraCapture.Text = "相机拍摄";
-            btn_CameraCapture.Type = AntdUI.TTypeMini.Primary;
-            btn_CameraCapture.Click += Btn_CameraCapture_Click;
+            btnCameraCapture.Dock = DockStyle.Right;
+            btnCameraCapture.Font = new Font("Microsoft YaHei UI", 10F);
+            btnCameraCapture.LocalizationText = "CameraCapture";
+            btnCameraCapture.Location = new Point(192, 0);
+            btnCameraCapture.Name = "btnCameraCapture";
+            btnCameraCapture.Size = new Size(119, 40);
+            btnCameraCapture.TabIndex = 1;
+            btnCameraCapture.Text = "拍摄相片";
+            btnCameraCapture.Type = AntdUI.TTypeMini.Primary;
+            btnCameraCapture.Click += BtnCameraCapture_Click;
             // 
-            // btn_UploadImage
+            // btnUploadImage
             // 
-            btn_UploadImage.Dock = DockStyle.Right;
-            btn_UploadImage.Font = new Font("Microsoft YaHei UI", 10F);
-            btn_UploadImage.LocalizationText = "UploadImage";
-            btn_UploadImage.Location = new Point(311, 0);
-            btn_UploadImage.Name = "btn_UploadImage";
-            btn_UploadImage.Size = new Size(111, 40);
-            btn_UploadImage.TabIndex = 0;
-            btn_UploadImage.Text = "选择本地图片";
-            btn_UploadImage.Type = AntdUI.TTypeMini.Primary;
-            btn_UploadImage.Click += Btn_UploadImage_Click;
+            btnUploadImage.Dock = DockStyle.Right;
+            btnUploadImage.Font = new Font("Microsoft YaHei UI", 10F);
+            btnUploadImage.LocalizationText = "UploadImage";
+            btnUploadImage.Location = new Point(311, 0);
+            btnUploadImage.Name = "btnUploadImage";
+            btnUploadImage.Size = new Size(111, 40);
+            btnUploadImage.TabIndex = 0;
+            btnUploadImage.Text = "本地图片";
+            btnUploadImage.Type = AntdUI.TTypeMini.Primary;
+            btnUploadImage.Click += BtnUploadImage_Click;
             // 
             // blacknessMethod_OriginImage_Zone
             // 
@@ -848,12 +863,12 @@ namespace AI_Assistant_Win.Controls
         private Label blacknessMethod_OriginImage_Zone;
         private AntdUI.Avatar avatarOriginImage;
         private AntdUI.Panel panel5;
-        private AntdUI.Button btn_UploadImage;
+        private AntdUI.Button btnUploadImage;
         private FlowLayoutPanel flowLayoutPanel1;
         private AntdUI.Panel panel6;
         private OpenFileDialog blacknessMethod_OpenFileDialog;
         private System.IO.FileSystemWatcher blacknessMethod_FileSystemWatcher;
-        private AntdUI.Button btn_CameraCapture;
+        private AntdUI.Button btnCameraCapture;
         private Label label1;
         private AntdUI.Panel panel3;
         private AntdUI.Button btn_Save;
@@ -899,5 +914,6 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Select select_Work_Group;
         private AntdUI.Select select_Analyst;
         private AntdUI.Button btnCameraSetting;
+        private AntdUI.Button btnCameraRecover;
     }
 }

@@ -6,6 +6,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
@@ -130,8 +131,7 @@ namespace AI_Assistant_Win.Business
                 IGigEDevice gigEDevice = device as IGigEDevice;
 
                 // ch:探测网络最佳包大小(只对GigE相机有效) | en:Detection network optimal package size(It only works for the GigE camera)
-                int optionPacketSize;
-                result = gigEDevice.GetOptimalPacketSize(out optionPacketSize);
+                result = gigEDevice.GetOptimalPacketSize(out int optionPacketSize);
                 if (result != MvError.MV_OK)
                 {
                     throw new CameraSDKException("Warning: Get Packet Size failed!", result);
@@ -331,6 +331,31 @@ namespace AI_Assistant_Win.Business
             #endregion
             var ok = binding.Id == 0 ? connection.Insert(binding) : connection.Update(binding);
             return ok;
+        }
+
+        public string SaveImage()
+        {
+            if (frameForSave == null)
+            {
+                throw new Exception("No vaild image");
+            }
+            ImageFormatInfo imageFormatInfo;
+            imageFormatInfo.FormatType = ImageFormatType.Jpeg;
+            imageFormatInfo.JpegQuality = 99;
+
+            string directoryPath = @".\Images\Origin";
+            Directory.CreateDirectory(directoryPath);
+            var imageName = $"{DateTime.Now:yyyyMMddHHmmssfff}_w{frameForSave.Image.Width}_h{frameForSave.Image.Height}_fn{frameForSave.FrameNum}.{imageFormatInfo.FormatType}";
+            string fullPath = Path.Combine(directoryPath, imageName);
+            lock (saveImageLock)
+            {
+                var result = device.ImageSaver.SaveImageToFile(fullPath, frameForSave.Image, imageFormatInfo, CFAMethod.Equilibrated);
+                if (result != MvError.MV_OK)
+                {
+                    throw new CameraSDKException("Save Image Fail!", result);
+                }
+            }
+            return fullPath;
         }
     }
 }
