@@ -1,11 +1,17 @@
-﻿using MvCameraControl;
+﻿using AI_Assistant_Win.Business;
+using MvCameraControl;
 using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Utils
 {
     public class CameraHelper
     {
+        /// <summary>
+        /// different page uses camera, it should be closed when the application exits.
+        /// </summary>
+        public static List<CameraBLL> CAMERA_DEVICES = [];
         // ch:显示错误信息 | en:Show error message
         public static void ShowErrorMsg(Form form, string message, int errorCode)
         {

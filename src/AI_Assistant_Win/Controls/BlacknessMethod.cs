@@ -46,6 +46,7 @@ namespace AI_Assistant_Win.Controls
             blacknessMethodBLL = new BlacknessMethodBLL();
             imageProcessBLL = new ImageProcessBLL();
             cameraBLL = new CameraBLL();
+            CameraHelper.CAMERA_DEVICES.Add(cameraBLL);
             form = _form;
             InitializeComponent();
             this.Load += async (s, e) => await InitializeCameraAsync();
@@ -54,8 +55,10 @@ namespace AI_Assistant_Win.Controls
 
         private async Task CloseCameraAsync()
         {
+            // TODO: unsaved confirm
             await Task.Delay(50);
             cameraBLL.CloseDevice();
+            CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
         }
 
 
@@ -99,7 +102,6 @@ namespace AI_Assistant_Win.Controls
             {
                 CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
             }
-
         }
 
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
@@ -128,7 +130,7 @@ namespace AI_Assistant_Win.Controls
                     if (btn.IsDisposed) return;
                     btn.Loading = false;
                     AntdUI.Notification.success(form, "成功", "上传成功！", AntdUI.TAlignFrom.BR, Font);
-                    Btn_Predict_Click(btn_Predict, null);  // auto predict
+                    BtnPredict_Click(btnPredict, null);  // auto predict
                 });
             }
         }
@@ -173,7 +175,7 @@ namespace AI_Assistant_Win.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void Btn_Predict_Click(object sender, EventArgs e)
+        private void BtnPredict_Click(object sender, EventArgs e)
         {
             AntdUI.Button btn = (AntdUI.Button)sender;
             btn.LoadingWaveValue = 0;
@@ -182,7 +184,11 @@ namespace AI_Assistant_Win.Controls
             {
                 var labels = File.ReadAllLines("./Resources/Blackness/labels.txt");
                 using var yolo = YoloV8Predictor.Create("./Resources/blackness/model.onnx", labels, false);
-
+                if (string.IsNullOrEmpty(originImagePath))
+                {
+                    AntdUI.Notification.warn(form, "提示", "请拍摄或者上传图后进行识别", AntdUI.TAlignFrom.BR, Font);
+                    return;
+                }
                 using var image = SixLabors.ImageSharp.Image.Load(originImagePath);
                 var predictions = yolo.Predict(image);
                 if (predictions.Length == 6)
@@ -195,7 +201,7 @@ namespace AI_Assistant_Win.Controls
                 }
                 else
                 {
-                    AntdUI.Notification.error(form, "错误", "请使用正确的黑度样板图片进行识别", AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Notification.warn(form, "提示", "请使用正确的黑度样板图片进行识别", AntdUI.TAlignFrom.BR, Font);
                 }
             }, () =>
             {
@@ -267,32 +273,32 @@ namespace AI_Assistant_Win.Controls
             return color;
         }
 
-        private void Btn_Save_Click(object sender, EventArgs e)
+        private void BtnSave_Click(object sender, EventArgs e)
         {
             // 数据验证
             if (blacknessMethodBLL.GetTempMethodResultList() == null)
             {
-                AntdUI.Notification.error(form, "错误", "请进行识别后再保存", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, "提示", "请进行识别后再保存", AntdUI.TAlignFrom.BR, Font);
                 return;
             }
             if (select_Work_Group.SelectedValue == null)
             {
-                AntdUI.Notification.error(form, "错误", "请选择班组", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, "提示", "请选择班组", AntdUI.TAlignFrom.BR, Font);
                 return;
             }
             if (select_Analyst.SelectedValue == null)
             {
-                AntdUI.Notification.error(form, "错误", "请选择分析人员", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, "提示", "请选择分析人员", AntdUI.TAlignFrom.BR, Font);
                 return;
             }
             if (string.IsNullOrEmpty(input_Coil_Number.Text))
             {
-                AntdUI.Notification.error(form, "错误", "请输入正确的钢卷号", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, "提示", "请输入正确的钢卷号", AntdUI.TAlignFrom.BR, Font);
                 return;
             }
             if (string.IsNullOrEmpty(input_Size.Text))
             {
-                AntdUI.Notification.error(form, "错误", "请输入正确的尺寸", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, "提示", "请输入正确的尺寸", AntdUI.TAlignFrom.BR, Font);
                 return;
             }
             if (AntdUI.Modal.open(form, "请确认", "是否保存本次黑度检测结果？") == DialogResult.OK)
@@ -369,7 +375,7 @@ namespace AI_Assistant_Win.Controls
                 if (btn.IsDisposed) return;
                 btn.Loading = false;
                 AntdUI.Notification.success(form, "成功", "拍摄成功！", AntdUI.TAlignFrom.BR, Font);
-                Btn_Predict_Click(btn_Predict, null);  // auto predict
+                BtnPredict_Click(btnPredict, null);  // auto predict
             });
         }
     }

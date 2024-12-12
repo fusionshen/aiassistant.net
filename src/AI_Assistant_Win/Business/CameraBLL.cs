@@ -15,6 +15,7 @@ namespace AI_Assistant_Win.Business
 {
     public class CameraBLL
     {
+
         CameraBinding binding = null;
         IDevice device = null;
 
@@ -84,11 +85,6 @@ namespace AI_Assistant_Win.Business
             {
                 return "NoCameraGrabbing";
             }
-        }
-
-        public CameraGrabbing GetCameraGrabbing()
-        {
-            return cameraGrabbing;
         }
 
         public List<IDeviceInfo> GetDeviceList()

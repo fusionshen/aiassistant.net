@@ -36,7 +36,7 @@ namespace AI_Assistant_Win.Controls
             blacknessMethod_RenderImage_Text = new Label();
             blacknessMethod_RenderImage = new AntdUI.Avatar();
             panel2 = new AntdUI.Panel();
-            btn_Predict = new AntdUI.Button();
+            btnPredict = new AntdUI.Button();
             blacknessMethod_RenderImage_Zone = new Label();
             panel4 = new AntdUI.Panel();
             blacknessMethod_OriginImage_Text = new Label();
@@ -51,7 +51,7 @@ namespace AI_Assistant_Win.Controls
             panel6 = new AntdUI.Panel();
             label12 = new Label();
             panel17 = new AntdUI.Panel();
-            btn_Save = new AntdUI.Button();
+            btnSave = new AntdUI.Button();
             panel16 = new AntdUI.Panel();
             input_Size = new AntdUI.Input();
             label_Size = new Label();
@@ -168,7 +168,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel2.Back = Color.Transparent;
             panel2.BackColor = Color.Transparent;
-            panel2.Controls.Add(btn_Predict);
+            panel2.Controls.Add(btnPredict);
             panel2.Dock = DockStyle.Bottom;
             panel2.Location = new Point(9, 535);
             panel2.Name = "panel2";
@@ -176,18 +176,18 @@ namespace AI_Assistant_Win.Controls
             panel2.Size = new Size(444, 40);
             panel2.TabIndex = 13;
             // 
-            // btn_Predict
+            // btnPredict
             // 
-            btn_Predict.Dock = DockStyle.Right;
-            btn_Predict.Font = new Font("Microsoft YaHei UI", 10F);
-            btn_Predict.LocalizationText = "Predict";
-            btn_Predict.Location = new Point(371, 0);
-            btn_Predict.Name = "btn_Predict";
-            btn_Predict.Size = new Size(73, 40);
-            btn_Predict.TabIndex = 0;
-            btn_Predict.Text = "识别";
-            btn_Predict.Type = AntdUI.TTypeMini.Primary;
-            btn_Predict.Click += Btn_Predict_Click;
+            btnPredict.Dock = DockStyle.Right;
+            btnPredict.Font = new Font("Microsoft YaHei UI", 10F);
+            btnPredict.LocalizationText = "Predict";
+            btnPredict.Location = new Point(371, 0);
+            btnPredict.Name = "btnPredict";
+            btnPredict.Size = new Size(73, 40);
+            btnPredict.TabIndex = 0;
+            btnPredict.Text = "识别";
+            btnPredict.Type = AntdUI.TTypeMini.Primary;
+            btnPredict.Click += BtnPredict_Click;
             // 
             // blacknessMethod_RenderImage_Zone
             // 
@@ -378,7 +378,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel17.Back = Color.Transparent;
             panel17.BackColor = Color.Transparent;
-            panel17.Controls.Add(btn_Save);
+            panel17.Controls.Add(btnSave);
             panel17.Dock = DockStyle.Bottom;
             panel17.Location = new Point(9, 535);
             panel17.Name = "panel17";
@@ -386,18 +386,18 @@ namespace AI_Assistant_Win.Controls
             panel17.Size = new Size(342, 40);
             panel17.TabIndex = 26;
             // 
-            // btn_Save
+            // btnSave
             // 
-            btn_Save.Dock = DockStyle.Right;
-            btn_Save.Font = new Font("Microsoft YaHei UI", 10F);
-            btn_Save.LocalizationText = "Save";
-            btn_Save.Location = new Point(269, 0);
-            btn_Save.Name = "btn_Save";
-            btn_Save.Size = new Size(73, 40);
-            btn_Save.TabIndex = 0;
-            btn_Save.Text = "保存";
-            btn_Save.Type = AntdUI.TTypeMini.Primary;
-            btn_Save.Click += Btn_Save_Click;
+            btnSave.Dock = DockStyle.Right;
+            btnSave.Font = new Font("Microsoft YaHei UI", 10F);
+            btnSave.LocalizationText = "Save";
+            btnSave.Location = new Point(269, 0);
+            btnSave.Name = "btnSave";
+            btnSave.Size = new Size(73, 40);
+            btnSave.TabIndex = 0;
+            btnSave.Text = "保存";
+            btnSave.Type = AntdUI.TTypeMini.Primary;
+            btnSave.Click += BtnSave_Click;
             // 
             // panel16
             // 
@@ -857,7 +857,7 @@ namespace AI_Assistant_Win.Controls
         private Label blacknessMethod_RenderImage_Zone;
         private AntdUI.Avatar blacknessMethod_RenderImage;
         private AntdUI.Panel panel2;
-        private AntdUI.Button btn_Predict;
+        private AntdUI.Button btnPredict;
         private AntdUI.Panel panel4;
         private Label blacknessMethod_OriginImage_Text;
         private Label blacknessMethod_OriginImage_Zone;
@@ -871,7 +871,7 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Button btnCameraCapture;
         private Label label1;
         private AntdUI.Panel panel3;
-        private AntdUI.Button btn_Save;
+        private AntdUI.Button btnSave;
         private AntdUI.Button button7;
         private AntdUI.Panel panel12;
         private AntdUI.Button button6;

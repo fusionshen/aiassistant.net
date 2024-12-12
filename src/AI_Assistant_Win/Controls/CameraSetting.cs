@@ -381,6 +381,7 @@ namespace AI_Assistant_Win.Controls
             {
                 CameraHelper.ShowErrorMsg(form, "Trigger Software Fail!", result);
             }
+            AntdUI.Notification.info(form, "提示", "软触发仅用于拍照效果查看，并不会自动上传并识别！", AntdUI.TAlignFrom.BR, Font);
         }
 
         /// <summary>
