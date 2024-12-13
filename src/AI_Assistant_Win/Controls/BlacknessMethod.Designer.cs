@@ -34,7 +34,7 @@ namespace AI_Assistant_Win.Controls
             header1 = new AntdUI.PageHeader();
             panel1 = new AntdUI.Panel();
             blacknessMethod_RenderImage_Text = new Label();
-            blacknessMethod_RenderImage = new AntdUI.Avatar();
+            avatarRenderImage = new AntdUI.Avatar();
             panel2 = new AntdUI.Panel();
             btnPredict = new AntdUI.Button();
             blacknessMethod_RenderImage_Zone = new Label();
@@ -129,7 +129,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel1.ArrowSize = 10;
             panel1.Controls.Add(blacknessMethod_RenderImage_Text);
-            panel1.Controls.Add(blacknessMethod_RenderImage);
+            panel1.Controls.Add(avatarRenderImage);
             panel1.Controls.Add(panel2);
             panel1.Controls.Add(blacknessMethod_RenderImage_Zone);
             panel1.Location = new Point(449, 3);
@@ -153,16 +153,16 @@ namespace AI_Assistant_Win.Controls
             blacknessMethod_RenderImage_Text.TabIndex = 12;
             blacknessMethod_RenderImage_Text.Text = "点击识别后的图片可进行放大预览，各部位识别结果会在右侧结果判定区展示。";
             // 
-            // blacknessMethod_RenderImage
+            // avatarRenderImage
             // 
-            blacknessMethod_RenderImage.Dock = DockStyle.Top;
-            blacknessMethod_RenderImage.Image = Properties.Resources.blackness_template;
-            blacknessMethod_RenderImage.Location = new Point(9, 39);
-            blacknessMethod_RenderImage.Name = "blacknessMethod_RenderImage";
-            blacknessMethod_RenderImage.Radius = 6;
-            blacknessMethod_RenderImage.Size = new Size(444, 455);
-            blacknessMethod_RenderImage.TabIndex = 9;
-            blacknessMethod_RenderImage.Click += BlacknessMethod_renderImage_Click;
+            avatarRenderImage.Dock = DockStyle.Top;
+            avatarRenderImage.Image = Properties.Resources.blackness_template;
+            avatarRenderImage.Location = new Point(9, 39);
+            avatarRenderImage.Name = "avatarRenderImage";
+            avatarRenderImage.Radius = 6;
+            avatarRenderImage.Size = new Size(444, 455);
+            avatarRenderImage.TabIndex = 9;
+            avatarRenderImage.Click += AvatarRenderImage_Click;
             // 
             // panel2
             // 
@@ -179,6 +179,7 @@ namespace AI_Assistant_Win.Controls
             // btnPredict
             // 
             btnPredict.Dock = DockStyle.Right;
+            btnPredict.Enabled = false;
             btnPredict.Font = new Font("Microsoft YaHei UI", 10F);
             btnPredict.LocalizationText = "Predict";
             btnPredict.Location = new Point(371, 0);
@@ -259,6 +260,7 @@ namespace AI_Assistant_Win.Controls
             // btnCameraRecover
             // 
             btnCameraRecover.Dock = DockStyle.Right;
+            btnCameraRecover.Enabled = false;
             btnCameraRecover.Font = new Font("Microsoft YaHei UI", 10F);
             btnCameraRecover.LocalizationText = "CameraRecover";
             btnCameraRecover.Location = new Point(73, 0);
@@ -284,6 +286,7 @@ namespace AI_Assistant_Win.Controls
             // btnCameraCapture
             // 
             btnCameraCapture.Dock = DockStyle.Right;
+            btnCameraCapture.Enabled = false;
             btnCameraCapture.Font = new Font("Microsoft YaHei UI", 10F);
             btnCameraCapture.LocalizationText = "CameraCapture";
             btnCameraCapture.Location = new Point(192, 0);
@@ -389,6 +392,7 @@ namespace AI_Assistant_Win.Controls
             // btnSave
             // 
             btnSave.Dock = DockStyle.Right;
+            btnSave.Enabled = false;
             btnSave.Font = new Font("Microsoft YaHei UI", 10F);
             btnSave.LocalizationText = "Save";
             btnSave.Location = new Point(269, 0);
@@ -855,7 +859,7 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Panel panel1;
         private Label blacknessMethod_RenderImage_Text;
         private Label blacknessMethod_RenderImage_Zone;
-        private AntdUI.Avatar blacknessMethod_RenderImage;
+        private AntdUI.Avatar avatarRenderImage;
         private AntdUI.Panel panel2;
         private AntdUI.Button btnPredict;
         private AntdUI.Panel panel4;

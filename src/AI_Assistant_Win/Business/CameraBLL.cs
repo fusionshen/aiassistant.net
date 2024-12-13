@@ -1,10 +1,10 @@
 ﻿using AI_Assistant_Win.Models;
-using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using MvCameraControl;
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text.Json;
@@ -13,8 +13,20 @@ using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Business
 {
-    public class CameraBLL
+    /// <summary>
+    /// TODO: reconnect
+    /// </summary>
+    public class CameraBLL : INotifyPropertyChanged
     {
+        private readonly string _application;
+        private readonly nint _imageHandle;
+        public CameraBLL(string application, nint imageHandle)
+        {
+            _application = application;
+            _imageHandle = imageHandle;
+            SDKSystem.Initialize();
+            connection = SQLiteHandler.Instance.GetSQLiteConnection();
+        }
 
         CameraBinding binding = null;
         IDevice device = null;
@@ -25,30 +37,43 @@ namespace AI_Assistant_Win.Business
 
         List<IDeviceInfo> deviceInfoList = [];
 
-        private CameraGrabbing cameraGrabbing;
-
         Thread receiveThread = null;    // ch:接收图像线程 | en: Receive image thread
         private bool IsOpen { get; set; } = false;
-        public bool IsGrabbing { get; set; } = false;   // ch:是否正在取图 | en: Grabbing flag
+        // ch:是否正在取图 | en: Grabbing flag
+        private bool isGrabbing = false;
+        public bool IsGrabbing
+        {
+            get { return isGrabbing; }
+            set
+            {
+                if (isGrabbing != value)
+                {
+                    isGrabbing = value;
+                    OnPropertyChanged(nameof(IsGrabbing));
+                }
+            }
+        }
         public bool IsRecording { get; set; } = false;       // ch:是否正在录像 | en: Video record flag
         public bool IsTriggerMode { get; set; } = false;
 
         private IFrameOut frameForSave;                         // ch:获取到的帧信息, 用于保存图像 | en:Frame for save image
 
-        private readonly object saveImageLock = new object();
+        private readonly object saveImageLock = new();
 
         private readonly SQLiteConnection connection;
-        public CameraBLL()
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            SDKSystem.Initialize();
-            connection = SQLiteHandler.Instance.GetSQLiteConnection();
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string StartGrabbing(CameraGrabbing _cameraGrabbing)
+        public string StartRendering()
         {
-            cameraGrabbing = _cameraGrabbing;
             // 查询数据库是否存在摄像头绑定
-            binding = connection.Table<CameraBinding>().FirstOrDefault(t => t.Application.Equals(cameraGrabbing.Application));
+            binding = connection.Table<CameraBinding>().FirstOrDefault(t => t.Application.Equals(_application));
             if (binding == null)
             {
                 return "NoCameraSettings";
@@ -102,10 +127,10 @@ namespace AI_Assistant_Win.Business
 
         public void OpenDevice(int selectedIndex)
         {
-            // ch:获取选择的设备信息 | en:Get selected device information
-            IDeviceInfo deviceInfo = deviceInfoList[selectedIndex];
             try
             {
+                // ch:获取选择的设备信息 | en:Get selected device information
+                IDeviceInfo deviceInfo = deviceInfoList[selectedIndex];
                 // ch:打开设备 | en:Open device
                 device = DeviceFactory.CreateDevice(deviceInfo);
             }
@@ -211,7 +236,7 @@ namespace AI_Assistant_Win.Business
                     }
 
 #if !GDI_RENDER
-                    device.ImageRender.DisplayOneFrame(cameraGrabbing.ImageHandle, frameOut.Image);
+                    device.ImageRender.DisplayOneFrame(_imageHandle, frameOut.Image);
 #else
                     // 使用GDI绘制图像
                     try
@@ -250,6 +275,11 @@ namespace AI_Assistant_Win.Business
 
         public void StopGrabbing()
         {
+            if (receiveThread == null ||    // if no camera and try to upload image
+                !receiveThread.IsAlive)     // if images uploaded continuously after stopping camera grabbing. 
+            {
+                return;
+            }
             // ch:标志位设为false | en:Set flag bit false
             IsGrabbing = false;
             receiveThread.Join();
@@ -280,13 +310,19 @@ namespace AI_Assistant_Win.Business
 
         public int SaveConfig()
         {
+            if (device == null)
+            {
+                return -1;
+            }
             if (binding == null)
             {
-                binding = new CameraBinding();
-                binding.CreateTime = DateTime.Now;
+                binding = new CameraBinding
+                {
+                    CreateTime = DateTime.Now
+                };
             }
             #region 构造实体
-            binding.Application = cameraGrabbing.Application;
+            binding.Application = _application;
             binding.SerialNumber = device.DeviceInfo.SerialNumber;
             binding.DeviceInfo = JsonSerializer.Serialize(device.DeviceInfo);
             binding.IsOpen = IsOpen;
@@ -339,7 +375,7 @@ namespace AI_Assistant_Win.Business
             imageFormatInfo.FormatType = ImageFormatType.Jpeg;
             imageFormatInfo.JpegQuality = 99;
 
-            string directoryPath = @".\Images\Origin";
+            string directoryPath = $".\\Images\\{_application}\\Origin";
             Directory.CreateDirectory(directoryPath);
             var imageName = $"{DateTime.Now:yyyyMMddHHmmssfff}_w{frameForSave.Image.Width}_h{frameForSave.Image.Height}_fn{frameForSave.FrameNum}.{imageFormatInfo.FormatType}";
             string fullPath = Path.Combine(directoryPath, imageName);

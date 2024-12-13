@@ -1,28 +1,64 @@
 ﻿using SixLabors.ImageSharp;
 using System;
+using System.ComponentModel;
 using System.IO;
 
 namespace AI_Assistant_Win.Business
 {
-    public class ImageProcessBLL
+    public class ImageProcessBLL(string application) : INotifyPropertyChanged
     {
-        public string SaveOriginImageAndReturnPath(string filePath)
+        private string originImagePath = string.Empty;
+
+        public string OriginImagePath
         {
-            string directoryPath = @".\Images\Origin";
-            Directory.CreateDirectory(directoryPath);
-            string fullPath = Path.Combine(directoryPath, DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".jpg");
-            using var image = SixLabors.ImageSharp.Image.Load(filePath);
-            image.Save(fullPath);
-            return fullPath;
+            get { return originImagePath; }
+            set
+            {
+                if (originImagePath != value)
+                {
+                    originImagePath = value;
+                    OnPropertyChanged(nameof(OriginImagePath));
+                }
+            }
         }
 
-        public string SaveRenderImageAndReturnPath(SixLabors.ImageSharp.Image image)
+        private string renderImagePath = string.Empty;
+        public string RenderImagePath
         {
-            string directoryPath = @".\Images\Render";
+            get { return renderImagePath; }
+            set
+            {
+                if (renderImagePath != value)
+                {
+                    renderImagePath = value;
+                    OnPropertyChanged(nameof(RenderImagePath));
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public void SaveOriginImage(string filePath)
+        {
+            string directoryPath = $".\\Images\\{application}\\Origin";
+            Directory.CreateDirectory(directoryPath);
+            string fullPath = Path.Combine(directoryPath, DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".jpg");
+            using var image = Image.Load(filePath);
+            image.Save(fullPath);
+            OriginImagePath = fullPath;
+        }
+
+        public void SaveRenderImage(SixLabors.ImageSharp.Image image)
+        {
+            string directoryPath = $".\\Images\\{application}\\Render";
             Directory.CreateDirectory(directoryPath);
             string fullPath = Path.Combine(directoryPath, DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".jpg");
             image.Save(fullPath);
-            return fullPath;
+            RenderImagePath = fullPath;
         }
     }
 }
