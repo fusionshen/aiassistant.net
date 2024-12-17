@@ -1,4 +1,5 @@
 ﻿using SixLabors.Fonts;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
 using System;
@@ -13,7 +14,7 @@ namespace AI_Assistant_Win.Business
 
     public class BlacknessPredict : INotifyPropertyChanged
     {
-        private readonly SixLabors.Fonts.Font font;
+        private readonly Font font;
 
         private readonly string[] labels = File.ReadAllLines("./Resources/Blackness/labels.txt");
 
@@ -37,22 +38,22 @@ namespace AI_Assistant_Win.Business
         public void Predict()
         {
             using var yolo = YoloV8Predictor.Create("./Resources/Blackness/model.onnx", labels, false);
-            using var image = SixLabors.ImageSharp.Image.Load(imageProcessBLL.OriginImagePath);
+            using var image = Image.Load(imageProcessBLL.OriginImagePath);
             predictions = yolo.Predict(image);
             if (predictions.Length == 6)
             {
                 DrawBoxes(image);
-                imageProcessBLL.SaveRenderImage(image);  // show render image & page outputs predictions
+                imageProcessBLL.SaveRenderImage(image);  // show render image 
             }
             else
             {
                 predictions = []; // page clears inputs
-                imageProcessBLL.RenderImagePath = string.Empty; // clear render image &
+                imageProcessBLL.RenderImagePath = string.Empty; // clear render image 
             }
-            OnPropertyChanged(nameof(Predictions));
+            OnPropertyChanged(nameof(Predictions)); //  page outputs/clears predictions
         }
 
-        private void DrawBoxes(SixLabors.ImageSharp.Image image)
+        private void DrawBoxes(Image image)
         {
             foreach (var pred in predictions)
             {
@@ -71,31 +72,31 @@ namespace AI_Assistant_Win.Business
                 var size = TextMeasurer.MeasureSize(text, new TextOptions(font));
                 var color = GetRetangleColorByNumber(number);
 
-                image.Mutate(d => d.Draw(SixLabors.ImageSharp.Drawing.Processing.Pens.Solid(color, 5),
-                    new SixLabors.ImageSharp.Rectangle(x, y, width, height)));
-                image.Mutate(d => d.DrawText(text, font, color, new SixLabors.ImageSharp.Point(x, (int)(y - size.Height - 1))));
+                image.Mutate(d => d.Draw(Pens.Solid(color, 5),
+                    new Rectangle(x, y, width, height)));
+                image.Mutate(d => d.DrawText(text, font, color, new Point(x, (int)(y - size.Height - 1))));
             }
         }
 
-        private static SixLabors.ImageSharp.Color GetRetangleColorByNumber(string number)
+        private static Color GetRetangleColorByNumber(string number)
         {
-            var color = SixLabors.ImageSharp.Color.Black;
+            var color = Color.Black;
             switch (number)
             {
                 case "1":
-                    color = SixLabors.ImageSharp.Color.DarkRed;
+                    color = Color.DarkRed;
                     break;
                 case "2":
-                    color = SixLabors.ImageSharp.Color.Red;
+                    color = Color.Red;
                     break;
                 case "3":
-                    color = SixLabors.ImageSharp.Color.DarkOrange;
+                    color = Color.DarkOrange;
                     break;
                 case "4":
-                    color = SixLabors.ImageSharp.Color.Yellow;
+                    color = Color.Yellow;
                     break;
                 case "5":
-                    color = SixLabors.ImageSharp.Color.Green;
+                    color = Color.Green;
                     break;
                 default:
                     break;

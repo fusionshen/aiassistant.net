@@ -72,6 +72,13 @@ namespace AI_Assistant_Win.Business
 
         public string StartRendering()
         {
+            // get device list
+            GetDeviceList();
+            var deviceIndex = deviceInfoList.FindIndex(t => t.SerialNumber.Equals(binding.SerialNumber));
+            if (deviceIndex == -1)
+            {
+                return "NoCamera";
+            }
             // 查询数据库是否存在摄像头绑定
             binding = connection.Table<CameraBinding>().FirstOrDefault(t => t.Application.Equals(_application));
             if (binding == null)
@@ -82,10 +89,7 @@ namespace AI_Assistant_Win.Business
             {
                 return "NoCameraOpen";
             }
-            // get device list
-            GetDeviceList();
             // open camera
-            var deviceIndex = deviceInfoList.FindIndex(t => t.SerialNumber.Equals(binding.SerialNumber));
             OpenDevice(deviceIndex);
             if (binding.IsGrabbing)
             {
@@ -314,13 +318,10 @@ namespace AI_Assistant_Win.Business
             {
                 return -1;
             }
-            if (binding == null)
+            binding ??= new CameraBinding
             {
-                binding = new CameraBinding
-                {
-                    CreateTime = DateTime.Now
-                };
-            }
+                CreateTime = DateTime.Now
+            };
             #region 构造实体
             binding.Application = _application;
             binding.SerialNumber = device.DeviceInfo.SerialNumber;

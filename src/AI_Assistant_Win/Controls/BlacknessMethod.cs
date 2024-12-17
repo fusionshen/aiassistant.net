@@ -1,6 +1,6 @@
 using AI_Assistant_Win.Business;
-using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
+using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using System;
 using System.Collections.Generic;
@@ -8,12 +8,10 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Yolov8.Net;
 
 namespace AI_Assistant_Win.Controls
 {
     /// <summary>
-    /// init camera, if camera was binded, origin image zone will show the image.
     /// reconnect camera
     /// </summary>
     public partial class BlacknessMethod : UserControl
@@ -28,6 +26,10 @@ namespace AI_Assistant_Win.Controls
 
         private readonly BlacknessPredict blacknessPredict;
 
+        private BlacknessResult originalBlacknessResult;
+
+        private readonly BlacknessResult tempBlacknessResult;
+
         public BlacknessMethod(MainWindow _form)
         {
             form = _form;
@@ -40,8 +42,56 @@ namespace AI_Assistant_Win.Controls
             cameraBLL = new CameraBLL("Blackness", avatarOriginImage.Handle);
             cameraBLL.PropertyChanged += CameraBLL_PropertyChanged;
             CameraHelper.CAMERA_DEVICES.Add(cameraBLL);
+            originalBlacknessResult = new BlacknessResult();  // TODO: edit
+            tempBlacknessResult = new BlacknessResult();
+            tempBlacknessResult.PropertyChanged += TempBlacknessResult_PropertyChanged;
             this.Load += async (s, e) => await InitializeCameraAsync();
             this.HandleDestroyed += async (s, e) => await CloseCameraAsync();
+        }
+
+        private void TempBlacknessResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!originalBlacknessResult.Equals(tempBlacknessResult))
+            {
+                try
+                {
+                    CheckValid();
+                    btnSave.Enabled = true;
+                }
+                catch (Exception)
+                {
+                    btnSave.Enabled = false;
+                }
+            }
+            else
+            {
+                btnSave.Enabled = false;
+            }
+        }
+
+        private void CheckValid()
+        {
+            // 数据验证
+            if (tempBlacknessResult == null)
+            {
+                throw new ArgumentNullException("请进行识别后再保存");
+            }
+            if (selectWorkGroup.SelectedValue == null)
+            {
+                throw new ArgumentNullException("请选择班组");
+            }
+            if (selectAnalyst.SelectedValue == null)
+            {
+                throw new ArgumentNullException("请选择分析人员");
+            }
+            if (string.IsNullOrEmpty(inputCoilNumber.Text))
+            {
+                throw new ArgumentNullException("请输入正确的钢卷号");
+            }
+            if (string.IsNullOrEmpty(inputSize.Text))
+            {
+                throw new ArgumentNullException("请输入正确的尺寸");
+            }
         }
 
         private void BlacknessPredict_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -50,11 +100,12 @@ namespace AI_Assistant_Win.Controls
             {
                 if (blacknessPredict.Predictions != null && blacknessPredict.Predictions.Length != 0)
                 {
-                    OutputTexts(blacknessPredict.Predictions);
+                    OutputTexts();
                     AntdUI.Notification.success(form, "成功", "识别成功！", AntdUI.TAlignFrom.BR, Font);
                 }
                 else
                 {
+                    ClearTexts();
                     AntdUI.Notification.warn(form, "提示", "请使用正确的黑度样板图片进行识别", AntdUI.TAlignFrom.BR, Font);
                 }
             }
@@ -64,10 +115,11 @@ namespace AI_Assistant_Win.Controls
         {
             if (e.PropertyName == "OriginImagePath")
             {
+                tempBlacknessResult.OriginImagePath = imageProcessBLL.OriginImagePath;
                 btnPredict.Enabled = !string.IsNullOrEmpty(imageProcessBLL.OriginImagePath);
                 if (!string.IsNullOrEmpty(imageProcessBLL.OriginImagePath))
                 {
-                    avatarOriginImage.Image = System.Drawing.Image.FromFile(imageProcessBLL.OriginImagePath);
+                    avatarOriginImage.Image = Image.FromFile(imageProcessBLL.OriginImagePath);
                     BtnPredict_Click(btnPredict, null);  // auto predict
                 }
                 else
@@ -77,16 +129,16 @@ namespace AI_Assistant_Win.Controls
             }
             else if (e.PropertyName == "RenderImagePath")
             {
+                tempBlacknessResult.RenderImagePath = imageProcessBLL.RenderImagePath;
                 if (!string.IsNullOrEmpty(imageProcessBLL.RenderImagePath))
                 {
-                    avatarRenderImage.Image = System.Drawing.Image.FromFile(imageProcessBLL.RenderImagePath);
+                    avatarRenderImage.Image = Image.FromFile(imageProcessBLL.RenderImagePath);
                 }
                 else
                 {
                     avatarRenderImage.Image = Properties.Resources.blackness_template;
                 }
             }
-            // TODO: save
         }
 
         private void CameraBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -106,7 +158,6 @@ namespace AI_Assistant_Win.Controls
             CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
         }
 
-
         private async Task InitializeCameraAsync()
         {
             try
@@ -114,6 +165,9 @@ namespace AI_Assistant_Win.Controls
                 var result = cameraBLL.StartRendering();
                 switch (result)
                 {
+                    case "NoCamera":
+                        AntdUI.Notification.warn(form, "提示", "未能找到可用摄像头", AntdUI.TAlignFrom.BR, Font);
+                        break;
                     case "NoCameraSettings":
                         AntdUI.Notification.warn(form, "提示", "请设置摄像头进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
                         // 延迟1秒
@@ -178,10 +232,6 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void BtnPredict_Click(object sender, EventArgs e)
         {
             AntdUI.Button btn = (AntdUI.Button)sender;
@@ -197,44 +247,47 @@ namespace AI_Assistant_Win.Controls
             });
         }
 
-        private void OutputTexts(Prediction[] predictions)
+        private void OutputTexts()
         {
-            var resultList = blacknessMethodBLL.ParsePredictions(predictions);
-            input_Surface_OP.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Description;
-            input_Surface_CE.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Description;
-            input_Surface_DR.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Description;
-            input_Inside_OP.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Description;
-            input_Inside_CE.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Description;
-            input_Inside_DR.Text = resultList.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Description;
-            radio_Result_OK.Checked = resultList.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level)); // [1，2] not exit，otherwise，NG is checked
+            var sorted = blacknessPredict.Predictions.OrderBy(t => t.Rectangle.Y).ToArray();
+            // TODO: 现场根据X具体位置判断，因为可能出现未贴完6个部位或者未识别出六个部位的情况
+            tempBlacknessResult.Items = [new(BlacknessLocationKind.SURFACE_OP, sorted[0]),
+                            new(BlacknessLocationKind.SURFACE_CE, sorted[1]),
+                            new(BlacknessLocationKind.SURFACE_DR, sorted[2]),
+                            new(BlacknessLocationKind.INSIDE_OP, sorted[3]),
+                            new(BlacknessLocationKind.INSIDE_CE, sorted[4]),
+                            new(BlacknessLocationKind.INSIDE_DR, sorted[5])];
+            inputSurfaceOP.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Description;
+            inputSurfaceCE.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Description;
+            inputSurfaceDR.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Description;
+            inputInsideOP.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Description;
+            inputInsideCE.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Description;
+            inputInsideDR.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Description;
+            radioResultOK.Checked = tempBlacknessResult.Items.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level)); // [1，2] not exit，otherwise，NG is checked
+        }
+
+        private void ClearTexts()
+        {
+            tempBlacknessResult.Items = null;
+            inputSurfaceOP.Text = string.Empty;
+            inputSurfaceCE.Text = string.Empty;
+            inputSurfaceDR.Text = string.Empty;
+            inputInsideOP.Text = string.Empty;
+            inputInsideCE.Text = string.Empty;
+            inputInsideDR.Text = string.Empty;
+            radioResultNG.Checked = true;
         }
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            // 数据验证
-            if (blacknessMethodBLL.GetTempMethodResultList() == null)
+            // double check
+            try
             {
-                AntdUI.Notification.warn(form, "提示", "请进行识别后再保存", AntdUI.TAlignFrom.BR, Font);
-                return;
+                CheckValid();
             }
-            if (select_Work_Group.SelectedValue == null)
+            catch (Exception error)
             {
-                AntdUI.Notification.warn(form, "提示", "请选择班组", AntdUI.TAlignFrom.BR, Font);
-                return;
-            }
-            if (select_Analyst.SelectedValue == null)
-            {
-                AntdUI.Notification.warn(form, "提示", "请选择分析人员", AntdUI.TAlignFrom.BR, Font);
-                return;
-            }
-            if (string.IsNullOrEmpty(input_Coil_Number.Text))
-            {
-                AntdUI.Notification.warn(form, "提示", "请输入正确的钢卷号", AntdUI.TAlignFrom.BR, Font);
-                return;
-            }
-            if (string.IsNullOrEmpty(input_Size.Text))
-            {
-                AntdUI.Notification.warn(form, "提示", "请输入正确的尺寸", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, "提示", error.Message, AntdUI.TAlignFrom.BR, Font);
                 return;
             }
             if (AntdUI.Modal.open(form, "请确认", "是否保存本次黑度检测结果？") == DialogResult.OK)
@@ -244,33 +297,33 @@ namespace AI_Assistant_Win.Controls
                 btn.Loading = true;
                 AntdUI.ITask.Run(() =>
                 {
-                    // 构造黑度测试数据
-                    var blacknessMethodResult = new BlacknessMethodResult
+                    try
                     {
-                        CoilNumber = input_Coil_Number.Text,
-                        Size = input_Size.Text,
-                        OriginImagePath = imageProcessBLL.OriginImagePath,
-                        RenderImagePath = imageProcessBLL.RenderImagePath,
-                        WorkGroup = select_Work_Group.SelectedValue.ToString(),
-                        Analyst = select_Analyst.SelectedValue.ToString(),
-                    };
-                    var result = blacknessMethodBLL.SaveResult(blacknessMethodResult);
-                    if (result == 0)
-                    {
-                        AntdUI.Notification.error(form, "错误", "保存失败！", AntdUI.TAlignFrom.BR, Font);
-                        return;
+                        var result = blacknessMethodBLL.SaveResult(tempBlacknessResult);
+                        if (result == 0)
+                        {
+                            AntdUI.Notification.error(form, "错误", "保存失败！", AntdUI.TAlignFrom.BR, Font);
+                            return;
+                        }
+                        else
+                        {
+                            tempBlacknessResult.Id = result;
+                            originalBlacknessResult = (BlacknessResult)tempBlacknessResult.Clone();
+                            btn.Enabled = false;
+                            AntdUI.Notification.success(form, "成功", "保存成功！", AntdUI.TAlignFrom.BR, Font);
+                            return;
+                        }
                     }
-                    else
+                    catch (Exception error)
                     {
-                        AntdUI.Notification.success(form, "成功", "保存成功！", AntdUI.TAlignFrom.BR, Font);
+
+                        AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
                         return;
                     }
                 }, () =>
                 {
                     if (btn.IsDisposed) return;
                     btn.Loading = false;
-                    // 防止多次点击，操作相同的数据，TODO:检测数据变化后，进行新增或更新操作
-                    btn.Enabled = false;
                 });
             }
         }
@@ -311,6 +364,26 @@ namespace AI_Assistant_Win.Controls
                 btn.Loading = false;
                 AntdUI.Notification.success(form, "成功", "拍摄成功！", AntdUI.TAlignFrom.BR, Font);
             });
+        }
+
+        private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
+        {
+            tempBlacknessResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
+        }
+
+        private void SelectAnalyst_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
+        {
+            tempBlacknessResult.Analyst = selectAnalyst.SelectedValue.ToString();
+        }
+
+        private void InputCoilNumber_TextChanged(object sender, EventArgs e)
+        {
+            tempBlacknessResult.CoilNumber = inputCoilNumber.Text;
+        }
+
+        private void InputSize_TextChanged(object sender, EventArgs e)
+        {
+            tempBlacknessResult.Size = inputSize.Text;
         }
     }
 }
