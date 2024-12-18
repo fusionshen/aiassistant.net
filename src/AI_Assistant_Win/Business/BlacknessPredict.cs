@@ -20,10 +20,18 @@ namespace AI_Assistant_Win.Business
 
         private readonly ImageProcessBLL imageProcessBLL;
 
-        private Prediction[] predictions;
+        private Prediction[] predictions = new Prediction[6];
         public Prediction[] Predictions
         {
             get { return predictions; }
+            set
+            {
+                if (!predictions.SequenceEqual(value))
+                {
+                    predictions = value;
+                    OnPropertyChanged(nameof(Predictions));
+                }
+            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

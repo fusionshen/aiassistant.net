@@ -57,7 +57,7 @@ namespace AI_Assistant_Win.Models.Middle
                 if (!_originImagePath.Equals(value))
                 {
                     _originImagePath = value;
-                    OnPropertyChanged(nameof(Size));
+                    OnPropertyChanged(nameof(OriginImagePath));
                 }
             }
         }

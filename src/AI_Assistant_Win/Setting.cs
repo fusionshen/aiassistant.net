@@ -27,6 +27,7 @@ namespace AI_Assistant_Win
         public bool Animation, ShadowEnabled, ShowInWindow, ScrollBarHide;
         public Setting(Form _form)
         {
+            form = _form;
             InitializeComponent();
             label2.Checked = Animation = AntdUI.Config.Animation;
             switch1.Checked = ShadowEnabled = AntdUI.Config.ShadowEnabled;

@@ -148,7 +148,7 @@ namespace AI_Assistant_Win.Controls
             table_Blackness_History.Location = new Point(3, 123);
             table_Blackness_History.Name = "table_Blackness_History";
             table_Blackness_History.Radius = 6;
-            table_Blackness_History.Size = new Size(1297, 550);
+            table_Blackness_History.Size = new Size(1294, 507);
             table_Blackness_History.TabIndex = 0;
             table_Blackness_History.CellClick += Table1_CellClick;
             table_Blackness_History.CellButtonClick += Table1_CellButtonClick;

@@ -105,23 +105,19 @@ namespace AI_Assistant_Win.Controls
                         }
                         break;
                     default:
-                        if (AntdUI.Modal.open(new AntdUI.Modal.Config(form, "提示", new AntdUI.Modal.TextLine[] {
-                                    new AntdUI.Modal.TextLine(data[3].value.ToString(),AntdUI.Style.Db.Primary),
-                                    new AntdUI.Modal.TextLine(data[9].value.ToString(),6,AntdUI.Style.Db.TextSecondary)
-                        }, AntdUI.TType.Error)
+                        // TODO: uploaded
+                        if (AntdUI.Modal.open(form, "请确认", "是否修改本次黑度检测结果？") == DialogResult.OK)
                         {
-                            CancelText = null,
-                            OkType = AntdUI.TTypeMini.Error,
-                            OkText = "成功"
-                        }) == DialogResult.OK)
-                        {
-                            table_Blackness_History.Spin("等待中...", () =>
+                            try
                             {
-                                System.Threading.Thread.Sleep(2000);
-                            }, () =>
+                                BlacknessMethod.EDIT_ITEM_ID = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
+                                ((MainWindow)form).OpenPage("V60 Blackness Method On GA Sheet");
+                            }
+                            catch (Exception error)
                             {
-                                System.Diagnostics.Debug.WriteLine("操作成功");
-                            });
+                                AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                            }
+                            break;
                         }
                         break;
                 }
@@ -136,9 +132,9 @@ namespace AI_Assistant_Win.Controls
         List<AntdUI.AntItem[]> GetPageData(int current, int pageSize)
         {
             var dbList = blacknessMethodBLL.GetResultListFromDB();
+            pagination1.Total = dbList.Count;
             // lower memory coss
             var pagedList = dbList.Skip(pageSize * Math.Abs(current - 1)).Take(pageSize).ToList();
-            pagination1.Total = pagedList.Count;
             // format table items
             var dataList = pagedList.Select(t =>
             {
