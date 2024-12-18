@@ -74,8 +74,7 @@ namespace AI_Assistant_Win.Business
         {
             // get device list
             GetDeviceList();
-            var deviceIndex = deviceInfoList.FindIndex(t => t.SerialNumber.Equals(binding.SerialNumber));
-            if (deviceIndex == -1)
+            if (deviceInfoList == null || deviceInfoList.Count == 0)
             {
                 return "NoCamera";
             }
@@ -89,6 +88,7 @@ namespace AI_Assistant_Win.Business
             {
                 return "NoCameraOpen";
             }
+            var deviceIndex = deviceInfoList.FindIndex(t => t.SerialNumber.Equals(binding.SerialNumber));
             // open camera
             OpenDevice(deviceIndex);
             if (binding.IsGrabbing)

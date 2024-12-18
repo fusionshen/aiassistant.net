@@ -204,18 +204,13 @@ namespace AI_Assistant_Win.Controls
             CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
         }
 
-        /// <summary>
-        /// 一方面要支持修改操作，一方面又要支持摄像头初始化。
-        /// 如果是修改摄像头需要打开吗？需要打开，因为要提供给客户修改原图渲染图的能力。
-        /// 摄像头需要持续渲染吗？按照设定的来，也不会影响客户查看原图的功能，而且修改的频率不会很大。
-        /// </summary>
-        /// <returns></returns>
         private async Task InitializeAsync()
         {
             if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
             {
                 // 为了通过观察者模式实现界面数据效果
                 blacknessMethodBLL.LoadOriginalResultFromDB(originalBlacknessResult, EDIT_ITEM_ID);
+                return;
             }
             try
             {
