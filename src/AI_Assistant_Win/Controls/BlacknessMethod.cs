@@ -32,6 +32,8 @@ namespace AI_Assistant_Win.Controls
 
         private readonly BlacknessResult tempBlacknessResult;
 
+        private List<int> sortedIDs = [];
+
         public BlacknessMethod(MainWindow _form)
         {
             form = _form;
@@ -49,7 +51,7 @@ namespace AI_Assistant_Win.Controls
             tempBlacknessResult = new BlacknessResult();
             tempBlacknessResult.PropertyChanged += TempBlacknessResult_PropertyChanged;
             this.Load += async (s, e) => await InitializeAsync();
-            this.HandleDestroyed += async (s, e) => await CloseCameraAsync();
+            this.HandleDestroyed += async (s, e) => await DestoryAsync();
         }
 
         private void OriginalBlacknessResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -61,6 +63,10 @@ namespace AI_Assistant_Win.Controls
             else if (e.PropertyName == "CoilNumber")
             {
                 inputCoilNumber.Text = originalBlacknessResult.CoilNumber;
+            }
+            else if (e.PropertyName == "Size")
+            {
+                inputSize.Text = originalBlacknessResult.Size;
             }
             else if (e.PropertyName == "OriginImagePath")
             {
@@ -77,10 +83,6 @@ namespace AI_Assistant_Win.Controls
             else if (e.PropertyName == "Analyst")
             {
                 selectAnalyst.SelectedValue = originalBlacknessResult.Analyst;
-            }
-            else if (e.PropertyName == "Size")
-            {
-                inputSize.Text = originalBlacknessResult.Size;
             }
             else if (e.PropertyName == "Items")
             {
@@ -143,12 +145,18 @@ namespace AI_Assistant_Win.Controls
                 {
                     OutputTexts();
                     // call when edit
-                    //AntdUI.Notification.success(form, "成功", "识别成功！", AntdUI.TAlignFrom.BR, Font);
+                    if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
+                    {
+                        AntdUI.Notification.success(form, "成功", "识别成功！", AntdUI.TAlignFrom.BR, Font);
+                    }
                 }
                 else
                 {
                     ClearTexts();
-                    AntdUI.Notification.warn(form, "提示", "请使用正确的黑度样板图片进行识别", AntdUI.TAlignFrom.BR, Font);
+                    if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
+                    {
+                        AntdUI.Notification.warn(form, "提示", "请使用正确的黑度样板图片进行识别", AntdUI.TAlignFrom.BR, Font);
+                    }
                 }
             }
         }
@@ -196,8 +204,9 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-        private async Task CloseCameraAsync()
+        private async Task DestoryAsync()
         {
+            sortedIDs = [];
             EDIT_ITEM_ID = string.Empty;
             await Task.Delay(50);
             cameraBLL.CloseDevice();
@@ -206,14 +215,29 @@ namespace AI_Assistant_Win.Controls
 
         private async Task InitializeAsync()
         {
-            if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
-            {
-                // 为了通过观察者模式实现界面数据效果
-                blacknessMethodBLL.LoadOriginalResultFromDB(originalBlacknessResult, EDIT_ITEM_ID);
-                return;
-            }
+
             try
             {
+                // 为了通过观察者模式实现界面数据效果
+                sortedIDs = blacknessMethodBLL.LoadOriginalResultFromDB(originalBlacknessResult, EDIT_ITEM_ID);
+                if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
+                {
+                    // The order is very important.:)
+                    btnNext.Visible = true;
+                    btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != sortedIDs.Count - 1;
+                    btnPrint.Visible = true;
+                    btnPre.Visible = true;
+                    btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
+                    AntdUI.Notification.success(form, "成功", $"修改模式[编号：{EDIT_ITEM_ID}]", AntdUI.TAlignFrom.BR, Font);
+                    return;
+                }
+                else
+                {
+                    btnNext.Visible = false;
+                    btnPrint.Visible = false;
+                    btnPre.Visible = false;
+                    AntdUI.Notification.success(form, "成功", "新增模式", AntdUI.TAlignFrom.BR, Font);
+                }
                 var result = cameraBLL.StartRendering();
                 switch (result)
                 {
@@ -252,6 +276,10 @@ namespace AI_Assistant_Win.Controls
             catch (CameraSDKException error)
             {
                 CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
+            }
+            catch (Exception error)
+            {
+                AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
             }
         }
 
@@ -359,16 +387,16 @@ namespace AI_Assistant_Win.Controls
                         }
                         else
                         {
-                            tempBlacknessResult.Id = result;
-                            originalBlacknessResult = (BlacknessResult)tempBlacknessResult.Clone();
-                            btn.Enabled = false;
                             AntdUI.Notification.success(form, "成功", "保存成功！", AntdUI.TAlignFrom.BR, Font);
+                            EDIT_ITEM_ID = result.ToString();
+                            _ = InitializeAsync();
+                            btn.Enabled = false;
+                            MainWindow.SOMETHING_IS_UNDONE = false;
                             return;
                         }
                     }
                     catch (Exception error)
                     {
-
                         AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
                         return;
                     }
@@ -436,6 +464,62 @@ namespace AI_Assistant_Win.Controls
         private void InputSize_TextChanged(object sender, EventArgs e)
         {
             tempBlacknessResult.Size = inputSize.Text;
+        }
+
+        private void BtnClear_Click(object sender, EventArgs e)
+        {
+            EDIT_ITEM_ID = string.Empty;
+            _ = InitializeAsync();
+        }
+
+        private void BtnHistory_Click(object sender, EventArgs e)
+        {
+            if (AntdUI.Modal.open(form, "请确认", "是否跳转至历史记录界面？") == DialogResult.OK)
+            {
+                try
+                {
+                    form.OpenPage("Historical Record Of V60 Blackness Method");
+                }
+                catch (Exception error)
+                {
+                    AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                }
+            }
+        }
+
+        private void BtnPre_Click(object sender, EventArgs e)
+        {
+            var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
+            if (index != 0)
+            {
+                EDIT_ITEM_ID = (sortedIDs[index - 1]).ToString();
+                _ = InitializeAsync();
+            }
+        }
+
+        private void BtnNext_Click(object sender, EventArgs e)
+        {
+            var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
+            if (index != sortedIDs.Count)
+            {
+                EDIT_ITEM_ID = (sortedIDs[index + 1]).ToString();
+                _ = InitializeAsync();
+            }
+        }
+
+        private void BtnPrint_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                AntdUI.Drawer.open(form, new BlacknessReport(form, EDIT_ITEM_ID)
+                {
+                    Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
+                }, AntdUI.TAlignMini.Right);
+            }
+            catch (Exception error)
+            {
+                AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+            }
         }
     }
 }

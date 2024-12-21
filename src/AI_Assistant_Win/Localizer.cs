@@ -80,7 +80,7 @@ namespace AI_Assistant_Win
                 case "BlacknessHistory.Text":
                     return "The Historical Record Of V60 Blackness Method On GA Sheet";
                 case "BlacknessHistory.Description":
-                    return "This method is applicable to the blackness rating of adhesive tape after the V60 test for the adhesion test of zinc coating on GA plates.";
+                    return "Display the history of blackness method, supporting operations such as search, edit, delete, preview, print, export, and upload. Note: The query time cannot be manually modified. If you need to clear it, please click the reset button on the right.";
 
                 //Alert ----------------------------
                 case "Alert.Text":

@@ -14,16 +14,34 @@ namespace AI_Assistant_Win.Controls
 
         private readonly BlacknessMethodBLL blacknessMethodBLL;
 
+        private DateTime? startDate = null;
+
+        private DateTime? endDate = null;
         public BlacknessHistory(Form _form)
         {
             form = _form;
             blacknessMethodBLL = new BlacknessMethodBLL();
             InitializeComponent();
+            InitializeSearch();
+            InitializeTable();
+        }
+
+        private void InitializeSearch()
+        {
+            inputRangeDate.MaxDate = DateTime.Now;
+            if (!string.IsNullOrEmpty(BlacknessMethod.EDIT_ITEM_ID))
+            {
+                inputSearch.Text = BlacknessMethod.EDIT_ITEM_ID;
+            }
+        }
+
+        private void InitializeTable()
+        {
             // table_Blackness_History.EditMode = AntdUI.TEditMode.DoubleClick;
             pagination1.PageSizeOptions = [10, 20, 30, 50, 100];
             selectMultiple_Table_Setting.SelectedValue = ["显示表头", "固定表头"];
             #region table header
-            table_Blackness_History.Columns = new AntdUI.ColumnCollection {
+            table_Blackness_History.Columns = [
                 new AntdUI.ColumnCheck("check"){ Fixed = true },
                 new AntdUI.Column("id","编号", AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("coilNumber","钢卷号", AntdUI.ColumnAlign.Center){ Fixed = true },
@@ -43,17 +61,19 @@ namespace AI_Assistant_Win.Controls
                 new AntdUI.Column("lastModifiedTime","最后修改时间",AntdUI.ColumnAlign.Center),
                 // new AntdUI.Column("address","地址"){ Width="120", LineBreak=true},
                 new AntdUI.Column("btns","操作"){ Fixed=true, Width="auto"},
-            };
+            ];
             #endregion
             #region 数据
-            var pagedList = GetPageData(pagination1.Current, pagination1.PageSize);
-            table_Blackness_History.DataSource = pagedList;
+            LoadData(pagination1.Current);  // 1
             #endregion
-
         }
 
+        private void LoadData(int current)
+        {
+            var pagedList = GetPageData(current, pagination1.PageSize);
+            table_Blackness_History.DataSource = pagedList;
+        }
         #region 单元格事件
-
         void Table1_CellClick(object sender, AntdUI.TableClickEventArgs e)
         {
             // if enable dragging column, columnIndex will change. but e only have the attribute: columnIndex, so must disable it.:)
@@ -66,7 +86,6 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
-
         void Table1_CellButtonClick(object sender, AntdUI.TableButtonEventArgs e)
         {
             if (e.Record is IList<AntdUI.AntItem> data)
@@ -106,7 +125,7 @@ namespace AI_Assistant_Win.Controls
                         break;
                     default:
                         // TODO: uploaded
-                        if (AntdUI.Modal.open(form, "请确认", "是否修改本次黑度检测结果？") == DialogResult.OK)
+                        if (AntdUI.Modal.open(form, "请确认", "是否对本次黑度检测结果进行修改？") == DialogResult.OK)
                         {
                             try
                             {
@@ -124,14 +143,12 @@ namespace AI_Assistant_Win.Controls
 
             }
         }
-
         #endregion
-
         #region 获取页面数据
-
         List<AntdUI.AntItem[]> GetPageData(int current, int pageSize)
         {
-            var dbList = blacknessMethodBLL.GetResultListFromDB();
+            // startDate endDate keywords
+            var dbList = blacknessMethodBLL.GetResultListByConditions(startDate, endDate, inputSearch.Text);
             pagination1.Total = dbList.Count;
             // lower memory coss
             var pagedList = dbList.Skip(pageSize * Math.Abs(current - 1)).Take(pageSize).ToList();
@@ -141,26 +158,26 @@ namespace AI_Assistant_Win.Controls
                 // single row
                 var columnsInOneRow = new List<AntdUI.AntItem>
                 {
-                    new AntdUI.AntItem("check", false),
-                    new AntdUI.AntItem("id", t.Id),
-                    new AntdUI.AntItem("coilNumber", t.CoilNumber),
-                    new AntdUI.AntItem("size", t.Size),
-                    new AntdUI.AntItem("isOK", t.IsOK ? new AntdUI.CellBadge(AntdUI.TState.Success, "OK") :
+                    new("check", false),
+                    new("id", t.Id),
+                    new("coilNumber", t.CoilNumber),
+                    new("size", t.Size),
+                    new("isOK", t.IsOK ? new AntdUI.CellBadge(AntdUI.TState.Success, "OK") :
                     new AntdUI.CellBadge(AntdUI.TState.Error, "NG")),
-                    new AntdUI.AntItem("isUploaded", t.IsUploaded),
-                    new AntdUI.AntItem("levels", FormatCellTagList(t).ToArray()),
-                    new AntdUI.AntItem("analyst", t.Analyst),
-                    new AntdUI.AntItem("workGroup", t.WorkGroup),
-                    new AntdUI.AntItem("createTime", t.CreateTime),
-                    new AntdUI.AntItem("uploader", t.Uploader),
-                    new AntdUI.AntItem("uploadTime", t.UploadTime),
-                    new AntdUI.AntItem("lastReviser", t.LastReviser),
-                    new AntdUI.AntItem("lastModifiedTime", t.LastModifiedTime),
+                    new("isUploaded", t.IsUploaded),
+                    new("levels", FormatCellTagList(t).ToArray()),
+                    new("analyst", t.Analyst),
+                    new("workGroup", t.WorkGroup),
+                    new("createTime", t.CreateTime),
+                    new("uploader", t.Uploader),
+                    new("uploadTime", t.UploadTime),
+                    new("lastReviser", t.LastReviser),
+                    new("lastModifiedTime", t.LastModifiedTime),
                     // for preview
-                    new AntdUI.AntItem("originImage", t.OriginImagePath),
-                    new AntdUI.AntItem("renderImage", t.RenderImagePath),
+                    new("originImage", t.OriginImagePath),
+                    new("renderImage", t.RenderImagePath),
                     // for levels cell click
-                    new AntdUI.AntItem("levelDetail", FormatLevelDetail(t)),
+                    new("levelDetail", FormatLevelDetail(t)),
 
                 };
                 // 预览、报告(导出/打印)、修改、删除
@@ -247,7 +264,6 @@ namespace AI_Assistant_Win.Controls
             CheckEnableHeaderResizing_CheckedChanged(null, new AntdUI.BoolEventArgs(enableHeaderResizing));
             var columnDragSort = e.Value.Any(t => "列拖拽".Equals(t.ToString()));
             CheckColumnDragSort_CheckedChanged(null, new AntdUI.BoolEventArgs(columnDragSort));
-            return;
         }
         void CheckVisibleHeader_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
         {
@@ -294,5 +310,39 @@ namespace AI_Assistant_Win.Controls
             table_Blackness_History.ColumnDragSort = e.Value;
         }
         #endregion
+
+        private void InputRangeDate_ValueChanged(object sender, AntdUI.DateTimesEventArgs e)
+        {
+            startDate = e.Value[0];
+            endDate = e.Value[1];
+            BtnSearch_Click(null, null);
+        }
+
+        private void BtnReload_Click(object sender, EventArgs e)
+        {
+            inputRangeDate.Clear();
+            startDate = null;
+            endDate = null;
+            BtnSearch_Click(null, null);
+        }
+
+        private void InputSearch_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                // 这里处理Enter键被按下的情况
+                // MessageBox.Show("Enter键被按下！");
+                BtnSearch_Click(null, null);
+                // 如果你想阻止Enter键的默认行为（例如，发出“叮”声或移动焦点），可以调用e.SuppressKeyPress()
+                // 但通常对于TextBox，你可能不希望阻止它，因为用户可能期望焦点移动到下一个控件
+                // 如果你确实想阻止默认行为，请取消注释以下行：
+                // e.SuppressKeyPress();
+            }
+        }
+
+        private void BtnSearch_Click(object sender, EventArgs e)
+        {
+            LoadData(1);
+        }
     }
 }

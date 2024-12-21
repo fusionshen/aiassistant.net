@@ -20,10 +20,41 @@ namespace AI_Assistant_Win.Business
             connection = SQLiteHandler.Instance.GetSQLiteConnection();
         }
 
-        public List<BlacknessMethodResult> GetResultListFromDB()
+        public List<BlacknessMethodResult> GetResultListByConditions(DateTime? startDate, DateTime? endDate, string text)
         {
-            var query = connection.Table<BlacknessMethodResult>().ToList();
-            return query;
+            var all = connection.Table<BlacknessMethodResult>().ToList();
+            var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
+            var sorted = filtered.OrderByDescending(t => t.CreateTime).ToList();
+            return sorted;
+        }
+
+        private bool Filter(BlacknessMethodResult t, DateTime? startDate, DateTime? endDate, string text)
+        {
+            var result = true;
+            if (startDate != null)
+            {
+                result = result && t.CreateTime != null && t.CreateTime >= startDate;
+            }
+            if (endDate != null)
+            {
+                result = result && t.CreateTime != null && t.CreateTime <= endDate;
+            }
+            if (!string.IsNullOrEmpty(text))
+            {
+                result = result && (t.Id.ToString().Equals(text) ||
+                    (!string.IsNullOrEmpty(t.CoilNumber) && t.CoilNumber.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.Size) && t.Size.Contains(text)) ||
+                    (t.IsOK && text.Contains("OK", StringComparison.CurrentCultureIgnoreCase)) ||
+                    (!t.IsOK && text.Contains("NG", StringComparison.CurrentCultureIgnoreCase)) ||
+                    (t.IsUploaded && text.Equals("已上传")) ||
+                    (!t.IsUploaded && text.Equals("未上传")) ||
+                    (!string.IsNullOrEmpty(t.Uploader) && t.Uploader.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.WorkGroup) && t.WorkGroup.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.Analyst) && t.Analyst.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.LastReviser) && t.LastReviser.Contains(text))
+                    );
+            }
+            return result;
         }
 
         public BlacknessMethodResult GetResultById(string id)
@@ -32,7 +63,7 @@ namespace AI_Assistant_Win.Business
             {
                 throw new ArgumentNullException("blacknesss method item id is none!");
             }
-            // if t.Id.ToString()Equals(id), will throw not function toString(), funny!
+            // if t.Id.ToString().Equals(id), will throw not function toString(), funny!
             var item = connection.Table<BlacknessMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
             return item;
         }
@@ -174,14 +205,32 @@ namespace AI_Assistant_Win.Business
             }
         }
 
-        public void LoadOriginalResultFromDB(BlacknessResult originalBlacknessResult, string id)
+        public List<int> LoadOriginalResultFromDB(BlacknessResult originalBlacknessResult, string id)
         {
-            var body = GetResultById(id);
+            if (string.IsNullOrEmpty(id))
+            {
+                originalBlacknessResult.Id = 0;
+                originalBlacknessResult.CoilNumber = string.Empty;
+                originalBlacknessResult.Size = string.Empty;
+                originalBlacknessResult.OriginImagePath = string.Empty;
+                originalBlacknessResult.RenderImagePath = string.Empty;
+                originalBlacknessResult.WorkGroup = string.Empty;
+                originalBlacknessResult.Analyst = string.Empty;
+                originalBlacknessResult.Items = [];
+                return [];
+            }
+            var allSorted = connection.Table<BlacknessMethodResult>().OrderBy(t => t.Id).ToList();
+            // if t.Id.Equals(id), will find null, double funny!!!
+            var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"编号{id}没有主体数据，请联系管理员");
             var items = connection.Table<BlacknessMethodItem>()
                 .Where(t => t.ResultId.Equals(id))
                 .Select(t => new Blackness(t.Location, JsonSerializer.Deserialize<Prediction>(t.Prediction)))
                 .OrderBy(t => t.Location)
                 .ToList();
+            if (items == null || items.Count == 0)
+            {
+                throw new Exception($"编号{id}没有明细数据，请联系管理员");
+            }
             originalBlacknessResult.Id = body.Id;
             originalBlacknessResult.CoilNumber = body.CoilNumber;
             originalBlacknessResult.Size = body.Size;
@@ -190,6 +239,7 @@ namespace AI_Assistant_Win.Business
             originalBlacknessResult.WorkGroup = body.WorkGroup;
             originalBlacknessResult.Analyst = body.Analyst;
             originalBlacknessResult.Items = items;
+            return allSorted.Select(t => t.Id).ToList();
         }
     }
 }

@@ -144,6 +144,7 @@ namespace AI_Assistant_Win
             colorTheme.Size = new Size(40, 40);
             colorTheme.TabIndex = 8;
             colorTheme.Value = Color.FromArgb(22, 119, 255);
+            colorTheme.Visible = false;
             // 
             // MainWindow
             // 

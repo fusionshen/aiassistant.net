@@ -51,6 +51,12 @@ namespace AI_Assistant_Win.Controls
             panel6 = new AntdUI.Panel();
             label12 = new Label();
             panel17 = new AntdUI.Panel();
+            btnNext = new AntdUI.Button();
+            btnUpload = new AntdUI.Button();
+            btnPrint = new AntdUI.Button();
+            btnPre = new AntdUI.Button();
+            btnHistory = new AntdUI.Button();
+            btnClear = new AntdUI.Button();
             btnSave = new AntdUI.Button();
             panel16 = new AntdUI.Panel();
             inputSize = new AntdUI.Input();
@@ -187,7 +193,7 @@ namespace AI_Assistant_Win.Controls
             btnPredict.Size = new Size(73, 40);
             btnPredict.TabIndex = 0;
             btnPredict.Text = "识别";
-            btnPredict.Type = AntdUI.TTypeMini.Primary;
+            btnPredict.Type = AntdUI.TTypeMini.Error;
             btnPredict.Click += BtnPredict_Click;
             // 
             // blacknessMethod_RenderImage_Zone
@@ -268,7 +274,7 @@ namespace AI_Assistant_Win.Controls
             btnCameraRecover.Size = new Size(119, 40);
             btnCameraRecover.TabIndex = 3;
             btnCameraRecover.Text = "恢复拍摄";
-            btnCameraRecover.Type = AntdUI.TTypeMini.Primary;
+            btnCameraRecover.Type = AntdUI.TTypeMini.Success;
             btnCameraRecover.Click += BtnCameraRecover_Click;
             // 
             // btnCameraSetting
@@ -280,7 +286,6 @@ namespace AI_Assistant_Win.Controls
             btnCameraSetting.Shape = AntdUI.TShape.Circle;
             btnCameraSetting.Size = new Size(40, 40);
             btnCameraSetting.TabIndex = 2;
-            btnCameraSetting.Type = AntdUI.TTypeMini.Primary;
             btnCameraSetting.Click += BtnCameraSetting_Click;
             // 
             // btnCameraCapture
@@ -294,7 +299,7 @@ namespace AI_Assistant_Win.Controls
             btnCameraCapture.Size = new Size(119, 40);
             btnCameraCapture.TabIndex = 1;
             btnCameraCapture.Text = "拍摄相片";
-            btnCameraCapture.Type = AntdUI.TTypeMini.Primary;
+            btnCameraCapture.Type = AntdUI.TTypeMini.Warn;
             btnCameraCapture.Click += BtnCameraCapture_Click;
             // 
             // btnUploadImage
@@ -381,6 +386,12 @@ namespace AI_Assistant_Win.Controls
             // 
             panel17.Back = Color.Transparent;
             panel17.BackColor = Color.Transparent;
+            panel17.Controls.Add(btnNext);
+            panel17.Controls.Add(btnUpload);
+            panel17.Controls.Add(btnPrint);
+            panel17.Controls.Add(btnPre);
+            panel17.Controls.Add(btnHistory);
+            panel17.Controls.Add(btnClear);
             panel17.Controls.Add(btnSave);
             panel17.Dock = DockStyle.Bottom;
             panel17.Location = new Point(9, 535);
@@ -388,6 +399,84 @@ namespace AI_Assistant_Win.Controls
             panel17.Radius = 0;
             panel17.Size = new Size(342, 40);
             panel17.TabIndex = 26;
+            // 
+            // btnNext
+            // 
+            btnNext.Dock = DockStyle.Left;
+            btnNext.Enabled = false;
+            btnNext.IconSvg = "ArrowRightOutlined";
+            btnNext.LoadingWaveVertical = true;
+            btnNext.Location = new Point(200, 0);
+            btnNext.Name = "btnNext";
+            btnNext.Shape = AntdUI.TShape.Circle;
+            btnNext.Size = new Size(40, 40);
+            btnNext.TabIndex = 8;
+            btnNext.Visible = false;
+            btnNext.Click += BtnNext_Click;
+            // 
+            // btnUpload
+            // 
+            btnUpload.Dock = DockStyle.Left;
+            btnUpload.Enabled = false;
+            btnUpload.IconSvg = "CloudUploadOutlined";
+            btnUpload.LoadingWaveVertical = true;
+            btnUpload.Location = new Point(160, 0);
+            btnUpload.Name = "btnUpload";
+            btnUpload.Shape = AntdUI.TShape.Circle;
+            btnUpload.Size = new Size(40, 40);
+            btnUpload.TabIndex = 7;
+            btnUpload.Visible = false;
+            // 
+            // btnPrint
+            // 
+            btnPrint.Dock = DockStyle.Left;
+            btnPrint.IconSvg = "PrinterOutlined";
+            btnPrint.LoadingWaveVertical = true;
+            btnPrint.Location = new Point(120, 0);
+            btnPrint.Name = "btnPrint";
+            btnPrint.Shape = AntdUI.TShape.Circle;
+            btnPrint.Size = new Size(40, 40);
+            btnPrint.TabIndex = 6;
+            btnPrint.Visible = false;
+            btnPrint.Click += BtnPrint_Click;
+            // 
+            // btnPre
+            // 
+            btnPre.Dock = DockStyle.Left;
+            btnPre.Enabled = false;
+            btnPre.IconSvg = "ArrowLeftOutlined";
+            btnPre.LoadingWaveVertical = true;
+            btnPre.Location = new Point(80, 0);
+            btnPre.Name = "btnPre";
+            btnPre.Shape = AntdUI.TShape.Circle;
+            btnPre.Size = new Size(40, 40);
+            btnPre.TabIndex = 5;
+            btnPre.Visible = false;
+            btnPre.Click += BtnPre_Click;
+            // 
+            // btnHistory
+            // 
+            btnHistory.Dock = DockStyle.Left;
+            btnHistory.IconSvg = "OrderedListOutlined";
+            btnHistory.LoadingWaveVertical = true;
+            btnHistory.Location = new Point(40, 0);
+            btnHistory.Name = "btnHistory";
+            btnHistory.Shape = AntdUI.TShape.Circle;
+            btnHistory.Size = new Size(40, 40);
+            btnHistory.TabIndex = 4;
+            btnHistory.Click += BtnHistory_Click;
+            // 
+            // btnClear
+            // 
+            btnClear.Dock = DockStyle.Left;
+            btnClear.IconSvg = "ClearOutlined";
+            btnClear.LoadingWaveVertical = true;
+            btnClear.Location = new Point(0, 0);
+            btnClear.Name = "btnClear";
+            btnClear.Shape = AntdUI.TShape.Circle;
+            btnClear.Size = new Size(40, 40);
+            btnClear.TabIndex = 3;
+            btnClear.Click += BtnClear_Click;
             // 
             // btnSave
             // 
@@ -400,7 +489,7 @@ namespace AI_Assistant_Win.Controls
             btnSave.Size = new Size(73, 40);
             btnSave.TabIndex = 0;
             btnSave.Text = "保存";
-            btnSave.Type = AntdUI.TTypeMini.Primary;
+            btnSave.Type = AntdUI.TTypeMini.Error;
             btnSave.Click += BtnSave_Click;
             // 
             // panel16
@@ -923,5 +1012,13 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Select selectAnalyst;
         private AntdUI.Button btnCameraSetting;
         private AntdUI.Button btnCameraRecover;
+        private AntdUI.Button btnClear;
+        private AntdUI.Button button1;
+        private AntdUI.Button btn;
+        private AntdUI.Button btnHistory;
+        private AntdUI.Button btnPre;
+        private AntdUI.Button btnNext;
+        private AntdUI.Button btnPrint;
+        private AntdUI.Button btnUpload;
     }
 }

@@ -34,11 +34,12 @@ namespace AI_Assistant_Win.Controls
             header1 = new AntdUI.PageHeader();
             pagination1 = new AntdUI.Pagination();
             panel1 = new AntdUI.Panel();
+            btnReload = new AntdUI.Button();
             selectMultiple_Table_Setting = new AntdUI.SelectMultiple();
             panel6 = new System.Windows.Forms.Panel();
-            input9 = new AntdUI.Input();
-            button2 = new AntdUI.Button();
-            inputRange1 = new AntdUI.DatePickerRange();
+            inputSearch = new AntdUI.Input();
+            btnSearch = new AntdUI.Button();
+            inputRangeDate = new AntdUI.DatePickerRange();
             table_Blackness_History = new AntdUI.Table();
             panel1.SuspendLayout();
             panel6.SuspendLayout();
@@ -46,7 +47,7 @@ namespace AI_Assistant_Win.Controls
             // 
             // header1
             // 
-            header1.Description = "展示行列数据。";
+            header1.Description = "展示黑度检测历史记录，支持搜索、修改、删除、预览、打印、导出、上传等操作。注意：无法在文本框中修改查询时间，如需清空请点击右侧重置按钮。";
             header1.Dock = DockStyle.Top;
             header1.Font = new Font("Microsoft YaHei UI", 12F);
             header1.LocalizationDescription = "BlacknessHistory.Description";
@@ -75,9 +76,10 @@ namespace AI_Assistant_Win.Controls
             // 
             // panel1
             // 
+            panel1.Controls.Add(btnReload);
             panel1.Controls.Add(selectMultiple_Table_Setting);
             panel1.Controls.Add(panel6);
-            panel1.Controls.Add(inputRange1);
+            panel1.Controls.Add(inputRangeDate);
             panel1.Dock = DockStyle.Top;
             panel1.Font = new Font("Microsoft YaHei UI", 12F);
             panel1.Location = new Point(0, 74);
@@ -86,6 +88,17 @@ namespace AI_Assistant_Win.Controls
             panel1.Size = new Size(1300, 43);
             panel1.TabIndex = 1;
             panel1.Text = "panel1";
+            // 
+            // btnReload
+            // 
+            btnReload.IconSvg = "ReloadOutlined";
+            btnReload.LoadingWaveVertical = true;
+            btnReload.Location = new Point(1042, 0);
+            btnReload.Name = "btnReload";
+            btnReload.Shape = AntdUI.TShape.Circle;
+            btnReload.Size = new Size(40, 40);
+            btnReload.TabIndex = 28;
+            btnReload.Click += BtnReload_Click;
             // 
             // selectMultiple_Table_Setting
             // 
@@ -100,46 +113,51 @@ namespace AI_Assistant_Win.Controls
             // 
             // panel6
             // 
-            panel6.Controls.Add(input9);
-            panel6.Controls.Add(button2);
+            panel6.Controls.Add(inputSearch);
+            panel6.Controls.Add(btnSearch);
             panel6.Location = new Point(1080, -2);
             panel6.Name = "panel6";
             panel6.Size = new Size(220, 46);
             panel6.TabIndex = 26;
             panel6.Text = "panel4";
             // 
-            // input9
+            // inputSearch
             // 
-            input9.Dock = DockStyle.Fill;
-            input9.JoinRight = true;
-            input9.LocalizationPlaceholderText = "Input.{id}";
-            input9.Location = new Point(0, 0);
-            input9.Name = "input9";
-            input9.PlaceholderText = "输入点什么搜索";
-            input9.Size = new Size(170, 46);
-            input9.TabIndex = 0;
+            inputSearch.Dock = DockStyle.Fill;
+            inputSearch.JoinRight = true;
+            inputSearch.LocalizationPlaceholderText = "Input.{id}";
+            inputSearch.Location = new Point(0, 0);
+            inputSearch.Name = "inputSearch";
+            inputSearch.PlaceholderText = "输入点什么搜索";
+            inputSearch.Radius = 3;
+            inputSearch.RightToLeft = RightToLeft.No;
+            inputSearch.Size = new Size(170, 46);
+            inputSearch.TabIndex = 0;
+            inputSearch.KeyDown += InputSearch_KeyDown;
             // 
-            // button2
+            // btnSearch
             // 
-            button2.Dock = DockStyle.Right;
-            button2.IconSvg = "SearchOutlined";
-            button2.JoinLeft = true;
-            button2.Location = new Point(170, 0);
-            button2.Name = "button2";
-            button2.Size = new Size(50, 46);
-            button2.TabIndex = 1;
-            button2.Type = AntdUI.TTypeMini.Primary;
+            btnSearch.Dock = DockStyle.Right;
+            btnSearch.IconSvg = "SearchOutlined";
+            btnSearch.JoinLeft = true;
+            btnSearch.Location = new Point(170, 0);
+            btnSearch.Name = "btnSearch";
+            btnSearch.Shape = AntdUI.TShape.Circle;
+            btnSearch.Size = new Size(50, 46);
+            btnSearch.TabIndex = 1;
+            btnSearch.Click += BtnSearch_Click;
             // 
-            // inputRange1
+            // inputRangeDate
             // 
-            inputRange1.LocalizationPlaceholderEnd = "DatePicker.PlaceholderE";
-            inputRange1.LocalizationPlaceholderStart = "DatePicker.PlaceholderS";
-            inputRange1.Location = new Point(777, -1);
-            inputRange1.Name = "inputRange1";
-            inputRange1.PlaceholderEnd = "结束时间";
-            inputRange1.PlaceholderStart = "开始时间";
-            inputRange1.Size = new Size(300, 46);
-            inputRange1.TabIndex = 25;
+            inputRangeDate.LocalizationPlaceholderEnd = "DatePicker.PlaceholderE";
+            inputRangeDate.LocalizationPlaceholderStart = "DatePicker.PlaceholderS";
+            inputRangeDate.Location = new Point(741, -1);
+            inputRangeDate.Name = "inputRangeDate";
+            inputRangeDate.PlaceholderEnd = "结束时间";
+            inputRangeDate.PlaceholderStart = "开始时间";
+            inputRangeDate.Size = new Size(300, 46);
+            inputRangeDate.TabIndex = 25;
+            inputRangeDate.ValueChanged += InputRangeDate_ValueChanged;
             // 
             // table_Blackness_History
             // 
@@ -172,10 +190,12 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Pagination pagination1;
         private AntdUI.Panel panel1;
         private AntdUI.Table table_Blackness_History;
-        private AntdUI.DatePickerRange inputRange1;
+        private AntdUI.DatePickerRange inputRangeDate;
         private System.Windows.Forms.Panel panel6;
-        private AntdUI.Input input9;
-        private AntdUI.Button button2;
+        private AntdUI.Input inputSearch;
+        private AntdUI.Button btnSearch;
         private AntdUI.SelectMultiple selectMultiple_Table_Setting;
+        private AntdUI.Button btnClear;
+        private AntdUI.Button btnReload;
     }
 }

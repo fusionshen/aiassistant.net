@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AI_Assistant_Win.Models.Middle
 {
-    public class BlacknessResult : INotifyPropertyChanged, ICloneable
+    public class BlacknessResult : INotifyPropertyChanged
     {
         private int _id = 0;
         public int Id
@@ -13,7 +13,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _id; }
             set
             {
-                if (_id != value)
+                if (!_id.Equals(value))
                 {
                     _id = value;
                     OnPropertyChanged(nameof(Id));
@@ -27,7 +27,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _coilNumber; }
             set
             {
-                if (_coilNumber != value)
+                if (!_coilNumber.Equals(value))
                 {
                     _coilNumber = value;
                     OnPropertyChanged(nameof(CoilNumber));
@@ -41,7 +41,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _size; }
             set
             {
-                if (value != _size)
+                if (!_size.Equals(value))
                 {
                     _size = value;
                     OnPropertyChanged(nameof(Size));
@@ -82,7 +82,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _workGroup; }
             set
             {
-                if (!string.IsNullOrEmpty(value))
+                if (!_workGroup.Equals(value))
                 {
                     _workGroup = value;
                     OnPropertyChanged(nameof(WorkGroup));
@@ -96,7 +96,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _analyst; }
             set
             {
-                if (_analyst != value)
+                if (!_analyst.Equals(value))
                 {
                     _analyst = value;
                     OnPropertyChanged(nameof(Analyst));
@@ -146,28 +146,6 @@ namespace AI_Assistant_Win.Models.Middle
         public override int GetHashCode()
         {
             return (Id * 397) ^ (Items != null ? Items.GetHashCode() : 0); // 根据你的字段定义哈希码计算逻辑
-        }
-
-        public object Clone()
-        {
-            return new BlacknessResult(this); // 调用上面的手动复制构造函数
-        }
-
-        public BlacknessResult()
-        {
-
-        }
-
-        public BlacknessResult(BlacknessResult other)
-        {
-            this.Id = other.Id;
-            this.CoilNumber = other.CoilNumber;
-            this.Size = other.Size;
-            this.OriginImagePath = other.OriginImagePath;
-            this.RenderImagePath = other.RenderImagePath;
-            this.WorkGroup = other.WorkGroup;
-            this.Analyst = other.Analyst;
-            this.Items = other.Items;
         }
     }
 }
