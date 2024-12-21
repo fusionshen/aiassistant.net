@@ -13,21 +13,10 @@ using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Business
 {
-    /// <summary>
-    /// TODO: reconnect
-    /// </summary>
-    public class CameraBLL : INotifyPropertyChanged
+    public class CameraBLL(string application, nint imageHandle) : INotifyPropertyChanged
     {
-        private readonly string _application;
-        private readonly nint _imageHandle;
-        public CameraBLL(string application, nint imageHandle)
-        {
-            _application = application;
-            _imageHandle = imageHandle;
-            SDKSystem.Initialize();
-            connection = SQLiteHandler.Instance.GetSQLiteConnection();
-        }
-
+        private readonly string _application = application;
+        private readonly nint _imageHandle = imageHandle;
         CameraBinding binding = null;
         IDevice device = null;
 
@@ -38,6 +27,7 @@ namespace AI_Assistant_Win.Business
         List<IDeviceInfo> deviceInfoList = [];
 
         Thread receiveThread = null;    // ch:接收图像线程 | en: Receive image thread
+        Thread reconnectThread = null;  
         private bool IsOpen { get; set; } = false;
         // ch:是否正在取图 | en: Grabbing flag
         private bool isGrabbing = false;
@@ -60,10 +50,9 @@ namespace AI_Assistant_Win.Business
 
         private readonly object saveImageLock = new();
 
-        private readonly SQLiteConnection connection;
+        private readonly SQLiteConnection connection = SQLiteHandler.Instance.GetSQLiteConnection();
 
         public event PropertyChangedEventHandler PropertyChanged;
-
 
         protected virtual void OnPropertyChanged(string propertyName)
         {
@@ -89,7 +78,7 @@ namespace AI_Assistant_Win.Business
                 return "NoCameraOpen";
             }
             var deviceIndex = deviceInfoList.FindIndex(t => t.SerialNumber.Equals(binding.SerialNumber));
-            // open camera
+            // open camera TODO: maybe there are exceptions
             OpenDevice(deviceIndex);
             if (binding.IsGrabbing)
             {
@@ -129,12 +118,92 @@ namespace AI_Assistant_Win.Business
             return deviceInfoList;
         }
 
+        private bool isExited = false;
+
+        private bool isConnected = false;
+
+        public bool IsConnected
+        {
+            get { return isConnected; }
+            set
+            {
+                if (isConnected != value)
+                {
+                    isConnected = value;
+                    OnPropertyChanged(nameof(IsConnected));
+                }
+            }
+        }
+
+        private int cameraIndex;
+
         public void OpenDevice(int selectedIndex)
+        {
+            cameraIndex = selectedIndex;
+            OpenCameraReally();
+            reconnectThread = new Thread(ReconnectProcess);
+            reconnectThread.Start();
+        }
+
+        private void ReconnectProcess()
+        {
+            while (true)
+            {
+                if (isConnected)
+                {
+                    Thread.Sleep(1);
+                    continue;
+                }
+
+                if (isExited)
+                {
+                    break;
+                }
+
+                if (device != null)
+                {
+                    device.StreamGrabber.StopGrabbing();
+                    device.Close();
+                    device.Dispose();
+                    device = null;
+                }
+                // open camera continuously
+                try
+                {
+                    OpenCameraReally();
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+                if (IsGrabbing)
+                {
+                    // start grabbing
+                    StartGrabbing();
+                    if (IsTriggerMode)
+                    {
+                        // set software trigger
+                        device.Parameters.SetEnumValueByString("TriggerMode", "On");
+                        // ch:触发源设为软触发 | en:Set trigger source as Software
+                        device.Parameters.SetEnumValueByString("TriggerSource", "Software");
+                    }
+                    else
+                    {
+                        // set continuous  mode
+                        // ch:设置采集连续模式 | en:Set Continues Aquisition Mode
+                        device.Parameters.SetEnumValueByString("AcquisitionMode", "Continuous");
+                        device.Parameters.SetEnumValueByString("TriggerMode", "Off");
+                    }
+                }
+            }
+        }
+
+        private void OpenCameraReally()
         {
             try
             {
                 // ch:获取选择的设备信息 | en:Get selected device information
-                IDeviceInfo deviceInfo = deviceInfoList[selectedIndex];
+                IDeviceInfo deviceInfo = deviceInfoList[cameraIndex];
                 // ch:打开设备 | en:Open device
                 device = DeviceFactory.CreateDevice(deviceInfo);
             }
@@ -142,7 +211,6 @@ namespace AI_Assistant_Win.Business
             {
                 throw new CameraSDKException("Create Device fail!" + ex.Message);
             }
-
             int result = device.Open();
             if (result != MvError.MV_OK)
             {
@@ -175,7 +243,20 @@ namespace AI_Assistant_Win.Business
             device.Parameters.SetEnumValueByString("AcquisitionMode", "Continuous");
             device.Parameters.SetEnumValueByString("TriggerMode", "Off");
             IsOpen = true;
+            IsConnected = true;
+            device.DeviceExceptionEvent += ExceptionEventHandler;
         }
+
+        void ExceptionEventHandler(object sender, DeviceExceptionArgs e)
+        {
+            // will call after 60 secs 
+            if (e.MsgType == DeviceExceptionType.DisConnect)
+            {
+                Console.WriteLine("Device disconnect!");
+                IsConnected = false;
+            }
+        }
+
         public IDevice GetDevice()
         {
             return device;
@@ -187,7 +268,6 @@ namespace AI_Assistant_Win.Business
             {
                 // ch:标志位置位true | en:Set position bit true
                 IsGrabbing = true;
-
                 receiveThread = new Thread(ReceiveThreadProcess);
                 receiveThread.Start();
             }
@@ -216,9 +296,11 @@ namespace AI_Assistant_Win.Business
 
             while (IsGrabbing)
             {
-                IFrameOut frameOut;
-
-                nRet = device.StreamGrabber.GetImageBuffer(1000, out frameOut);
+                if (!isConnected)
+                {
+                    break;
+                }
+                nRet = device.StreamGrabber.GetImageBuffer(1000, out IFrameOut frameOut);
                 if (MvError.MV_OK == nRet)
                 {
                     if (IsRecording)
@@ -299,6 +381,9 @@ namespace AI_Assistant_Win.Business
 
         public void CloseDevice()
         {
+            isConnected = false;
+            isExited = true;
+            reconnectThread?.Join();
             if (device != null)
             {
                 device.Close();

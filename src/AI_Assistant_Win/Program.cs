@@ -1,4 +1,5 @@
 using AI_Assistant_Win.Utils;
+using MvCameraControl;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -15,6 +16,7 @@ namespace AI_Assistant_Win
         [STAThread]
         static void Main(string[] arge)
         {
+            SDKSystem.Initialize();
             ComWrappers.RegisterForMarshalling(WinFormsComInterop.WinFormsComWrappers.Instance);
             var command = string.Join(" ", arge);
             AntdUI.Localization.DefaultLanguage = "zh-CN";
@@ -83,6 +85,7 @@ namespace AI_Assistant_Win
         private static void OnApplicationExit(object sender, EventArgs e)
         {
             CameraHelper.CAMERA_DEVICES.ForEach(t => t.CloseDevice());
+            SDKSystem.Finalize();
         }
     }
 }

@@ -202,6 +202,19 @@ namespace AI_Assistant_Win.Controls
                 btnCameraRecover.Enabled = !cameraBLL.IsGrabbing;
                 btnCameraCapture.Enabled = cameraBLL.IsGrabbing;
             }
+            else if (e.PropertyName == "IsConnected")
+            {
+                btnCameraRecover.Enabled = cameraBLL.IsConnected && !cameraBLL.IsGrabbing;
+                btnCameraCapture.Enabled = cameraBLL.IsConnected && cameraBLL.IsGrabbing;
+                if (cameraBLL.IsConnected)
+                {
+                    AntdUI.Notification.success(form, "成功", "摄像头已连接", AntdUI.TAlignFrom.BR, Font);
+                }
+                else 
+                {
+                    AntdUI.Notification.warn(form, "提示", "摄像头已离线", AntdUI.TAlignFrom.BR, Font);
+                }
+            }
         }
 
         private async Task DestoryAsync()
