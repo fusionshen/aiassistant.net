@@ -11,9 +11,6 @@ using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Controls
 {
-    /// <summary>
-    /// TODO：reconnect camera
-    /// </summary>
     public partial class BlacknessMethod : UserControl
     {
         public static string EDIT_ITEM_ID = string.Empty;
@@ -210,7 +207,7 @@ namespace AI_Assistant_Win.Controls
                 {
                     AntdUI.Notification.success(form, "成功", "摄像头已连接", AntdUI.TAlignFrom.BR, Font);
                 }
-                else 
+                else
                 {
                     AntdUI.Notification.warn(form, "提示", "摄像头已离线", AntdUI.TAlignFrom.BR, Font);
                 }

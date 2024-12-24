@@ -52,7 +52,7 @@ namespace AI_Assistant_Win.Business
             OriginImagePath = fullPath;
         }
 
-        public void SaveRenderImage(SixLabors.ImageSharp.Image image)
+        public void SaveRenderImage(Image image)
         {
             string directoryPath = $".\\Images\\{application}\\Render";
             Directory.CreateDirectory(directoryPath);

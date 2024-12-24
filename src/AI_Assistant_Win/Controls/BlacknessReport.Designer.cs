@@ -694,9 +694,9 @@ namespace AI_Assistant_Win.Controls
             label12.Location = new Point(324, 0);
             label12.Margin = new Padding(0);
             label12.Name = "label12";
-            label12.Size = new Size(96, 35);
+            label12.Size = new Size(90, 35);
             label12.TabIndex = 23;
-            label12.Text = "已上传";
+            label12.Text = "           已上传";
             label12.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label11

@@ -53,6 +53,7 @@ namespace AI_Assistant_Win.Utils
             _db.CreateTable<BlacknessMethodResult>();
             _db.CreateTable<BlacknessMethodItem>();
             _db.CreateTable<CameraBinding>();
+            _db.CreateTable<SystemConfig>();
         }
 
         // 私有静态内部类，负责持有唯一实例

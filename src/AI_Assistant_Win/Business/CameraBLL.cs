@@ -1,13 +1,13 @@
 ﻿using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Utils;
 using MvCameraControl;
+using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
-using System.Text.Json;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -27,7 +27,7 @@ namespace AI_Assistant_Win.Business
         List<IDeviceInfo> deviceInfoList = [];
 
         Thread receiveThread = null;    // ch:接收图像线程 | en: Receive image thread
-        Thread reconnectThread = null;  
+        Thread reconnectThread = null;
         private bool IsOpen { get; set; } = false;
         // ch:是否正在取图 | en: Grabbing flag
         private bool isGrabbing = false;
@@ -410,7 +410,7 @@ namespace AI_Assistant_Win.Business
             #region 构造实体
             binding.Application = _application;
             binding.SerialNumber = device.DeviceInfo.SerialNumber;
-            binding.DeviceInfo = JsonSerializer.Serialize(device.DeviceInfo);
+            binding.DeviceInfo = JsonConvert.SerializeObject(device.DeviceInfo);
             binding.IsOpen = IsOpen;
             binding.IsGrabbing = IsGrabbing;
             int result = device.Parameters.GetEnumValue("TriggerMode", out IEnumValue enumValue);

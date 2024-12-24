@@ -2,23 +2,18 @@
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
+using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using Yolov8.Net;
 
 namespace AI_Assistant_Win.Business
 {
     public class BlacknessMethodBLL
     {
-        private readonly SQLiteConnection connection;
-
-        public BlacknessMethodBLL()
-        {
-            connection = SQLiteHandler.Instance.GetSQLiteConnection();
-        }
+        private readonly SQLiteConnection connection = SQLiteHandler.Instance.GetSQLiteConnection();
 
         public List<BlacknessMethodResult> GetResultListByConditions(DateTime? startDate, DateTime? endDate, string text)
         {
@@ -132,7 +127,7 @@ namespace AI_Assistant_Win.Business
                     Level = t.Level,
                     Score = t.Score,
                     Width = t.Width,
-                    Prediction = JsonSerializer.Serialize(t.Prediction)
+                    Prediction = JsonConvert.SerializeObject(t.Prediction)
                 });
                 ok = connection.InsertAll(itemList);
                 if (ok == 0)
@@ -194,7 +189,7 @@ namespace AI_Assistant_Win.Business
                     Level = t.Level,
                     Score = t.Score,
                     Width = t.Width,
-                    Prediction = JsonSerializer.Serialize(t.Prediction)
+                    Prediction = JsonConvert.SerializeObject(t.Prediction)
                 });
                 ok = connection.InsertAll(itemList);
                 if (ok == 0)
@@ -224,7 +219,7 @@ namespace AI_Assistant_Win.Business
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"编号{id}没有主体数据，请联系管理员");
             var items = connection.Table<BlacknessMethodItem>()
                 .Where(t => t.ResultId.Equals(id))
-                .Select(t => new Blackness(t.Location, JsonSerializer.Deserialize<Prediction>(t.Prediction)))
+                .Select(t => new Blackness(t.Location, JsonConvert.DeserializeObject<Prediction>(t.Prediction)))
                 .OrderBy(t => t.Location)
                 .ToList();
             if (items == null || items.Count == 0)

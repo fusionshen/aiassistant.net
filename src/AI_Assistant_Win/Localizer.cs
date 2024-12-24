@@ -527,7 +527,7 @@ namespace AI_Assistant_Win
 
                 default:
                     System.Diagnostics.Debug.WriteLine(key);
-                    return null;
+                    return key;
             }
         }
     }

@@ -37,6 +37,7 @@ namespace AI_Assistant_Win
             virtualPanel = new AntdUI.VirtualPanel();
             windowBar = new AntdUI.PageHeader();
             txt_search = new AntdUI.Input();
+            avatarLoginUser = new AntdUI.Avatar();
             colorTheme = new AntdUI.ColorPicker();
             windowBar.SuspendLayout();
             SuspendLayout();
@@ -100,6 +101,7 @@ namespace AI_Assistant_Win
             // 
             windowBar.BackgroundImageLayout = ImageLayout.Stretch;
             windowBar.Controls.Add(txt_search);
+            windowBar.Controls.Add(avatarLoginUser);
             windowBar.Controls.Add(colorTheme);
             windowBar.Controls.Add(btn_mode);
             windowBar.Controls.Add(btn_global);
@@ -125,15 +127,27 @@ namespace AI_Assistant_Win
             // 
             txt_search.Dock = DockStyle.Right;
             txt_search.LocalizationPlaceholderText = "Workbench.{id}";
-            txt_search.Location = new Point(765, 0);
+            txt_search.Location = new Point(725, 0);
             txt_search.Name = "txt_search";
             txt_search.Padding = new Padding(0, 2, 0, 2);
             txt_search.PlaceholderText = "输入关键字搜索...";
             txt_search.PrefixSvg = "SearchOutlined";
             txt_search.Size = new Size(201, 40);
-            txt_search.TabIndex = 9;
+            txt_search.TabIndex = 10;
             txt_search.PrefixClick += Txt_search_PrefixClick;
             txt_search.TextChanged += Txt_search_TextChanged;
+            // 
+            // avatarLoginUser
+            // 
+            avatarLoginUser.Dock = DockStyle.Right;
+            avatarLoginUser.Image = Properties.Resources.img1;
+            avatarLoginUser.Location = new Point(926, 0);
+            avatarLoginUser.Name = "avatarLoginUser";
+            avatarLoginUser.Padding = new Padding(10);
+            avatarLoginUser.Round = true;
+            avatarLoginUser.Size = new Size(40, 40);
+            avatarLoginUser.TabIndex = 10;
+            avatarLoginUser.Click += AvatarLoginUser_Click;
             // 
             // colorTheme
             // 
@@ -169,6 +183,7 @@ namespace AI_Assistant_Win
         private AntdUI.VirtualPanel virtualPanel;
         private AntdUI.PageHeader windowBar;
         private AntdUI.ColorPicker colorTheme;
+        private AntdUI.Avatar avatarLoginUser;
         private AntdUI.Input txt_search;
     }
 }
