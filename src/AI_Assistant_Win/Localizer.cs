@@ -526,7 +526,11 @@ namespace AI_Assistant_Win
                 #endregion
 
                 default:
-                    System.Diagnostics.Debug.WriteLine(key);
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        System.Diagnostics.Debug.WriteLine(key);
+
+                    }
                     return key;
             }
         }

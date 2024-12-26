@@ -40,7 +40,7 @@
             // 
             tablePanel.ColumnCount = 2;
             tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 186F));
+            tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 247F));
             tablePanel.Controls.Add(inputPassword, 1, 1);
             tablePanel.Controls.Add(inputUsername, 1, 0);
             tablePanel.Controls.Add(label1, 0, 0);
@@ -54,29 +54,30 @@
             tablePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             tablePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 46F));
             tablePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            tablePanel.Size = new System.Drawing.Size(272, 92);
+            tablePanel.Size = new System.Drawing.Size(341, 92);
             tablePanel.TabIndex = 0;
             // 
             // inputPassword
             // 
             inputPassword.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputPassword.Location = new System.Drawing.Point(89, 49);
+            inputPassword.LocalizationPlaceholderText = "Please enter your password";
+            inputPassword.Location = new System.Drawing.Point(97, 49);
             inputPassword.Name = "inputPassword";
             inputPassword.PasswordChar = '●';
             inputPassword.PlaceholderText = "请输入密码";
             inputPassword.Radius = 1;
-            inputPassword.Size = new System.Drawing.Size(180, 40);
+            inputPassword.Size = new System.Drawing.Size(241, 40);
             inputPassword.TabIndex = 4;
             // 
             // inputUsername
             // 
             inputUsername.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputUsername.LocalizationPlaceholderText = "Input.{id}";
-            inputUsername.Location = new System.Drawing.Point(89, 3);
+            inputUsername.LocalizationPlaceholderText = "Please enter your account";
+            inputUsername.Location = new System.Drawing.Point(97, 3);
             inputUsername.Name = "inputUsername";
             inputUsername.PlaceholderText = "请输入账号";
             inputUsername.Radius = 1;
-            inputUsername.Size = new System.Drawing.Size(180, 40);
+            inputUsername.Size = new System.Drawing.Size(241, 40);
             inputUsername.TabIndex = 2;
             // 
             // label1
@@ -86,7 +87,7 @@
             label1.LocalizationText = "Accout";
             label1.Location = new System.Drawing.Point(3, 3);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(80, 40);
+            label1.Size = new System.Drawing.Size(88, 40);
             label1.TabIndex = 0;
             label1.Text = "账号";
             label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -98,7 +99,7 @@
             label3.LocalizationText = "Password";
             label3.Location = new System.Drawing.Point(3, 49);
             label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(80, 40);
+            label3.Size = new System.Drawing.Size(88, 40);
             label3.TabIndex = 0;
             label3.Text = "密码";
             label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -107,7 +108,7 @@
             // 
             Controls.Add(tablePanel);
             Name = "Login";
-            Size = new System.Drawing.Size(272, 96);
+            Size = new System.Drawing.Size(341, 92);
             tablePanel.ResumeLayout(false);
             ResumeLayout(false);
         }

@@ -1,22 +1,22 @@
-﻿using AI_Assistant_Win.Business;
+﻿using System.Net.Http;
 
 namespace AI_Assistant_Win.Utils
 {
-    public class ApiHandler
+    public class HttpClientHandler
     {
 
-        private readonly ApiBLL _apiBLL;
+        private readonly HttpClient _httpClient;
 
-        public ApiHandler()
+        public HttpClientHandler()
         {
-            _apiBLL = new ApiBLL();
+            _httpClient = new HttpClient();
         }
 
         // 私有静态内部类，负责持有唯一实例
         private static class Nested
         {
             // 静态成员变量，在第一次使用时才创建实例
-            internal static readonly ApiHandler instance = new();
+            internal static readonly HttpClientHandler instance = new();
         }
 
         /// <summary>
@@ -26,11 +26,11 @@ namespace AI_Assistant_Win.Utils
         /// Double-Checked Locking 双重检查锁定
         /// ✔ Bill Pugh Singleton 静态内部类 这种方法利用了C#静态内部类的特性，实现了线程安全的懒加载，且无需显式锁定。
         /// </summary>
-        public static ApiHandler Instance => Nested.instance;
+        public static HttpClientHandler Instance => Nested.instance;
 
-        public ApiBLL GetApiBLL()
+        public HttpClient GetHttpClient()
         {
-            return _apiBLL;
+            return _httpClient;
         }
     }
 }

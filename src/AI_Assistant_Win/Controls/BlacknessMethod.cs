@@ -25,7 +25,7 @@ namespace AI_Assistant_Win.Controls
 
         private readonly BlacknessPredict blacknessPredict;
 
-        private BlacknessResult originalBlacknessResult;
+        private readonly BlacknessResult originalBlacknessResult;
 
         private readonly BlacknessResult tempBlacknessResult;
 
