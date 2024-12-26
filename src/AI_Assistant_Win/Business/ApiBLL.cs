@@ -130,7 +130,7 @@ namespace AI_Assistant_Win.Business
 
             if (string.IsNullOrEmpty(fileRootDictionary))
             {
-                throw new Exception("平台文件更目录未指定，请联系管理员");
+                throw new Exception("平台文件根目录未指定，请联系管理员");
             }
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
             var response = await httpClient.GetAsync($"{fileRootDictionary}{loginUserInfo.Avatar}", HttpCompletionOption.ResponseHeadersRead);

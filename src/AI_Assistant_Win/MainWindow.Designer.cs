@@ -111,7 +111,7 @@ namespace AI_Assistant_Win
             windowBar.Dock = DockStyle.Top;
             windowBar.Font = new Font("Microsoft YaHei UI", 12F);
             windowBar.Icon = Properties.Resources.logo;
-            windowBar.LocalizationSubText = "";
+            windowBar.LocalizationSubText = "Workbench";
             windowBar.LocalizationText = "Workbench.{id}";
             windowBar.Location = new Point(0, 0);
             windowBar.Name = "windowBar";

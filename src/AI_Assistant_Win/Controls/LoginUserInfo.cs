@@ -20,17 +20,20 @@ namespace AI_Assistant_Win
 
         private void InitializeData()
         {
-            avatar.Spin(async () =>
+            if (!string.IsNullOrEmpty(apiBLL.LoginUserInfo.Avatar))
             {
-                try
+                avatar.Spin(async () =>
                 {
-                    avatar.Image = await apiBLL.GetUserAvatarAsync();
-                }
-                catch (Exception error)
-                {
-                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, error.Message, AntdUI.TAlignFrom.BR, Font);
-                }
-            });
+                    try
+                    {
+                        avatar.Image = await apiBLL.GetUserAvatarAsync();
+                    }
+                    catch (Exception error)
+                    {
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, error.Message, AntdUI.TAlignFrom.BR, Font);
+                    }
+                });
+            }
             labelUsername.Text = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
             labelDepartment.Text = Localization.Get($"Department:{apiBLL.LoginUserInfo.DepartmentName}", $"部门：{apiBLL.LoginUserInfo.DepartmentName}");
             labelPhone.Text = Localization.Get($"Phone:{apiBLL.LoginUserInfo.MobilePhone}", $"手机：{apiBLL.LoginUserInfo.MobilePhone}");
