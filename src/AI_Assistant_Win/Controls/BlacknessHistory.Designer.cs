@@ -35,7 +35,7 @@ namespace AI_Assistant_Win.Controls
             pagination1 = new AntdUI.Pagination();
             panel1 = new AntdUI.Panel();
             btnReload = new AntdUI.Button();
-            selectMultiple_Table_Setting = new AntdUI.SelectMultiple();
+            selectMultipleTableSetting = new AntdUI.SelectMultiple();
             panel6 = new System.Windows.Forms.Panel();
             inputSearch = new AntdUI.Input();
             btnSearch = new AntdUI.Button();
@@ -77,7 +77,7 @@ namespace AI_Assistant_Win.Controls
             // panel1
             // 
             panel1.Controls.Add(btnReload);
-            panel1.Controls.Add(selectMultiple_Table_Setting);
+            panel1.Controls.Add(selectMultipleTableSetting);
             panel1.Controls.Add(panel6);
             panel1.Controls.Add(inputRangeDate);
             panel1.Dock = DockStyle.Top;
@@ -100,16 +100,17 @@ namespace AI_Assistant_Win.Controls
             btnReload.TabIndex = 28;
             btnReload.Click += BtnReload_Click;
             // 
-            // selectMultiple_Table_Setting
+            // selectMultipleTableSetting
             // 
-            selectMultiple_Table_Setting.Items.AddRange(new object[] { "显示表头", "固定表头", "显示列边框", "奇偶列", "部分列排序", "手动调整列头宽度", "列拖拽" });
-            selectMultiple_Table_Setting.Location = new Point(1, -1);
-            selectMultiple_Table_Setting.Name = "selectMultiple_Table_Setting";
-            selectMultiple_Table_Setting.PlaceholderText = "表格设置";
-            selectMultiple_Table_Setting.Size = new Size(243, 46);
-            selectMultiple_Table_Setting.SuffixText = "";
-            selectMultiple_Table_Setting.TabIndex = 27;
-            selectMultiple_Table_Setting.SelectedValueChanged += SelectMultiple_Table_Setting_SelectedValueChanged;
+            selectMultipleTableSetting.Items.AddRange(new object[] { "显示表头", "固定表头", "显示列边框", "奇偶列", "部分列排序", "手动调整列头宽度", "列拖拽" });
+            selectMultipleTableSetting.LocalizationPlaceholderText = "Table Settings";
+            selectMultipleTableSetting.Location = new Point(1, -1);
+            selectMultipleTableSetting.Name = "selectMultipleTableSetting";
+            selectMultipleTableSetting.PlaceholderText = "表格设置";
+            selectMultipleTableSetting.Size = new Size(243, 46);
+            selectMultipleTableSetting.SuffixText = "";
+            selectMultipleTableSetting.TabIndex = 27;
+            selectMultipleTableSetting.SelectedValueChanged += SelectMultipleTableSettingSelectedValueChanged;
             // 
             // panel6
             // 
@@ -125,7 +126,7 @@ namespace AI_Assistant_Win.Controls
             // 
             inputSearch.Dock = DockStyle.Fill;
             inputSearch.JoinRight = true;
-            inputSearch.LocalizationPlaceholderText = "Input.{id}";
+            inputSearch.LocalizationPlaceholderText = "Text something.";
             inputSearch.Location = new Point(0, 0);
             inputSearch.Name = "inputSearch";
             inputSearch.PlaceholderText = "输入点什么搜索";
@@ -194,7 +195,7 @@ namespace AI_Assistant_Win.Controls
         private System.Windows.Forms.Panel panel6;
         private AntdUI.Input inputSearch;
         private AntdUI.Button btnSearch;
-        private AntdUI.SelectMultiple selectMultiple_Table_Setting;
+        private AntdUI.SelectMultiple selectMultipleTableSetting;
         private AntdUI.Button btnClear;
         private AntdUI.Button btnReload;
     }

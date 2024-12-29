@@ -7,25 +7,21 @@ namespace AI_Assistant_Win.Utils
     {
         #region common
         public static string SUCCESS => Localization.Get("Success", "成功");
-
         public static string FAIL => Localization.Get("Fail", "失败");
-
         public static string PROMPT => Localization.Get("Prompt", "提示");
-
         public static string CONFIRM => Localization.Get("Confirm", "确认");
-
         public static string CANCEL => Localization.Get("Cancel", "取消");
-
         public static string SETTING => Localization.Get("Setting", "设置");
-
         public static string ERROR => Localization.Get("Error", "错误");
-
         public static string PLEASE_CONTACT_ADMIN => Localization.Get("Please contact the administrator.", "请联系管理员。");
-
         public static string PREDICTED_SUCCESSFULLY => Localization.Get("Predicted successfully!", "识别成功！");
         public static string SAVE_SUCCESSFULLY => Localization.Get("Saved successfully!", "保存成功！");
         public static string SAVE_FAILED => Localization.Get("Saved Failed！", "保存成功！");
         public static string JUMP_TO_HISTORY => Localization.Get("Would you like to jump to the history page?", "是否跳转至历史记录界面？");
+        public static string PREVIEW_IMAGE => Localization.Get("Preview images", "预览图像");
+        public static string REPORT => Localization.Get("Report", "报告");
+        public static string EDIT => Localization.Get("Edit", "修改");
+        public static string DELETE => Localization.Get("Delete", "删除");
         #endregion
         #region login
         public static string LOGIN_MODAL_TITLE => Localization.Get("Please enter your platform account", "请输入平台账户");
@@ -108,7 +104,46 @@ namespace AI_Assistant_Win.Utils
         public static string BLACKNESS_EDIT_MODE(string id) => Localization.Get($"Edit Mode[ID：{id}]", $"修改模式[编号：{id}]");
         public static string BLACKNESS_NEW_MODE => Localization.Get("New Mode", "新增模式");
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
-        public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result this time?", "是否保存本次黑度检测结果？");
+        public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
+        public static string WOULD_EDIT_BLACKNESS_RESULT => Localization.Get("Would you like to edit the blackness detection result?", "是否对本次黑度检测结果进行修改？");
+        public static string BLACKNESS_TABLE_HEADER_ID => Localization.Get("Id", "等级");
+        public static string BLACKNESS_TABLE_HEADER_TESTNO => Localization.Get("TestNo", "试样编号");
+        public static string BLACKNESS_TABLE_HEADER_SIZE => Localization.Get("Size", "尺寸");
+        public static string BLACKNESS_TABLE_HEADER_UPLOADED => Localization.Get("Uploaded", "是否上传");
+        public static string BLACKNESS_TABLE_HEADER_COILNUMBER => Localization.Get("CoilNumber", "钢卷号");
+        public static string BLACKNESS_TABLE_HEADER_LEVEL => Localization.Get("Level", "等级");
+        public static string BLACKNESS_TABLE_HEADER_ANALYST => Localization.Get("Analyst", "分析人");
+        public static string BLACKNESS_TABLE_HEADER_WORKGROUP => Localization.Get("WorkGroup", "班组");
+        public static string BLACKNESS_TABLE_HEADER_CREATETIME => Localization.Get("CreateTime", "创建时间");
+        public static string BLACKNESS_TABLE_HEADER_UPLOADER => Localization.Get("Uploader", "上传人");
+        public static string BLACKNESS_TABLE_HEADER_UPLOADTIME => Localization.Get("UploadTime", "上传时间");
+        public static string BLACKNESS_TABLE_HEADER_LASTREVISER => Localization.Get("LastReviser", "最近修改人");
+        public static string BLACKNESS_TABLE_HEADER_LASTMODIFIEDTIME => Localization.Get("LastModifiedTime", "最后修改时间");
+        public static string BLACKNESS_TABLE_HEADER_OPERATIONS => Localization.Get("Operations", "操作");
+        public static string SURFACE_OP => Localization.Get("SurfaceOP-", "表面OP-");
+        public static string SURFACE_CE => Localization.Get("SurfaceCE-", "表面CE-");
+        public static string SURFACE_DR => Localization.Get("SurfaceDR-", "表面DR-");
+        public static string INSIDE_OP => Localization.Get("InsideOP-", "里面OP-");
+        public static string INSIDE_CE => Localization.Get("InsideCE-", "里面CE-");
+        public static string INSIDE_DR => Localization.Get("InsideDR-", "里面DR-");
+        public static string PRINT_PREVIEW => Localization.Get("Print Preview", "打印预览");
+        public static string PRINT_PRINT => Localization.Get("Print", "打印");
+        public static string PRINT_DOWNLOAD => Localization.Get("Download", "下载");
+        public static string PRINT_SETTINGS => Localization.Get("Print Settings", "打印设置");
+        public static string PREVIEW_BEFORE_DOWNLOADING => Localization.Get("Please preview it before downloading.", "请先预览然后再下载");
+        public static string CHOOSE_THE_LOCATION => Localization.Get("Choose the location to save the PDF file", "选择保存PDF文件的位置");
+        public static string FILE_SAVED_LOCATION => Localization.Get("The PDF file has been successfully saved to:", "PDF文件已成功保存到: ");
+        #endregion
+        #region table
+        public static string DISPLAY_HEADER => Localization.Get("Display header", "显示表头");
+        public static string FIX_HEADER => Localization.Get("Fix header", "固定表头");
+        public static string DISPLAY_COLUMN_BORDER => Localization.Get("Display column border", "显示列边框");
+        public static string ODD_AND_EVEN => Localization.Get("Odd and even rows", "奇偶显示");
+        public static string COLUMN_SORTING => Localization.Get("Column sorting", "部分列排序");
+        public static string MANUALLY_ADJUST_COLUMN_WIDTH => Localization.Get("Manually adjust the width", "手动调整列头宽度");
+        public static string DRAG_COLUMN => Localization.Get("Drag colomns", "列拖拽");
+        public static string GONG => Localization.Get("Total", "共");
+        public static string YE => Localization.Get("Pages", "页");
 
         #endregion
     }

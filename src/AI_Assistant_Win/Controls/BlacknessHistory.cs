@@ -1,5 +1,6 @@
 using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -39,33 +40,47 @@ namespace AI_Assistant_Win.Controls
         {
             // table_Blackness_History.EditMode = AntdUI.TEditMode.DoubleClick;
             pagination1.PageSizeOptions = [10, 20, 30, 50, 100];
-            selectMultiple_Table_Setting.SelectedValue = ["显示表头", "固定表头"];
+            selectMultipleTableSetting.Items = [
+                LocalizeHelper.DISPLAY_HEADER,
+                LocalizeHelper.FIX_HEADER,
+                LocalizeHelper.DISPLAY_COLUMN_BORDER,
+                LocalizeHelper.ODD_AND_EVEN,
+                LocalizeHelper.COLUMN_SORTING,
+                LocalizeHelper.MANUALLY_ADJUST_COLUMN_WIDTH,
+                LocalizeHelper.DRAG_COLUMN
+            ];
+            selectMultipleTableSetting.SelectedValue = [
+                LocalizeHelper.DISPLAY_HEADER,
+                LocalizeHelper.FIX_HEADER
+                ];
             #region table header
             table_Blackness_History.Columns = [
                 new AntdUI.ColumnCheck("check"){ Fixed = true },
-                new AntdUI.Column("id","编号", AntdUI.ColumnAlign.Center){ Fixed = true },
-                new AntdUI.Column("coilNumber","钢卷号", AntdUI.ColumnAlign.Center){ Fixed = true },
-                new AntdUI.Column("size","尺寸", AntdUI.ColumnAlign.Center){ Fixed = true },
+                new AntdUI.Column("id",LocalizeHelper.BLACKNESS_TABLE_HEADER_ID, AntdUI.ColumnAlign.Center){ Fixed = true },
+                new AntdUI.Column("testNo",LocalizeHelper.BLACKNESS_TABLE_HEADER_TESTNO, AntdUI.ColumnAlign.Center){ Fixed = true },
+                new AntdUI.Column("size",LocalizeHelper.BLACKNESS_TABLE_HEADER_SIZE, AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("isOK","OK/NG", AntdUI.ColumnAlign.Center){ Fixed = true },
-                new AntdUI.ColumnSwitch("isUploaded","已上传",AntdUI.ColumnAlign.Center){ Fixed = true, Call=(value, record, i_row, i_col)=>{
-                    System.Threading.Thread.Sleep(2000);
-                    return value;
-                } },
-                new AntdUI.Column("levels","等级", AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("analyst","分析人",AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("workGroup","班组",AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("createTime","创建时间",AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("uploader","上传人",AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("uploadTime","上传时间",AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("lastReviser","最后修改人",AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("lastModifiedTime","最后修改时间",AntdUI.ColumnAlign.Center),
-                // new AntdUI.Column("address","地址"){ Width="120", LineBreak=true},
-                new AntdUI.Column("btns","操作"){ Fixed=true, Width="auto"},
+                new AntdUI.ColumnSwitch("isUploaded",LocalizeHelper.BLACKNESS_TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center)
+                {
+                    Fixed = true,
+                    Call=(value, record, i_row, i_col) => {
+                        System.Threading.Thread.Sleep(2000);
+                        return value;
+                    }
+                },
+                new AntdUI.Column("coilNumber",LocalizeHelper.BLACKNESS_TABLE_HEADER_COILNUMBER, AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("levels",LocalizeHelper.BLACKNESS_TABLE_HEADER_LEVEL, AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("analyst",LocalizeHelper.BLACKNESS_TABLE_HEADER_ANALYST,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("workGroup",LocalizeHelper.BLACKNESS_TABLE_HEADER_WORKGROUP,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("createTime",LocalizeHelper.BLACKNESS_TABLE_HEADER_CREATETIME,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("uploader",LocalizeHelper.BLACKNESS_TABLE_HEADER_UPLOADER,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("uploadTime",LocalizeHelper.BLACKNESS_TABLE_HEADER_UPLOADTIME,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("lastReviser",LocalizeHelper.BLACKNESS_TABLE_HEADER_LASTREVISER,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("lastModifiedTime",LocalizeHelper.BLACKNESS_TABLE_HEADER_LASTMODIFIEDTIME,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("btns",LocalizeHelper.BLACKNESS_TABLE_HEADER_OPERATIONS){ Fixed=true, Width="auto"},
             ];
             #endregion
-            #region 数据
             LoadData(pagination1.Current);  // 1
-            #endregion
         }
 
         private void LoadData(int current)
@@ -79,7 +94,7 @@ namespace AI_Assistant_Win.Controls
             // if enable dragging column, columnIndex will change. but e only have the attribute: columnIndex, so must disable it.:)
             if (e.Record is IList<AntdUI.AntItem> data)
             {
-                if (e.RowIndex > 0 && e.ColumnIndex == 6) // levels
+                if (e.RowIndex > 0 && e.ColumnIndex == 7) // levels
                 {
                     var levelDatail = data.FirstOrDefault(t => "levelDetail".Equals(t.key))?.value.ToString();
                     AntdUI.Popover.open(new AntdUI.Popover.Config(table_Blackness_History, levelDatail) { Offset = e.Rect });
@@ -120,12 +135,12 @@ namespace AI_Assistant_Win.Controls
                         }
                         catch (Exception error)
                         {
-                            AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                         }
                         break;
                     default:
                         // TODO: uploaded
-                        if (AntdUI.Modal.open(form, "请确认", "是否对本次黑度检测结果进行修改？") == DialogResult.OK)
+                        if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.WOULD_EDIT_BLACKNESS_RESULT) == DialogResult.OK)
                         {
                             try
                             {
@@ -134,7 +149,7 @@ namespace AI_Assistant_Win.Controls
                             }
                             catch (Exception error)
                             {
-                                AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                             }
                             break;
                         }
@@ -160,10 +175,11 @@ namespace AI_Assistant_Win.Controls
                 {
                     new("check", false),
                     new("id", t.Id),
-                    new("coilNumber", t.CoilNumber),
+                    new("testNo", t.TestNo),
                     new("size", t.Size),
                     new("isOK", t.IsOK ? new AntdUI.CellBadge(AntdUI.TState.Success, "OK") :
                     new AntdUI.CellBadge(AntdUI.TState.Error, "NG")),
+                    new("coilNumber", t.CoilNumber),
                     new("isUploaded", t.IsUploaded),
                     new("levels", FormatCellTagList(t).ToArray()),
                     new("analyst", t.Analyst),
@@ -182,10 +198,12 @@ namespace AI_Assistant_Win.Controls
                 };
                 // 预览、报告(导出/打印)、修改、删除
                 AntdUI.CellLink[] btns = [
-                    new AntdUI.CellButton("preview") { BorderWidth = 1, IconSvg = "PlayCircleOutlined", ShowArrow = true, Tooltip = "图像"},
-                    new AntdUI.CellButton("report") { BorderWidth = 1, IconSvg = "SnippetsOutlined", ShowArrow = true, Tooltip = "报告"},
-                    new AntdUI.CellButton("edit")  { BorderWidth = 1, IconSvg = "EditOutlined", ShowArrow = true, Tooltip = "修改", Type= AntdUI.TTypeMini.Warn},
-                    new AntdUI.CellButton("delete")  { BorderWidth = 1, IconSvg = "DeleteOutlined", ShowArrow = true, Tooltip = "删除", Type= AntdUI.TTypeMini.Error},
+                    new AntdUI.CellButton("preview") { BorderWidth = 1, IconSvg = "PlayCircleOutlined", ShowArrow = true, Tooltip = LocalizeHelper.PREVIEW_IMAGE},
+                    new AntdUI.CellButton("report") { BorderWidth = 1, IconSvg = "SnippetsOutlined", ShowArrow = true, Tooltip = LocalizeHelper.REPORT},
+                    new AntdUI.CellButton("edit")  { BorderWidth = 1, IconSvg = "EditOutlined", ShowArrow = true, Tooltip = LocalizeHelper.EDIT,
+                        Type= AntdUI.TTypeMini.Warn},
+                    new AntdUI.CellButton("delete")  { BorderWidth = 1, IconSvg = "DeleteOutlined", ShowArrow = true, Tooltip = LocalizeHelper.DELETE,
+                        Type= AntdUI.TTypeMini.Error},
                 ];
                 columnsInOneRow.Add(new AntdUI.AntItem("btns", btns));
                 return columnsInOneRow.ToArray();
@@ -195,12 +213,12 @@ namespace AI_Assistant_Win.Controls
 
         private string FormatLevelDetail(BlacknessMethodResult blacknessMethodResult)
         {
-            return $"表面OP：等级{blacknessMethodResult.SurfaceOPLevel}，宽度{blacknessMethodResult.SurfaceOPWidth:F2}mm\n" +
-                   $"表面CE：等级{blacknessMethodResult.SurfaceCELevel}，宽度{blacknessMethodResult.SurfaceCEWidth:F2}mm\n" +
-                   $"表面DR：等级{blacknessMethodResult.SurfaceDRLevel}，宽度{blacknessMethodResult.SurfaceDRWidth:F2}mm\n" +
-                   $"里面OP：等级{blacknessMethodResult.InsideOPLevel}，宽度{blacknessMethodResult.InsideOPWidth:F2}mm\n" +
-                   $"里面CE：等级{blacknessMethodResult.InsideCELevel}，宽度{blacknessMethodResult.InsideCEWidth:F2}mm\n" +
-                   $"里面DR：等级{blacknessMethodResult.InsideDRLevel}，宽度{blacknessMethodResult.InsideDRWidth:F2}mm";
+            return $"{LocalizeHelper.SURFACE_OP}{LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceOPLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceOPWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
+                   $"{LocalizeHelper.SURFACE_CE}{LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceCELevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceCEWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
+                   $"{LocalizeHelper.SURFACE_DR}{LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceDRLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceDRWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
+                   $"{LocalizeHelper.INSIDE_OP}{LocalizeHelper.LEVEL}{blacknessMethodResult.InsideOPLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideOPWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
+                   $"{LocalizeHelper.INSIDE_CE}{LocalizeHelper.LEVEL}{blacknessMethodResult.InsideCELevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideCEWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
+                   $"{LocalizeHelper.INSIDE_DR}{LocalizeHelper.LEVEL}{blacknessMethodResult.InsideDRLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideDRWidth:F2}{LocalizeHelper.MILLIMETER}";
         }
 
         private List<AntdUI.CellTag> FormatCellTagList(BlacknessMethodResult blacknessMethodResult)
@@ -219,9 +237,9 @@ namespace AI_Assistant_Win.Controls
             {
                 if (int.TryParse(t, out int intValue))
                 {
-                    return new AntdUI.CellTag($"等级{t}", (AntdUI.TTypeMini)intValue);
+                    return new AntdUI.CellTag($"{LocalizeHelper.LEVEL}{t}", (AntdUI.TTypeMini)intValue);
                 }
-                return new AntdUI.CellTag($"等级{t}", AntdUI.TTypeMini.Default);
+                return new AntdUI.CellTag($"{LocalizeHelper.LEVEL}{t}", AntdUI.TTypeMini.Default);
             }).ToList();
             return tagList;
         }
@@ -233,7 +251,7 @@ namespace AI_Assistant_Win.Controls
 
         private string Pagination1_ShowTotalChanged(object sender, AntdUI.PagePageEventArgs e)
         {
-            return $"{e.PageSize} / {e.Total} 共 {e.PageTotal} 页";
+            return $"{e.PageSize} / {e.Total} {LocalizeHelper.GONG} {e.PageTotal} {LocalizeHelper.YE}";
         }
         #endregion
         #region 表格设置
@@ -248,21 +266,21 @@ namespace AI_Assistant_Win.Controls
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void SelectMultiple_Table_Setting_SelectedValueChanged(object sender, AntdUI.ObjectsEventArgs e)
+        private void SelectMultipleTableSettingSelectedValueChanged(object sender, AntdUI.ObjectsEventArgs e)
         {
-            var visibleHeader = e.Value.Any(t => "显示表头".Equals(t.ToString()));
+            var visibleHeader = e.Value.Any(t => LocalizeHelper.DISPLAY_HEADER.Equals(t.ToString()));
             CheckVisibleHeader_CheckedChanged(null, new AntdUI.BoolEventArgs(visibleHeader));
-            var fixedHeader = e.Value.Any(t => "固定表头".Equals(t.ToString()));
+            var fixedHeader = e.Value.Any(t => LocalizeHelper.FIX_HEADER.Equals(t.ToString()));
             CheckFixedHeader_CheckedChanged(null, new AntdUI.BoolEventArgs(fixedHeader));
-            var bordered = e.Value.Any(t => "显示列边框".Equals(t.ToString()));
+            var bordered = e.Value.Any(t => LocalizeHelper.DISPLAY_COLUMN_BORDER.Equals(t.ToString()));
             CheckBordered_CheckedChanged(null, new AntdUI.BoolEventArgs(bordered));
-            var setRowStyle = e.Value.Any(t => "奇偶列".Equals(t.ToString()));
+            var setRowStyle = e.Value.Any(t => LocalizeHelper.ODD_AND_EVEN.Equals(t.ToString()));
             CheckSetRowStyle_CheckedChanged(null, new AntdUI.BoolEventArgs(setRowStyle));
-            var sortOrder = e.Value.Any(t => "部分列排序".Equals(t.ToString()));
+            var sortOrder = e.Value.Any(t => LocalizeHelper.COLUMN_SORTING.Equals(t.ToString()));
             CheckSortOrder_CheckedChanged(null, new AntdUI.BoolEventArgs(sortOrder));
-            var enableHeaderResizing = e.Value.Any(t => "手动调整列头宽度".Equals(t.ToString()));
+            var enableHeaderResizing = e.Value.Any(t => LocalizeHelper.MANUALLY_ADJUST_COLUMN_WIDTH.Equals(t.ToString()));
             CheckEnableHeaderResizing_CheckedChanged(null, new AntdUI.BoolEventArgs(enableHeaderResizing));
-            var columnDragSort = e.Value.Any(t => "列拖拽".Equals(t.ToString()));
+            var columnDragSort = e.Value.Any(t => LocalizeHelper.DRAG_COLUMN.Equals(t.ToString()));
             CheckColumnDragSort_CheckedChanged(null, new AntdUI.BoolEventArgs(columnDragSort));
         }
         void CheckVisibleHeader_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
