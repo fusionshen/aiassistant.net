@@ -1,12 +1,14 @@
 ﻿using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
+using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Yolov8.Net;
 
 namespace AI_Assistant_Win.Business
@@ -14,6 +16,8 @@ namespace AI_Assistant_Win.Business
     public class BlacknessMethodBLL
     {
         private readonly SQLiteConnection connection = SQLiteHandler.Instance.GetSQLiteConnection();
+
+        private readonly ApiBLL apiBLL = ApiHandler.Instance.GetApiBLL();
 
         public List<BlacknessMethodResult> GetResultListByConditions(DateTime? startDate, DateTime? endDate, string text)
         {
@@ -56,7 +60,7 @@ namespace AI_Assistant_Win.Business
         {
             if (string.IsNullOrEmpty(id))
             {
-                throw new ArgumentNullException("blacknesss method item id is none!");
+                throw new Exception(LocalizeHelper.ID_IS_EMPTY);
             }
             // if t.Id.ToString().Equals(id), will throw not function toString(), funny!
             var item = connection.Table<BlacknessMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
@@ -86,12 +90,13 @@ namespace AI_Assistant_Win.Business
                 #region 构造主体
                 var blacknessMethodResult = new BlacknessMethodResult
                 {
-                    CoilNumber = tempBlacknessResult.CoilNumber,
-                    Size = tempBlacknessResult.Size,
-                    WorkGroup = tempBlacknessResult.WorkGroup,
-                    Analyst = tempBlacknessResult.Analyst,
                     OriginImagePath = tempBlacknessResult.OriginImagePath,
                     RenderImagePath = tempBlacknessResult.RenderImagePath,
+                    WorkGroup = tempBlacknessResult.WorkGroup,
+                    TestNo = tempBlacknessResult.TestNo,
+                    CoilNumber = tempBlacknessResult.CoilNumber,
+                    Size = tempBlacknessResult.Size,
+                    Analyst = tempBlacknessResult.Analyst,
                     SurfaceOPLevel = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP)).Level,
                     SurfaceOPWidth = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP)).Width,
                     SurfaceOPScore = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP)).Score,
@@ -117,7 +122,7 @@ namespace AI_Assistant_Win.Business
                 var ok = connection.Insert(blacknessMethodResult);
                 if (ok == 0)
                 {
-                    throw new Exception("新增主体失败");
+                    throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
                 }
                 // 构造item
                 var itemList = tempBlacknessResult.Items.Select(t => new BlacknessMethodItem
@@ -132,14 +137,14 @@ namespace AI_Assistant_Win.Business
                 ok = connection.InsertAll(itemList);
                 if (ok == 0)
                 {
-                    throw new Exception("保存明细失败");
+                    throw new Exception(LocalizeHelper.SAVE_DETAILS_FAILED);
                 }
                 return blacknessMethodResult;
             }
             else // update
             {
                 // find result
-                var result = GetResultById(tempBlacknessResult.Id.ToString()) ?? throw new Exception("查找主体失败");
+                var result = GetResultById(tempBlacknessResult.Id.ToString()) ?? throw new Exception(LocalizeHelper.FIND_SUBJECT_FAILED);
                 var items = connection.Table<BlacknessMethodItem>().Where(t => t.ResultId == result.Id).ToList();
                 // no batch in sqlitenet
                 items.ForEach(t =>
@@ -147,15 +152,16 @@ namespace AI_Assistant_Win.Business
                     var ok = connection.Delete(t);
                     if (ok == 0)
                     {
-                        throw new Exception("删除明细失败");
+                        throw new Exception(LocalizeHelper.DELETE_DETAILS_FAILED);
                     }
                 });
-                result.CoilNumber = tempBlacknessResult.CoilNumber;
-                result.Size = tempBlacknessResult.Size;
-                result.WorkGroup = tempBlacknessResult.WorkGroup;
-                result.Analyst = tempBlacknessResult.Analyst;
                 result.OriginImagePath = tempBlacknessResult.OriginImagePath;
                 result.RenderImagePath = tempBlacknessResult.RenderImagePath;
+                result.WorkGroup = tempBlacknessResult.WorkGroup;
+                result.TestNo = tempBlacknessResult.TestNo;
+                result.CoilNumber = tempBlacknessResult.CoilNumber;
+                result.Size = tempBlacknessResult.Size;
+                result.Analyst = tempBlacknessResult.Analyst;
                 result.SurfaceOPLevel = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP)).Level;
                 result.SurfaceOPWidth = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP)).Width;
                 result.SurfaceOPScore = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP)).Score;
@@ -175,11 +181,12 @@ namespace AI_Assistant_Win.Business
                 result.InsideDRWidth = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR)).Width;
                 result.InsideDRScore = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR)).Score;
                 result.IsOK = tempBlacknessResult.Items.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level));
+                result.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
                 result.LastModifiedTime = DateTime.Now;
                 var ok = connection.Update(result);
                 if (ok == 0)
                 {
-                    throw new Exception("更新主体失败");
+                    throw new Exception(LocalizeHelper.UPDATE_SUBJECT_FAILED);
                 }
                 // 构造item
                 var itemList = tempBlacknessResult.Items.Select(t => new BlacknessMethodItem
@@ -194,7 +201,7 @@ namespace AI_Assistant_Win.Business
                 ok = connection.InsertAll(itemList);
                 if (ok == 0)
                 {
-                    throw new Exception("保存明细失败");
+                    throw new Exception(LocalizeHelper.SAVE_DETAILS_FAILED);
                 }
                 return result;
             }
@@ -205,18 +212,19 @@ namespace AI_Assistant_Win.Business
             if (string.IsNullOrEmpty(id))
             {
                 originalBlacknessResult.Id = 0;
-                originalBlacknessResult.CoilNumber = string.Empty;
-                originalBlacknessResult.Size = string.Empty;
                 originalBlacknessResult.OriginImagePath = string.Empty;
                 originalBlacknessResult.RenderImagePath = string.Empty;
                 originalBlacknessResult.WorkGroup = string.Empty;
-                originalBlacknessResult.Analyst = string.Empty;
+                originalBlacknessResult.TestNo = string.Empty;
+                originalBlacknessResult.CoilNumber = string.Empty;
+                originalBlacknessResult.Size = string.Empty;
+                originalBlacknessResult.Analyst = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
                 originalBlacknessResult.Items = [];
                 return [];
             }
             var allSorted = connection.Table<BlacknessMethodResult>().OrderBy(t => t.Id).ToList();
             // if t.Id.Equals(id), will find null, double funny!!!
-            var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"编号{id}没有主体数据，请联系管理员");
+            var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var items = connection.Table<BlacknessMethodItem>()
                 .Where(t => t.ResultId.Equals(id))
                 .Select(t => new Blackness(t.Location, JsonConvert.DeserializeObject<Prediction>(t.Prediction)))
@@ -224,17 +232,24 @@ namespace AI_Assistant_Win.Business
                 .ToList();
             if (items == null || items.Count == 0)
             {
-                throw new Exception($"编号{id}没有明细数据，请联系管理员");
+                throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_DETAILS}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             }
             originalBlacknessResult.Id = body.Id;
-            originalBlacknessResult.CoilNumber = body.CoilNumber;
-            originalBlacknessResult.Size = body.Size;
             originalBlacknessResult.OriginImagePath = body.OriginImagePath;
             originalBlacknessResult.RenderImagePath = body.RenderImagePath;
             originalBlacknessResult.WorkGroup = body.WorkGroup;
+            originalBlacknessResult.TestNo = body.TestNo;
+            originalBlacknessResult.CoilNumber = body.CoilNumber;
+            originalBlacknessResult.Size = body.Size;
             originalBlacknessResult.Analyst = body.Analyst;
             originalBlacknessResult.Items = items;
             return allSorted.Select(t => t.Id).ToList();
+        }
+
+        public async Task<List<GetTestNoListResponse>> GetTestNoList()
+        {
+            var list = await apiBLL.GetTestNoListAsync();
+            return list;
         }
     }
 }

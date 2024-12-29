@@ -1,6 +1,7 @@
 using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
+using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using System;
 using System.Collections.Generic;
@@ -57,14 +58,6 @@ namespace AI_Assistant_Win.Controls
             {
                 tempBlacknessResult.Id = originalBlacknessResult.Id;
             }
-            else if (e.PropertyName == "CoilNumber")
-            {
-                inputCoilNumber.Text = originalBlacknessResult.CoilNumber;
-            }
-            else if (e.PropertyName == "Size")
-            {
-                inputSize.Text = originalBlacknessResult.Size;
-            }
             else if (e.PropertyName == "OriginImagePath")
             {
                 imageProcessBLL.OriginImagePath = originalBlacknessResult.OriginImagePath;
@@ -77,9 +70,21 @@ namespace AI_Assistant_Win.Controls
             {
                 selectWorkGroup.SelectedValue = originalBlacknessResult.WorkGroup;
             }
+            else if (e.PropertyName == "TestNo")
+            {
+                selectTestNo.SelectedValue = originalBlacknessResult.TestNo;
+            }
+            else if (e.PropertyName == "CoilNumber")
+            {
+                inputCoilNumber.Text = originalBlacknessResult.CoilNumber;
+            }
+            else if (e.PropertyName == "Size")
+            {
+                inputSize.Text = originalBlacknessResult.Size;
+            }
             else if (e.PropertyName == "Analyst")
             {
-                selectAnalyst.SelectedValue = originalBlacknessResult.Analyst;
+                inputAnalyst.Text = originalBlacknessResult.Analyst;
             }
             else if (e.PropertyName == "Items")
             {
@@ -114,23 +119,27 @@ namespace AI_Assistant_Win.Controls
             // 数据验证
             if (tempBlacknessResult == null || tempBlacknessResult.Items.Count == 0)
             {
-                throw new ArgumentNullException("请进行识别后再保存");
+                throw new Exception(LocalizeHelper.PLEASE_PREDICT_BEFORE_SAVING);
             }
             if (selectWorkGroup.SelectedValue == null)
             {
-                throw new ArgumentNullException("请选择班组");
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_WORKBENCH);
             }
-            if (selectAnalyst.SelectedValue == null)
+            if (selectTestNo.SelectedValue == null)
             {
-                throw new ArgumentNullException("请选择分析人员");
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_TESTNO);
             }
             if (string.IsNullOrEmpty(inputCoilNumber.Text))
             {
-                throw new ArgumentNullException("请输入正确的钢卷号");
+                throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
             }
             if (string.IsNullOrEmpty(inputSize.Text))
             {
-                throw new ArgumentNullException("请输入正确的尺寸");
+                throw new Exception(LocalizeHelper.PLEASE_INPUT_SIZE);
+            }
+            if (string.IsNullOrEmpty(inputAnalyst.Text))
+            {
+                throw new Exception(LocalizeHelper.PLEASE_INPUT_ANALYST);
             }
         }
 
@@ -144,7 +153,7 @@ namespace AI_Assistant_Win.Controls
                     // call when edit
                     if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
                     {
-                        AntdUI.Notification.success(form, "成功", "识别成功！", AntdUI.TAlignFrom.BR, Font);
+                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.PREDICTED_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
                     }
                 }
                 else
@@ -152,7 +161,7 @@ namespace AI_Assistant_Win.Controls
                     ClearTexts();
                     if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
                     {
-                        AntdUI.Notification.warn(form, "提示", "请使用正确的黑度样板图片进行识别", AntdUI.TAlignFrom.BR, Font);
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_USE_CORRECT_IMAGE, AntdUI.TAlignFrom.BR, Font);
                     }
                 }
             }
@@ -205,11 +214,11 @@ namespace AI_Assistant_Win.Controls
                 btnCameraCapture.Enabled = cameraBLL.IsConnected && cameraBLL.IsGrabbing;
                 if (cameraBLL.IsConnected)
                 {
-                    AntdUI.Notification.success(form, "成功", "摄像头已连接", AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CAMERA_CONNECTED, AntdUI.TAlignFrom.BR, Font);
                 }
                 else
                 {
-                    AntdUI.Notification.warn(form, "提示", "摄像头已离线", AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.CAMERA_DISCONNECTED, AntdUI.TAlignFrom.BR, Font);
                 }
             }
         }
@@ -225,10 +234,11 @@ namespace AI_Assistant_Win.Controls
 
         private async Task InitializeAsync()
         {
-
+            // TestNo List
+            await InitializeSelectTestNoListAsync();
             try
             {
-                // 为了通过观察者模式实现界面数据效果
+                // 通过观察者模式实现界面数据效果
                 sortedIDs = blacknessMethodBLL.LoadOriginalResultFromDB(originalBlacknessResult, EDIT_ITEM_ID);
                 if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
                 {
@@ -238,7 +248,7 @@ namespace AI_Assistant_Win.Controls
                     btnPrint.Visible = true;
                     btnPre.Visible = true;
                     btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
-                    AntdUI.Notification.success(form, "成功", $"修改模式[编号：{EDIT_ITEM_ID}]", AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.BLACKNESS_EDIT_MODE(EDIT_ITEM_ID), AntdUI.TAlignFrom.BR, Font);
                     return;
                 }
                 else
@@ -246,40 +256,40 @@ namespace AI_Assistant_Win.Controls
                     btnNext.Visible = false;
                     btnPrint.Visible = false;
                     btnPre.Visible = false;
-                    AntdUI.Notification.success(form, "成功", "新增模式", AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.BLACKNESS_NEW_MODE, AntdUI.TAlignFrom.BR, Font);
                 }
                 var result = cameraBLL.StartRendering();
                 switch (result)
                 {
-                    case "NoCamera":
-                        AntdUI.Notification.warn(form, "提示", "未能找到可用摄像头", AntdUI.TAlignFrom.BR, Font);
+                    case CameraBLLStatusKind.NoCamera:
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA, AntdUI.TAlignFrom.BR, Font);
                         break;
-                    case "NoCameraSettings":
-                        AntdUI.Notification.warn(form, "提示", "请设置摄像头进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
+                    case CameraBLLStatusKind.NoCameraSettings:
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
                         // 延迟1秒
                         await Task.Delay(1000);
                         BtnCameraSetting_Click(null, null);
                         break;
-                    case "NoCameraOpen":
-                        AntdUI.Notification.warn(form, "提示", "请打开摄像头进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
+                    case CameraBLLStatusKind.NoCameraOpen:
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
                         // 延迟1秒
                         await Task.Delay(1000);
                         BtnCameraSetting_Click(null, null);
                         break;
-                    case "NoCameraGrabbing":
-                        AntdUI.Notification.warn(form, "提示", "请开启采集进行实时拍摄", AntdUI.TAlignFrom.BR, Font);
+                    case CameraBLLStatusKind.NoCameraGrabbing:
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
                         // 延迟1秒
                         await Task.Delay(1000);
                         BtnCameraSetting_Click(null, null);
                         break;
-                    case "TriggerMode":
-                        AntdUI.Notification.success(form, "成功", "触发模式", AntdUI.TAlignFrom.BR, Font);
+                    case CameraBLLStatusKind.TriggerMode:
+                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.TRIGGER_MODE, AntdUI.TAlignFrom.BR, Font);
                         break;
-                    case "ContinuousMode":
-                        AntdUI.Notification.success(form, "成功", "实时模式", AntdUI.TAlignFrom.BR, Font);
+                    case CameraBLLStatusKind.ContinuousMode:
+                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CONTINUOUS_MODE, AntdUI.TAlignFrom.BR, Font);
                         break;
                     default:
-                        AntdUI.Notification.error(form, "错误", "请联系管理员", AntdUI.TAlignFrom.BR, Font);
+                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.PLEASE_CONTACT_ADMIN, AntdUI.TAlignFrom.BR, Font);
                         break;
                 }
             }
@@ -289,7 +299,32 @@ namespace AI_Assistant_Win.Controls
             }
             catch (Exception error)
             {
-                AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+            }
+        }
+
+        private List<GetTestNoListResponse> testNoList;
+        private async Task InitializeSelectTestNoListAsync()
+        {
+            try
+            {
+                selectTestNo.Items.Clear();
+                testNoList = await blacknessMethodBLL.GetTestNoList();
+            }
+            catch (Exception error)
+            {
+                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+            }
+            // select testNo
+            var result = testNoList.Select(t => t.TestNo).Distinct().OrderDescending().ToList();
+            if (result != null && result.Count != 0)
+            {
+                selectTestNo.Items.AddRange([.. result]);
+            }
+            else
+            {
+                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.ONLY_TEST_NO, AntdUI.TAlignFrom.BR, Font);
+                selectTestNo.Items.AddRange(["test"]);
             }
         }
 
@@ -315,7 +350,7 @@ namespace AI_Assistant_Win.Controls
                     imageProcessBLL.SaveOriginImage(blacknessMethod_OpenFileDialog.FileName);
                     // stop realtime image render
                     cameraBLL.StopGrabbing();
-                    AntdUI.Notification.success(form, "成功", "上传成功！", AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.UPLOAD_ORIGINAL_IMAGE_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
                     if (btn.IsDisposed) return;
                     btn.Loading = false;
                 });
@@ -377,10 +412,10 @@ namespace AI_Assistant_Win.Controls
             }
             catch (Exception error)
             {
-                AntdUI.Notification.warn(form, "提示", error.Message, AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, error.Message, AntdUI.TAlignFrom.BR, Font);
                 return;
             }
-            if (AntdUI.Modal.open(form, "请确认", "是否保存本次黑度检测结果？") == DialogResult.OK)
+            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.WOULD_SAVE_BLACKNESS_RESULT) == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
                 btn.LoadingWaveValue = 0;
@@ -392,12 +427,12 @@ namespace AI_Assistant_Win.Controls
                         var result = blacknessMethodBLL.SaveResult(tempBlacknessResult);
                         if (result == 0)
                         {
-                            AntdUI.Notification.error(form, "错误", "保存失败！", AntdUI.TAlignFrom.BR, Font);
+                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.SAVE_FAILED, AntdUI.TAlignFrom.BR, Font);
                             return;
                         }
                         else
                         {
-                            AntdUI.Notification.success(form, "成功", "保存成功！", AntdUI.TAlignFrom.BR, Font);
+                            AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.SAVE_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
                             EDIT_ITEM_ID = result.ToString();
                             _ = InitializeAsync();
                             btn.Enabled = false;
@@ -407,7 +442,7 @@ namespace AI_Assistant_Win.Controls
                     }
                     catch (Exception error)
                     {
-                        AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                         return;
                     }
                 }, () =>
@@ -429,7 +464,7 @@ namespace AI_Assistant_Win.Controls
             }
             catch (Exception error)
             {
-                AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
 
         }
@@ -452,7 +487,7 @@ namespace AI_Assistant_Win.Controls
                 cameraBLL.StopGrabbing();
                 if (btn.IsDisposed) return;
                 btn.Loading = false;
-                AntdUI.Notification.success(form, "成功", "拍摄成功！", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CAMERA_CAPTURED_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
             });
         }
 
@@ -461,9 +496,15 @@ namespace AI_Assistant_Win.Controls
             tempBlacknessResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
         }
 
-        private void SelectAnalyst_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
+        private void SelectTestNo_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempBlacknessResult.Analyst = selectAnalyst.SelectedValue.ToString();
+            tempBlacknessResult.TestNo = selectTestNo.SelectedValue.ToString();
+            // coilNumber
+            var target = testNoList.FirstOrDefault(t => tempBlacknessResult.TestNo.Equals(t.TestNo));
+            if (target != null)
+            {
+                inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
+            }
         }
 
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)
@@ -476,6 +517,11 @@ namespace AI_Assistant_Win.Controls
             tempBlacknessResult.Size = inputSize.Text;
         }
 
+        private void InputAnalyst_TextChanged(object sender, EventArgs e)
+        {
+            tempBlacknessResult.Analyst = inputAnalyst.Text;
+        }
+
         private void BtnClear_Click(object sender, EventArgs e)
         {
             EDIT_ITEM_ID = string.Empty;
@@ -484,7 +530,7 @@ namespace AI_Assistant_Win.Controls
 
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-            if (AntdUI.Modal.open(form, "请确认", "是否跳转至历史记录界面？") == DialogResult.OK)
+            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.JUMP_TO_HISTORY) == DialogResult.OK)
             {
                 try
                 {
@@ -492,7 +538,7 @@ namespace AI_Assistant_Win.Controls
                 }
                 catch (Exception error)
                 {
-                    AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                 }
             }
         }
@@ -528,7 +574,7 @@ namespace AI_Assistant_Win.Controls
             }
             catch (Exception error)
             {
-                AntdUI.Notification.error(form, "错误", error.Message, AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
         }
     }

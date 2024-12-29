@@ -1,4 +1,5 @@
 ﻿using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Utils;
 using MvCameraControl;
 using Newtonsoft.Json;
@@ -59,23 +60,23 @@ namespace AI_Assistant_Win.Business
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public string StartRendering()
+        public CameraBLLStatusKind StartRendering()
         {
             // get device list
             GetDeviceList();
             if (deviceInfoList == null || deviceInfoList.Count == 0)
             {
-                return "NoCamera";
+                return CameraBLLStatusKind.NoCamera;
             }
             // 查询数据库是否存在摄像头绑定
             binding = connection.Table<CameraBinding>().FirstOrDefault(t => t.Application.Equals(_application));
             if (binding == null)
             {
-                return "NoCameraSettings";
+                return CameraBLLStatusKind.NoCameraSettings;
             }
             if (!binding.IsOpen)
             {
-                return "NoCameraOpen";
+                return CameraBLLStatusKind.NoCameraOpen;
             }
             var deviceIndex = deviceInfoList.FindIndex(t => t.SerialNumber.Equals(binding.SerialNumber));
             // open camera TODO: maybe there are exceptions
@@ -91,17 +92,17 @@ namespace AI_Assistant_Win.Business
                     device.Parameters.SetEnumValueByString("TriggerMode", "On");
                     // ch:触发源设为软触发 | en:Set trigger source as Software
                     device.Parameters.SetEnumValueByString("TriggerSource", "Software");
-                    return "TriggerMode";
+                    return CameraBLLStatusKind.TriggerMode;
                 }
                 // set continuous  mode
                 // ch:设置采集连续模式 | en:Set Continues Aquisition Mode
                 device.Parameters.SetEnumValueByString("AcquisitionMode", "Continuous");
                 device.Parameters.SetEnumValueByString("TriggerMode", "Off");
-                return "ContinuousMode";
+                return CameraBLLStatusKind.ContinuousMode;
             }
             else
             {
-                return "NoCameraGrabbing";
+                return CameraBLLStatusKind.NoCameraGrabbing;
             }
         }
 
@@ -112,7 +113,7 @@ namespace AI_Assistant_Win.Business
                 int nRet = DeviceEnumerator.EnumDevices(enumTLayerType, out deviceInfoList);
                 if (nRet != MvError.MV_OK)
                 {
-                    throw new CameraSDKException("Enumerate devices fail!", nRet);
+                    throw new CameraSDKException(LocalizeHelper.ENUMERATE_DEVICES_FAILED, nRet);
                 }
             }
             return deviceInfoList;
@@ -209,12 +210,12 @@ namespace AI_Assistant_Win.Business
             }
             catch (Exception ex)
             {
-                throw new CameraSDKException("Create Device fail!" + ex.Message);
+                throw new CameraSDKException(LocalizeHelper.CREATE_DEVICE_FAILED + ex.Message);
             }
             int result = device.Open();
             if (result != MvError.MV_OK)
             {
-                throw new CameraSDKException("Open Device fail!", result);
+                throw new CameraSDKException(LocalizeHelper.OPEN_DEVICE_FAILED, result);
             }
 
             //ch: 判断是否为gige设备 | en: Determine whether it is a GigE device
@@ -227,14 +228,14 @@ namespace AI_Assistant_Win.Business
                 result = gigEDevice.GetOptimalPacketSize(out int optionPacketSize);
                 if (result != MvError.MV_OK)
                 {
-                    throw new CameraSDKException("Warning: Get Packet Size failed!", result);
+                    throw new CameraSDKException(LocalizeHelper.GET_PACKET_SIZE_FAILED, result);
                 }
                 else
                 {
                     result = device.Parameters.SetIntValue("GevSCPSPacketSize", (long)optionPacketSize);
                     if (result != MvError.MV_OK)
                     {
-                        throw new CameraSDKException("Warning: Set Packet Size failed!", result);
+                        throw new CameraSDKException(LocalizeHelper.SET_PACKET_SIZE_FAILED, result);
                     }
                 }
             }
@@ -252,7 +253,6 @@ namespace AI_Assistant_Win.Business
             // will call after 60 secs 
             if (e.MsgType == DeviceExceptionType.DisConnect)
             {
-                Console.WriteLine("Device disconnect!");
                 IsConnected = false;
             }
         }
@@ -273,7 +273,7 @@ namespace AI_Assistant_Win.Business
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Start thread failed!, " + ex.Message);
+                MessageBox.Show(LocalizeHelper.START_THREAD_FAILED + ex.Message);
                 throw;
             }
 
@@ -283,7 +283,7 @@ namespace AI_Assistant_Win.Business
             {
                 IsGrabbing = false;
                 receiveThread.Join();
-                throw new CameraSDKException("Start Grabbing Fail!", result);
+                throw new CameraSDKException(LocalizeHelper.START_GRABBING_FAILED, result);
             }
 
         }
@@ -316,7 +316,7 @@ namespace AI_Assistant_Win.Business
                         }
                         catch (Exception e)
                         {
-                            MessageBox.Show("IFrameOut.Clone failed, " + e.Message);
+                            MessageBox.Show(LocalizeHelper.IFRAMEOUT_CLONE_FAILED + e.Message);
                             return;
                         }
                     }
@@ -374,7 +374,7 @@ namespace AI_Assistant_Win.Business
             int result = device.StreamGrabber.StopGrabbing();
             if (result != MvError.MV_OK)
             {
-                throw new CameraSDKException("Stop Grabbing Fail!", result);
+                throw new CameraSDKException(LocalizeHelper.STOP_GRABBING_FAILED, result);
             }
 
         }
@@ -455,7 +455,7 @@ namespace AI_Assistant_Win.Business
         {
             if (frameForSave == null)
             {
-                throw new Exception("No vaild image");
+                throw new Exception(LocalizeHelper.NO_VAILD_IMAGE);
             }
             ImageFormatInfo imageFormatInfo;
             imageFormatInfo.FormatType = ImageFormatType.Jpeg;
@@ -470,7 +470,7 @@ namespace AI_Assistant_Win.Business
                 var result = device.ImageSaver.SaveImageToFile(fullPath, frameForSave.Image, imageFormatInfo, CFAMethod.Equilibrated);
                 if (result != MvError.MV_OK)
                 {
-                    throw new CameraSDKException("Save Image Fail!", result);
+                    throw new CameraSDKException(LocalizeHelper.SAVE_IAMGE_FAILED, result);
                 }
             }
             return fullPath;

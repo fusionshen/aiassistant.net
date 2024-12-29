@@ -147,6 +147,11 @@ namespace AI_Assistant_Win.Models
         [Column("work_group")]
         public string WorkGroup { get; set; }
         /// <summary>
+        /// 试样编号
+        /// </summary>
+        [Column("test_no")]
+        public string TestNo { get; set; }
+        /// <summary>
         /// 分析人-新建人员
         /// </summary>
         [Column("analyst")]

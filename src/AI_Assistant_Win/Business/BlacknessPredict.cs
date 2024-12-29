@@ -1,4 +1,5 @@
-﻿using SixLabors.Fonts;
+﻿using AI_Assistant_Win.Utils;
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.Processing;
@@ -76,7 +77,7 @@ namespace AI_Assistant_Win.Business
 
                 // Bounding Box Text
                 string number = new(pred.Label.Name.Where(char.IsDigit).ToArray());
-                string text = $"等级{number}，宽度：{pred.Rectangle.Height:F2}mm";
+                string text = $"{LocalizeHelper.LEVEL}{number}{LocalizeHelper.BLACKNESS_WITH}{pred.Rectangle.Height:F2}{LocalizeHelper.MILLIMETER}";
                 var size = TextMeasurer.MeasureSize(text, new TextOptions(font));
                 var color = GetRetangleColorByNumber(number);
 

@@ -1,4 +1,5 @@
 ﻿using AI_Assistant_Win.Models.Enums;
+using AI_Assistant_Win.Utils;
 using System;
 using System.Linq;
 using Yolov8.Net;
@@ -30,7 +31,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// </summary>
         public string Description
         {
-            get { return $"等级{Level}，宽度{Prediction.Rectangle.Height:F2}mm"; }
+            get { return $"{LocalizeHelper.LEVEL}{Level}{LocalizeHelper.BLACKNESS_WITH}{Prediction.Rectangle.Height:F2}{LocalizeHelper.MILLIMETER}"; }
         }
         /// <summary>
         /// 识别结果

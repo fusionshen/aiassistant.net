@@ -45,7 +45,7 @@ namespace AI_Assistant_Win.Utils
                 case MvError.MV_E_NETER: errorMsg += " Network error "; break;
             }
 
-            AntdUI.Notification.error(form, "失败", errorMsg, AntdUI.TAlignFrom.BR);
+            AntdUI.Notification.error(form, LocalizeHelper.FAIL, errorMsg, AntdUI.TAlignFrom.BR);
         }
     }
 }

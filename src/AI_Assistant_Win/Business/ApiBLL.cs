@@ -5,6 +5,7 @@ using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
 using SQLite;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
@@ -64,16 +65,16 @@ namespace AI_Assistant_Win.Business
 
         public async Task<bool> LoginAsync(string username, string password)
         {
-            var json = JsonConvert.SerializeObject(new LoginRequest { Username = $"{username}@lims", Password = password });
-
-            var data = new StringContent(json, Encoding.UTF8, "application/json");
-
             var loginUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("LoginURL"))?.Value;
 
             if (string.IsNullOrEmpty(loginUrl))
             {
                 throw new Exception("登录接口未指定，请联系管理员");
             }
+
+            var json = JsonConvert.SerializeObject(new LoginRequest { Username = $"{username}@lims", Password = password });
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
 
             var response = await httpClient.PostAsync(loginUrl, data);
 
@@ -146,6 +147,29 @@ namespace AI_Assistant_Win.Business
         public void Logout()
         {
             LoginUserInfo = null;
+        }
+
+        public async Task<List<GetTestNoListResponse>> GetTestNoListAsync()
+        {
+            var getTestNoListUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("GetTestNoListUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(getTestNoListUrl))
+            {
+                throw new Exception("试样编号接口未指定，请联系管理员");
+            }
+
+            getTestNoListUrl = $"{getTestNoListUrl}?{HttpHelper.ToQueryString(new GetTestNoListRequest { })}";
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+            var jsonStr = await httpClient.GetStringAsync(getTestNoListUrl);
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<PagableBody<List<List<GetTestNoListResponse>>>>>(jsonStr) ?? throw new Exception("试样编号接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+
+            return result.Data.Data.FirstOrDefault();
         }
     }
 }

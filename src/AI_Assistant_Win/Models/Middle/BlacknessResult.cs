@@ -21,6 +21,21 @@ namespace AI_Assistant_Win.Models.Middle
             }
         }
 
+        private string _testNo = string.Empty;
+
+        public string TestNo
+        {
+            get { return _testNo; }
+            set
+            {
+                if (!_testNo.Equals(value))
+                {
+                    _testNo = value;
+                    OnPropertyChanged(nameof(TestNo));
+                }
+            }
+        }
+
         private string _coilNumber = string.Empty;
         public string CoilNumber
         {
@@ -133,12 +148,13 @@ namespace AI_Assistant_Win.Models.Middle
             if (obj.GetType() != this.GetType()) return false;
             var param = (BlacknessResult)obj;
             var result = Id.Equals(param.Id) &&
-                CoilNumber.Equals(param.CoilNumber) &&
-                Analyst.Equals(param.Analyst) &&
-                Size.Equals(param.Size) &&
                 WorkGroup.Equals(param.WorkGroup) &&
                 OriginImagePath.Equals(param.OriginImagePath) &&
                 RenderImagePath.Equals(param.RenderImagePath) &&
+                TestNo.Equals(param.TestNo) &&
+                CoilNumber.Equals(param.CoilNumber) &&
+                Analyst.Equals(param.Analyst) &&
+                Size.Equals(param.Size) &&
                 Items.SequenceEqual(param.Items);
             return result;
         }
