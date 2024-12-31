@@ -1,12 +1,8 @@
 using AI_Assistant_Win.Business;
+using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Utils;
-using iText.IO.Image;
-using iText.Kernel.Pdf;
-using iText.Layout;
 using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -22,10 +18,15 @@ namespace AI_Assistant_Win.Controls
 
         AntdUI.FormFloatButton floatButton = null;
 
+        private BlacknessMethodResult target;
+
+        private readonly BlacknessUploadBLL uploadBlacknessBLL;
+
         public BlacknessReport(Form _form, string id)
         {
             form = _form;
             blacknessMethodBLL = new BlacknessMethodBLL();
+            uploadBlacknessBLL = new BlacknessUploadBLL();
             InitializeComponent();
             LoadData(id);
             Disposed += BlacknessReport_Disposed;
@@ -42,8 +43,12 @@ namespace AI_Assistant_Win.Controls
                                 Tooltip = LocalizeHelper.PRINT_PRINT,
                                 Type= AntdUI.TTypeMini.Primary
                             },
-                             new("download",  "DownloadOutlined", true){
+                            new("download",  "DownloadOutlined", true){
                                 Tooltip = LocalizeHelper.PRINT_DOWNLOAD
+                            },
+                            new("upload",  "CloudUploadOutlined", true){
+                                Tooltip = LocalizeHelper.PRINT_UPLOAD,
+                                Type= AntdUI.TTypeMini.Error
                             },
                             new("setting", "SettingOutlined", true){
                                 Tooltip = LocalizeHelper.PRINT_SETTINGS
@@ -70,27 +75,50 @@ namespace AI_Assistant_Win.Controls
                                     return;
                                 }
                                 // 弹出文件保存对话框
-                                SaveFileDialog saveFileDialog = new SaveFileDialog
+                                SaveFileDialog saveFileDialog = new()
                                 {
                                     Filter = "PDF文件|*.pdf",
                                     DefaultExt = "pdf",
+                                    FileName = $"{target.CoilNumber}_黑度检测报告.pdf",
                                     Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                 };
                                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                                 {
-                                    string pdfPath = saveFileDialog.FileName;
-                                    using (var writer = new PdfWriter(pdfPath))
+                                    try
                                     {
-                                        using var pdf = new PdfDocument(writer);
-                                        var document = new Document(pdf);
-                                        using MemoryStream ms = new();
-                                        memoryImage.Save(ms, ImageFormat.Png); // 将Bitmap保存为PNG格式（或其他支持的格式）
-                                        var pdfImage = new iText.Layout.Element.Image(ImageDataFactory.Create(ms.ToArray()));
-                                        // 将图像添加到PDF文档中
-                                        document.Add(pdfImage);
-                                        document.Close();
+                                        string pdfPath = saveFileDialog.FileName;
+                                        FileHelper.SaveImageAsPDF(memoryImage, pdfPath);
+                                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath,
+                                            AntdUI.TAlignFrom.BR, Font);
                                     }
-                                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath, AntdUI.TAlignFrom.BR, Font);
+                                    catch (Exception error)
+                                    {
+                                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                                    }
+                                }
+                                break;
+                            case "upload":
+                                if (memoryImage == null)
+                                {
+                                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PREVIEW_BEFORE_UPLOADING,
+                                        AntdUI.TAlignFrom.BR, Font);
+                                    return;
+                                }
+                                // check uploaded with the same coil number
+                                var lastUploaded = uploadBlacknessBLL.GetLastUploaded(target);
+                                if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, lastUploaded != null ?
+                                    LocalizeHelper.WOULD_REUPLOAD_BLACKNESS_RESULT(target.CoilNumber) :
+                                    LocalizeHelper.WOULD_UPLOAD_BLACKNESS_RESULT) == DialogResult.OK)
+                                {
+                                    try
+                                    {
+                                        _ = uploadBlacknessBLL.Upload(memoryImage, target, lastUploaded);
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);
+                                    }
                                 }
                                 break;
                             case "setting":
@@ -118,10 +146,10 @@ namespace AI_Assistant_Win.Controls
         {
             try
             {
-                var result = blacknessMethodBLL.GetResultById(id);
-                label_Date.Text = result.CreateTime?.ToString("yyyy 年 MM 月 dd 日");
+                target = blacknessMethodBLL.GetResultById(id);
+                label_Date.Text = target.CreateTime?.ToString("yyyy 年 MM 月 dd 日");
                 #region workGroup
-                switch (result.WorkGroup)
+                switch (target.WorkGroup)
                 {
                     case "甲-白":
                         checkbox_Jia_Day.Checked = true;
@@ -215,11 +243,11 @@ namespace AI_Assistant_Win.Controls
                         break;
                 }
                 #endregion
-                label_Analyst.Text = result.Analyst.Split("-").LastOrDefault();
-                label_Coil_Number.Text = result.CoilNumber;
-                label_Size.Text = result.Size;
+                label_Analyst.Text = target.Analyst.Split("-").LastOrDefault();
+                label_Coil_Number.Text = target.CoilNumber;
+                label_Size.Text = target.Size;
                 #region OK/NG
-                if (result.IsOK)
+                if (target.IsOK)
                 {
                     checkbox_OK.Checked = true;
                     checkbox_NG.Checked = false;
@@ -231,7 +259,7 @@ namespace AI_Assistant_Win.Controls
                 }
                 #endregion
                 #region uploaded
-                if (result.IsUploaded)
+                if (target.IsUploaded)
                 {
                     checkbox_Uploaded.Checked = true;
                     checkbox_Not_Uploaded.Checked = false;
@@ -243,20 +271,20 @@ namespace AI_Assistant_Win.Controls
                 }
                 #endregion
                 #region image
-                blacknessReport_RenderImage.Image = System.Drawing.Image.FromFile(result.RenderImagePath);
+                blacknessReport_RenderImage.Image = System.Drawing.Image.FromFile(target.RenderImagePath);
                 #endregion
-                label_Surface_OP_Level.Text = result.SurfaceOPLevel;
-                label_Surface_OP_Width.Text = $"{result.SurfaceOPWidth:F2}";
-                label_Surface_CE_Level.Text = result.SurfaceCELevel;
-                label_Surface_CE_Width.Text = $"{result.SurfaceCEWidth:F2}";
-                label_Surface_DR_Level.Text = result.SurfaceDRLevel;
-                label_Surface_DR_Width.Text = $"{result.SurfaceDRWidth:F2}";
-                label_Inside_OP_Level.Text = result.InsideOPLevel;
-                label_Inside_OP_Width.Text = $"{result.InsideOPWidth:F2}";
-                label_Inside_CE_Level.Text = result.InsideCELevel;
-                label_Inside_CE_Width.Text = $"{result.InsideCEWidth:F2}";
-                label_Inside_DR_Level.Text = result.InsideDRLevel;
-                label_Inside_DR_Width.Text = $"{result.InsideDRWidth:F2}";
+                label_Surface_OP_Level.Text = target.SurfaceOPLevel;
+                label_Surface_OP_Width.Text = $"{target.SurfaceOPWidth:F2}";
+                label_Surface_CE_Level.Text = target.SurfaceCELevel;
+                label_Surface_CE_Width.Text = $"{target.SurfaceCEWidth:F2}";
+                label_Surface_DR_Level.Text = target.SurfaceDRLevel;
+                label_Surface_DR_Width.Text = $"{target.SurfaceDRWidth:F2}";
+                label_Inside_OP_Level.Text = target.InsideOPLevel;
+                label_Inside_OP_Width.Text = $"{target.InsideOPWidth:F2}";
+                label_Inside_CE_Level.Text = target.InsideCELevel;
+                label_Inside_CE_Width.Text = $"{target.InsideCEWidth:F2}";
+                label_Inside_DR_Level.Text = target.InsideDRLevel;
+                label_Inside_DR_Width.Text = $"{target.InsideDRWidth:F2}";
             }
             catch (Exception error)
             {

@@ -11,14 +11,12 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace AI_Assistant_Win.Business
 {
-    /// <summary>
-    /// TODO: upload
-    /// </summary>
     public class ApiBLL : INotifyPropertyChanged
     {
         private LoginToken loginToken;
@@ -168,8 +166,166 @@ namespace AI_Assistant_Win.Business
             {
                 throw new Exception(result.Message);
             }
-
+            if (result.Data == null || result.Data.Data == null)
+            {
+                throw new Exception("试样编号接口返回有误，请联系管理员");
+            }
             return result.Data.Data.FirstOrDefault();
+        }
+
+        public async Task<List<GetFileCategoryListResponse>> GetFileCategoryTreeAsync()
+        {
+            var getFileCategoryListUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("GetFileCategoryListUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(getFileCategoryListUrl))
+            {
+                throw new Exception("文件系统目录接口未指定，请联系管理员");
+            }
+
+            var json = JsonConvert.SerializeObject(new GetFileCategoryListRequest { });
+
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+
+            var response = await httpClient.PostAsync(getFileCategoryListUrl, data);
+
+            var jsonStr = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<List<GetFileCategoryListResponse>>>(jsonStr) ?? throw new Exception("文件系统目录接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+            if (result.Data == null)
+            {
+                throw new Exception("文件系统目录接口返回有误，请联系管理员");
+            }
+            return result.Data;
+        }
+
+        public async Task<int> CreateCategoryAsync(string categoryName)
+        {
+            var createCategoryUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("CreateCategoryUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(createCategoryUrl))
+            {
+                throw new Exception("创建文件系统目录接口未指定，请联系管理员");
+            }
+
+            var json = JsonConvert.SerializeObject(new CreateCategoryRequest { CategoryName = categoryName });
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+
+            var response = await httpClient.PostAsync(createCategoryUrl, data);
+
+            var jsonStr = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<int>>(jsonStr) ?? throw new Exception("创建文件系统目录接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+            if (result.Data == 0)
+            {
+                throw new Exception("创建文件系统目录接口返回有误，请联系管理员");
+            }
+            return result.Data;
+        }
+
+        public async Task<int> UploadFileAsync(BlacknessUploadResult uploadResult)
+        {
+            var uploadFileUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("UploadFileUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(uploadFileUrl))
+            {
+                throw new Exception("上传文件接口未指定，请联系管理员");
+            }
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+            // 创建 MultipartFormDataContent 实例
+            using var content = new MultipartFormDataContent
+            {
+                { new StringContent(uploadResult.FileManagerId.ToString()), "fileManagerId" },
+                { new StringContent(uploadResult.FileName), "fileName" },
+                { new StringContent(string.Empty), "fileUrl" },
+                { new StringContent("4"), "fileType" },
+                { new StringContent(uploadResult.FileCategory), "fileCategory" },
+                { new StringContent(uploadResult.FileCategoryId.ToString()), "fileCategoryId" },
+                { new StringContent(uploadResult.FileVersion), "fileVersion" },
+                { new StringContent(LoginUserInfo.Username), "creator" },
+                { new StringContent(string.Empty), "fileTag" },
+                { new StringContent("1"), "isClassify" },
+                { new StringContent(uploadResult.UploadFileId ?? "null"), "uploadFileId" },
+                { new StringContent(uploadResult.CreateTime.ToString("yyyy-MM-dd HH:mm:ss")), "createTime" },
+                { new StringContent(string.Empty), "fileIntroduction" },
+                { new StringContent("WU_FILE_1"), "id" },
+                { new StringContent(uploadResult.FileName), "name" },
+                { new StringContent("application/pdf"), "type" }
+            };
+            FileInfo fileInfo = new(uploadResult.LocalFilePath);
+            content.Add(new StringContent(TimeHelper.FormateJavaScriptToString(fileInfo.LastWriteTime)), "lastModifiedDate");
+            // 读取二进制文件数据
+            byte[] fileBytes = File.ReadAllBytes(uploadResult.LocalFilePath); // 替换为你的文件路径
+            // 创建 ByteArrayContent 实例来封装二进制数据
+            using var byteArrayContent = new ByteArrayContent(fileBytes);
+            // 设置二进制数据的 Content-Type（如果需要，默认为 application/octet-stream）
+            byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            // 将二进制数据添加到 MultipartFormDataContent 中
+            content.Add(new StringContent(fileBytes.Length.ToString()), "size");
+            // 第三个参数是文件名（可选，但通常用于服务器端处理）
+            // "{\"error\":null,\"data\":{\"isOk\":false,\"msg\":\"上传失败：请求不包含文件\"},\"status\":200,\"msg\":\"操作成功\",\"duration\":745}"
+            content.Add(byteArrayContent, "file", uploadResult.FileName); // 可以只传递文件名，如果不需要完整路径
+            var response = await httpClient.PostAsync(uploadFileUrl, content);
+            var jsonStr = await response.Content.ReadAsStringAsync();
+            var result = JsonConvert.DeserializeObject<ResponseBody<UploadFileResponse>>(jsonStr) ?? throw new Exception("上传文件接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+            if (result.Data == null)
+            {
+                throw new Exception("上传文件接口返回有误，请联系管理员");
+            }
+            if (!result.Data.IsOK)
+            {
+                throw new Exception(result.Data.Message);
+            }
+            return result.Data.FileManagerId;
+        }
+
+        public async Task<GetFileByIdResponse> GetFileByIdAsync(int fileManagerId)
+        {
+            var getFileByIdUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("GetFileByIdUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(getFileByIdUrl))
+            {
+                throw new Exception("获取文件信息接口未指定，请联系管理员");
+            }
+
+            getFileByIdUrl = $"{getFileByIdUrl}?id={fileManagerId}";
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+            var jsonStr = await httpClient.GetStringAsync(getFileByIdUrl);
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<GetFileByIdResponse>>(jsonStr) ?? throw new Exception("获取文件信息接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+
+            if (result.Data == null)
+            {
+                throw new Exception("获取文件信息接口返回有误，请联系管理员");
+            }
+
+            return result.Data;
         }
     }
 }

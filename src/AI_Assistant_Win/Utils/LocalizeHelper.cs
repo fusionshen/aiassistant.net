@@ -129,10 +129,14 @@ namespace AI_Assistant_Win.Utils
         public static string PRINT_PREVIEW => Localization.Get("Print Preview", "打印预览");
         public static string PRINT_PRINT => Localization.Get("Print", "打印");
         public static string PRINT_DOWNLOAD => Localization.Get("Download", "下载");
+        public static string PRINT_UPLOAD => Localization.Get("Upload", "上传至业务系统");
         public static string PRINT_SETTINGS => Localization.Get("Print Settings", "打印设置");
         public static string PREVIEW_BEFORE_DOWNLOADING => Localization.Get("Please preview it before downloading.", "请先预览然后再下载");
+        public static string PREVIEW_BEFORE_UPLOADING => Localization.Get("Please preview it before uploading.", "请先预览然后再上传");
         public static string CHOOSE_THE_LOCATION => Localization.Get("Choose the location to save the PDF file", "选择保存PDF文件的位置");
         public static string FILE_SAVED_LOCATION => Localization.Get("The PDF file has been successfully saved to:", "PDF文件已成功保存到: ");
+        public static string WOULD_UPLOAD_BLACKNESS_RESULT => Localization.Get("Would you like to upload this blackness detection report and its results to the business system?", "是否将本次黑度检测报告及结果上传至业务系统？");
+        public static string WOULD_REUPLOAD_BLACKNESS_RESULT(string coilNumber) => Localization.Get($"The system has detected that the steel coil number [{coilNumber}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到钢卷号[{coilNumber}]已经上传，是否将本次报告及结果重新上传至业务系统并更新版本？");
         #endregion
         #region table
         public static string DISPLAY_HEADER => Localization.Get("Display header", "显示表头");

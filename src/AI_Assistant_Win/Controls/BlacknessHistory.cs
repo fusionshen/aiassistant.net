@@ -138,8 +138,7 @@ namespace AI_Assistant_Win.Controls
                             AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                         }
                         break;
-                    default:
-                        // TODO: uploaded
+                    case "edit":
                         if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.WOULD_EDIT_BLACKNESS_RESULT) == DialogResult.OK)
                         {
                             try
@@ -151,8 +150,9 @@ namespace AI_Assistant_Win.Controls
                             {
                                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                             }
-                            break;
                         }
+                        break;
+                    default:
                         break;
                 }
 
