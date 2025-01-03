@@ -40,16 +40,16 @@ namespace AI_Assistant_Win.Controls
             button11 = new AntdUI.Button();
             panel13 = new AntdUI.Panel();
             cbPixelFormat = new AntdUI.Select();
-            label_Work_Group = new Label();
+            labelPixelFormat = new AntdUI.Label();
             panel12 = new AntdUI.Panel();
             tbFrameRate = new AntdUI.Input();
-            label2 = new Label();
+            labelFrameRate = new AntdUI.Label();
             panel9 = new AntdUI.Panel();
             tbGain = new AntdUI.Input();
-            label1 = new Label();
+            labelGain = new AntdUI.Label();
             panel15 = new AntdUI.Panel();
             tbExposure = new AntdUI.Input();
-            label_Coil_Number = new Label();
+            labelExposureTime = new AntdUI.Label();
             divider3 = new AntdUI.Divider();
             panel4 = new System.Windows.Forms.Panel();
             panel11 = new AntdUI.Panel();
@@ -139,7 +139,7 @@ namespace AI_Assistant_Win.Controls
             panel14.Dock = DockStyle.Top;
             panel14.Location = new Point(5, 165);
             panel14.Name = "panel14";
-            panel14.Padding = new Padding(100, 0, 100, 0);
+            panel14.Padding = new Padding(80, 0, 80, 0);
             panel14.Radius = 0;
             panel14.Size = new Size(410, 46);
             panel14.TabIndex = 29;
@@ -150,7 +150,8 @@ namespace AI_Assistant_Win.Controls
             bnSetParam.AutoSizeMode = AntdUI.TAutoSize.Auto;
             bnSetParam.Dock = DockStyle.Right;
             bnSetParam.Enabled = false;
-            bnSetParam.Location = new Point(210, 0);
+            bnSetParam.LocalizationText = "Set Params";
+            bnSetParam.Location = new Point(230, 0);
             bnSetParam.Name = "bnSetParam";
             bnSetParam.Size = new Size(100, 47);
             bnSetParam.TabIndex = 7;
@@ -162,7 +163,8 @@ namespace AI_Assistant_Win.Controls
             bnGetParam.AutoSizeMode = AntdUI.TAutoSize.Auto;
             bnGetParam.Dock = DockStyle.Left;
             bnGetParam.Enabled = false;
-            bnGetParam.Location = new Point(100, 0);
+            bnGetParam.LocalizationText = "Get Params";
+            bnGetParam.Location = new Point(80, 0);
             bnGetParam.Name = "bnGetParam";
             bnGetParam.Size = new Size(100, 47);
             bnGetParam.TabIndex = 6;
@@ -182,7 +184,7 @@ namespace AI_Assistant_Win.Controls
             panel13.Back = Color.Transparent;
             panel13.BackColor = Color.Transparent;
             panel13.Controls.Add(cbPixelFormat);
-            panel13.Controls.Add(label_Work_Group);
+            panel13.Controls.Add(labelPixelFormat);
             panel13.Dock = DockStyle.Top;
             panel13.Location = new Point(5, 125);
             panel13.Name = "panel13";
@@ -197,31 +199,32 @@ namespace AI_Assistant_Win.Controls
             cbPixelFormat.DropDownArrow = true;
             cbPixelFormat.Enabled = false;
             cbPixelFormat.Font = new Font("Microsoft YaHei UI", 10F);
-            cbPixelFormat.LocalizationPlaceholderText = "Select.{id}";
+            cbPixelFormat.LocalizationPlaceholderText = "";
             cbPixelFormat.Location = new Point(100, 0);
             cbPixelFormat.Name = "cbPixelFormat";
             cbPixelFormat.PlaceholderText = "";
             cbPixelFormat.Size = new Size(261, 40);
             cbPixelFormat.TabIndex = 17;
             // 
-            // label_Work_Group
+            // labelPixelFormat
             // 
-            label_Work_Group.BackColor = Color.Transparent;
-            label_Work_Group.Dock = DockStyle.Left;
-            label_Work_Group.Font = new Font("Microsoft YaHei UI", 10F);
-            label_Work_Group.Location = new Point(0, 0);
-            label_Work_Group.Name = "label_Work_Group";
-            label_Work_Group.Size = new Size(100, 40);
-            label_Work_Group.TabIndex = 16;
-            label_Work_Group.Text = "像素格式：";
-            label_Work_Group.TextAlign = ContentAlignment.MiddleRight;
+            labelPixelFormat.BackColor = Color.Transparent;
+            labelPixelFormat.Dock = DockStyle.Left;
+            labelPixelFormat.Font = new Font("Microsoft YaHei UI", 10F);
+            labelPixelFormat.LocalizationText = "PixelFormat:";
+            labelPixelFormat.Location = new Point(0, 0);
+            labelPixelFormat.Name = "labelPixelFormat";
+            labelPixelFormat.Size = new Size(100, 40);
+            labelPixelFormat.TabIndex = 16;
+            labelPixelFormat.Text = "像素格式：";
+            labelPixelFormat.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel12
             // 
             panel12.Back = Color.Transparent;
             panel12.BackColor = Color.Transparent;
             panel12.Controls.Add(tbFrameRate);
-            panel12.Controls.Add(label2);
+            panel12.Controls.Add(labelFrameRate);
             panel12.Dock = DockStyle.Top;
             panel12.Location = new Point(5, 85);
             panel12.Name = "panel12";
@@ -239,24 +242,25 @@ namespace AI_Assistant_Win.Controls
             tbFrameRate.Size = new Size(261, 40);
             tbFrameRate.TabIndex = 17;
             // 
-            // label2
+            // labelFrameRate
             // 
-            label2.BackColor = Color.Transparent;
-            label2.Dock = DockStyle.Left;
-            label2.Font = new Font("Microsoft YaHei UI", 10F);
-            label2.Location = new Point(0, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(100, 40);
-            label2.TabIndex = 16;
-            label2.Text = "帧率：";
-            label2.TextAlign = ContentAlignment.MiddleRight;
+            labelFrameRate.BackColor = Color.Transparent;
+            labelFrameRate.Dock = DockStyle.Left;
+            labelFrameRate.Font = new Font("Microsoft YaHei UI", 10F);
+            labelFrameRate.LocalizationText = "FrameRate:";
+            labelFrameRate.Location = new Point(0, 0);
+            labelFrameRate.Name = "labelFrameRate";
+            labelFrameRate.Size = new Size(100, 40);
+            labelFrameRate.TabIndex = 16;
+            labelFrameRate.Text = "帧率：";
+            labelFrameRate.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel9
             // 
             panel9.Back = Color.Transparent;
             panel9.BackColor = Color.Transparent;
             panel9.Controls.Add(tbGain);
-            panel9.Controls.Add(label1);
+            panel9.Controls.Add(labelGain);
             panel9.Dock = DockStyle.Top;
             panel9.Location = new Point(5, 45);
             panel9.Name = "panel9";
@@ -274,24 +278,25 @@ namespace AI_Assistant_Win.Controls
             tbGain.Size = new Size(261, 40);
             tbGain.TabIndex = 17;
             // 
-            // label1
+            // labelGain
             // 
-            label1.BackColor = Color.Transparent;
-            label1.Dock = DockStyle.Left;
-            label1.Font = new Font("Microsoft YaHei UI", 10F);
-            label1.Location = new Point(0, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(100, 40);
-            label1.TabIndex = 16;
-            label1.Text = "增益：";
-            label1.TextAlign = ContentAlignment.MiddleRight;
+            labelGain.BackColor = Color.Transparent;
+            labelGain.Dock = DockStyle.Left;
+            labelGain.Font = new Font("Microsoft YaHei UI", 10F);
+            labelGain.LocalizationText = "Gain:";
+            labelGain.Location = new Point(0, 0);
+            labelGain.Name = "labelGain";
+            labelGain.Size = new Size(100, 40);
+            labelGain.TabIndex = 16;
+            labelGain.Text = "增益：";
+            labelGain.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel15
             // 
             panel15.Back = Color.Transparent;
             panel15.BackColor = Color.Transparent;
             panel15.Controls.Add(tbExposure);
-            panel15.Controls.Add(label_Coil_Number);
+            panel15.Controls.Add(labelExposureTime);
             panel15.Dock = DockStyle.Top;
             panel15.Location = new Point(5, 5);
             panel15.Name = "panel15";
@@ -309,23 +314,24 @@ namespace AI_Assistant_Win.Controls
             tbExposure.Size = new Size(261, 40);
             tbExposure.TabIndex = 17;
             // 
-            // label_Coil_Number
+            // labelExposureTime
             // 
-            label_Coil_Number.BackColor = Color.Transparent;
-            label_Coil_Number.Dock = DockStyle.Left;
-            label_Coil_Number.Font = new Font("Microsoft YaHei UI", 10F);
-            label_Coil_Number.Location = new Point(0, 0);
-            label_Coil_Number.Name = "label_Coil_Number";
-            label_Coil_Number.Size = new Size(100, 40);
-            label_Coil_Number.TabIndex = 16;
-            label_Coil_Number.Text = "曝光：";
-            label_Coil_Number.TextAlign = ContentAlignment.MiddleRight;
+            labelExposureTime.BackColor = Color.Transparent;
+            labelExposureTime.Dock = DockStyle.Left;
+            labelExposureTime.Font = new Font("Microsoft YaHei UI", 10F);
+            labelExposureTime.LocalizationText = "ExposureTime:";
+            labelExposureTime.Location = new Point(0, 0);
+            labelExposureTime.Name = "labelExposureTime";
+            labelExposureTime.Size = new Size(100, 40);
+            labelExposureTime.TabIndex = 16;
+            labelExposureTime.Text = "曝光：";
+            labelExposureTime.TextAlign = ContentAlignment.MiddleRight;
             // 
             // divider3
             // 
             divider3.Dock = DockStyle.Top;
             divider3.Font = new Font("Microsoft YaHei UI", 10F);
-            divider3.LocalizationText = "";
+            divider3.LocalizationText = "Settings";
             divider3.Location = new Point(0, 315);
             divider3.Name = "divider3";
             divider3.Orientation = AntdUI.TOrientation.Left;
@@ -364,6 +370,7 @@ namespace AI_Assistant_Win.Controls
             bnTriggerExec.AutoSizeMode = AntdUI.TAutoSize.Auto;
             bnTriggerExec.Dock = DockStyle.Right;
             bnTriggerExec.Enabled = false;
+            bnTriggerExec.LocalizationText = "Soft Trigger Once";
             bnTriggerExec.Location = new Point(244, 0);
             bnTriggerExec.Name = "bnTriggerExec";
             bnTriggerExec.Size = new Size(116, 47);
@@ -378,6 +385,7 @@ namespace AI_Assistant_Win.Controls
             cbSoftTrigger.AutoSizeMode = AntdUI.TAutoSize.Width;
             cbSoftTrigger.Dock = DockStyle.Left;
             cbSoftTrigger.Enabled = false;
+            cbSoftTrigger.LocalizationText = "SoftTrigger";
             cbSoftTrigger.Location = new Point(50, 0);
             cbSoftTrigger.Name = "cbSoftTrigger";
             cbSoftTrigger.Size = new Size(98, 46);
@@ -413,6 +421,7 @@ namespace AI_Assistant_Win.Controls
             bnStopGrab.AutoSizeMode = AntdUI.TAutoSize.Auto;
             bnStopGrab.Dock = DockStyle.Left;
             bnStopGrab.Enabled = false;
+            bnStopGrab.LocalizationText = "   Stop      ";
             bnStopGrab.Location = new Point(312, 0);
             bnStopGrab.Name = "bnStopGrab";
             bnStopGrab.Size = new Size(100, 47);
@@ -426,6 +435,7 @@ namespace AI_Assistant_Win.Controls
             bnStartGrab.AutoSizeMode = AntdUI.TAutoSize.Auto;
             bnStartGrab.Dock = DockStyle.Left;
             bnStartGrab.Enabled = false;
+            bnStartGrab.LocalizationText = "  Start   ";
             bnStartGrab.Location = new Point(212, 0);
             bnStartGrab.Name = "bnStartGrab";
             bnStartGrab.Size = new Size(100, 47);
@@ -440,6 +450,7 @@ namespace AI_Assistant_Win.Controls
             bnTriggerMode.Dock = DockStyle.Left;
             bnTriggerMode.Enabled = false;
             bnTriggerMode.Fill = Color.FromArgb(200, 0, 0);
+            bnTriggerMode.LocalizationText = "Trigger";
             bnTriggerMode.Location = new Point(106, 0);
             bnTriggerMode.Name = "bnTriggerMode";
             bnTriggerMode.Size = new Size(106, 48);
@@ -453,6 +464,7 @@ namespace AI_Assistant_Win.Controls
             bnContinuesMode.Dock = DockStyle.Left;
             bnContinuesMode.Enabled = false;
             bnContinuesMode.Fill = Color.FromArgb(200, 0, 0);
+            bnContinuesMode.LocalizationText = "Conti";
             bnContinuesMode.Location = new Point(0, 0);
             bnContinuesMode.Name = "bnContinuesMode";
             bnContinuesMode.Size = new Size(106, 48);
@@ -471,7 +483,7 @@ namespace AI_Assistant_Win.Controls
             // 
             divider2.Dock = DockStyle.Top;
             divider2.Font = new Font("Microsoft YaHei UI", 10F);
-            divider2.LocalizationText = "";
+            divider2.LocalizationText = "Acquisition";
             divider2.Location = new Point(0, 176);
             divider2.Name = "divider2";
             divider2.Orientation = AntdUI.TOrientation.Left;
@@ -495,6 +507,7 @@ namespace AI_Assistant_Win.Controls
             // 
             bnClose.AutoSizeMode = AntdUI.TAutoSize.Auto;
             bnClose.Enabled = false;
+            bnClose.LocalizationText = "  Close   ";
             bnClose.Location = new Point(319, 12);
             bnClose.Name = "bnClose";
             bnClose.Size = new Size(100, 47);
@@ -506,6 +519,7 @@ namespace AI_Assistant_Win.Controls
             // bnOpen
             // 
             bnOpen.AutoSizeMode = AntdUI.TAutoSize.Auto;
+            bnOpen.LocalizationText = "  Open   ";
             bnOpen.Location = new Point(222, 12);
             bnOpen.Name = "bnOpen";
             bnOpen.Size = new Size(100, 47);
@@ -529,7 +543,7 @@ namespace AI_Assistant_Win.Controls
             cbDeviceList.AllowClear = true;
             cbDeviceList.Dock = DockStyle.Fill;
             cbDeviceList.JoinRight = true;
-            cbDeviceList.LocalizationPlaceholderText = "Select.{id}";
+            cbDeviceList.LocalizationPlaceholderText = "Text something.";
             cbDeviceList.Location = new Point(0, 0);
             cbDeviceList.Name = "cbDeviceList";
             cbDeviceList.PlaceholderText = "输入点什么搜索";
@@ -552,7 +566,7 @@ namespace AI_Assistant_Win.Controls
             // 
             divider1.Dock = DockStyle.Top;
             divider1.Font = new Font("Microsoft YaHei UI", 10F);
-            divider1.LocalizationText = "";
+            divider1.LocalizationText = "Find";
             divider1.Location = new Point(0, 74);
             divider1.Name = "divider1";
             divider1.Orientation = AntdUI.TOrientation.Left;
@@ -566,8 +580,8 @@ namespace AI_Assistant_Win.Controls
             header1.Description = "查找设备、打开/关闭设备、参数设置";
             header1.Dock = DockStyle.Top;
             header1.Font = new Font("Microsoft YaHei UI", 12F);
-            header1.LocalizationDescription = "";
-            header1.LocalizationText = "";
+            header1.LocalizationDescription = "Find Device,Turn On/OFF,Parameter Settings";
+            header1.LocalizationText = "Camera Settings";
             header1.Location = new Point(0, 0);
             header1.Name = "header1";
             header1.Padding = new Padding(0, 0, 0, 10);
@@ -678,14 +692,14 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Panel panel12;
         private AntdUI.Panel panel9;
         private AntdUI.Input tbGain;
-        private Label label1;
+        private AntdUI.Label labelGain;
         private AntdUI.Panel panel15;
-        private Label label_Coil_Number;
+        private AntdUI.Label labelExposureTime;
         private AntdUI.Panel panel13;
         private AntdUI.Select cbPixelFormat;
-        private Label label_Work_Group;
+        private AntdUI.Label labelPixelFormat;
         private AntdUI.Input tbFrameRate;
-        private Label label2;
+        private AntdUI.Label labelFrameRate;
         private AntdUI.Input tbExposure;
         private AntdUI.Panel panel14;
         private AntdUI.Button button11;

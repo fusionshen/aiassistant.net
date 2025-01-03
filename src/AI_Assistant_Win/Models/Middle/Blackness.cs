@@ -10,7 +10,6 @@ namespace AI_Assistant_Win.Models.Middle
     {
         /// <summary>
         /// 位置
-        /// todo: 现场获得比例尺后，应该根据XY位置确定
         /// </summary>
         public BlacknessLocationKind Location { get; set; } = location;
         /// <summary>
@@ -23,7 +22,6 @@ namespace AI_Assistant_Win.Models.Middle
         public float Score { get { return Prediction.Score; } }
         /// <summary>
         /// 宽度，实际指图片高度
-        /// todo：现场获取比例尺后，计算出最终mm数
         /// </summary>
         public float Width { get { return Prediction.Rectangle.Height; } }
         /// <summary>

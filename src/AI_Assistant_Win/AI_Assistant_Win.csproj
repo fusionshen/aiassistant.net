@@ -11,13 +11,13 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.5.5</Version>
+	<Version>0.5.6</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolov8.net</Description>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
-    <Description>👚 基于 yolov8.net 和 antdUI 设计的AI人工智能助手 Winform 客户端</Description>
+    <Description>👚 基于 yolov8.net 和 antdUI 设计的AI人工智能助手 Winforms 客户端</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
     

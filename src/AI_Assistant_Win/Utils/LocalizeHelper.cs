@@ -22,6 +22,7 @@ namespace AI_Assistant_Win.Utils
         public static string REPORT => Localization.Get("Report", "报告");
         public static string EDIT => Localization.Get("Edit", "修改");
         public static string DELETE => Localization.Get("Delete", "删除");
+        public static string UNDER_DEVELOPMENT => Localization.Get("This feature is currently under development.", "此功能目前正在开发中。");
         #endregion
         #region login
         public static string LOGIN_MODAL_TITLE => Localization.Get("Please enter your platform account", "请输入平台账户");
@@ -106,7 +107,7 @@ namespace AI_Assistant_Win.Utils
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
         public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
         public static string WOULD_EDIT_BLACKNESS_RESULT => Localization.Get("Would you like to edit the blackness detection result?", "是否对本次黑度检测结果进行修改？");
-        public static string BLACKNESS_TABLE_HEADER_ID => Localization.Get("Id", "等级");
+        public static string BLACKNESS_TABLE_HEADER_ID => Localization.Get("Id", "编号");
         public static string BLACKNESS_TABLE_HEADER_TESTNO => Localization.Get("TestNo", "试样编号");
         public static string BLACKNESS_TABLE_HEADER_SIZE => Localization.Get("Size", "尺寸");
         public static string BLACKNESS_TABLE_HEADER_UPLOADED => Localization.Get("Uploaded", "是否上传");
@@ -137,6 +138,12 @@ namespace AI_Assistant_Win.Utils
         public static string FILE_SAVED_LOCATION => Localization.Get("The PDF file has been successfully saved to:", "PDF文件已成功保存到: ");
         public static string WOULD_UPLOAD_BLACKNESS_RESULT => Localization.Get("Would you like to upload this blackness detection report and its results to the business system?", "是否将本次黑度检测报告及结果上传至业务系统？");
         public static string WOULD_REUPLOAD_BLACKNESS_RESULT(string coilNumber) => Localization.Get($"The system has detected that the steel coil number [{coilNumber}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到钢卷号[{coilNumber}]已经上传，是否将本次报告及结果重新上传至业务系统并更新版本？");
+        public static string REPORT_UPLOAD_SUCCESS => Localization.Get("Successfully uploaded! The report can be viewed in the [File Management] module; the data can be viewed in the [Sample Management - Data Entry] page.", "成功上传！报告可在【文件管理】模块中查看，数据可在【试样管理-数据录入】查看。");
+        public static string BLACKNESS_RESULT_UPLOADED => Localization.Get("Uploaded", "已上传");
+        public static string BLACKNESS_RESULT_NOT_UPLOADED => Localization.Get("Not Uploaded", "未上传");
+        public static string BLACKNESS_RESULT_AWAITING_REUPLOAD => Localization.Get("Awaiting re-upload", "待重新上传");
+        public static string WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the blackness report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次黑度报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
+
         #endregion
         #region table
         public static string DISPLAY_HEADER => Localization.Get("Display header", "显示表头");

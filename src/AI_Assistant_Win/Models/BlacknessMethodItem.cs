@@ -17,7 +17,6 @@ namespace AI_Assistant_Win.Models
         public int ResultId { get; set; }
         /// <summary>
         /// 位置
-        /// TODO: 现场获得比例尺后，应该根据XY位置确定
         /// </summary>
         [Column("location")]
         public BlacknessLocationKind Location { get; set; }
@@ -33,7 +32,6 @@ namespace AI_Assistant_Win.Models
         public float Score { get; set; }
         /// <summary>
         /// 宽度，实际指图片高度
-        /// TODO：现场获取比例尺后，计算出最终mm数
         /// </summary>
         [Column("width")]
         public float Width { get; set; }

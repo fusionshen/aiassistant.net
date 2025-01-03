@@ -1,4 +1,5 @@
 ﻿using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using SQLite;
@@ -6,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace AI_Assistant_Win.Business
@@ -19,6 +22,115 @@ namespace AI_Assistant_Win.Business
         private readonly SQLiteConnection connection = SQLiteHandler.Instance.GetSQLiteConnection();
 
         public async Task Upload(Bitmap memoryImage, BlacknessMethodResult methodResult, BlacknessUploadResult lastUpload = null)
+        {
+            var uploadResult = await UploadPDF(memoryImage, methodResult, lastUpload);
+            // call bussiness
+            BlacknessResultResponse info;
+            try
+            {
+                info = await UploadInfo(methodResult, uploadResult);
+            }
+            catch (Exception)
+            {
+                // cant delete the latest version in the server
+                throw;
+            }
+            // add uploadResult & update methodResult
+            connection.BeginTransaction();
+            try
+            {
+                DoLocallyByTransaction(methodResult, uploadResult);
+                connection.Commit();
+            }
+            catch (Exception)
+            {
+                connection.Rollback();
+                // should delete file at the server, but cant delete the latest version in the server
+                // delete info
+                await WithdrawInfo(info);
+                throw;
+            }
+        }
+
+        private async Task WithdrawInfo(BlacknessResultResponse info)
+        {
+            if (!string.IsNullOrEmpty(info.Id))
+            {
+                info.EntityState = EntityStateKind.Delete;
+                await apiBLL.UploadBlacknessResultAsync(info);
+            }
+        }
+
+        private async Task<BlacknessResultResponse> UploadInfo(BlacknessMethodResult methodResult, BlacknessUploadResult uploadResult)
+        {
+            // create a model
+            var model = new BlacknessResultResponse
+            {
+                CoilNumber = methodResult.CoilNumber,
+                TestNo = methodResult.TestNo,
+                OriginImagePath = methodResult.OriginImagePath,
+                RenderImagePath = methodResult.RenderImagePath,
+                Size = methodResult.Size,
+                IsOK = methodResult.IsOK,
+                SurfaceOPLevel = methodResult.SurfaceOPLevel,
+                SurfaceOPWidth = methodResult.SurfaceOPWidth,
+                SurfaceOPScore = methodResult.SurfaceOPScore,
+                SurfaceCELevel = methodResult.SurfaceCELevel,
+                SurfaceCEWidth = methodResult.SurfaceCEWidth,
+                SurfaceCEScore = methodResult.SurfaceCEScore,
+                SurfaceDRLevel = methodResult.SurfaceDRLevel,
+                SurfaceDRWidth = methodResult.SurfaceDRWidth,
+                SurfaceDRScore = methodResult.SurfaceDRScore,
+                InsideOPLevel = methodResult.InsideOPLevel,
+                InsideOPWidth = methodResult.InsideOPWidth,
+                InsideOPScore = methodResult.InsideOPScore,
+                InsideCELevel = methodResult.InsideCELevel,
+                InsideCEWidth = methodResult.InsideCEWidth,
+                InsideCEScore = methodResult.InsideCEScore,
+                InsideDRLevel = methodResult.InsideDRLevel,
+                InsideDRWidth = methodResult.InsideDRWidth,
+                InsideDRScore = methodResult.InsideDRScore,
+                IsUploaded = methodResult.IsUploaded,
+                Uploader = methodResult.Uploader,
+                UploadTime = methodResult.UploadTime,
+                WorkGroup = methodResult.WorkGroup,
+                Analyst = methodResult.Analyst,
+                CreateTime = methodResult.CreateTime,
+                LastReviser = methodResult.LastReviser,
+                LastModifiedTime = methodResult.LastModifiedTime,
+                ReportFileId = uploadResult.UploadFileId,
+                Details = CreateDetails(methodResult.Id),
+                EntityState = EntityStateKind.Insert,
+            };
+            // find it exits
+            var finded = await apiBLL.FindBlacknessResultAsync(methodResult.TestNo, methodResult.CoilNumber);
+            if (finded != null)
+            {
+                model.Id = finded.Id;
+                model.EntityState = EntityStateKind.Update;
+            }
+            model.Id = await apiBLL.UploadBlacknessResultAsync(model);
+            return model;
+        }
+
+        private List<BlacknessItemResponse> CreateDetails(int id)
+        {
+            var items = connection.Table<BlacknessMethodItem>()
+                .Where(t => t.ResultId.Equals(id))
+                .Select(t => new BlacknessItemResponse
+                {
+                    Location = t.Location,
+                    Level = t.Level,
+                    Score = t.Score,
+                    Width = t.Width,
+                    Prediction = t.Prediction
+                })
+                .OrderBy(t => t.Location)
+                .ToList();
+            return items;
+        }
+
+        private async Task<BlacknessUploadResult> UploadPDF(Bitmap memoryImage, BlacknessMethodResult methodResult, BlacknessUploadResult lastUpload)
         {
             var uploadResult = new BlacknessUploadResult
             {
@@ -45,23 +157,11 @@ namespace AI_Assistant_Win.Business
             uploadResult.FileVersionId = uploadedFile.FileVersionId;
             uploadResult.FileVersion = uploadedFile.FileVersion;
             uploadResult.UploadFileId = uploadedFile.UploadFileId;
-            uploadResult.UploadTime = uploadedFile.CreateTime;
-            // add uploadResult & update methodResult
-            connection.BeginTransaction();
-            try
-            {
-                DoLocallyByTransaction(methodResult, uploadResult);
-                connection.Commit();
-            }
-            catch (Exception)
-            {
-                connection.Rollback();
-                // TODO: delete file at the server
-                throw;
-            }
+            uploadResult.UploadTime = DateTime.Now;
+            return uploadResult;
         }
 
-        private bool DoLocallyByTransaction(BlacknessMethodResult methodResult, BlacknessUploadResult uploadResult)
+        private void DoLocallyByTransaction(BlacknessMethodResult methodResult, BlacknessUploadResult uploadResult)
         {
             methodResult.IsUploaded = true;
             methodResult.Uploader = uploadResult.Uploader;
@@ -76,7 +176,6 @@ namespace AI_Assistant_Win.Business
             {
                 throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
             }
-            return true;
         }
 
         private async Task<int> GetFileCategoryId()
@@ -104,7 +203,8 @@ namespace AI_Assistant_Win.Business
 
         public BlacknessUploadResult GetLastUploaded(BlacknessMethodResult target)
         {
-            var item = connection.Table<BlacknessUploadResult>().Where(t => t.TestNo.Equals(target.TestNo))
+            var item = connection.Table<BlacknessUploadResult>()
+                .Where(t => t.TestNo.Equals(target.TestNo) && t.CoilNumber.Equals(target.CoilNumber))
                 .OrderByDescending(t => t.FileVersion).FirstOrDefault();
             return item;
         }

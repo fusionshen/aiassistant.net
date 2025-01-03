@@ -22,13 +22,19 @@ namespace AI_Assistant_Win.Controls
 
         private readonly BlacknessUploadBLL uploadBlacknessBLL;
 
-        public BlacknessReport(Form _form, string id)
+        private readonly string methodId;
+
+        private readonly Action callBack;
+
+        public BlacknessReport(Form _form, string _methodId, Action _callBack)
         {
             form = _form;
+            methodId = _methodId;
+            callBack = _callBack;
             blacknessMethodBLL = new BlacknessMethodBLL();
             uploadBlacknessBLL = new BlacknessUploadBLL();
             InitializeComponent();
-            LoadData(id);
+            LoadData(methodId);
             Disposed += BlacknessReport_Disposed;
             AntdUI.ITask.Run(() =>
             {
@@ -53,7 +59,7 @@ namespace AI_Assistant_Win.Controls
                             new("setting", "SettingOutlined", true){
                                 Tooltip = LocalizeHelper.PRINT_SETTINGS
                             }
-                    ], btn =>
+                    ], async btn =>
                     {
                         switch (btn.Name)
                         {
@@ -112,12 +118,18 @@ namespace AI_Assistant_Win.Controls
                                 {
                                     try
                                     {
-                                        _ = uploadBlacknessBLL.Upload(memoryImage, target, lastUploaded);
-
+                                        // TODO: btn loading
+                                        await uploadBlacknessBLL.Upload(memoryImage, target, lastUploaded);
+                                        // refresh
+                                        LoadData(methodId);
+                                        // refresh parent form
+                                        callBack();
+                                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.REPORT_UPLOAD_SUCCESS,
+                                         AntdUI.TAlignFrom.BR, Font);
                                     }
                                     catch (Exception ex)
                                     {
-                                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);
+                                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);    
                                     }
                                 }
                                 break;

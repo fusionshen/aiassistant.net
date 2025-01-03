@@ -134,6 +134,8 @@ namespace AI_Assistant_Win.Models.Middle
             }
         }
 
+        public bool IsUploaded { get; set; } = false;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(string propertyName)

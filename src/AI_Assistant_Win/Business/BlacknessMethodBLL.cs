@@ -41,6 +41,7 @@ namespace AI_Assistant_Win.Business
             if (!string.IsNullOrEmpty(text))
             {
                 result = result && (t.Id.ToString().Equals(text) ||
+                    (!string.IsNullOrEmpty(t.TestNo) && t.TestNo.Contains(text)) ||
                     (!string.IsNullOrEmpty(t.CoilNumber) && t.CoilNumber.Contains(text)) ||
                     (!string.IsNullOrEmpty(t.Size) && t.Size.Contains(text)) ||
                     (t.IsOK && text.Contains("OK", StringComparison.CurrentCultureIgnoreCase)) ||
@@ -243,6 +244,7 @@ namespace AI_Assistant_Win.Business
             originalBlacknessResult.Size = body.Size;
             originalBlacknessResult.Analyst = body.Analyst;
             originalBlacknessResult.Items = items;
+            originalBlacknessResult.IsUploaded = body.IsUploaded; // promot before saving
             return allSorted.Select(t => t.Id).ToList();
         }
 

@@ -1,11 +1,13 @@
 using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Utils;
+using AntdUI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AI_Assistant_Win.Controls
 {
@@ -60,14 +62,15 @@ namespace AI_Assistant_Win.Controls
                 new AntdUI.Column("testNo",LocalizeHelper.BLACKNESS_TABLE_HEADER_TESTNO, AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("size",LocalizeHelper.BLACKNESS_TABLE_HEADER_SIZE, AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("isOK","OK/NG", AntdUI.ColumnAlign.Center){ Fixed = true },
-                new AntdUI.ColumnSwitch("isUploaded",LocalizeHelper.BLACKNESS_TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center)
-                {
-                    Fixed = true,
-                    Call=(value, record, i_row, i_col) => {
-                        System.Threading.Thread.Sleep(2000);
-                        return value;
-                    }
-                },
+                new AntdUI.Column("isUploaded",LocalizeHelper.BLACKNESS_TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center){ Fixed = true },
+                //new AntdUI.ColumnSwitch("isUploaded",LocalizeHelper.BLACKNESS_TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center)
+                //{
+                //    Fixed = true,
+                //    Call=(value, record, i_row, i_col) => {
+                //        System.Threading.Thread.Sleep(2000);
+                //        return value;
+                //    }
+                //},
                 new AntdUI.Column("coilNumber",LocalizeHelper.BLACKNESS_TABLE_HEADER_COILNUMBER, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("levels",LocalizeHelper.BLACKNESS_TABLE_HEADER_LEVEL, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("analyst",LocalizeHelper.BLACKNESS_TABLE_HEADER_ANALYST,AntdUI.ColumnAlign.Center),
@@ -119,6 +122,7 @@ namespace AI_Assistant_Win.Controls
                                 {
                                     case "download":
                                         // TODO: download image
+                                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.UNDER_DEVELOPMENT, AntdUI.TAlignFrom.BR, Font);
                                         break;
                                 }
                             }
@@ -128,7 +132,7 @@ namespace AI_Assistant_Win.Controls
                         var id = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
                         try
                         {
-                            AntdUI.Drawer.open(form, new BlacknessReport(form, id)
+                            AntdUI.Drawer.open(form, new BlacknessReport(form, id, () => { BtnSearch_Click(null, null); })
                             {
                                 Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                             }, AntdUI.TAlignMini.Right);
@@ -151,6 +155,9 @@ namespace AI_Assistant_Win.Controls
                                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                             }
                         }
+                        break;
+                    case "delete":
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.UNDER_DEVELOPMENT, AntdUI.TAlignFrom.BR, Font);
                         break;
                     default:
                         break;
@@ -177,10 +184,10 @@ namespace AI_Assistant_Win.Controls
                     new("id", t.Id),
                     new("testNo", t.TestNo),
                     new("size", t.Size),
-                    new("isOK", t.IsOK ? new AntdUI.CellBadge(AntdUI.TState.Success, "OK") :
-                    new AntdUI.CellBadge(AntdUI.TState.Error, "NG")),
+                    new("isOK", t.IsOK ? new AntdUI.CellBadge(TState.Success, "OK") : new AntdUI.CellBadge(TState.Error, "NG")),
                     new("coilNumber", t.CoilNumber),
-                    new("isUploaded", t.IsUploaded),
+                    new("isUploaded", CreateIsUploadedCellBadge(t)),
+                    //new("isUploaded", t.IsUploaded),
                     new("levels", FormatCellTagList(t).ToArray()),
                     new("analyst", t.Analyst),
                     new("workGroup", t.WorkGroup),
@@ -209,6 +216,25 @@ namespace AI_Assistant_Win.Controls
                 return columnsInOneRow.ToArray();
             }).ToList();
             return dataList;
+        }
+
+        private static CellBadge CreateIsUploadedCellBadge(BlacknessMethodResult t)
+        {
+            if (!t.IsUploaded)
+            {
+                return new AntdUI.CellBadge(AntdUI.TState.Error, LocalizeHelper.BLACKNESS_RESULT_NOT_UPLOADED);
+            }
+            else
+            {
+                if (t.LastModifiedTime != null && t.LastModifiedTime >= t.UploadTime)
+                {
+                    return new AntdUI.CellBadge(AntdUI.TState.Processing, LocalizeHelper.BLACKNESS_RESULT_AWAITING_REUPLOAD);
+                }
+                else
+                {
+                    return new AntdUI.CellBadge(AntdUI.TState.Success, LocalizeHelper.BLACKNESS_RESULT_UPLOADED);
+                }
+            }
         }
 
         private string FormatLevelDetail(BlacknessMethodResult blacknessMethodResult)

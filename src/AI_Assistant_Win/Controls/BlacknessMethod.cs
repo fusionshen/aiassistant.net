@@ -415,12 +415,14 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, error.Message, AntdUI.TAlignFrom.BR, Font);
                 return;
             }
-            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.WOULD_SAVE_BLACKNESS_RESULT) == DialogResult.OK)
+            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalBlacknessResult.IsUploaded ? 
+                LocalizeHelper.WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING : 
+                LocalizeHelper.WOULD_SAVE_BLACKNESS_RESULT) == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
                 btn.LoadingWaveValue = 0;
                 btn.Loading = true;
-                AntdUI.ITask.Run(() =>
+                AntdUI.ITask.Run(async () =>
                 {
                     try
                     {
@@ -434,7 +436,7 @@ namespace AI_Assistant_Win.Controls
                         {
                             AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.SAVE_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
                             EDIT_ITEM_ID = result.ToString();
-                            _ = InitializeAsync();
+                            await InitializeAsync();
                             btn.Enabled = false;
                             MainWindow.SOMETHING_IS_UNDONE = false;
                             return;
@@ -567,7 +569,7 @@ namespace AI_Assistant_Win.Controls
         {
             try
             {
-                AntdUI.Drawer.open(form, new BlacknessReport(form, EDIT_ITEM_ID)
+                AntdUI.Drawer.open(form, new BlacknessReport(form, EDIT_ITEM_ID, () => { })
                 {
                     Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                 }, AntdUI.TAlignMini.Right);

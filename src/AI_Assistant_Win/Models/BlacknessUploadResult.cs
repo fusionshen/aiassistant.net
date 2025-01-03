@@ -62,7 +62,7 @@ namespace AI_Assistant_Win.Models
         [Column("upload_file_id")]
         public string UploadFileId { get; set; }
         /// <summary>
-        /// 系统返回的上传时间
+        /// 系统返回的上传时间，只会返回FileManager创建时间
         /// </summary>
         [Column("upload_time")]
         public DateTime? UploadTime { get; set; }

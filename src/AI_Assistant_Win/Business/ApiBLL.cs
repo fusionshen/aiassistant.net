@@ -3,6 +3,7 @@ using AI_Assistant_Win.Models.Request;
 using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
+using Org.BouncyCastle.Asn1.X509;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -326,6 +327,76 @@ namespace AI_Assistant_Win.Business
             }
 
             return result.Data;
+        }
+
+        public async Task<BlacknessResultResponse> FindBlacknessResultAsync(string testNo, string coilNumber)
+        {
+            var findBlacknessResultUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("FindBlacknessResultUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(findBlacknessResultUrl))
+            {
+                throw new Exception("查询黑度试验接口未指定，请联系管理员");
+            }
+
+            var json = JsonConvert.SerializeObject(new FindBlacknessResultRequest { CoilNumber = coilNumber, TestNo = testNo });
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+
+            var response = await httpClient.PostAsync(findBlacknessResultUrl, data);
+
+            var jsonStr = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<List<BlacknessResultResponse>>>(jsonStr) ?? throw new Exception("查询黑度试验接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+            if (result.Data == null)
+            {
+                throw new Exception("查询黑度试验接口返回有误，请联系管理员");
+            }
+            if (result.Data.Count > 1)
+            {
+                throw new Exception("业务系统中黑度试验数据重复，请联系管理员");
+            }
+            return result.Data.FirstOrDefault();
+        }
+
+        public async Task<string> UploadBlacknessResultAsync(BlacknessResultResponse uploadInfo)
+        {
+            var uploadBlacknessResultUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("UploadBlacknessResultUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(uploadBlacknessResultUrl))
+            {
+                throw new Exception("上传黑度试验接口未指定，请联系管理员");
+            }
+
+            var json = JsonConvert.SerializeObject(uploadInfo);
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+
+            var response = await httpClient.PostAsync(uploadBlacknessResultUrl, data);
+
+            var jsonStr = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<BlacknessResultResponse>>(jsonStr) ?? throw new Exception("上传黑度试验接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+
+            if (result.Data == null || string.IsNullOrEmpty(result.Data.Id))
+            {
+                throw new Exception("上传黑度试验接口返回有误，请联系管理员");
+            }
+
+            return result.Data.Id;
         }
     }
 }

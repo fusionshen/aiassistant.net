@@ -192,7 +192,7 @@ namespace AI_Assistant_Win.Controls
             panel2.Controls.Add(label_Surface_OP_Width);
             panel2.Controls.Add(label_Surface_OP_Level);
             panel2.Controls.Add(button1);
-            panel2.Location = new Point(333, 240);
+            panel2.Location = new Point(332, 226);
             panel2.Name = "panel2";
             panel2.Radius = 0;
             panel2.Size = new Size(87, 411);
@@ -365,7 +365,7 @@ namespace AI_Assistant_Win.Controls
             // blacknessReport_RenderImage
             // 
             blacknessReport_RenderImage.Image = Properties.Resources.blackness_template;
-            blacknessReport_RenderImage.Location = new Point(0, 240);
+            blacknessReport_RenderImage.Location = new Point(0, 226);
             blacknessReport_RenderImage.Name = "blacknessReport_RenderImage";
             blacknessReport_RenderImage.Size = new Size(330, 411);
             blacknessReport_RenderImage.TabIndex = 13;
@@ -378,9 +378,9 @@ namespace AI_Assistant_Win.Controls
             panel24.Controls.Add(label16);
             panel24.Controls.Add(button20);
             panel24.Dock = DockStyle.Top;
-            panel24.Location = new Point(0, 207);
+            panel24.Location = new Point(0, 198);
             panel24.Name = "panel24";
-            panel24.Size = new Size(420, 35);
+            panel24.Size = new Size(420, 25);
             panel24.TabIndex = 12;
             panel24.Text = "panel24";
             // 
@@ -392,7 +392,7 @@ namespace AI_Assistant_Win.Controls
             label20.Location = new Point(375, 0);
             label20.Margin = new Padding(0);
             label20.Name = "label20";
-            label20.Size = new Size(45, 35);
+            label20.Size = new Size(45, 25);
             label20.TabIndex = 22;
             label20.Text = "宽度";
             label20.TextAlign = ContentAlignment.MiddleCenter;
@@ -405,7 +405,7 @@ namespace AI_Assistant_Win.Controls
             label19.Location = new Point(335, 0);
             label19.Margin = new Padding(0);
             label19.Name = "label19";
-            label19.Size = new Size(40, 35);
+            label19.Size = new Size(40, 25);
             label19.TabIndex = 21;
             label19.Text = "黑度判定";
             label19.TextAlign = ContentAlignment.MiddleCenter;
@@ -418,7 +418,7 @@ namespace AI_Assistant_Win.Controls
             label17.Location = new Point(153, 0);
             label17.Margin = new Padding(0);
             label17.Name = "label17";
-            label17.Size = new Size(182, 35);
+            label17.Size = new Size(182, 25);
             label17.TabIndex = 20;
             label17.TextAlign = ContentAlignment.MiddleLeft;
             // 
@@ -430,7 +430,7 @@ namespace AI_Assistant_Win.Controls
             label16.Location = new Point(0, 0);
             label16.Margin = new Padding(0);
             label16.Name = "label16";
-            label16.Size = new Size(153, 35);
+            label16.Size = new Size(153, 25);
             label16.TabIndex = 19;
             label16.Text = "        板厚要求在0.3~2.3mm";
             label16.TextAlign = ContentAlignment.MiddleLeft;
@@ -454,10 +454,10 @@ namespace AI_Assistant_Win.Controls
             panel18.Controls.Add(label18);
             panel18.Controls.Add(button14);
             panel18.Dock = DockStyle.Top;
-            panel18.Location = new Point(0, 172);
+            panel18.Location = new Point(0, 166);
             panel18.Name = "panel18";
             panel18.Radius = 0;
-            panel18.Size = new Size(420, 35);
+            panel18.Size = new Size(420, 32);
             panel18.TabIndex = 10;
             panel18.Text = "panel18";
             // 
@@ -471,7 +471,7 @@ namespace AI_Assistant_Win.Controls
             panel23.Location = new Point(380, 0);
             panel23.Name = "panel23";
             panel23.Radius = 0;
-            panel23.Size = new Size(37, 35);
+            panel23.Size = new Size(37, 32);
             panel23.TabIndex = 25;
             panel23.Text = "panel23";
             // 
@@ -485,7 +485,7 @@ namespace AI_Assistant_Win.Controls
             checkbox_Not_Uploaded.Location = new Point(1, 1);
             checkbox_Not_Uploaded.Name = "checkbox_Not_Uploaded";
             checkbox_Not_Uploaded.RightToLeft = RightToLeft.Yes;
-            checkbox_Not_Uploaded.Size = new Size(34, 33);
+            checkbox_Not_Uploaded.Size = new Size(34, 30);
             checkbox_Not_Uploaded.TabIndex = 4;
             checkbox_Not_Uploaded.Text = "否";
             checkbox_Not_Uploaded.TextAlign = ContentAlignment.MiddleCenter;
@@ -507,7 +507,7 @@ namespace AI_Assistant_Win.Controls
             panel22.Location = new Point(343, 0);
             panel22.Name = "panel22";
             panel22.Radius = 0;
-            panel22.Size = new Size(37, 35);
+            panel22.Size = new Size(37, 32);
             panel22.TabIndex = 24;
             panel22.Text = "panel22";
             // 
@@ -522,7 +522,7 @@ namespace AI_Assistant_Win.Controls
             checkbox_Uploaded.Location = new Point(1, 1);
             checkbox_Uploaded.Name = "checkbox_Uploaded";
             checkbox_Uploaded.RightToLeft = RightToLeft.Yes;
-            checkbox_Uploaded.Size = new Size(34, 33);
+            checkbox_Uploaded.Size = new Size(34, 30);
             checkbox_Uploaded.TabIndex = 4;
             checkbox_Uploaded.Text = "是";
             checkbox_Uploaded.TextAlign = ContentAlignment.MiddleCenter;
@@ -544,7 +544,7 @@ namespace AI_Assistant_Win.Controls
             panel21.Location = new Point(306, 0);
             panel21.Name = "panel21";
             panel21.Radius = 0;
-            panel21.Size = new Size(37, 35);
+            panel21.Size = new Size(37, 32);
             panel21.TabIndex = 23;
             panel21.Text = "panel21";
             // 
@@ -558,7 +558,7 @@ namespace AI_Assistant_Win.Controls
             checkbox_NG.Location = new Point(1, 1);
             checkbox_NG.Name = "checkbox_NG";
             checkbox_NG.RightToLeft = RightToLeft.Yes;
-            checkbox_NG.Size = new Size(34, 33);
+            checkbox_NG.Size = new Size(34, 30);
             checkbox_NG.TabIndex = 4;
             checkbox_NG.Text = "NG";
             checkbox_NG.TextAlign = ContentAlignment.MiddleCenter;
@@ -580,7 +580,7 @@ namespace AI_Assistant_Win.Controls
             panel20.Location = new Point(269, 0);
             panel20.Name = "panel20";
             panel20.Radius = 0;
-            panel20.Size = new Size(37, 35);
+            panel20.Size = new Size(37, 32);
             panel20.TabIndex = 22;
             panel20.Text = "panel20";
             // 
@@ -595,7 +595,7 @@ namespace AI_Assistant_Win.Controls
             checkbox_OK.Location = new Point(1, 1);
             checkbox_OK.Name = "checkbox_OK";
             checkbox_OK.RightToLeft = RightToLeft.Yes;
-            checkbox_OK.Size = new Size(34, 33);
+            checkbox_OK.Size = new Size(34, 30);
             checkbox_OK.TabIndex = 4;
             checkbox_OK.Text = "OK";
             checkbox_OK.TextAlign = ContentAlignment.MiddleCenter;
@@ -616,7 +616,7 @@ namespace AI_Assistant_Win.Controls
             label15.ForeColor = Color.Black;
             label15.Location = new Point(227, 0);
             label15.Name = "label15";
-            label15.Size = new Size(42, 35);
+            label15.Size = new Size(42, 32);
             label15.TabIndex = 21;
             label15.Text = "3-5为OK";
             label15.TextAlign = ContentAlignment.MiddleCenter;
@@ -630,7 +630,7 @@ namespace AI_Assistant_Win.Controls
             label14.ForeColor = Color.Black;
             label14.Location = new Point(185, 0);
             label14.Name = "label14";
-            label14.Size = new Size(42, 35);
+            label14.Size = new Size(42, 32);
             label14.TabIndex = 20;
             label14.Text = "1-2为NG";
             label14.TextAlign = ContentAlignment.MiddleCenter;
@@ -644,7 +644,7 @@ namespace AI_Assistant_Win.Controls
             label13.ForeColor = Color.Black;
             label13.Location = new Point(155, 0);
             label13.Name = "label13";
-            label13.Size = new Size(30, 35);
+            label13.Size = new Size(30, 32);
             label13.TabIndex = 19;
             label13.Text = "判定";
             label13.TextAlign = ContentAlignment.MiddleCenter;
@@ -657,7 +657,7 @@ namespace AI_Assistant_Win.Controls
             label18.Location = new Point(0, 0);
             label18.Margin = new Padding(0);
             label18.Name = "label18";
-            label18.Size = new Size(155, 35);
+            label18.Size = new Size(155, 32);
             label18.TabIndex = 18;
             label18.Text = "注：此报告书适用于GA板V60黑度判定";
             label18.TextAlign = ContentAlignment.MiddleCenter;
@@ -679,7 +679,7 @@ namespace AI_Assistant_Win.Controls
             panel17.Controls.Add(label6);
             panel17.Controls.Add(button22);
             panel17.Dock = DockStyle.Top;
-            panel17.Location = new Point(0, 137);
+            panel17.Location = new Point(0, 131);
             panel17.Name = "panel17";
             panel17.Radius = 0;
             panel17.Size = new Size(420, 35);
@@ -785,7 +785,7 @@ namespace AI_Assistant_Win.Controls
             panel7.Controls.Add(panel9);
             panel7.Controls.Add(button4);
             panel7.Dock = DockStyle.Top;
-            panel7.Location = new Point(0, 102);
+            panel7.Location = new Point(0, 96);
             panel7.Name = "panel7";
             panel7.Radius = 0;
             panel7.Size = new Size(420, 35);
@@ -1122,7 +1122,7 @@ namespace AI_Assistant_Win.Controls
             panel6.Controls.Add(blacknessMethod_OriginImage_Zone);
             panel6.Controls.Add(button3);
             panel6.Dock = DockStyle.Top;
-            panel6.Location = new Point(0, 67);
+            panel6.Location = new Point(0, 61);
             panel6.Name = "panel6";
             panel6.Radius = 0;
             panel6.Size = new Size(420, 35);
@@ -1199,7 +1199,7 @@ namespace AI_Assistant_Win.Controls
             panel4.BorderWidth = 2F;
             panel4.Controls.Add(button2);
             panel4.Dock = DockStyle.Top;
-            panel4.Location = new Point(0, 63);
+            panel4.Location = new Point(0, 57);
             panel4.Name = "panel4";
             panel4.Size = new Size(420, 4);
             panel4.TabIndex = 5;
@@ -1221,7 +1221,7 @@ namespace AI_Assistant_Win.Controls
             panel5.Location = new Point(0, 0);
             panel5.Name = "panel5";
             panel5.Radius = 0;
-            panel5.Size = new Size(420, 63);
+            panel5.Size = new Size(420, 57);
             panel5.TabIndex = 1;
             panel5.Text = "panel4";
             // 
@@ -1233,7 +1233,7 @@ namespace AI_Assistant_Win.Controls
             label_Date.Location = new Point(300, 0);
             label_Date.Margin = new Padding(0);
             label_Date.Name = "label_Date";
-            label_Date.Size = new Size(120, 63);
+            label_Date.Size = new Size(120, 57);
             label_Date.TabIndex = 14;
             label_Date.Text = "2024 年 11 月 28 日";
             label_Date.TextAlign = ContentAlignment.MiddleCenter;
@@ -1246,7 +1246,7 @@ namespace AI_Assistant_Win.Controls
             label_title.Location = new Point(0, 0);
             label_title.Margin = new Padding(0);
             label_title.Name = "label_title";
-            label_title.Size = new Size(300, 63);
+            label_title.Size = new Size(300, 57);
             label_title.TabIndex = 13;
             label_title.Text = "GA板黑度测试结果报告书";
             label_title.TextAlign = ContentAlignment.MiddleRight;
