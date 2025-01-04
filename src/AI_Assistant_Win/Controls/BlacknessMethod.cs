@@ -1,4 +1,5 @@
 using AI_Assistant_Win.Business;
+using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Models.Response;
@@ -32,6 +33,8 @@ namespace AI_Assistant_Win.Controls
 
         private List<int> sortedIDs = [];
 
+        private readonly ObservableDictionary<string, CalculateScale> scaleList = [];
+
         public BlacknessMethod(MainWindow _form)
         {
             form = _form;
@@ -48,8 +51,45 @@ namespace AI_Assistant_Win.Controls
             originalBlacknessResult.PropertyChanged += OriginalBlacknessResult_PropertyChanged;
             tempBlacknessResult = new BlacknessResult();
             tempBlacknessResult.PropertyChanged += TempBlacknessResult_PropertyChanged;
+            scaleList.Changed += ScaleList_Changed;
             this.Load += async (s, e) => await InitializeAsync();
             this.HandleDestroyed += async (s, e) => await DestoryAsync();
+        }
+
+        private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
+        {
+            selectScale.Items.Clear();
+            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleName(t)}").ToArray());
+            if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Add)
+            {
+                Console.WriteLine($"Added: Key={e.Key}, Value={e.NewValue}");
+                selectScale.SelectedValue = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+            }
+            else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Remove)
+            {
+                Console.WriteLine($"Removed: Key={e.Key}, Value={e.OldValue}");
+            }
+            else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Update)
+            {
+                Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
+            }
+        }
+
+        private string FormatScaleName(KeyValuePair<string, CalculateScale> t)
+        {
+            var text = string.Empty;
+            switch (t.Key)
+            {
+                case "current":
+                    text = $"{LocalizeHelper.BLACKNESS_SCALE_CURRENT_TITLE}[{t.Value.Value:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}]";
+                    break;
+                case "atThatTime":
+                    text = $"{LocalizeHelper.BLACKNESS_SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}]";
+                    break;
+                default:
+                    break;
+            }
+            return text;
         }
 
         private void OriginalBlacknessResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -85,6 +125,13 @@ namespace AI_Assistant_Win.Controls
             else if (e.PropertyName == "Analyst")
             {
                 inputAnalyst.Text = originalBlacknessResult.Analyst;
+            }
+            else if (e.PropertyName == "CalculateScale")
+            {
+                if (originalBlacknessResult.CalculateScale == null)
+                {
+                    //AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
+                }
             }
             else if (e.PropertyName == "Items")
             {
@@ -176,7 +223,7 @@ namespace AI_Assistant_Win.Controls
                 if (!string.IsNullOrEmpty(imageProcessBLL.OriginImagePath))
                 {
                     avatarOriginImage.Image = Image.FromFile(imageProcessBLL.OriginImagePath);
-                    // cant aotu predict under the status of editing
+                    // cant predict automatically under the status of editing
                     if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
                     {
                         BtnPredict_Click(btnPredict, null);  // auto predict
@@ -235,7 +282,14 @@ namespace AI_Assistant_Win.Controls
         private async Task InitializeAsync()
         {
             // TestNo List
-            await InitializeSelectTestNoListAsync();
+            await InitializeSelectTestNoAsync();
+            // Scale List
+            if (!InitializeSelectScale())
+            {
+                await Task.Delay(1000);
+                BtnSetScale_Click(null, null);
+                return;
+            }
             try
             {
                 // 通过观察者模式实现界面数据效果
@@ -303,13 +357,26 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
+        private bool InitializeSelectScale()
+        {
+            var currentScale = blacknessMethodBLL.GetCurrentScale();
+            if (currentScale == null)
+            {
+                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
+                return false;
+            }
+            scaleList["current"] = currentScale;
+            return true;
+        }
+
+
         private List<GetTestNoListResponse> testNoList;
-        private async Task InitializeSelectTestNoListAsync()
+        private async Task InitializeSelectTestNoAsync()
         {
             try
             {
                 selectTestNo.Items.Clear();
-                testNoList = await blacknessMethodBLL.GetTestNoList();
+                testNoList = await blacknessMethodBLL.GetTestNoListAsync();
             }
             catch (Exception error)
             {
@@ -415,8 +482,8 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, error.Message, AntdUI.TAlignFrom.BR, Font);
                 return;
             }
-            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalBlacknessResult.IsUploaded ? 
-                LocalizeHelper.WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING : 
+            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalBlacknessResult.IsUploaded ?
+                LocalizeHelper.WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING :
                 LocalizeHelper.WOULD_SAVE_BLACKNESS_RESULT) == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
@@ -578,6 +645,51 @@ namespace AI_Assistant_Win.Controls
             {
                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
+        }
+
+        private void BtnSetScale_Click(object sender, EventArgs e)
+        {
+            if (!scaleList.ContainsKey("current") &&
+                (string.IsNullOrEmpty(tempBlacknessResult.RenderImagePath) ||
+                tempBlacknessResult.Items == null ||
+                tempBlacknessResult.Items.Count == 0))
+            {
+                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PREDICT_FIRSTLY_BEFORE_SETTING_SCALE, AntdUI.TAlignFrom.BR, Font);
+                return;
+            }
+            var setting = new BlacknessScaleSetting(form);
+            setting.SetCurrentScaleDetails(tempBlacknessResult);
+            var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.BLACKNESS_SCALE_SETTINGS_MODAL_TITLE, setting)
+            {
+                OnButtonStyle = (id, btn) =>
+                {
+                    btn.BackExtend = "135, #6253E1, #04BEFE";
+                },
+                CancelText = LocalizeHelper.CANCEL,
+                OkText = LocalizeHelper.SETTING_SAVE,
+                OnOk = config =>
+                {
+                    try
+                    {
+                        scaleList["current"] = setting.SaveSettings();   // 同时，正好利用了自带的转圈圈等待效果，简直完美2024年12月25日01点41分
+                        return true;
+                    }
+                    catch (Exception error)
+                    {
+                        AntdUI.Notification.error(form, LocalizeHelper.FAIL, error.Message, AntdUI.TAlignFrom.BR, Font);
+                        return false;
+                    }
+                }
+            });
+            if (result == DialogResult.OK)
+            {
+
+            }
+        }
+
+        private void SelectScale_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
+        {
+
         }
     }
 }

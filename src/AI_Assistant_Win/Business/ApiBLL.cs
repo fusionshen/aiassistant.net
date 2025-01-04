@@ -3,7 +3,6 @@ using AI_Assistant_Win.Models.Request;
 using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
-using Org.BouncyCastle.Asn1.X509;
 using SQLite;
 using System;
 using System.Collections.Generic;

@@ -55,6 +55,7 @@ namespace AI_Assistant_Win.Utils
             _db.CreateTable<CameraBinding>();
             _db.CreateTable<SystemConfig>();
             _db.CreateTable<BlacknessUploadResult>();
+            _db.CreateTable<CalculateScale>();
         }
 
         // 私有静态内部类，负责持有唯一实例

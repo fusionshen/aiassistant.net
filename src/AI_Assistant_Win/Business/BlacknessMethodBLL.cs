@@ -220,15 +220,17 @@ namespace AI_Assistant_Win.Business
                 originalBlacknessResult.CoilNumber = string.Empty;
                 originalBlacknessResult.Size = string.Empty;
                 originalBlacknessResult.Analyst = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
+                originalBlacknessResult.CalculateScale = connection.Table<CalculateScale>().OrderByDescending(x => x.Id).FirstOrDefault(x => x.Key.Equals("Blackness"));
                 originalBlacknessResult.Items = [];
                 return [];
             }
             var allSorted = connection.Table<BlacknessMethodResult>().OrderBy(t => t.Id).ToList();
             // if t.Id.Equals(id), will find null, double funny!!!
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
+            var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));
             var items = connection.Table<BlacknessMethodItem>()
                 .Where(t => t.ResultId.Equals(id))
-                .Select(t => new Blackness(t.Location, JsonConvert.DeserializeObject<Prediction>(t.Prediction)))
+                .Select(t => new Blackness(t.Location, JsonConvert.DeserializeObject<Prediction>(t.Prediction), scaleAtThatTime))
                 .OrderBy(t => t.Location)
                 .ToList();
             if (items == null || items.Count == 0)
@@ -245,13 +247,28 @@ namespace AI_Assistant_Win.Business
             originalBlacknessResult.Analyst = body.Analyst;
             originalBlacknessResult.Items = items;
             originalBlacknessResult.IsUploaded = body.IsUploaded; // promot before saving
+            originalBlacknessResult.CalculateScale = scaleAtThatTime;
             return allSorted.Select(t => t.Id).ToList();
         }
 
-        public async Task<List<GetTestNoListResponse>> GetTestNoList()
+        public async Task<List<GetTestNoListResponse>> GetTestNoListAsync()
         {
             var list = await apiBLL.GetTestNoListAsync();
             return list;
+        }
+
+        public CalculateScale GetCurrentScale()
+        {
+            return connection.Table<CalculateScale>().OrderByDescending(x => x.Id).FirstOrDefault(x => x.Key.Equals("Blackness"));
+        }
+
+        public void SaveScaleSetting(CalculateScale add)
+        {
+            var ok = connection.Insert(add);
+            if (ok == 0)
+            {
+                throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
+            }
         }
     }
 }

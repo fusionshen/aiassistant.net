@@ -12,6 +12,7 @@ namespace AI_Assistant_Win.Utils
         public static string CONFIRM => Localization.Get("Confirm", "确认");
         public static string CANCEL => Localization.Get("Cancel", "取消");
         public static string SETTING => Localization.Get("Setting", "设置");
+        public static string SETTING_SAVE => Localization.Get("Save Settings", "保存设置");
         public static string ERROR => Localization.Get("Error", "错误");
         public static string PLEASE_CONTACT_ADMIN => Localization.Get("Please contact the administrator.", "请联系管理员。");
         public static string PREDICTED_SUCCESSFULLY => Localization.Get("Predicted successfully!", "识别成功！");
@@ -94,14 +95,16 @@ namespace AI_Assistant_Win.Utils
         public static string LEVEL => Localization.Get("Level:", "等级：");
         public static string BLACKNESS_WITH => Localization.Get(",Width:", "，宽度：");
         public static string MILLIMETER => Localization.Get("mm", "毫米");
+        public static string PIXEL => Localization.Get("pixels", "像素");
         public static string PLEASE_PREDICT_BEFORE_SAVING => Localization.Get("Please predict before saving.", "请进行识别后再保存。");
         public static string PLEASE_SELECT_WORKBENCH => Localization.Get("Please select a workbench.", "请选择班组。");
         public static string PLEASE_SELECT_TESTNO => Localization.Get("Please select a test no.", "请选择试样编号。");
         public static string PLEASE_INPUT_COIL_NUMBER => Localization.Get("Please text a coil number.", "请输入钢卷号。");
         public static string PLEASE_INPUT_SIZE => Localization.Get("Please text a size.", "请输入尺寸。");
         public static string PLEASE_INPUT_ANALYST => Localization.Get("Please text a analyst.", "请输入分析人。");
-        public static string PLEASE_USE_CORRECT_IMAGE => Localization.Get("Please use the correct density pattern image for prediction.",
-            "请使用正确的黑度样板图片进行识别。");
+        public static string PLEASE_USE_CORRECT_IMAGE => Localization.Get("Please use the correct density pattern image for prediction.", "请使用正确的黑度样板图片进行识别。");
+        public static string PLEASE_SET_BLACKNESS_SCALE => Localization.Get("Please set the scale for calculating the correct width of blackness.", "请设置比例尺用于计算正确的黑度检测宽度。");
+        public static string PREDICT_FIRSTLY_BEFORE_SETTING_SCALE => Localization.Get("Please take a photo or upload a blackness detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张黑度检测图片并且成功识别后再尝试进行比例尺设置。");
         public static string BLACKNESS_EDIT_MODE(string id) => Localization.Get($"Edit Mode[ID：{id}]", $"修改模式[编号：{id}]");
         public static string BLACKNESS_NEW_MODE => Localization.Get("New Mode", "新增模式");
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
@@ -144,6 +147,14 @@ namespace AI_Assistant_Win.Utils
         public static string BLACKNESS_RESULT_AWAITING_REUPLOAD => Localization.Get("Awaiting re-upload", "待重新上传");
         public static string WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the blackness report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次黑度报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
 
+        #endregion
+        #region blackness scale
+        public static string BLACKNESS_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Blackness-width Scale Setting", "黑度宽度比例尺设置");
+        public static string BLACKNESS_SCALE_CACULATED_RATIO_TITLE => Localization.Get("The Result:", "计算结果：");
+        public static string BLACKNESS_SCALE_CACULATED_RATIO_UNIT => Localization.Get("mm/100Pixels", "毫米/100像素");
+        public static string BLACKNESS_SCALE_INPUT_ERROR => Localization.Get("Invalid Input", "非法输入");
+        public static string BLACKNESS_SCALE_CURRENT_TITLE => Localization.Get("Current", "当前比例尺");
+        public static string BLACKNESS_SCALE_TITLE_AT_THAT_TIME => Localization.Get("At That Time", "当时比例尺");
         #endregion
         #region table
         public static string DISPLAY_HEADER => Localization.Get("Display header", "显示表头");

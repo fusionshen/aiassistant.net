@@ -10,6 +10,11 @@ namespace AI_Assistant_Win.Models
         [Column("id")]
         public int Id { get; set; }
         /// <summary>
+        /// 比例尺
+        /// </summary>
+        [Column("scale_id")]
+        public int ScaleId { get; set; }
+        /// <summary>
         /// 钢卷号
         /// </summary>
         [Column("coil_number")]

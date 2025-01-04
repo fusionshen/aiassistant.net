@@ -129,7 +129,7 @@ namespace AI_Assistant_Win.Controls
                                     }
                                     catch (Exception ex)
                                     {
-                                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);    
+                                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);
                                     }
                                 }
                                 break;

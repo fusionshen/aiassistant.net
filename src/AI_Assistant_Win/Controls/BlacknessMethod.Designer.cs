@@ -36,6 +36,8 @@ namespace AI_Assistant_Win.Controls
             labelRenderAreaDescription = new AntdUI.Label();
             avatarRenderImage = new AntdUI.Avatar();
             panel2 = new AntdUI.Panel();
+            selectScale = new AntdUI.Select();
+            btnSetScale = new AntdUI.Button();
             btnPredict = new AntdUI.Button();
             lableRenderImageDisplayArea = new AntdUI.Label();
             panel4 = new AntdUI.Panel();
@@ -179,6 +181,8 @@ namespace AI_Assistant_Win.Controls
             // 
             panel2.Back = Color.Transparent;
             panel2.BackColor = Color.Transparent;
+            panel2.Controls.Add(selectScale);
+            panel2.Controls.Add(btnSetScale);
             panel2.Controls.Add(btnPredict);
             panel2.Dock = DockStyle.Bottom;
             panel2.Location = new Point(9, 535);
@@ -186,6 +190,33 @@ namespace AI_Assistant_Win.Controls
             panel2.Radius = 0;
             panel2.Size = new Size(444, 40);
             panel2.TabIndex = 13;
+            // 
+            // selectScale
+            // 
+            selectScale.AllowClear = true;
+            selectScale.Dock = DockStyle.Left;
+            selectScale.DropDownArrow = true;
+            selectScale.Font = new Font("Microsoft YaHei UI", 10F);
+            selectScale.LocalizationPlaceholderText = "Please select a scale";
+            selectScale.Location = new Point(40, 0);
+            selectScale.Name = "selectScale";
+            selectScale.Padding = new Padding(5, 0, 0, 0);
+            selectScale.PlaceholderText = "请选择比例尺";
+            selectScale.Size = new Size(293, 40);
+            selectScale.TabIndex = 19;
+            selectScale.SelectedIndexChanged += SelectScale_SelectedIndexChanged;
+            // 
+            // btnSetScale
+            // 
+            btnSetScale.Dock = DockStyle.Left;
+            btnSetScale.IconSvg = "ToolOutlined";
+            btnSetScale.LoadingWaveVertical = true;
+            btnSetScale.Location = new Point(0, 0);
+            btnSetScale.Name = "btnSetScale";
+            btnSetScale.Shape = AntdUI.TShape.Circle;
+            btnSetScale.Size = new Size(40, 40);
+            btnSetScale.TabIndex = 3;
+            btnSetScale.Click += BtnSetScale_Click;
             // 
             // btnPredict
             // 
@@ -421,7 +452,7 @@ namespace AI_Assistant_Win.Controls
             labelAnalyst.Dock = DockStyle.Left;
             labelAnalyst.Enabled = false;
             labelAnalyst.Font = new Font("Microsoft YaHei UI", 10F);
-            labelAnalyst.LocalizationText = "Analyst";
+            labelAnalyst.LocalizationText = "Analyst:";
             labelAnalyst.Location = new Point(0, 0);
             labelAnalyst.Name = "labelAnalyst";
             labelAnalyst.Size = new Size(90, 33);
@@ -566,7 +597,7 @@ namespace AI_Assistant_Win.Controls
             labelSize.BackColor = Color.Transparent;
             labelSize.Dock = DockStyle.Left;
             labelSize.Font = new Font("Microsoft YaHei UI", 10F);
-            labelSize.LocalizationText = "Size";
+            labelSize.LocalizationText = "Size:";
             labelSize.Location = new Point(0, 0);
             labelSize.Name = "labelSize";
             labelSize.Size = new Size(90, 33);
@@ -602,7 +633,7 @@ namespace AI_Assistant_Win.Controls
             labelCoilNumber.BackColor = Color.Transparent;
             labelCoilNumber.Dock = DockStyle.Left;
             labelCoilNumber.Font = new Font("Microsoft YaHei UI", 10F);
-            labelCoilNumber.LocalizationText = "CoilNumber";
+            labelCoilNumber.LocalizationText = "CoilNumber:";
             labelCoilNumber.Location = new Point(0, 0);
             labelCoilNumber.Name = "labelCoilNumber";
             labelCoilNumber.Size = new Size(90, 33);
@@ -643,7 +674,7 @@ namespace AI_Assistant_Win.Controls
             labelTestNo.BackColor = Color.Transparent;
             labelTestNo.Dock = DockStyle.Left;
             labelTestNo.Font = new Font("Microsoft YaHei UI", 10F);
-            labelTestNo.LocalizationText = "TestNO";
+            labelTestNo.LocalizationText = "TestNo:";
             labelTestNo.Location = new Point(0, 0);
             labelTestNo.Name = "labelTestNo";
             labelTestNo.Size = new Size(90, 33);
@@ -685,7 +716,7 @@ namespace AI_Assistant_Win.Controls
             labelWorkGroup.BackColor = Color.Transparent;
             labelWorkGroup.Dock = DockStyle.Left;
             labelWorkGroup.Font = new Font("Microsoft YaHei UI", 10F);
-            labelWorkGroup.LocalizationText = "WorkGroup";
+            labelWorkGroup.LocalizationText = "WorkGroup:";
             labelWorkGroup.Location = new Point(0, 0);
             labelWorkGroup.Name = "labelWorkGroup";
             labelWorkGroup.Size = new Size(90, 33);
@@ -775,7 +806,7 @@ namespace AI_Assistant_Win.Controls
             labelInsideDR.BackColor = Color.Transparent;
             labelInsideDR.Dock = DockStyle.Left;
             labelInsideDR.Font = new Font("Microsoft YaHei UI", 10F);
-            labelInsideDR.LocalizationText = "InsideDR";
+            labelInsideDR.LocalizationText = "InsideDR:";
             labelInsideDR.Location = new Point(0, 0);
             labelInsideDR.Name = "labelInsideDR";
             labelInsideDR.Size = new Size(90, 33);
@@ -809,7 +840,7 @@ namespace AI_Assistant_Win.Controls
             labelInsideCE.BackColor = Color.Transparent;
             labelInsideCE.Dock = DockStyle.Left;
             labelInsideCE.Font = new Font("Microsoft YaHei UI", 10F);
-            labelInsideCE.LocalizationText = "InsideCE";
+            labelInsideCE.LocalizationText = "InsideCE:";
             labelInsideCE.Location = new Point(0, 0);
             labelInsideCE.Name = "labelInsideCE";
             labelInsideCE.Size = new Size(90, 33);
@@ -843,7 +874,7 @@ namespace AI_Assistant_Win.Controls
             labelInsideOP.BackColor = Color.Transparent;
             labelInsideOP.Dock = DockStyle.Left;
             labelInsideOP.Font = new Font("Microsoft YaHei UI", 10F);
-            labelInsideOP.LocalizationText = "InsideOP";
+            labelInsideOP.LocalizationText = "InsideOP:";
             labelInsideOP.Location = new Point(0, 0);
             labelInsideOP.Name = "labelInsideOP";
             labelInsideOP.Size = new Size(90, 33);
@@ -877,7 +908,7 @@ namespace AI_Assistant_Win.Controls
             labelSurfaceDR.BackColor = Color.Transparent;
             labelSurfaceDR.Dock = DockStyle.Left;
             labelSurfaceDR.Font = new Font("Microsoft YaHei UI", 10F);
-            labelSurfaceDR.LocalizationText = "SurfaceDR";
+            labelSurfaceDR.LocalizationText = "SurfaceDR:";
             labelSurfaceDR.Location = new Point(0, 0);
             labelSurfaceDR.Name = "labelSurfaceDR";
             labelSurfaceDR.Size = new Size(90, 33);
@@ -911,7 +942,7 @@ namespace AI_Assistant_Win.Controls
             labelSurfaceCE.BackColor = Color.Transparent;
             labelSurfaceCE.Dock = DockStyle.Left;
             labelSurfaceCE.Font = new Font("Microsoft YaHei UI", 10F);
-            labelSurfaceCE.LocalizationText = "SurfaceCE";
+            labelSurfaceCE.LocalizationText = "SurfaceCE:";
             labelSurfaceCE.Location = new Point(0, 0);
             labelSurfaceCE.Name = "labelSurfaceCE";
             labelSurfaceCE.Size = new Size(90, 33);
@@ -945,7 +976,7 @@ namespace AI_Assistant_Win.Controls
             labelSurfaceOP.BackColor = Color.Transparent;
             labelSurfaceOP.Dock = DockStyle.Left;
             labelSurfaceOP.Font = new Font("Microsoft YaHei UI", 10F);
-            labelSurfaceOP.LocalizationText = "SurfaceOP";
+            labelSurfaceOP.LocalizationText = "SurfaceOP:";
             labelSurfaceOP.Location = new Point(0, 0);
             labelSurfaceOP.Name = "labelSurfaceOP";
             labelSurfaceOP.Size = new Size(90, 33);
@@ -1072,7 +1103,6 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Button btnCameraSetting;
         private AntdUI.Button btnCameraRecover;
         private AntdUI.Button btnClear;
-        private AntdUI.Button button1;
         private AntdUI.Button btn;
         private AntdUI.Button btnHistory;
         private AntdUI.Button btnPre;
@@ -1083,5 +1113,8 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Panel panel18;
         private AntdUI.Input inputAnalyst;
         private AntdUI.Label labelAnalyst;
+        private AntdUI.Button button8;
+        private AntdUI.Button btnSetScale;
+        private AntdUI.Select selectScale;
     }
 }

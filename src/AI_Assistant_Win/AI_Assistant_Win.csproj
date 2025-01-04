@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.5.6</Version>
+	<Version>0.5.7</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolov8.net</Description>
@@ -71,6 +71,9 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\BlacknessReport.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\BlacknessScaleSetting.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="Controls\LoginUserInfo.cs">

@@ -90,10 +90,10 @@ namespace AI_Assistant_Win.Models.Response
 
         [JsonProperty("uploadTime")]
         public DateTime? UploadTime { get; set; }
-   
+
         [JsonProperty("workGroup")]
         public string WorkGroup { get; set; }
-     
+
         [JsonProperty("analyst")]
         public string Analyst { get; set; }
 

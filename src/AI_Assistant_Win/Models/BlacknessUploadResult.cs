@@ -40,7 +40,7 @@ namespace AI_Assistant_Win.Models
         /// </summary>
         [Column("local_file_path")]
         public string LocalFilePath { get; set; }
-        #region 
+        #region api return
         [Column("file_manager_id")]
         public int FileManagerId { get; set; } = 0;
 

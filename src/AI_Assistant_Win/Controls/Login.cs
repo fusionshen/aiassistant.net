@@ -26,7 +26,7 @@ namespace AI_Assistant_Win
             };
         }
 
-        public async Task<bool> SignIn()
+        public async Task<bool> SignInAsync()
         {
             return await apiBLL.LoginAsync(Username, Password);
         }

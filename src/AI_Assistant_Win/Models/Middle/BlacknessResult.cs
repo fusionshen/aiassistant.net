@@ -22,7 +22,6 @@ namespace AI_Assistant_Win.Models.Middle
         }
 
         private string _testNo = string.Empty;
-
         public string TestNo
         {
             get { return _testNo; }
@@ -135,6 +134,24 @@ namespace AI_Assistant_Win.Models.Middle
         }
 
         public bool IsUploaded { get; set; } = false;
+
+        private CalculateScale calculateScale = new();
+
+        /// <summary>
+        /// 当时比例尺和当前比例尺
+        /// </summary>
+        public CalculateScale CalculateScale
+        {
+            get { return calculateScale; }
+            set
+            {
+                if (calculateScale != value)
+                {
+                    calculateScale = value;
+                    OnPropertyChanged(nameof(CalculateScale));
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

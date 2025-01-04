@@ -6,8 +6,12 @@ using Yolov8.Net;
 
 namespace AI_Assistant_Win.Models.Middle
 {
-    public class Blackness(BlacknessLocationKind location, Prediction prediction) : IEquatable<Blackness>
+    public class Blackness(BlacknessLocationKind location, Prediction prediction, CalculateScale scale = null) : IEquatable<Blackness>
     {
+        /// <summary>
+        /// 比例尺
+        /// </summary>
+        public CalculateScale CalculateScale { get; set; } = scale;
         /// <summary>
         /// 位置
         /// </summary>
@@ -23,14 +27,22 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 宽度，实际指图片高度
         /// </summary>
-        public float Width { get { return Prediction.Rectangle.Height; } }
+        public float Width { get { return CalculateScale == null ? Prediction.Rectangle.Height : Prediction.Rectangle.Height * CalculateScale.Value; } }
         /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>
         public string Description
         {
-            get { return $"{LocalizeHelper.LEVEL}{Level}{LocalizeHelper.BLACKNESS_WITH}{Prediction.Rectangle.Height:F2}{LocalizeHelper.MILLIMETER}"; }
+            get { return $"{LocalizeHelper.LEVEL}{Level}{LocalizeHelper.BLACKNESS_WITH}{CalculateRealScale()}"; }
         }
+
+        private string CalculateRealScale()
+        {
+            var result = CalculateScale == null ? $"{Prediction.Rectangle.Height:F2}{LocalizeHelper.PIXEL}" :
+                $"{Prediction.Rectangle.Height * CalculateScale.Value:F2}{LocalizeHelper.MILLIMETER}";
+            return result;
+        }
+
         /// <summary>
         /// 识别结果
         /// </summary>
