@@ -25,9 +25,9 @@ namespace AI_Assistant_Win.Models.Middle
         /// </summary>
         public float Score { get { return Prediction.Score; } }
         /// <summary>
-        /// 宽度，实际指图片高度
+        /// 宽度，实际指图片像素高度，可以页面上可以更改比例尺重新计算，原始的像素值不能变化
         /// </summary>
-        public float Width { get { return CalculateScale == null ? Prediction.Rectangle.Height : Prediction.Rectangle.Height * CalculateScale.Value; } }
+        public float Width { get { return Prediction.Rectangle.Height; } }
         /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>
@@ -38,8 +38,7 @@ namespace AI_Assistant_Win.Models.Middle
 
         private string CalculateRealScale()
         {
-            var result = CalculateScale == null ? $"{Prediction.Rectangle.Height:F2}{LocalizeHelper.PIXEL}" :
-                $"{Prediction.Rectangle.Height * CalculateScale.Value:F2}{LocalizeHelper.MILLIMETER}";
+            var result = CalculateScale == null ? $"{Prediction.Rectangle.Height:F2}{LocalizeHelper.PIXEL}" : $"{Prediction.Rectangle.Height * CalculateScale.Value / 100:F2}{LocalizeHelper.MILLIMETER}";
             return result;
         }
 
@@ -55,7 +54,8 @@ namespace AI_Assistant_Win.Models.Middle
             return Location == other.Location &&
                 Level == other.Level &&
                 Score == other.Score &&
-                Width == other.Width;
+                Width == other.Width &&
+                CalculateScale != null && CalculateScale.Equals(other.CalculateScale);
         }
 
         public override bool Equals(object obj)

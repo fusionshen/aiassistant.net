@@ -63,7 +63,10 @@ namespace AI_Assistant_Win.Controls
             if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Add)
             {
                 Console.WriteLine($"Added: Key={e.Key}, Value={e.NewValue}");
-                selectScale.SelectedValue = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                selectScale.SelectedValue = text;
+                btnSetScale.Enabled = true;
+                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, $"{LocalizeHelper.BLACKNESS_SCALE_LOAD_SUCCESSED}{text}", AntdUI.TAlignFrom.BR, Font);
             }
             else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Remove)
             {
@@ -72,6 +75,9 @@ namespace AI_Assistant_Win.Controls
             else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Update)
             {
                 Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
+                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                selectScale.SelectedValue = text;
+                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, $"{LocalizeHelper.BLACKNESS_SCALE_LOAD_SUCCESSED}{text}", AntdUI.TAlignFrom.BR, Font);
             }
         }
 
@@ -130,7 +136,16 @@ namespace AI_Assistant_Win.Controls
             {
                 if (originalBlacknessResult.CalculateScale == null)
                 {
-                    //AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
+                    selectScale.SelectedValue = null;
+                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.LOST_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
+                }
+                else
+                {
+                    // different scale
+                    if (!originalBlacknessResult.CalculateScale.Equals(scaleList.FirstOrDefault(t => "current".Equals(t.Key)).Value))
+                    {
+                        scaleList["atThatTime"] = originalBlacknessResult.CalculateScale;
+                    }
                 }
             }
             else if (e.PropertyName == "Items")
@@ -164,9 +179,18 @@ namespace AI_Assistant_Win.Controls
         private void CheckValid()
         {
             // 数据验证
+            if (selectScale.SelectedValue == null)
+            {
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_SCALE);
+            }
             if (tempBlacknessResult == null || tempBlacknessResult.Items.Count == 0)
             {
                 throw new Exception(LocalizeHelper.PLEASE_PREDICT_BEFORE_SAVING);
+            }
+            // 比例尺不一致
+            if (!tempBlacknessResult.CalculateScale.Equals(tempBlacknessResult.Items.FirstOrDefault()?.CalculateScale))
+            {
+                throw new Exception(LocalizeHelper.PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING);
             }
             if (selectWorkGroup.SelectedValue == null)
             {
@@ -197,6 +221,9 @@ namespace AI_Assistant_Win.Controls
                 if (blacknessPredict.Predictions != null && blacknessPredict.Predictions.Length != 0)
                 {
                     OutputTexts();
+                    // for add scale firstly
+                    btnSetScale.Enabled = true;
+                    checkboxRedefine.Enabled = true;
                     // call when edit
                     if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
                     {
@@ -205,6 +232,8 @@ namespace AI_Assistant_Win.Controls
                 }
                 else
                 {
+                    checkboxRedefine.Checked = false;
+                    checkboxRedefine.Enabled = false;
                     ClearTexts();
                     if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
                     {
@@ -286,9 +315,8 @@ namespace AI_Assistant_Win.Controls
             // Scale List
             if (!InitializeSelectScale())
             {
-                await Task.Delay(1000);
+                // tell client how to do when any scale does not exit.
                 BtnSetScale_Click(null, null);
-                return;
             }
             try
             {
@@ -359,18 +387,19 @@ namespace AI_Assistant_Win.Controls
 
         private bool InitializeSelectScale()
         {
-            var currentScale = blacknessMethodBLL.GetCurrentScale();
-            if (currentScale == null)
+            scaleList.Clear();
+            var currentScaleFromDB = blacknessMethodBLL.GetCurrentScale();
+            if (currentScaleFromDB == null)
             {
                 AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
                 return false;
             }
-            scaleList["current"] = currentScale;
+            scaleList["current"] = currentScaleFromDB;
             return true;
         }
 
-
         private List<GetTestNoListResponse> testNoList;
+
         private async Task InitializeSelectTestNoAsync()
         {
             try
@@ -431,7 +460,8 @@ namespace AI_Assistant_Win.Controls
             btn.Loading = true;
             AntdUI.ITask.Run(() =>
             {
-                blacknessPredict.Predict();
+                // current scale
+                blacknessPredict.Predict(CurrentScale);
             }, () =>
             {
                 if (btn.IsDisposed) return;
@@ -439,16 +469,21 @@ namespace AI_Assistant_Win.Controls
             });
         }
 
+        private CalculateScale CurrentScale
+        {
+            get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+        }
+
         private void OutputTexts()
         {
             var sorted = blacknessPredict.Predictions.OrderBy(t => t.Rectangle.Y).ToArray();
             // TODO: 现场根据X具体位置判断，因为可能出现未贴完6个部位或者未识别出六个部位的情况
-            tempBlacknessResult.Items = [new(BlacknessLocationKind.SURFACE_OP, sorted[0]),
-                            new(BlacknessLocationKind.SURFACE_CE, sorted[1]),
-                            new(BlacknessLocationKind.SURFACE_DR, sorted[2]),
-                            new(BlacknessLocationKind.INSIDE_OP, sorted[3]),
-                            new(BlacknessLocationKind.INSIDE_CE, sorted[4]),
-                            new(BlacknessLocationKind.INSIDE_DR, sorted[5])];
+            tempBlacknessResult.Items = [new(BlacknessLocationKind.SURFACE_OP, sorted[0], CurrentScale),
+                            new(BlacknessLocationKind.SURFACE_CE, sorted[1], CurrentScale),
+                            new(BlacknessLocationKind.SURFACE_DR, sorted[2],CurrentScale),
+                            new(BlacknessLocationKind.INSIDE_OP, sorted[3],CurrentScale),
+                            new(BlacknessLocationKind.INSIDE_CE, sorted[4], CurrentScale),
+                            new(BlacknessLocationKind.INSIDE_DR, sorted[5], CurrentScale)];
             inputSurfaceOP.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Description;
             inputSurfaceCE.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Description;
             inputSurfaceDR.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Description;
@@ -593,8 +628,40 @@ namespace AI_Assistant_Win.Controls
 
         private void BtnClear_Click(object sender, EventArgs e)
         {
-            EDIT_ITEM_ID = string.Empty;
-            _ = InitializeAsync();
+            ConfirmUnderUnsaved(async () =>
+            {
+                btnClear.Loading = true;
+                EDIT_ITEM_ID = string.Empty;
+                await InitializeAsync();
+                btnClear.Loading = false;
+            }, LocalizeHelper.CLEAR_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
+        }
+
+        private void ConfirmUnderUnsaved(Action action, string content)
+        {
+            if (MainWindow.SOMETHING_IS_UNDONE)
+            {
+                var result = AntdUI.Modal.open(new AntdUI.Modal.Config(LocalizeHelper.CONFIRM,
+                    content,
+                    AntdUI.TType.Error)
+                {
+                    OnButtonStyle = (id, btn) =>
+                    {
+                        btn.BackExtend = "135, #6253E1, #04BEFE";
+                    },
+                    CancelText = LocalizeHelper.CANCEL,
+                    OkText = LocalizeHelper.CONFIRM
+                });
+                if (result == DialogResult.OK)
+                {
+                    BeginInvoke(action);
+                };
+            }
+            else
+            {
+                // 异步
+                BeginInvoke(action);
+            }
         }
 
         private void BtnHistory_Click(object sender, EventArgs e)
@@ -614,22 +681,33 @@ namespace AI_Assistant_Win.Controls
 
         private void BtnPre_Click(object sender, EventArgs e)
         {
-            var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
-            if (index != 0)
+            ConfirmUnderUnsaved(async () =>
             {
-                EDIT_ITEM_ID = (sortedIDs[index - 1]).ToString();
-                _ = InitializeAsync();
-            }
+                btnPre.Loading = true;
+                var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
+                if (index != 0)
+                {
+                    EDIT_ITEM_ID = (sortedIDs[index - 1]).ToString();
+                    await InitializeAsync();
+                }
+                btnPre.Loading = false;
+            }, LocalizeHelper.PRE_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
         }
 
         private void BtnNext_Click(object sender, EventArgs e)
         {
-            var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
-            if (index != sortedIDs.Count)
+            ConfirmUnderUnsaved(async () =>
             {
-                EDIT_ITEM_ID = (sortedIDs[index + 1]).ToString();
-                _ = InitializeAsync();
-            }
+                btnNext.Loading = true;
+                var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
+                if (index != sortedIDs.Count)
+                {
+                    EDIT_ITEM_ID = (sortedIDs[index + 1]).ToString();
+                    await InitializeAsync();
+                }
+                btnNext.Loading = false;
+            }, LocalizeHelper.NEXT_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
+
         }
 
         private void BtnPrint_Click(object sender, EventArgs e)
@@ -649,16 +727,16 @@ namespace AI_Assistant_Win.Controls
 
         private void BtnSetScale_Click(object sender, EventArgs e)
         {
-            if (!scaleList.ContainsKey("current") &&
-                (string.IsNullOrEmpty(tempBlacknessResult.RenderImagePath) ||
-                tempBlacknessResult.Items == null ||
-                tempBlacknessResult.Items.Count == 0))
+            if ((string.IsNullOrEmpty(tempBlacknessResult.RenderImagePath) || tempBlacknessResult.Items == null || tempBlacknessResult.Items.Count == 0) &&
+                    (scaleList.Count == 0 ||   // for the first time
+                    checkboxRedefine.Checked)
+                )
             {
                 AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PREDICT_FIRSTLY_BEFORE_SETTING_SCALE, AntdUI.TAlignFrom.BR, Font);
                 return;
             }
             var setting = new BlacknessScaleSetting(form);
-            setting.SetCurrentScaleDetails(tempBlacknessResult);
+            setting.SetCurrentScaleDetails(tempBlacknessResult, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
             var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.BLACKNESS_SCALE_SETTINGS_MODAL_TITLE, setting)
             {
                 OnButtonStyle = (id, btn) =>
@@ -683,13 +761,24 @@ namespace AI_Assistant_Win.Controls
             });
             if (result == DialogResult.OK)
             {
-
+                checkboxRedefine.Checked = false;
             }
         }
 
         private void SelectScale_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
+            if (selectScale.SelectedValue != null)
+            {
+                tempBlacknessResult.CalculateScale = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+            }
+        }
 
+        private void CheckboxRedefine_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        {
+            if (checkboxRedefine.Checked && !string.IsNullOrEmpty(tempBlacknessResult.RenderImagePath) && tempBlacknessResult.Items != null && tempBlacknessResult.Items.Count != 0)
+            {
+                BtnSetScale_Click(null, null);
+            }
         }
     }
 }

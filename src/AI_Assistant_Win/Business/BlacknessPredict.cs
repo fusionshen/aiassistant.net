@@ -1,4 +1,5 @@
-﻿using AI_Assistant_Win.Utils;
+﻿using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Utils;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -44,14 +45,14 @@ namespace AI_Assistant_Win.Business
             var fontFamily = fontCollection.Add("./Resources/SourceHanSansCN-Regular.ttf");
             font = fontFamily.CreateFont(48, FontStyle.Bold);
         }
-        public void Predict()
+        public void Predict(CalculateScale currentScale)
         {
             using var yolo = YoloV8Predictor.Create("./Resources/Blackness/model.onnx", labels, false);
             using var image = Image.Load(imageProcessBLL.OriginImagePath);
             predictions = yolo.Predict(image);
             if (predictions.Length == 6)
             {
-                DrawBoxes(image);
+                DrawBoxes(image, currentScale);
                 imageProcessBLL.SaveRenderImage(image);  // show render image 
             }
             else
@@ -62,7 +63,7 @@ namespace AI_Assistant_Win.Business
             OnPropertyChanged(nameof(Predictions)); //  page outputs/clears predictions
         }
 
-        private void DrawBoxes(Image image)
+        private void DrawBoxes(Image image, CalculateScale currentScale)
         {
             foreach (var pred in predictions)
             {
@@ -77,7 +78,7 @@ namespace AI_Assistant_Win.Business
 
                 // Bounding Box Text
                 string number = new(pred.Label.Name.Where(char.IsDigit).ToArray());
-                string text = $"{LocalizeHelper.LEVEL}{number}{LocalizeHelper.BLACKNESS_WITH}{pred.Rectangle.Height:F2}{LocalizeHelper.MILLIMETER}";
+                string text = $"{LocalizeHelper.LEVEL}{number}{LocalizeHelper.BLACKNESS_WITH}{CalculateRealScale(pred, currentScale)}";
                 var size = TextMeasurer.MeasureSize(text, new TextOptions(font));
                 var color = GetRetangleColorByNumber(number);
 
@@ -85,6 +86,14 @@ namespace AI_Assistant_Win.Business
                     new Rectangle(x, y, width, height)));
                 image.Mutate(d => d.DrawText(text, font, color, new Point(x, (int)(y - size.Height - 1))));
             }
+        }
+
+        private string CalculateRealScale(Prediction pred, CalculateScale calculateScale)
+        {
+            var result = calculateScale == null ?
+                $"{pred.Rectangle.Height:F2}{LocalizeHelper.PIXEL}" :
+                $"{pred.Rectangle.Height * calculateScale.Value / 100:F2}{LocalizeHelper.MILLIMETER}";
+            return result;
         }
 
         private static Color GetRetangleColorByNumber(string number)

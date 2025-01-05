@@ -27,7 +27,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _testNo; }
             set
             {
-                if (!_testNo.Equals(value))
+                if (string.IsNullOrEmpty(_testNo) || !_testNo.Equals(value))
                 {
                     _testNo = value;
                     OnPropertyChanged(nameof(TestNo));
@@ -138,18 +138,16 @@ namespace AI_Assistant_Win.Models.Middle
         private CalculateScale calculateScale = new();
 
         /// <summary>
-        /// 当时比例尺和当前比例尺
+        /// 当时比例尺和当前比例尺要分清楚，这里我偏向作为当时比例尺使用
+        /// 每一次变化都要传递给前端，不然在上一条下一条会出问题
         /// </summary>
         public CalculateScale CalculateScale
         {
             get { return calculateScale; }
             set
             {
-                if (calculateScale != value)
-                {
-                    calculateScale = value;
-                    OnPropertyChanged(nameof(CalculateScale));
-                }
+                calculateScale = value;
+                OnPropertyChanged(nameof(CalculateScale));
             }
         }
 
@@ -167,13 +165,13 @@ namespace AI_Assistant_Win.Models.Middle
             if (obj.GetType() != this.GetType()) return false;
             var param = (BlacknessResult)obj;
             var result = Id.Equals(param.Id) &&
-                WorkGroup.Equals(param.WorkGroup) &&
-                OriginImagePath.Equals(param.OriginImagePath) &&
-                RenderImagePath.Equals(param.RenderImagePath) &&
-                TestNo.Equals(param.TestNo) &&
-                CoilNumber.Equals(param.CoilNumber) &&
-                Analyst.Equals(param.Analyst) &&
-                Size.Equals(param.Size) &&
+                !string.IsNullOrEmpty(WorkGroup) && WorkGroup.Equals(param.WorkGroup) &&
+                !string.IsNullOrEmpty(OriginImagePath) && OriginImagePath.Equals(param.OriginImagePath) &&
+                !string.IsNullOrEmpty(RenderImagePath) && RenderImagePath.Equals(param.RenderImagePath) &&
+                !string.IsNullOrEmpty(TestNo) && TestNo.Equals(param.TestNo) &&
+                !string.IsNullOrEmpty(CoilNumber) && CoilNumber.Equals(param.CoilNumber) &&
+                !string.IsNullOrEmpty(Analyst) && Analyst.Equals(param.Analyst) &&
+                !string.IsNullOrEmpty(Size) && Size.Equals(param.Size) &&
                 Items.SequenceEqual(param.Items);
             return result;
         }

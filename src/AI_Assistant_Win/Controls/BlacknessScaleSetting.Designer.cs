@@ -30,7 +30,7 @@
         {
             flowLayoutPanel1 = new AntdUI.In.FlowLayoutPanel();
             panelCurrent = new AntdUI.Panel();
-            labelRatio = new AntdUI.Label();
+            labelRatioCurrent = new AntdUI.Label();
             tablePanel = new System.Windows.Forms.TableLayoutPanel();
             inputInsideDRCurrent = new AntdUI.Input();
             inputInsideCECurrent = new AntdUI.Input();
@@ -56,7 +56,7 @@
             avatarCurrent = new AntdUI.Avatar();
             lableRenderImageDisplayArea = new AntdUI.Label();
             panelAtThatTime = new AntdUI.Panel();
-            label1 = new AntdUI.Label();
+            labelRatioAtThatTime = new AntdUI.Label();
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             inputInsideDRThatTime = new AntdUI.Input();
             inputInsideCEThatTime = new AntdUI.Input();
@@ -102,7 +102,7 @@
             // panelCurrent
             // 
             panelCurrent.ArrowSize = 10;
-            panelCurrent.Controls.Add(labelRatio);
+            panelCurrent.Controls.Add(labelRatioCurrent);
             panelCurrent.Controls.Add(tablePanel);
             panelCurrent.Controls.Add(avatarCurrent);
             panelCurrent.Controls.Add(lableRenderImageDisplayArea);
@@ -115,20 +115,20 @@
             panelCurrent.Size = new System.Drawing.Size(285, 583);
             panelCurrent.TabIndex = 21;
             // 
-            // labelRatio
+            // labelRatioCurrent
             // 
-            labelRatio.BackColor = System.Drawing.Color.Transparent;
-            labelRatio.Dock = System.Windows.Forms.DockStyle.Fill;
-            labelRatio.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            labelRatio.ForeColor = System.Drawing.Color.Red;
-            labelRatio.LocalizationText = "Auto Calculation";
-            labelRatio.Location = new System.Drawing.Point(9, 543);
-            labelRatio.Name = "labelRatio";
-            labelRatio.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            labelRatio.Size = new System.Drawing.Size(267, 31);
-            labelRatio.TabIndex = 14;
-            labelRatio.Text = "自动计算";
-            labelRatio.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            labelRatioCurrent.BackColor = System.Drawing.Color.Transparent;
+            labelRatioCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
+            labelRatioCurrent.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            labelRatioCurrent.ForeColor = System.Drawing.Color.Red;
+            labelRatioCurrent.LocalizationText = "Auto Calculation";
+            labelRatioCurrent.Location = new System.Drawing.Point(9, 543);
+            labelRatioCurrent.Name = "labelRatioCurrent";
+            labelRatioCurrent.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            labelRatioCurrent.Size = new System.Drawing.Size(267, 31);
+            labelRatioCurrent.TabIndex = 14;
+            labelRatioCurrent.Text = "自动计算";
+            labelRatioCurrent.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tablePanel
             // 
@@ -266,7 +266,7 @@
             textInsideDRPixels.Name = "textInsideDRPixels";
             textInsideDRPixels.Size = new System.Drawing.Size(71, 26);
             textInsideDRPixels.TabIndex = 33;
-            textInsideDRPixels.Text = "666";
+            textInsideDRPixels.Text = "";
             textInsideDRPixels.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelInsideDR
@@ -292,7 +292,7 @@
             textInsideCEPixels.Name = "textInsideCEPixels";
             textInsideCEPixels.Size = new System.Drawing.Size(71, 24);
             textInsideCEPixels.TabIndex = 30;
-            textInsideCEPixels.Text = "555";
+            textInsideCEPixels.Text = "";
             textInsideCEPixels.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelInsideCE
@@ -318,7 +318,7 @@
             textInsideOPPixels.Name = "textInsideOPPixels";
             textInsideOPPixels.Size = new System.Drawing.Size(71, 24);
             textInsideOPPixels.TabIndex = 27;
-            textInsideOPPixels.Text = "444";
+            textInsideOPPixels.Text = "";
             textInsideOPPixels.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelInsideOP
@@ -344,7 +344,7 @@
             textSurfaceDRPixels.Name = "textSurfaceDRPixels";
             textSurfaceDRPixels.Size = new System.Drawing.Size(71, 24);
             textSurfaceDRPixels.TabIndex = 24;
-            textSurfaceDRPixels.Text = "333";
+            textSurfaceDRPixels.Text = "";
             textSurfaceDRPixels.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelSurfaceDR
@@ -370,7 +370,7 @@
             textSurfaceCEPixels.Name = "textSurfaceCEPixels";
             textSurfaceCEPixels.Size = new System.Drawing.Size(71, 24);
             textSurfaceCEPixels.TabIndex = 21;
-            textSurfaceCEPixels.Text = "222";
+            textSurfaceCEPixels.Text = "";
             textSurfaceCEPixels.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelSurfaceCE
@@ -396,7 +396,7 @@
             textSurfaceOPPixels.Name = "textSurfaceOPPixels";
             textSurfaceOPPixels.Size = new System.Drawing.Size(71, 24);
             textSurfaceOPPixels.TabIndex = 18;
-            textSurfaceOPPixels.Text = "111";
+            textSurfaceOPPixels.Text = "";
             textSurfaceOPPixels.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // labelSurfaceOP
@@ -475,7 +475,7 @@
             // panelAtThatTime
             // 
             panelAtThatTime.ArrowSize = 10;
-            panelAtThatTime.Controls.Add(label1);
+            panelAtThatTime.Controls.Add(labelRatioAtThatTime);
             panelAtThatTime.Controls.Add(tableLayoutPanel1);
             panelAtThatTime.Controls.Add(avatarThatTime);
             panelAtThatTime.Controls.Add(label20);
@@ -489,20 +489,20 @@
             panelAtThatTime.TabIndex = 22;
             panelAtThatTime.Visible = false;
             // 
-            // label1
+            // labelRatioAtThatTime
             // 
-            label1.BackColor = System.Drawing.Color.Transparent;
-            label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            label1.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            label1.ForeColor = System.Drawing.Color.Red;
-            label1.LocalizationText = "Auto Calculation";
-            label1.Location = new System.Drawing.Point(9, 543);
-            label1.Name = "label1";
-            label1.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            label1.Size = new System.Drawing.Size(267, 31);
-            label1.TabIndex = 14;
-            label1.Text = "自动计算";
-            label1.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            labelRatioAtThatTime.BackColor = System.Drawing.Color.Transparent;
+            labelRatioAtThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            labelRatioAtThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            labelRatioAtThatTime.ForeColor = System.Drawing.Color.Red;
+            labelRatioAtThatTime.LocalizationText = "Auto Calculation";
+            labelRatioAtThatTime.Location = new System.Drawing.Point(9, 543);
+            labelRatioAtThatTime.Name = "labelRatioAtThatTime";
+            labelRatioAtThatTime.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            labelRatioAtThatTime.Size = new System.Drawing.Size(267, 31);
+            labelRatioAtThatTime.TabIndex = 14;
+            labelRatioAtThatTime.Text = "自动计算";
+            labelRatioAtThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // tableLayoutPanel1
             // 
@@ -628,7 +628,7 @@
             textInsideDRPixelsThatTime.Name = "textInsideDRPixelsThatTime";
             textInsideDRPixelsThatTime.Size = new System.Drawing.Size(71, 26);
             textInsideDRPixelsThatTime.TabIndex = 33;
-            textInsideDRPixelsThatTime.Text = "666";
+            textInsideDRPixelsThatTime.Text = "";
             textInsideDRPixelsThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label6
@@ -654,7 +654,7 @@
             textInsideCEPixelsThatTime.Name = "textInsideCEPixelsThatTime";
             textInsideCEPixelsThatTime.Size = new System.Drawing.Size(71, 24);
             textInsideCEPixelsThatTime.TabIndex = 30;
-            textInsideCEPixelsThatTime.Text = "555";
+            textInsideCEPixelsThatTime.Text = "";
             textInsideCEPixelsThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label8
@@ -680,7 +680,7 @@
             textInsideOPPixelsThatTime.Name = "textInsideOPPixelsThatTime";
             textInsideOPPixelsThatTime.Size = new System.Drawing.Size(71, 24);
             textInsideOPPixelsThatTime.TabIndex = 27;
-            textInsideOPPixelsThatTime.Text = "444";
+            textInsideOPPixelsThatTime.Text = "";
             textInsideOPPixelsThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label10
@@ -706,7 +706,7 @@
             textSurfaceDRPixelsThatTime.Name = "textSurfaceDRPixelsThatTime";
             textSurfaceDRPixelsThatTime.Size = new System.Drawing.Size(71, 24);
             textSurfaceDRPixelsThatTime.TabIndex = 24;
-            textSurfaceDRPixelsThatTime.Text = "333";
+            textSurfaceDRPixelsThatTime.Text = "";
             textSurfaceDRPixelsThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label12
@@ -732,7 +732,7 @@
             textSurfaceCEPixelsThatTime.Name = "textSurfaceCEPixelsThatTime";
             textSurfaceCEPixelsThatTime.Size = new System.Drawing.Size(71, 24);
             textSurfaceCEPixelsThatTime.TabIndex = 21;
-            textSurfaceCEPixelsThatTime.Text = "222";
+            textSurfaceCEPixelsThatTime.Text = "";
             textSurfaceCEPixelsThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label14
@@ -758,7 +758,7 @@
             textSurfaceOPPixelsThatTime.Name = "textSurfaceOPPixelsThatTime";
             textSurfaceOPPixelsThatTime.Size = new System.Drawing.Size(71, 24);
             textSurfaceOPPixelsThatTime.TabIndex = 18;
-            textSurfaceOPPixelsThatTime.Text = "111";
+            textSurfaceOPPixelsThatTime.Text = "";
             textSurfaceOPPixelsThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label16
@@ -857,7 +857,7 @@
         private AntdUI.Avatar avatarCurrent;
         private System.Windows.Forms.TableLayoutPanel tablePanel;
         private AntdUI.Label label2;
-        private AntdUI.Label labelRatio;
+        private AntdUI.Label labelRatioCurrent;
         private AntdUI.Label label3;
         private AntdUI.Label label4;
         private AntdUI.Label labelSurfaceOP;
@@ -878,7 +878,7 @@
         private AntdUI.Input inputInsideOPCurrent;
         private AntdUI.Input inputSurfaceDRCurrent;
         private AntdUI.Input inputSurfaceCECurrent;
-        private AntdUI.Label label1;
+        private AntdUI.Label labelRatioAtThatTime;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private AntdUI.Input inputInsideDRThatTime;
         private AntdUI.Input inputInsideCEThatTime;

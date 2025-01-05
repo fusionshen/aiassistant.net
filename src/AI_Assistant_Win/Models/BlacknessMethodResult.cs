@@ -13,7 +13,7 @@ namespace AI_Assistant_Win.Models
         /// 比例尺
         /// </summary>
         [Column("scale_id")]
-        public int ScaleId { get; set; }
+        public int? ScaleId { get; set; }
         /// <summary>
         /// 钢卷号
         /// </summary>

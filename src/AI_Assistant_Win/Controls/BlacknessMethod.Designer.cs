@@ -36,6 +36,7 @@ namespace AI_Assistant_Win.Controls
             labelRenderAreaDescription = new AntdUI.Label();
             avatarRenderImage = new AntdUI.Avatar();
             panel2 = new AntdUI.Panel();
+            checkboxRedefine = new AntdUI.Checkbox();
             selectScale = new AntdUI.Select();
             btnSetScale = new AntdUI.Button();
             btnPredict = new AntdUI.Button();
@@ -181,6 +182,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel2.Back = Color.Transparent;
             panel2.BackColor = Color.Transparent;
+            panel2.Controls.Add(checkboxRedefine);
             panel2.Controls.Add(selectScale);
             panel2.Controls.Add(btnSetScale);
             panel2.Controls.Add(btnPredict);
@@ -191,31 +193,47 @@ namespace AI_Assistant_Win.Controls
             panel2.Size = new Size(444, 40);
             panel2.TabIndex = 13;
             // 
+            // checkboxRedefine
+            // 
+            checkboxRedefine.AutoCheck = true;
+            checkboxRedefine.Dock = DockStyle.Left;
+            checkboxRedefine.Enabled = false;
+            checkboxRedefine.Fill = Color.FromArgb(100, 0, 0);
+            checkboxRedefine.Font = new Font("Microsoft YaHei UI", 8F);
+            checkboxRedefine.LocalizationText = "Redefine";
+            checkboxRedefine.Location = new Point(40, 0);
+            checkboxRedefine.Name = "checkboxRedefine";
+            checkboxRedefine.Size = new Size(70, 40);
+            checkboxRedefine.TabIndex = 21;
+            checkboxRedefine.Text = "重新制定";
+            checkboxRedefine.CheckedChanged += CheckboxRedefine_CheckedChanged;
+            // 
             // selectScale
             // 
             selectScale.AllowClear = true;
-            selectScale.Dock = DockStyle.Left;
+            selectScale.Dock = DockStyle.Right;
             selectScale.DropDownArrow = true;
             selectScale.Font = new Font("Microsoft YaHei UI", 10F);
             selectScale.LocalizationPlaceholderText = "Please select a scale";
-            selectScale.Location = new Point(40, 0);
+            selectScale.Location = new Point(105, 0);
             selectScale.Name = "selectScale";
             selectScale.Padding = new Padding(5, 0, 0, 0);
             selectScale.PlaceholderText = "请选择比例尺";
-            selectScale.Size = new Size(293, 40);
+            selectScale.Size = new Size(266, 40);
             selectScale.TabIndex = 19;
             selectScale.SelectedIndexChanged += SelectScale_SelectedIndexChanged;
             // 
             // btnSetScale
             // 
             btnSetScale.Dock = DockStyle.Left;
+            btnSetScale.Enabled = false;
             btnSetScale.IconSvg = "ToolOutlined";
             btnSetScale.LoadingWaveVertical = true;
             btnSetScale.Location = new Point(0, 0);
             btnSetScale.Name = "btnSetScale";
             btnSetScale.Shape = AntdUI.TShape.Circle;
             btnSetScale.Size = new Size(40, 40);
-            btnSetScale.TabIndex = 3;
+            btnSetScale.TabIndex = 20;
             btnSetScale.Click += BtnSetScale_Click;
             // 
             // btnPredict
@@ -1116,5 +1134,6 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Button button8;
         private AntdUI.Button btnSetScale;
         private AntdUI.Select selectScale;
+        private AntdUI.Checkbox checkboxRedefine;
     }
 }

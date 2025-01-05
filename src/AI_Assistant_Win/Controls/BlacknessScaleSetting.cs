@@ -24,8 +24,6 @@ namespace AI_Assistant_Win
             form = _form;
             blacknessMethodBLL = new BlacknessMethodBLL();
             InitializeComponent();
-            // 调整表单大小以适应内容面板
-            AdjustFormSizeToContent();
         }
         private void AdjustFormSizeToContent()
         {
@@ -36,13 +34,14 @@ namespace AI_Assistant_Win
         }
 
         private string imagePath;
-        public void SetCurrentScaleDetails(BlacknessResult blacknessResult)
+        public void SetCurrentScaleDetails(BlacknessResult blacknessResult, bool reDefined, CalculateScale scaleAtThatTime)
         {
+            #region current
             var currentScale = blacknessMethodBLL.GetCurrentScale();
-            if (currentScale == null)
+            if (reDefined || currentScale == null)
             {
                 imagePath = blacknessResult.RenderImagePath;
-                avatarCurrent.Image = Image.FromFile(blacknessResult.RenderImagePath);
+                avatarCurrent.Image = Image.FromFile(imagePath);
                 textSurfaceOPPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Width.ToString("F2");
                 textSurfaceCEPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Width.ToString("F2");
                 textSurfaceDRPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Width.ToString("F2");
@@ -50,18 +49,66 @@ namespace AI_Assistant_Win
                 textInsideCEPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Width.ToString("F2");
                 textInsideDRPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Width.ToString("F2");
             }
+            else
+            {
+                imagePath = currentScale.ImagePath;
+                avatarCurrent.Image = Image.FromFile(imagePath);
+                var settings = JsonConvert.DeserializeObject<List<BlacknessScaleItem>>(currentScale.Settings);
+                textSurfaceOPPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Pixels;
+                inputSurfaceOPCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.MeasuredValue;
+                textSurfaceCEPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Pixels;
+                inputSurfaceCECurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.MeasuredValue;
+                textSurfaceDRPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Pixels;
+                inputSurfaceDRCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.MeasuredValue;
+                textInsideOPPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Pixels;
+                inputInsideOPCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.MeasuredValue;
+                textInsideCEPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Pixels;
+                inputInsideCECurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.MeasuredValue;
+                textInsideDRPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Pixels;
+                inputInsideDRCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.MeasuredValue;
+                labelRatioCurrent.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{currentScale.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+            }
+            #endregion
+            #region at that time
+            if (scaleAtThatTime != null)
+            {
+                panelAtThatTime.Visible = true;
+                avatarThatTime.Image = Image.FromFile(scaleAtThatTime.ImagePath);
+                var settings = JsonConvert.DeserializeObject<List<BlacknessScaleItem>>(scaleAtThatTime.Settings);
+                textSurfaceOPPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Pixels;
+                inputSurfaceOPThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.MeasuredValue;
+                textSurfaceCEPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Pixels;
+                inputSurfaceCEThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.MeasuredValue;
+                textSurfaceDRPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Pixels;
+                inputSurfaceDRThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.MeasuredValue;
+                textInsideOPPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Pixels;
+                inputInsideOPThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.MeasuredValue;
+                textInsideCEPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Pixels;
+                inputInsideCEThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.MeasuredValue;
+                textInsideDRPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Pixels;
+                inputInsideDRThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.MeasuredValue;
+                labelRatioAtThatTime.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+            }
+            #endregion
+            // 调整表单大小以适应内容面板
+            AdjustFormSizeToContent();
         }
 
         private void InputSurfaceOPCurrent_TextChanged(object sender, System.EventArgs e)
         {
+            DisplayCaculateRatio();
+        }
+
+        private void DisplayCaculateRatio()
+        {
             try
             {
                 var result = CaculateRatio();
-                labelRatio.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{result:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+                labelRatioCurrent.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{result:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
             }
             catch (Exception)
             {
-                labelRatio.Text = LocalizeHelper.BLACKNESS_SCALE_INPUT_ERROR;
+                labelRatioCurrent.Text = LocalizeHelper.BLACKNESS_SCALE_INPUT_ERROR;
             }
         }
 
@@ -104,27 +151,27 @@ namespace AI_Assistant_Win
 
         private void InputSurfaceCECurrent_TextChanged(object sender, System.EventArgs e)
         {
-            CaculateRatio();
+            DisplayCaculateRatio();
         }
 
         private void InputSurfaceDRCurrent_TextChanged(object sender, System.EventArgs e)
         {
-            CaculateRatio();
+            DisplayCaculateRatio();
         }
 
         private void InputInsideOPCurrent_TextChanged(object sender, System.EventArgs e)
         {
-            CaculateRatio();
+            DisplayCaculateRatio();
         }
 
         private void InputInsideCECurrent_TextChanged(object sender, System.EventArgs e)
         {
-            CaculateRatio();
+            DisplayCaculateRatio();
         }
 
         private void InputInsideDRCurrent_TextChanged(object sender, System.EventArgs e)
         {
-            CaculateRatio();
+            DisplayCaculateRatio();
         }
 
         public CalculateScale SaveSettings()
@@ -149,6 +196,11 @@ namespace AI_Assistant_Win
                     Creator = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}",
                     CreateTime = DateTime.Now
                 };
+                var currentScale = blacknessMethodBLL.GetCurrentScale();
+                if (currentScale != null && add.Equals(currentScale))
+                {
+                    throw new Exception(LocalizeHelper.NO_NEED_TO_SAVE_THE_SAME_SCALE);
+                }
                 blacknessMethodBLL.SaveScaleSetting(add);
                 return add;
             }

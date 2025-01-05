@@ -117,6 +117,7 @@ namespace AI_Assistant_Win.Business
                     InsideDRWidth = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR)).Width,
                     InsideDRScore = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR)).Score,
                     IsOK = tempBlacknessResult.Items.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level)),
+                    ScaleId = tempBlacknessResult.Items.FirstOrDefault()?.CalculateScale.Id, //tempBlacknessResult.CalculateScale.Id,
                     CreateTime = DateTime.Now
                 };
                 #endregion
@@ -182,6 +183,7 @@ namespace AI_Assistant_Win.Business
                 result.InsideDRWidth = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR)).Width;
                 result.InsideDRScore = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR)).Score;
                 result.IsOK = tempBlacknessResult.Items.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level));
+                result.ScaleId = tempBlacknessResult.Items.FirstOrDefault()?.CalculateScale.Id; //tempBlacknessResult.CalculateScale.Id;
                 result.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
                 result.LastModifiedTime = DateTime.Now;
                 var ok = connection.Update(result);
@@ -220,7 +222,6 @@ namespace AI_Assistant_Win.Business
                 originalBlacknessResult.CoilNumber = string.Empty;
                 originalBlacknessResult.Size = string.Empty;
                 originalBlacknessResult.Analyst = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
-                originalBlacknessResult.CalculateScale = connection.Table<CalculateScale>().OrderByDescending(x => x.Id).FirstOrDefault(x => x.Key.Equals("Blackness"));
                 originalBlacknessResult.Items = [];
                 return [];
             }
@@ -245,9 +246,9 @@ namespace AI_Assistant_Win.Business
             originalBlacknessResult.CoilNumber = body.CoilNumber;
             originalBlacknessResult.Size = body.Size;
             originalBlacknessResult.Analyst = body.Analyst;
+            originalBlacknessResult.CalculateScale = scaleAtThatTime; // must before items
             originalBlacknessResult.Items = items;
             originalBlacknessResult.IsUploaded = body.IsUploaded; // promot before saving
-            originalBlacknessResult.CalculateScale = scaleAtThatTime;
             return allSorted.Select(t => t.Id).ToList();
         }
 

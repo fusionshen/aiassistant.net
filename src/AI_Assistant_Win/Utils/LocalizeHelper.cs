@@ -54,10 +54,7 @@ namespace AI_Assistant_Win.Utils
         public static string WORKBENCH => Localization.Get("Workbench", "工作台");
         public static string CLOSE_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to close the application with unsaved work?",
             "您有未保存的工作，确定要关闭程序吗？");
-
         public static string CLOSE_CONFIRM => Localization.Get("Are you sure you want to close the application?", "确定要关闭程序吗？");
-
-
         public static string LEAVE_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to leave this page with unsaved work?",
             "您有未保存的工作，确定要离开此页面吗？");
         #endregion
@@ -96,7 +93,9 @@ namespace AI_Assistant_Win.Utils
         public static string BLACKNESS_WITH => Localization.Get(",Width:", "，宽度：");
         public static string MILLIMETER => Localization.Get("mm", "毫米");
         public static string PIXEL => Localization.Get("pixels", "像素");
+        public static string PLEASE_SELECT_SCALE => Localization.Get("Please select a scale.", "请选择比例尺。");
         public static string PLEASE_PREDICT_BEFORE_SAVING => Localization.Get("Please predict before saving.", "请进行识别后再保存。");
+        public static string PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING => Localization.Get("Please predict with the new scale before saving.", "请使用新的比例尺进行识别后再保存。");
         public static string PLEASE_SELECT_WORKBENCH => Localization.Get("Please select a workbench.", "请选择班组。");
         public static string PLEASE_SELECT_TESTNO => Localization.Get("Please select a test no.", "请选择试样编号。");
         public static string PLEASE_INPUT_COIL_NUMBER => Localization.Get("Please text a coil number.", "请输入钢卷号。");
@@ -104,6 +103,7 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_INPUT_ANALYST => Localization.Get("Please text a analyst.", "请输入分析人。");
         public static string PLEASE_USE_CORRECT_IMAGE => Localization.Get("Please use the correct density pattern image for prediction.", "请使用正确的黑度样板图片进行识别。");
         public static string PLEASE_SET_BLACKNESS_SCALE => Localization.Get("Please set the scale for calculating the correct width of blackness.", "请设置比例尺用于计算正确的黑度检测宽度。");
+        public static string LOST_BLACKNESS_SCALE => Localization.Get("The scale was lost at that time, please re-predict using a new scale and save it.", "当时比例尺丢失，请重新使用新的比例尺进行识别后保存。");
         public static string PREDICT_FIRSTLY_BEFORE_SETTING_SCALE => Localization.Get("Please take a photo or upload a blackness detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张黑度检测图片并且成功识别后再尝试进行比例尺设置。");
         public static string BLACKNESS_EDIT_MODE(string id) => Localization.Get($"Edit Mode[ID：{id}]", $"修改模式[编号：{id}]");
         public static string BLACKNESS_NEW_MODE => Localization.Get("New Mode", "新增模式");
@@ -146,7 +146,10 @@ namespace AI_Assistant_Win.Utils
         public static string BLACKNESS_RESULT_NOT_UPLOADED => Localization.Get("Not Uploaded", "未上传");
         public static string BLACKNESS_RESULT_AWAITING_REUPLOAD => Localization.Get("Awaiting re-upload", "待重新上传");
         public static string WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the blackness report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次黑度报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
-
+        public static string CLEAR_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to clear this page with unsaved work?",
+         "您有未保存的工作，确定要清空该页面吗？");
+        public static string PRE_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to open the previous record with unsaved work?", "您有未保存的工作，确定要打开上一条记录吗？");
+        public static string NEXT_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to open the next record with unsaved work?", "您有未保存的工作，确定要打开下一条记录吗？");
         #endregion
         #region blackness scale
         public static string BLACKNESS_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Blackness-width Scale Setting", "黑度宽度比例尺设置");
@@ -155,6 +158,9 @@ namespace AI_Assistant_Win.Utils
         public static string BLACKNESS_SCALE_INPUT_ERROR => Localization.Get("Invalid Input", "非法输入");
         public static string BLACKNESS_SCALE_CURRENT_TITLE => Localization.Get("Current", "当前比例尺");
         public static string BLACKNESS_SCALE_TITLE_AT_THAT_TIME => Localization.Get("At That Time", "当时比例尺");
+        public static string BLACKNESS_SCALE_LOAD_SUCCESSED => Localization.Get("Load Scale Successed:", "加载比例尺成功：");
+        public static string NO_NEED_TO_SAVE_THE_SAME_SCALE => Localization.Get("The scale has not changed, so there is no need to save it again.", "比例尺没有变化，无需再次保存。");
+
         #endregion
         #region table
         public static string DISPLAY_HEADER => Localization.Get("Display header", "显示表头");
