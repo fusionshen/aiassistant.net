@@ -1,0 +1,12 @@
+﻿global using BenchmarkDotNet.Attributes;
+global using BenchmarkDotNet.Configs;
+global using BenchmarkDotNet.Running;
+global using ConsoleDemo.Config;
+global using SkiaSharp;
+global using System.Buffers;
+global using System.Collections.Generic;
+global using YoloDotNet.Enums;
+global using YoloDotNet.Extensions;
+global using YoloDotNet.Models;
+global using YoloDotNet.Test.Common;
+global using YoloDotNet.Test.Common.Enums;
