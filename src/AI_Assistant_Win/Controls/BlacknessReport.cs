@@ -118,17 +118,19 @@ namespace AI_Assistant_Win.Controls
                                 {
                                     try
                                     {
-                                        // TODO: btn loading
+                                        btn.Loading = true;
                                         await uploadBlacknessBLL.Upload(memoryImage, target, lastUploaded);
                                         // refresh
                                         LoadData(methodId);
                                         // refresh parent form
-                                        callBack();
+                                        BeginInvoke(callBack);
+                                        btn.Loading = false;
                                         AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.REPORT_UPLOAD_SUCCESS,
                                          AntdUI.TAlignFrom.BR, Font);
                                     }
                                     catch (Exception ex)
                                     {
+                                        btn.Loading = false;
                                         AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);
                                     }
                                 }
@@ -140,9 +142,11 @@ namespace AI_Assistant_Win.Controls
                             default:
                                 break;
                         }
-                    });
-                    config.Vertical = false;  //  不遮挡内容
-                    config.TopMost = true;
+                    })
+                    {
+                        Vertical = false,  //  不遮挡内容
+                        TopMost = true
+                    };
                     floatButton = AntdUI.FloatButton.open(config);
                 }
                 else

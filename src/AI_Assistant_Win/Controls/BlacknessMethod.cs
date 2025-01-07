@@ -221,9 +221,13 @@ namespace AI_Assistant_Win.Controls
                 if (blacknessPredict.Predictions != null && blacknessPredict.Predictions.Length != 0)
                 {
                     OutputTexts();
-                    // for add scale firstly
                     btnSetScale.Enabled = true;
                     checkboxRedefine.Enabled = true;
+                    // for add scale firstly
+                    if (scaleList.Count == 0)
+                    {
+                        BtnSetScale_Click(null, null);
+                    }
                     // call when edit
                     if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
                     {

@@ -19,27 +19,30 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 黑度
         /// </summary>
-        public string Level { get { return new(Prediction.Label.Name.Where(char.IsDigit).ToArray()); } }
+        public string Level { get => new(Prediction.Label.Name.Where(char.IsDigit).ToArray()); }
         /// <summary>
         /// 置信度
         /// </summary>
-        public float Score { get { return Prediction.Score; } }
+        public float Score { get => Prediction.Score; }
         /// <summary>
         /// 宽度，实际指图片像素高度，可以页面上可以更改比例尺重新计算，原始的像素值不能变化
         /// </summary>
-        public float Width { get { return Prediction.Rectangle.Height; } }
+        public float Width { get => Prediction.Rectangle.Height; }
+        /// <summary>
+        /// 计算过后的宽度，用于保存数据库和history、report展示
+        /// </summary>
+        public float CalculatedWidth { get => CalculateScale == null ? Prediction.Rectangle.Height : Prediction.Rectangle.Height * CalculateScale.Value / 100; }
         /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>
         public string Description
         {
-            get { return $"{LocalizeHelper.LEVEL}{Level}{LocalizeHelper.BLACKNESS_WITH}{CalculateRealScale()}"; }
+            get => $"{LocalizeHelper.LEVEL}{Level}{LocalizeHelper.BLACKNESS_WITH}{CalculatedWidth:F2}{Unit}";
         }
 
-        private string CalculateRealScale()
+        private string Unit
         {
-            var result = CalculateScale == null ? $"{Prediction.Rectangle.Height:F2}{LocalizeHelper.PIXEL}" : $"{Prediction.Rectangle.Height * CalculateScale.Value / 100:F2}{LocalizeHelper.MILLIMETER}";
-            return result;
+            get => CalculateScale == null ? LocalizeHelper.PIXEL : LocalizeHelper.MILLIMETER;
         }
 
         /// <summary>

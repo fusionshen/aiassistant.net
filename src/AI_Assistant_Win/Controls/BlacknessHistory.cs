@@ -5,6 +5,7 @@ using AntdUI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -110,9 +111,9 @@ namespace AI_Assistant_Win.Controls
                 switch (e.Btn.Id)
                 {
                     case "preview":
-                        var renderImage = data.FirstOrDefault(t => "renderImage".Equals(t.key))?.value.ToString();
-                        var originImage = data.FirstOrDefault(t => "originImage".Equals(t.key))?.value.ToString();
-                        AntdUI.Preview.open(new AntdUI.Preview.Config(form, [Image.FromFile(renderImage), Image.FromFile(originImage)])
+                        var renderImagePath = data.FirstOrDefault(t => "renderImage".Equals(t.key))?.value.ToString();
+                        var originImagePath = data.FirstOrDefault(t => "originImage".Equals(t.key))?.value.ToString();
+                        AntdUI.Preview.open(new AntdUI.Preview.Config(form, [Image.FromFile(renderImagePath), Image.FromFile(originImagePath)])
                         {
                             Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
                             OnBtns = (id, config) =>
@@ -120,8 +121,31 @@ namespace AI_Assistant_Win.Controls
                                 switch (id)
                                 {
                                     case "download":
-                                        // TODO: download image
-                                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.UNDER_DEVELOPMENT, AntdUI.TAlignFrom.BR, Font);
+                                        // 弹出文件保存对话框
+                                        SaveFileDialog saveFileDialog = new()
+                                        {
+                                            Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                            DefaultExt = "jpg",
+                                            FileName = $"{data.FirstOrDefault(t => "coilNumber".Equals(t.key))?.value}_黑度检测结果.jpg",
+                                            Title = LocalizeHelper.CHOOSE_THE_LOCATION
+                                        };
+                                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                        {
+                                            try
+                                            {
+                                                string pdfPath = saveFileDialog.FileName;
+                                                var originImage = Image.FromFile(originImagePath);
+                                                originImage.Save(saveFileDialog.FileName.Replace(".jpg", "_原图.jpg"), ImageFormat.Jpeg);
+                                                var renderImage = Image.FromFile(renderImagePath);
+                                                renderImage.Save(saveFileDialog.FileName.Replace(".jpg", "_识别图.jpg"), ImageFormat.Jpeg);
+                                                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath,
+                                                    AntdUI.TAlignFrom.BR, Font);
+                                            }
+                                            catch (Exception error)
+                                            {
+                                                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                                            }
+                                        }
                                         break;
                                 }
                             }
