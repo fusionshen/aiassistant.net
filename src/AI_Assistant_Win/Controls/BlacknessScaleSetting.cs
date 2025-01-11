@@ -66,7 +66,7 @@ namespace AI_Assistant_Win
                 inputInsideCECurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.MeasuredValue;
                 textInsideDRPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Pixels;
                 inputInsideDRCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.MeasuredValue;
-                labelRatioCurrent.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{currentScale.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{currentScale.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
             }
             #endregion
             #region at that time
@@ -87,7 +87,7 @@ namespace AI_Assistant_Win
                 inputInsideCEThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.MeasuredValue;
                 textInsideDRPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Pixels;
                 inputInsideDRThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.MeasuredValue;
-                labelRatioAtThatTime.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+                labelRatioAtThatTime.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
             }
             #endregion
             // 调整表单大小以适应内容面板
@@ -104,11 +104,11 @@ namespace AI_Assistant_Win
             try
             {
                 var result = CaculateRatio();
-                labelRatioCurrent.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{result:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{result:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
             }
             catch (Exception)
             {
-                labelRatioCurrent.Text = LocalizeHelper.BLACKNESS_SCALE_INPUT_ERROR;
+                labelRatioCurrent.Text = LocalizeHelper.SCALE_INPUT_ERROR;
             }
         }
 

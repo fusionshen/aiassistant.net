@@ -4,53 +4,55 @@ using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using YoloDotNet.Extensions;
 
 namespace AI_Assistant_Win.Controls
 {
-    public partial class BlacknessMethod : UserControl
+    public partial class CircularAreaMethod : UserControl
     {
-        public static string EDIT_METHOD_ID = string.Empty;
+        public static string EDIT_ITEM_ID = string.Empty;
 
         private readonly MainWindow form;
 
-        private readonly BlacknessMethodBLL blacknessMethodBLL;
+        private readonly CircularAreaMethodBLL circularAreaMethodBLL;
 
         private readonly ImageProcessBLL imageProcessBLL;
 
         private readonly CameraBLL cameraBLL;
 
-        private readonly BlacknessPredict blacknessPredict;
+        private readonly CircularAreaPredict circularAreaPredict;
 
-        private readonly BlacknessResult originalBlacknessResult;
+        private readonly CircularAreaResult originalCircularAreaResult;
 
-        private readonly BlacknessResult tempBlacknessResult;
+        private readonly CircularAreaResult tempCircularAreaResult;
 
         private List<int> sortedIDs = [];
 
         private readonly ObservableDictionary<string, CalculateScale> scaleList = [];
 
-        public BlacknessMethod(MainWindow _form)
+        public CircularAreaMethod(MainWindow _form)
         {
             form = _form;
             InitializeComponent();
-            blacknessMethodBLL = new BlacknessMethodBLL();
-            imageProcessBLL = new ImageProcessBLL("Blackness");
+            circularAreaMethodBLL = new CircularAreaMethodBLL();
+            imageProcessBLL = new ImageProcessBLL("CircularArea");
             imageProcessBLL.PropertyChanged += ImageProcessBLL_PropertyChanged;
-            blacknessPredict = new BlacknessPredict(imageProcessBLL);
-            blacknessPredict.PropertyChanged += BlacknessPredict_PropertyChanged;
-            cameraBLL = new CameraBLL("Blackness", avatarOriginImage.Handle);
+            circularAreaPredict = new CircularAreaPredict(imageProcessBLL);
+            circularAreaPredict.PropertyChanged += CircularAreaPredict_PropertyChanged;
+            cameraBLL = new CameraBLL("CircularArea", avatarOriginImage.Handle);
             cameraBLL.PropertyChanged += CameraBLL_PropertyChanged;
             CameraHelper.CAMERA_DEVICES.Add(cameraBLL);
-            originalBlacknessResult = new BlacknessResult();
-            originalBlacknessResult.PropertyChanged += OriginalBlacknessResult_PropertyChanged;
-            tempBlacknessResult = new BlacknessResult();
-            tempBlacknessResult.PropertyChanged += TempBlacknessResult_PropertyChanged;
+            originalCircularAreaResult = new CircularAreaResult();
+            originalCircularAreaResult.PropertyChanged += OriginalCircularAreaResult_PropertyChanged;
+            tempCircularAreaResult = new CircularAreaResult();
+            tempCircularAreaResult.PropertyChanged += TempCircularAreaResult_PropertyChanged;
             scaleList.Changed += ScaleList_Changed;
             this.Load += async (s, e) => await InitializeAsync();
             this.HandleDestroyed += async (s, e) => await DestoryAsync();
@@ -87,10 +89,10 @@ namespace AI_Assistant_Win.Controls
             switch (t.Key)
             {
                 case "current":
-                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{t.Value.Value:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{t.Value.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}]";
                     break;
                 case "atThatTime":
-                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}]";
                     break;
                 default:
                     break;
@@ -98,43 +100,54 @@ namespace AI_Assistant_Win.Controls
             return text;
         }
 
-        private void OriginalBlacknessResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void OriginalCircularAreaResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Id")
             {
-                tempBlacknessResult.Id = originalBlacknessResult.Id;
-            }
-            else if (e.PropertyName == "OriginImagePath")
-            {
-                imageProcessBLL.OriginImagePath = originalBlacknessResult.OriginImagePath;
-            }
-            else if (e.PropertyName == "RenderImagePath")
-            {
-                imageProcessBLL.RenderImagePath = originalBlacknessResult.RenderImagePath;
-            }
-            else if (e.PropertyName == "WorkGroup")
-            {
-                selectWorkGroup.SelectedValue = originalBlacknessResult.WorkGroup;
+                tempCircularAreaResult.Id = originalCircularAreaResult.Id;
             }
             else if (e.PropertyName == "TestNo")
             {
-                selectTestNo.SelectedValue = originalBlacknessResult.TestNo;
+                selectTestNo.SelectedValue = originalCircularAreaResult.TestNo;
             }
             else if (e.PropertyName == "CoilNumber")
             {
-                inputCoilNumber.Text = originalBlacknessResult.CoilNumber;
+                inputCoilNumber.Text = originalCircularAreaResult.CoilNumber;
             }
-            else if (e.PropertyName == "Size")
+            else if (e.PropertyName == "Position")
             {
-                inputSize.Text = originalBlacknessResult.Size;
+                if (string.IsNullOrEmpty(originalCircularAreaResult.Position))
+                {
+                    selectPosition.SelectedValue = null;
+                }
+                else
+                {
+                    var selected = circularAreaMethodBLL.PositionList.FirstOrDefault(t => originalCircularAreaResult.Position.Equals((int)t.Key)).Value;
+                    if (selected != null)
+                    {
+                        selectPosition.SelectedValue = selected;
+                    }
+                }
+            }
+            else if (e.PropertyName == "OriginImagePath")
+            {
+                imageProcessBLL.OriginImagePath = originalCircularAreaResult.OriginImagePath;
+            }
+            else if (e.PropertyName == "RenderImagePath")
+            {
+                imageProcessBLL.RenderImagePath = originalCircularAreaResult.RenderImagePath;
+            }
+            else if (e.PropertyName == "WorkGroup")
+            {
+                selectWorkGroup.SelectedValue = originalCircularAreaResult.WorkGroup;
             }
             else if (e.PropertyName == "Analyst")
             {
-                inputAnalyst.Text = originalBlacknessResult.Analyst;
+                inputAnalyst.Text = originalCircularAreaResult.Analyst;
             }
             else if (e.PropertyName == "CalculateScale")
             {
-                if (originalBlacknessResult.CalculateScale == null)
+                if (originalCircularAreaResult.CalculateScale == null)
                 {
                     selectScale.SelectedValue = null;
                     AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.LOST_SCALE, AntdUI.TAlignFrom.BR, Font);
@@ -142,22 +155,21 @@ namespace AI_Assistant_Win.Controls
                 else
                 {
                     // different scale
-                    if (!originalBlacknessResult.CalculateScale.Equals(scaleList.FirstOrDefault(t => "current".Equals(t.Key)).Value))
+                    if (!originalCircularAreaResult.CalculateScale.Equals(scaleList.FirstOrDefault(t => "current".Equals(t.Key)).Value))
                     {
-                        scaleList["atThatTime"] = originalBlacknessResult.CalculateScale;
+                        scaleList["atThatTime"] = originalCircularAreaResult.CalculateScale;
                     }
                 }
             }
-            else if (e.PropertyName == "Items")
+            else if (e.PropertyName == "Item")
             {
                 // 观察者模式虽好，但是跳来跳去，不好好考虑，真的容易多写代码
-                blacknessPredict.Predictions = originalBlacknessResult.Items.Select(x => x.Prediction).ToArray();
+                circularAreaPredict.Prediction = originalCircularAreaResult.Item?.Prediction;
             }
         }
-
-        private void TempBlacknessResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void TempCircularAreaResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (!originalBlacknessResult.Equals(tempBlacknessResult))
+            if (!originalCircularAreaResult.Equals(tempCircularAreaResult))
             {
                 try
                 {
@@ -175,7 +187,6 @@ namespace AI_Assistant_Win.Controls
             }
             MainWindow.SOMETHING_IS_UNDONE = btnSave.Enabled;
         }
-
         private void CheckValid()
         {
             // 数据验证
@@ -183,12 +194,12 @@ namespace AI_Assistant_Win.Controls
             {
                 throw new Exception(LocalizeHelper.PLEASE_SELECT_SCALE);
             }
-            if (tempBlacknessResult == null || tempBlacknessResult.Items.Count == 0)
+            if (tempCircularAreaResult == null || tempCircularAreaResult.Item == null)
             {
                 throw new Exception(LocalizeHelper.PLEASE_PREDICT_BEFORE_SAVING);
             }
             // 比例尺不一致
-            if (!tempBlacknessResult.CalculateScale.Equals(tempBlacknessResult.Items.FirstOrDefault()?.CalculateScale))
+            if (!tempCircularAreaResult.CalculateScale.Equals(tempCircularAreaResult.Item.CalculateScale))
             {
                 throw new Exception(LocalizeHelper.PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING);
             }
@@ -204,21 +215,20 @@ namespace AI_Assistant_Win.Controls
             {
                 throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
             }
-            if (string.IsNullOrEmpty(inputSize.Text))
+            if (selectPosition.SelectedValue == null)
             {
-                throw new Exception(LocalizeHelper.PLEASE_INPUT_SIZE);
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_POSITION);
             }
             if (string.IsNullOrEmpty(inputAnalyst.Text))
             {
                 throw new Exception(LocalizeHelper.PLEASE_INPUT_ANALYST);
             }
         }
-
-        private void BlacknessPredict_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void CircularAreaPredict_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Predictions")
+            if (e.PropertyName == "Prediction")
             {
-                if (blacknessPredict.Predictions != null && blacknessPredict.Predictions.Length != 0)
+                if (circularAreaPredict.Prediction != null)
                 {
                     OutputTexts();
                     btnSetScale.Enabled = true;
@@ -229,7 +239,7 @@ namespace AI_Assistant_Win.Controls
                         BtnSetScale_Click(null, null);
                     }
                     // call when edit
-                    if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
+                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
                     {
                         AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.PREDICTED_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
                     }
@@ -239,48 +249,46 @@ namespace AI_Assistant_Win.Controls
                     checkboxRedefine.Checked = false;
                     checkboxRedefine.Enabled = false;
                     ClearTexts();
-                    if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
+                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
                     {
-                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_USE_CORRECT_BLACKNESS_IMAGE, AntdUI.TAlignFrom.BR, Font);
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_USE_CORRECT_CIRCULAR_IMAGE, AntdUI.TAlignFrom.BR, Font);
                     }
                 }
             }
         }
-
         private void ImageProcessBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "OriginImagePath")
             {
-                tempBlacknessResult.OriginImagePath = imageProcessBLL.OriginImagePath;
+                tempCircularAreaResult.OriginImagePath = imageProcessBLL.OriginImagePath;
                 btnPredict.Enabled = !string.IsNullOrEmpty(imageProcessBLL.OriginImagePath);
                 if (!string.IsNullOrEmpty(imageProcessBLL.OriginImagePath))
                 {
                     avatarOriginImage.Image = Image.FromFile(imageProcessBLL.OriginImagePath);
                     // cant predict automatically under the status of editing
-                    if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
+                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
                     {
                         BtnPredict_Click(btnPredict, null);  // auto predict
                     }
                 }
                 else
                 {
-                    avatarOriginImage.Image = Properties.Resources.blackness_template;
+                    avatarOriginImage.Image = Properties.Resources.area_template;
                 }
             }
             else if (e.PropertyName == "RenderImagePath")
             {
-                tempBlacknessResult.RenderImagePath = imageProcessBLL.RenderImagePath;
+                tempCircularAreaResult.RenderImagePath = imageProcessBLL.RenderImagePath;
                 if (!string.IsNullOrEmpty(imageProcessBLL.RenderImagePath))
                 {
                     avatarRenderImage.Image = Image.FromFile(imageProcessBLL.RenderImagePath);
                 }
                 else
                 {
-                    avatarRenderImage.Image = Properties.Resources.blackness_template;
+                    avatarRenderImage.Image = Properties.Resources.area_template;
                 }
             }
         }
-
         private void CameraBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsGrabbing")
@@ -302,16 +310,14 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
-
         private async Task DestoryAsync()
         {
             sortedIDs = [];
-            EDIT_METHOD_ID = string.Empty;
+            EDIT_ITEM_ID = string.Empty;
             await Task.Delay(50);
             cameraBLL.CloseDevice();
             CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
         }
-
         private async Task InitializeAsync()
         {
             // TestNo List
@@ -322,19 +328,21 @@ namespace AI_Assistant_Win.Controls
                 // tell client how to do when any scale does not exit.
                 BtnSetScale_Click(null, null);
             }
+            // Position List
+            InitializeSelectPostion();
             try
             {
                 // 通过观察者模式实现界面数据效果
-                sortedIDs = blacknessMethodBLL.LoadOriginalResultFromDB(originalBlacknessResult, EDIT_METHOD_ID);
-                if (!string.IsNullOrEmpty(EDIT_METHOD_ID))
+                sortedIDs = circularAreaMethodBLL.LoadOriginalResultFromDB(originalCircularAreaResult, EDIT_ITEM_ID);
+                if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
                 {
                     // The order is very important.:)
                     btnNext.Visible = true;
-                    btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != sortedIDs.Count - 1;
+                    btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != sortedIDs.Count - 1;
                     btnPrint.Visible = true;
                     btnPre.Visible = true;
-                    btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != 0;
-                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.BLACKNESS_EDIT_MODE(originalBlacknessResult), AntdUI.TAlignFrom.BR, Font);
+                    btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
+                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CIRCULAR_AREA_EDIT_MODE(originalCircularAreaResult), AntdUI.TAlignFrom.BR, Font);
                     return;
                 }
                 else
@@ -388,28 +396,33 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
         }
+        private void InitializeSelectPostion()
+        {
 
+            selectPosition.Items.Clear();
+            // select position
+            var result = circularAreaMethodBLL.PositionList.Select(t => t.Value).ToList();
+            selectPosition.Items.AddRange([.. result]);
+        }
         private bool InitializeSelectScale()
         {
             scaleList.Clear();
-            var currentScaleFromDB = blacknessMethodBLL.GetCurrentScale();
+            var currentScaleFromDB = circularAreaMethodBLL.GetCurrentScale();
             if (currentScaleFromDB == null)
             {
-                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_CIRCULAR_AREA_SCALE, AntdUI.TAlignFrom.BR, Font);
                 return false;
             }
             scaleList["current"] = currentScaleFromDB;
             return true;
         }
-
         private List<GetTestNoListResponse> testNoList;
-
         private async Task InitializeSelectTestNoAsync()
         {
             try
             {
                 selectTestNo.Items.Clear();
-                testNoList = await blacknessMethodBLL.GetTestNoListAsync();
+                testNoList = await circularAreaMethodBLL.GetTestNoListAsync();
             }
             catch (Exception error)
             {
@@ -427,27 +440,24 @@ namespace AI_Assistant_Win.Controls
                 selectTestNo.Items.AddRange(["test"]);
             }
         }
-
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image));
         }
-
         private void AvatarRenderImage_Click(object sender, EventArgs e)
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarRenderImage.Image));
         }
-
         private void BtnUploadImage_Click(object sender, System.EventArgs e)
         {
-            if (blacknessMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
+            if (areaMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
                 btn.LoadingWaveValue = 0;
                 btn.Loading = true;
                 AntdUI.ITask.Run(() =>
                 {
-                    imageProcessBLL.SaveOriginImage(blacknessMethod_OpenFileDialog.FileName);
+                    imageProcessBLL.SaveOriginImage(areaMethod_OpenFileDialog.FileName);
                     // stop realtime image render
                     cameraBLL.StopGrabbing();
                     AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.UPLOAD_ORIGINAL_IMAGE_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
@@ -456,7 +466,6 @@ namespace AI_Assistant_Win.Controls
                 });
             }
         }
-
         private void BtnPredict_Click(object sender, EventArgs e)
         {
             AntdUI.Button btn = (AntdUI.Button)sender;
@@ -465,50 +474,53 @@ namespace AI_Assistant_Win.Controls
             AntdUI.ITask.Run(() =>
             {
                 // current scale
-                blacknessPredict.Predict(CurrentScale);
+                circularAreaPredict.Predict(CurrentScale);
             }, () =>
             {
                 if (btn.IsDisposed) return;
                 btn.Loading = false;
             });
         }
-
         private CalculateScale CurrentScale
         {
             get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
         }
-
         private void OutputTexts()
         {
-            var sorted = blacknessPredict.Predictions.OrderBy(t => t.Rectangle.Y).ToArray();
-            // TODO: 现场根据X具体位置判断，因为可能出现未贴完6个部位或者未识别出六个部位的情况
-            tempBlacknessResult.Items = [new(BlacknessLocationKind.SURFACE_OP, sorted[0], CurrentScale),
-                            new(BlacknessLocationKind.SURFACE_CE, sorted[1], CurrentScale),
-                            new(BlacknessLocationKind.SURFACE_DR, sorted[2],CurrentScale),
-                            new(BlacknessLocationKind.INSIDE_OP, sorted[3],CurrentScale),
-                            new(BlacknessLocationKind.INSIDE_CE, sorted[4], CurrentScale),
-                            new(BlacknessLocationKind.INSIDE_DR, sorted[5], CurrentScale)];
-            inputSurfaceOP.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Description;
-            inputSurfaceCE.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Description;
-            inputSurfaceDR.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Description;
-            inputInsideOP.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Description;
-            inputInsideCE.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Description;
-            inputInsideDR.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Description;
-            radioResultOK.Checked = tempBlacknessResult.Items.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level)); // [1，2] not exit，otherwise，NG is checked
+            tempCircularAreaResult.Item = new(circularAreaPredict.Prediction, CurrentScale);
+            inputAreaOfPixels.Text = $"{tempCircularAreaResult.Item.AreaOfPixels}{LocalizeHelper.AREA_OF_PIXELS}";
+            inputConfidence.Text = $"{tempCircularAreaResult.Item.Confidence.ToPercent()}%";
+            OutputScaleTexts(tempCircularAreaResult.Item.CalculateScale);
+            inputCalculatedArea.Text = $"{tempCircularAreaResult.Item.CalculatedArea:F2}{tempCircularAreaResult.Item.Unit}";
+            inputDiameter.Text = $"{tempCircularAreaResult.Item.Diameter:F2}{tempCircularAreaResult.Item.DiameterUnit}";
         }
-
+        private void OutputScaleTexts(CalculateScale calculateScale)
+        {
+            if (calculateScale != null)
+            {
+                inputScale.Text = $"{calculateScale.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
+                var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(calculateScale.Settings);
+                if (settings != null)
+                {
+                    inputGraduations.Text = settings.TopGraduations;
+                }
+            }
+            else
+            {
+                inputScale.Text = string.Empty;
+                inputGraduations.Text = string.Empty;
+            }
+        }
         private void ClearTexts()
         {
-            tempBlacknessResult.Items = [];
-            inputSurfaceOP.Text = string.Empty;
-            inputSurfaceCE.Text = string.Empty;
-            inputSurfaceDR.Text = string.Empty;
-            inputInsideOP.Text = string.Empty;
-            inputInsideCE.Text = string.Empty;
-            inputInsideDR.Text = string.Empty;
-            radioResultNG.Checked = true;
+            tempCircularAreaResult.Item = null;
+            inputAreaOfPixels.Text = string.Empty;
+            inputConfidence.Text = string.Empty;
+            inputScale.Text = string.Empty;
+            inputGraduations.Text = string.Empty;
+            inputCalculatedArea.Text = string.Empty;
+            inputDiameter.Text = string.Empty;
         }
-
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // double check
@@ -521,9 +533,11 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, error.Message, AntdUI.TAlignFrom.BR, Font);
                 return;
             }
-            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalBlacknessResult.IsUploaded ?
-                LocalizeHelper.WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING :
-                LocalizeHelper.WOULD_SAVE_BLACKNESS_RESULT) == DialogResult.OK)
+            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalCircularAreaResult.IsUploaded ?
+                LocalizeHelper.WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADING :
+                circularAreaMethodBLL.GetResultExitsInDB(tempCircularAreaResult) != null ?
+                  LocalizeHelper.WOULD_RESAVE_CIRCULAR_AREA_RESULT_ON_THIS_POSITION(tempCircularAreaResult.Position) :
+                LocalizeHelper.WOULD_SAVE_CIRCULAR_AREA_RESULT) == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
                 btn.LoadingWaveValue = 0;
@@ -532,7 +546,7 @@ namespace AI_Assistant_Win.Controls
                 {
                     try
                     {
-                        var result = blacknessMethodBLL.SaveResult(tempBlacknessResult);
+                        var result = circularAreaMethodBLL.SaveResult(tempCircularAreaResult);
                         if (result == 0)
                         {
                             AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.SAVE_FAILED, AntdUI.TAlignFrom.BR, Font);
@@ -541,7 +555,7 @@ namespace AI_Assistant_Win.Controls
                         else
                         {
                             AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.SAVE_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
-                            EDIT_METHOD_ID = result.ToString();
+                            EDIT_ITEM_ID = result.ToString();
                             await InitializeAsync();
                             btn.Enabled = false;
                             MainWindow.SOMETHING_IS_UNDONE = false;
@@ -560,7 +574,6 @@ namespace AI_Assistant_Win.Controls
                 });
             }
         }
-
         private void BtnCameraSetting_Click(object sender, EventArgs e)
         {
             try
@@ -576,13 +589,11 @@ namespace AI_Assistant_Win.Controls
             }
 
         }
-
         private void BtnCameraRecover_Click(object sender, EventArgs e)
         {
             // start realtime image render
             cameraBLL.StartGrabbing();
         }
-
         private void BtnCameraCapture_Click(object sender, EventArgs e)
         {
             imageProcessBLL.OriginImagePath = cameraBLL.SaveImage();
@@ -598,49 +609,42 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CAMERA_CAPTURED_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
             });
         }
-
         private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempBlacknessResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
+            tempCircularAreaResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
         }
-
         private void SelectTestNo_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempBlacknessResult.TestNo = selectTestNo.SelectedValue.ToString();
+            tempCircularAreaResult.TestNo = selectTestNo.SelectedValue.ToString();
             // coilNumber
-            var target = testNoList.FirstOrDefault(t => tempBlacknessResult.TestNo.Equals(t.TestNo));
+            var target = testNoList.FirstOrDefault(t => tempCircularAreaResult.TestNo.Equals(t.TestNo));
             if (target != null)
             {
                 inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
             }
         }
-
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)
         {
-            tempBlacknessResult.CoilNumber = inputCoilNumber.Text;
+            tempCircularAreaResult.CoilNumber = inputCoilNumber.Text;
         }
-
-        private void InputSize_TextChanged(object sender, EventArgs e)
+        private void SelectPosition_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempBlacknessResult.Size = inputSize.Text;
+            tempCircularAreaResult.Position = selectPosition.SelectedValue.ToString();
         }
-
         private void InputAnalyst_TextChanged(object sender, EventArgs e)
         {
-            tempBlacknessResult.Analyst = inputAnalyst.Text;
+            tempCircularAreaResult.Analyst = inputAnalyst.Text;
         }
-
         private void BtnClear_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
             {
                 btnClear.Loading = true;
-                EDIT_METHOD_ID = string.Empty;
+                EDIT_ITEM_ID = string.Empty;
                 await InitializeAsync();
                 btnClear.Loading = false;
             }, LocalizeHelper.CLEAR_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
         }
-
         private void ConfirmUnderUnsaved(Action action, string content)
         {
             if (MainWindow.SOMETHING_IS_UNDONE)
@@ -667,7 +671,6 @@ namespace AI_Assistant_Win.Controls
                 BeginInvoke(action);
             }
         }
-
         private void BtnHistory_Click(object sender, EventArgs e)
         {
             if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.JUMP_TO_HISTORY) == DialogResult.OK)
@@ -682,43 +685,40 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
-
         private void BtnPre_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
             {
                 btnPre.Loading = true;
-                var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID));
+                var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
                 if (index != 0)
                 {
-                    EDIT_METHOD_ID = (sortedIDs[index - 1]).ToString();
+                    EDIT_ITEM_ID = (sortedIDs[index - 1]).ToString();
                     await InitializeAsync();
                 }
                 btnPre.Loading = false;
             }, LocalizeHelper.PRE_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
         }
-
         private void BtnNext_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
             {
                 btnNext.Loading = true;
-                var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID));
+                var index = sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID));
                 if (index != sortedIDs.Count)
                 {
-                    EDIT_METHOD_ID = (sortedIDs[index + 1]).ToString();
+                    EDIT_ITEM_ID = (sortedIDs[index + 1]).ToString();
                     await InitializeAsync();
                 }
                 btnNext.Loading = false;
             }, LocalizeHelper.NEXT_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
 
         }
-
         private void BtnPrint_Click(object sender, EventArgs e)
         {
             try
             {
-                AntdUI.Drawer.open(form, new BlacknessReport(form, EDIT_METHOD_ID, () => { })
+                AntdUI.Drawer.open(form, new BlacknessReport(form, EDIT_ITEM_ID, () => { })
                 {
                     Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                 }, AntdUI.TAlignMini.Right);
@@ -728,20 +728,19 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
         }
-
         private void BtnSetScale_Click(object sender, EventArgs e)
         {
-            if ((string.IsNullOrEmpty(tempBlacknessResult.RenderImagePath) || tempBlacknessResult.Items == null || tempBlacknessResult.Items.Count == 0) &&
+            if ((string.IsNullOrEmpty(tempCircularAreaResult.RenderImagePath) || tempCircularAreaResult.Item == null) &&
                     (scaleList.Count == 0 ||   // for the first time
                     checkboxRedefine.Checked)
                 )
             {
-                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PREDICT_FIRSTLY_BEFORE_SETTING_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PREDICT_FIRSTLY_BEFORE_SETTING_CIRCULAR_SCALE, AntdUI.TAlignFrom.BR, Font);
                 return;
             }
-            var setting = new BlacknessScaleSetting(form);
-            setting.SetCurrentScaleDetails(tempBlacknessResult, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
-            var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.BLACKNESS_SCALE_SETTINGS_MODAL_TITLE, setting)
+            var setting = new CircularScaleSetting(form);
+            setting.SetCurrentScaleDetails(tempCircularAreaResult, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
+            var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.CIRCULAR_SCALE_SETTINGS_MODAL_TITLE, setting)
             {
                 OnButtonStyle = (id, btn) =>
                 {
@@ -768,22 +767,21 @@ namespace AI_Assistant_Win.Controls
                 checkboxRedefine.Checked = false;
             }
         }
-
         private void SelectScale_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             if (selectScale.SelectedValue != null)
             {
-                tempBlacknessResult.CalculateScale = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+                var selected = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+                tempCircularAreaResult.CalculateScale = selected;
             }
             else
             {
-                tempBlacknessResult.CalculateScale = null;
+                tempCircularAreaResult.CalculateScale = null;
             }
         }
-
         private void CheckboxRedefine_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
         {
-            if (checkboxRedefine.Checked && !string.IsNullOrEmpty(tempBlacknessResult.RenderImagePath) && tempBlacknessResult.Items != null && tempBlacknessResult.Items.Count != 0)
+            if (checkboxRedefine.Checked && !string.IsNullOrEmpty(tempCircularAreaResult.RenderImagePath) && tempCircularAreaResult.Item != null)
             {
                 BtnSetScale_Click(null, null);
             }

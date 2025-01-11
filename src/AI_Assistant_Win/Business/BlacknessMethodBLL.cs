@@ -226,7 +226,6 @@ namespace AI_Assistant_Win.Business
                 return [];
             }
             var allSorted = connection.Table<BlacknessMethodResult>().OrderBy(t => t.Id).ToList();
-            // if t.Id.Equals(id), will find null, double funny!!!
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));
             var items = connection.Table<BlacknessMethodItem>()

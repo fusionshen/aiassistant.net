@@ -56,6 +56,8 @@ namespace AI_Assistant_Win.Utils
             _db.CreateTable<SystemConfig>();
             _db.CreateTable<BlacknessUploadResult>();
             _db.CreateTable<CalculateScale>();
+            _db.CreateTable<CircularAreaMethodResult>();
+            _db.CreateTable<CircularAreaMethodSummary>();
         }
 
         // 私有静态内部类，负责持有唯一实例

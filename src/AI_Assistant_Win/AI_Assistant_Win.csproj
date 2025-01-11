@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.6.1</Version>
+	<Version>0.6.2</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolo.net</Description>
@@ -19,6 +19,7 @@
     <FileVersion>$(Version)</FileVersion>
     <Description>👚 基于 yolo.net 和 antdUI 设计的AI人工智能助手 Winforms 客户端</Description>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
     
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
@@ -62,6 +63,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\CircularScaleSetting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\CircularAreaMethod.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\BlacknessMethod.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -101,6 +108,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Controls\CircularScaleSetting.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\CircularAreaMethod.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Controls\CameraSetting.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -123,6 +136,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Blackness\model.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Circular\model.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\CONSOLA.TTF">

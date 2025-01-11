@@ -32,9 +32,9 @@ namespace AI_Assistant_Win.Controls
         private void InitializeSearch()
         {
             inputRangeDate.MaxDate = DateTime.Now;
-            if (!string.IsNullOrEmpty(BlacknessMethod.EDIT_ITEM_ID))
+            if (!string.IsNullOrEmpty(BlacknessMethod.EDIT_METHOD_ID))
             {
-                inputSearch.Text = BlacknessMethod.EDIT_ITEM_ID;
+                inputSearch.Text = BlacknessMethod.EDIT_METHOD_ID;
             }
         }
 
@@ -170,7 +170,7 @@ namespace AI_Assistant_Win.Controls
                         {
                             try
                             {
-                                BlacknessMethod.EDIT_ITEM_ID = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
+                                BlacknessMethod.EDIT_METHOD_ID = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
                                 ((MainWindow)form).OpenPage("V60 Blackness Method On GA Sheet");
                             }
                             catch (Exception error)

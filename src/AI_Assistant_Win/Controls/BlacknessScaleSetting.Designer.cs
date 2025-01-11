@@ -549,72 +549,72 @@
             // inputInsideDRThatTime
             // 
             inputInsideDRThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputInsideDRThatTime.Enabled = false;
             inputInsideDRThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputInsideDRThatTime.Location = new System.Drawing.Point(159, 187);
             inputInsideDRThatTime.Margin = new System.Windows.Forms.Padding(0);
             inputInsideDRThatTime.Name = "inputInsideDRThatTime";
             inputInsideDRThatTime.Radius = 0;
+            inputInsideDRThatTime.ReadOnly = true;
             inputInsideDRThatTime.Size = new System.Drawing.Size(107, 32);
             inputInsideDRThatTime.TabIndex = 39;
             // 
             // inputInsideCEThatTime
             // 
             inputInsideCEThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputInsideCEThatTime.Enabled = false;
             inputInsideCEThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputInsideCEThatTime.Location = new System.Drawing.Point(159, 156);
             inputInsideCEThatTime.Margin = new System.Windows.Forms.Padding(0);
             inputInsideCEThatTime.Name = "inputInsideCEThatTime";
             inputInsideCEThatTime.Radius = 0;
+            inputInsideCEThatTime.ReadOnly = true;
             inputInsideCEThatTime.Size = new System.Drawing.Size(107, 30);
             inputInsideCEThatTime.TabIndex = 38;
             // 
             // inputInsideOPThatTime
             // 
             inputInsideOPThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputInsideOPThatTime.Enabled = false;
             inputInsideOPThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputInsideOPThatTime.Location = new System.Drawing.Point(159, 125);
             inputInsideOPThatTime.Margin = new System.Windows.Forms.Padding(0);
             inputInsideOPThatTime.Name = "inputInsideOPThatTime";
             inputInsideOPThatTime.Radius = 0;
+            inputInsideOPThatTime.ReadOnly = true;
             inputInsideOPThatTime.Size = new System.Drawing.Size(107, 30);
             inputInsideOPThatTime.TabIndex = 37;
             // 
             // inputSurfaceDRThatTime
             // 
             inputSurfaceDRThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputSurfaceDRThatTime.Enabled = false;
             inputSurfaceDRThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputSurfaceDRThatTime.Location = new System.Drawing.Point(159, 94);
             inputSurfaceDRThatTime.Margin = new System.Windows.Forms.Padding(0);
             inputSurfaceDRThatTime.Name = "inputSurfaceDRThatTime";
             inputSurfaceDRThatTime.Radius = 0;
+            inputSurfaceDRThatTime.ReadOnly = true;
             inputSurfaceDRThatTime.Size = new System.Drawing.Size(107, 30);
             inputSurfaceDRThatTime.TabIndex = 36;
             // 
             // inputSurfaceCEThatTime
             // 
             inputSurfaceCEThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputSurfaceCEThatTime.Enabled = false;
             inputSurfaceCEThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputSurfaceCEThatTime.Location = new System.Drawing.Point(159, 63);
             inputSurfaceCEThatTime.Margin = new System.Windows.Forms.Padding(0);
             inputSurfaceCEThatTime.Name = "inputSurfaceCEThatTime";
             inputSurfaceCEThatTime.Radius = 0;
+            inputSurfaceCEThatTime.ReadOnly = true;
             inputSurfaceCEThatTime.Size = new System.Drawing.Size(107, 30);
             inputSurfaceCEThatTime.TabIndex = 35;
             // 
             // inputSurfaceOPThatTime
             // 
             inputSurfaceOPThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputSurfaceOPThatTime.Enabled = false;
             inputSurfaceOPThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputSurfaceOPThatTime.Location = new System.Drawing.Point(159, 32);
             inputSurfaceOPThatTime.Margin = new System.Windows.Forms.Padding(0);
             inputSurfaceOPThatTime.Name = "inputSurfaceOPThatTime";
             inputSurfaceOPThatTime.Radius = 0;
+            inputSurfaceOPThatTime.ReadOnly = true;
             inputSurfaceOPThatTime.Size = new System.Drawing.Size(107, 30);
             inputSurfaceOPThatTime.TabIndex = 34;
             // 

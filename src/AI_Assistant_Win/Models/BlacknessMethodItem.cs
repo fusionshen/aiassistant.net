@@ -31,7 +31,7 @@ namespace AI_Assistant_Win.Models
         [Column("score")]
         public float Score { get; set; }
         /// <summary>
-        /// 宽度，实际指图片高度
+        /// 计算过后的宽度，用于保存数据库和history、report展示
         /// </summary>
         [Column("width")]
         public float Width { get; set; }

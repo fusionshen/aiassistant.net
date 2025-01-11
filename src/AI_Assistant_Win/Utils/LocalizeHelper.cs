@@ -1,4 +1,5 @@
 ﻿using AI_Assistant_Win.Models.Enums;
+using AI_Assistant_Win.Models.Middle;
 using AntdUI;
 
 namespace AI_Assistant_Win.Utils
@@ -43,6 +44,8 @@ namespace AI_Assistant_Win.Utils
         public static string ID_IS_EMPTY => Localization.Get("The ID is empty.", "编号为空。");
         public static string ADD_SUBJECT_FAILED => Localization.Get("Failed to add a new subject.", "新增主体失败。");
         public static string SAVE_DETAILS_FAILED => Localization.Get("Failed to save the details.", "保存明细失败。");
+        public static string ADD_SUMMARY_FAILED => Localization.Get("Failed to add a new summary.", "新增概要失败。");
+        public static string UPDATE_SUMMARY_FAILED => Localization.Get("Failed to save the summary.", "更新概要失败。");
         public static string FIND_SUBJECT_FAILED => Localization.Get("Failed to find the subject.", "查找主体失败。");
         public static string DELETE_DETAILS_FAILED => Localization.Get("Failed to delete the details.", "删除明细失败。");
         public static string UPDATE_SUBJECT_FAILED => Localization.Get("Failed to update the subject.", "更新主体失败。");
@@ -101,12 +104,12 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_INPUT_COIL_NUMBER => Localization.Get("Please text a coil number.", "请输入钢卷号。");
         public static string PLEASE_INPUT_SIZE => Localization.Get("Please text a size.", "请输入尺寸。");
         public static string PLEASE_INPUT_ANALYST => Localization.Get("Please text a analyst.", "请输入分析人。");
-        public static string PLEASE_USE_CORRECT_IMAGE => Localization.Get("Please use the correct density pattern image for prediction.", "请使用正确的黑度样板图片进行识别。");
+        public static string PLEASE_USE_CORRECT_BLACKNESS_IMAGE => Localization.Get("Please use the correct blackness reference image for identification.", "请使用正确的黑度样板图片进行识别。");
         public static string PLEASE_SET_BLACKNESS_SCALE => Localization.Get("Please set the scale for calculating the correct width of blackness.", "请设置比例尺用于计算正确的黑度检测宽度。");
-        public static string LOST_BLACKNESS_SCALE => Localization.Get("The scale was lost at that time, please re-predict using a new scale and save it.", "当时比例尺丢失，请重新使用新的比例尺进行识别后保存。");
-        public static string PREDICT_FIRSTLY_BEFORE_SETTING_SCALE => Localization.Get("Please take a photo or upload a blackness detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张黑度检测图片并且成功识别后再尝试进行比例尺设置。");
-        public static string BLACKNESS_EDIT_MODE(string id) => Localization.Get($"Edit Mode[ID：{id}]", $"修改模式[编号：{id}]");
-        public static string BLACKNESS_NEW_MODE => Localization.Get("New Mode", "新增模式");
+        public static string LOST_SCALE => Localization.Get("The scale was lost at that time, please re-predict using a new scale and save it.", "当时比例尺丢失，请重新使用新的比例尺进行识别后保存。");
+        public static string PREDICT_FIRSTLY_BEFORE_SETTING_BLACKNESS_SCALE => Localization.Get("Please take a photo or upload a blackness detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张黑度检测图片并且成功识别后再尝试进行比例尺设置。");
+        public static string BLACKNESS_EDIT_MODE(BlacknessResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo}]", $"修改模式[试样编号：{result.TestNo}]");
+        public static string NEW_MODE => Localization.Get("New Mode", "新增模式");
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
         public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
         public static string WOULD_EDIT_BLACKNESS_RESULT => Localization.Get("Would you like to edit the blackness detection result?", "是否对本次黑度检测结果进行修改？");
@@ -153,13 +156,33 @@ namespace AI_Assistant_Win.Utils
         #endregion
         #region blackness scale
         public static string BLACKNESS_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Blackness-width Scale Setting", "黑度宽度比例尺设置");
-        public static string BLACKNESS_SCALE_CACULATED_RATIO_TITLE => Localization.Get("The Result:", "计算结果：");
+        public static string SCALE_CACULATED_RATIO_TITLE => Localization.Get("The Result:", "计算结果：");
         public static string BLACKNESS_SCALE_CACULATED_RATIO_UNIT => Localization.Get("mm/100Pixels", "毫米/100像素");
-        public static string BLACKNESS_SCALE_INPUT_ERROR => Localization.Get("Invalid Input", "非法输入");
-        public static string BLACKNESS_SCALE_CURRENT_TITLE => Localization.Get("Current", "当前比例尺");
-        public static string BLACKNESS_SCALE_TITLE_AT_THAT_TIME => Localization.Get("At That Time", "当时比例尺");
-        public static string BLACKNESS_SCALE_LOAD_SUCCESSED => Localization.Get("Load Scale Successed:", "加载比例尺成功：");
+        public static string SCALE_INPUT_ERROR => Localization.Get("Invalid Input", "非法输入");
+        public static string CURRENT_SCALE_TITLE => Localization.Get("Current", "当前比例尺");
+        public static string SCALE_TITLE_AT_THAT_TIME => Localization.Get("At That Time", "当时比例尺");
+        public static string SCALE_LOAD_SUCCESSED => Localization.Get("Load Scale Successed:", "加载比例尺成功：");
         public static string NO_NEED_TO_SAVE_THE_SAME_SCALE => Localization.Get("The scale has not changed, so there is no need to save it again.", "比例尺没有变化，无需再次保存。");
+        public static string PLEASE_SET_CIRCULAR_AREA_SCALE => Localization.Get("Please set the scale for calculating the correct area of circular.", "请设置比例尺用于计算正确的圆形检测面积。");
+        public static string CIRCULAR_POSITION_TITLE => Localization.Get("Position:", "部位：");
+        public static string CIRCULAR_POSITION(CircularPositionKind position) => Localization.Get(position.ToString(), EnumHelper.GetDescriptionOfEnum<CircularPositionKind>(position.ToString()));
+        public static string CIRCULAR_AREA_TITLE => Localization.Get(",Area:", "，面积：");
+        public static string CIRCULAR_DIAMETER_TITLE => Localization.Get(",Diameter:", "，直径：");
+        public static string AREA_OF_PIXELS => Localization.Get("area of pixels", "像素面积");
+        public static string SQUARE_MILLIMETER => Localization.Get("sq mm", "平方毫米");
+        public static string CIRCULAR_AREA_PREDICTION_TITLE => Localization.Get("Area:", "面积：");
+        public static string CIRCULAR_AREA_PREDICTION_CONFIDENCE => Localization.Get(",Confidence:", "，置信度：");
+        public static string PLEASE_SELECT_POSITION => Localization.Get("Please select a position.", "请选择样品部位。");
+        public static string CIRCULAR_SCALE_CACULATED_RATIO_UNIT => Localization.Get("sq mm/100Pixels", "平方毫米/100像素面积");
+        public static string PREDICT_FIRSTLY_BEFORE_SETTING_CIRCULAR_SCALE => Localization.Get("Please take a photo or upload a circular detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张圆片面积检测图片并且成功识别后再尝试进行比例尺设置。");
+        public static string CIRCULAR_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Circular-area Scale Setting", "圆片面积比例尺设置");
+        public static string AUTO_CALCULATE => Localization.Get("Auto Calculate", "自动计算");
+        public static string NO_TOP_GRADUATIONS => Localization.Get("Please enter the platform scale on the upper surface of the sample at this time.", "请输入此时样品上表面的平台刻度。");
+        public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the area report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次面积报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
+        public static string WOULD_SAVE_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to save the area detection result?", "是否保存本次面积检测结果？");
+        public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_ON_THIS_POSITION(string position) => Localization.Get($"The system has detected an existing area report for the {position} section. Do you confirm to overwrite and update it?", $"系统检测到已存在{position}部位的面积报告，是否确认覆盖更新？");
+        public static string PLEASE_USE_CORRECT_CIRCULAR_IMAGE => Localization.Get("Please use the correct circular image for identification.", "请使用正确的圆形图片进行识别。");
+        public static string CIRCULAR_AREA_EDIT_MODE(CircularAreaResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo},Position:{result.Position}]", $"修改模式[试样编号：{result.TestNo}，部位：{result.Position}]");
 
         #endregion
         #region table

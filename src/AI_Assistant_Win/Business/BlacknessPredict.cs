@@ -111,10 +111,10 @@ namespace AI_Assistant_Win.Business
                     color = Color.DarkOrange;
                     break;
                 case "4":
-                    color = Color.Yellow;
+                    color = Color.Black;
                     break;
                 case "5":
-                    color = Color.Green;
+                    color = Color.DarkGreen;
                     break;
                 default:
                     break;

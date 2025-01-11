@@ -1,7 +1,9 @@
 ﻿using SixLabors.ImageSharp;
+using SkiaSharp;
 using System;
 using System.ComponentModel;
 using System.IO;
+using YoloDotNet.Extensions;
 
 namespace AI_Assistant_Win.Business
 {
@@ -58,6 +60,15 @@ namespace AI_Assistant_Win.Business
             Directory.CreateDirectory(directoryPath);
             string fullPath = Path.Combine(directoryPath, DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".jpg");
             image.Save(fullPath);
+            RenderImagePath = fullPath;
+        }
+
+        public void SaveRenderImage(SKImage image)
+        {
+            string directoryPath = $".\\Images\\{application}\\Render";
+            Directory.CreateDirectory(directoryPath);
+            string fullPath = Path.Combine(directoryPath, DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".jpg");
+            image.Save(fullPath, SKEncodedImageFormat.Jpeg);
             RenderImagePath = fullPath;
         }
     }
