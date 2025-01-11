@@ -1,10 +1,9 @@
 ﻿using AI_Assistant_Win.Utils;
 using System;
-using YoloDotNet.Models;
 
 namespace AI_Assistant_Win.Models.Middle
 {
-    public class CircularArea(Segmentation prediction, CalculateScale scale = null) : IEquatable<CircularArea>
+    public class CircularArea(SimpleSegmentation prediction, CalculateScale scale = null) : IEquatable<CircularArea>
     {
         /// <summary>
         /// 比例尺
@@ -17,11 +16,11 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 像素面积，可以页面上可以更改比例尺重新计算，原始值不能变化
         /// </summary>
-        public int AreaOfPixels { get => Prediction.SegmentedPixels.Length; }
+        public long AreaOfPixels { get => Prediction.SegmentedPixelsCount; }
         /// <summary>
         /// 计算后的面积，用于保存数据库和history、report展示
         /// </summary>
-        public float CalculatedArea { get => CalculateScale == null ? Prediction.SegmentedPixels.Length : Prediction.SegmentedPixels.Length * CalculateScale.Value / 100; }
+        public float CalculatedArea { get => CalculateScale == null ? Prediction.SegmentedPixelsCount : Prediction.SegmentedPixelsCount * CalculateScale.Value / 100; }
         /// <summary>
         /// 类圆直径
         /// </summary>
@@ -47,7 +46,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 识别结果
         /// </summary>
-        public Segmentation Prediction { get; set; } = prediction;
+        public SimpleSegmentation Prediction { get; set; } = prediction;
 
         public bool Equals(CircularArea other)
         {

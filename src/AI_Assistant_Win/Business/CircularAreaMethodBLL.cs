@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using YoloDotNet.Models;
 
 namespace AI_Assistant_Win.Business
 {
@@ -215,7 +214,7 @@ namespace AI_Assistant_Win.Business
             originalCircularAreaResult.WorkGroup = body.WorkGroup;
             originalCircularAreaResult.Analyst = body.Analyst;
             originalCircularAreaResult.CalculateScale = scaleAtThatTime; // must before items
-            originalCircularAreaResult.Item = new CircularArea(JsonConvert.DeserializeObject<Segmentation>(body.Prediction), scaleAtThatTime);
+            originalCircularAreaResult.Item = new CircularArea(JsonConvert.DeserializeObject<SimpleSegmentation>(body.Prediction), scaleAtThatTime);
             originalCircularAreaResult.IsUploaded = GetSummaryExitsInDB(body).IsUploaded; // promot before saving
             return allSorted.Select(t => t.Id).ToList();
         }

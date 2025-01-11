@@ -1,4 +1,5 @@
 ﻿using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using SkiaSharp;
 using System;
@@ -19,8 +20,8 @@ namespace AI_Assistant_Win.Business
 
         private readonly ImageProcessBLL imageProcessBLL;
 
-        private Segmentation prediction;
-        public Segmentation Prediction
+        private SimpleSegmentation prediction;
+        public SimpleSegmentation Prediction
         {
             get { return prediction; }
             set
@@ -58,8 +59,14 @@ namespace AI_Assistant_Win.Business
 
             if (predictions.Count == 1)
             {
-                prediction = predictions[0];
-                var rendered = DrawBoxes(image, currentScale);
+                prediction = new SimpleSegmentation
+                {
+                    Label = predictions[0].Label,
+                    Confidence = predictions[0].Confidence,
+                    BoundingBox = predictions[0].BoundingBox,
+                    SegmentedPixelsCount = predictions[0].SegmentedPixels.Length,
+                };
+                var rendered = DrawBoxes(image, currentScale, predictions[0]);
                 imageProcessBLL.SaveRenderImage(rendered);  // show render image 
             }
             else
@@ -71,9 +78,9 @@ namespace AI_Assistant_Win.Business
             OnPropertyChanged(nameof(Prediction)); //  page outputs/clears predictions
         }
 
-        private SKImage DrawBoxes(SKImage image, CalculateScale currentScale)
+        private SKImage DrawBoxes(SKImage image, CalculateScale currentScale, Segmentation segmentation)
         {
-            ArgumentNullException.ThrowIfNull(prediction);
+            ArgumentNullException.ThrowIfNull(segmentation);
 
             // Convert SKImage to SKBitmap to ensure pixel data is accessible
             SKBitmap bitmap = SKBitmap.FromImage(image);
@@ -83,9 +90,9 @@ namespace AI_Assistant_Win.Business
             int bytesPerPixel = bitmap.BytesPerPixel;
             int rowBytes = bitmap.RowBytes;
             // Define the overlay color
-            var color = HexToRgbaSkia(prediction.Label.Color, ImageConfig.SEGMENTATION_MASK_OPACITY);
+            var color = HexToRgbaSkia(segmentation.Label.Color, ImageConfig.SEGMENTATION_MASK_OPACITY);
 
-            var pixelSpan = prediction.SegmentedPixels.AsSpan();
+            var pixelSpan = segmentation.SegmentedPixels.AsSpan();
 
             unsafe
             {
@@ -123,7 +130,7 @@ namespace AI_Assistant_Win.Business
                 }
             }
 
-            return DrawBoundingBoxes(SKImage.FromBitmap(bitmap), prediction, currentScale);
+            return DrawBoundingBoxes(SKImage.FromBitmap(bitmap), segmentation, currentScale);
         }
 
         private SKImage DrawBoundingBoxes(SKImage image, Segmentation detection, CalculateScale currentScale)
@@ -181,7 +188,7 @@ namespace AI_Assistant_Win.Business
             // Draw detections
             var box = detection.BoundingBox;
             var boxColor = HexToRgbaSkia(detection.Label.Color, labelBoxAlpha);
-            var labelText = LabelText(currentScale);
+            var labelText = LabelText(currentScale, detection);
             var labelWidth = (int)paintText.MeasureText(labelText);
 
             labelBgPaint.Color = boxColor;
@@ -217,12 +224,12 @@ namespace AI_Assistant_Win.Business
             return surface.Snapshot();
         }
 
-        private string LabelText(CalculateScale currentScale)
+        private string LabelText(CalculateScale currentScale, Segmentation detection)
         {
             var result = currentScale == null ?
-             $"{prediction.SegmentedPixels.Length}{LocalizeHelper.AREA_OF_PIXELS}" :
-             $"{prediction.SegmentedPixels.Length * currentScale.Value / 100:F2}{LocalizeHelper.SQUARE_MILLIMETER}";
-            return $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_TITLE}{result}{LocalizeHelper.CIRCULAR_AREA_PREDICTION_CONFIDENCE}{prediction.Confidence.ToPercent()}%";
+             $"{detection.SegmentedPixels.Length}{LocalizeHelper.AREA_OF_PIXELS}" :
+             $"{detection.SegmentedPixels.Length * currentScale.Value / 100:F2}{LocalizeHelper.SQUARE_MILLIMETER}";
+            return $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_TITLE}{result}{LocalizeHelper.CIRCULAR_AREA_PREDICTION_CONFIDENCE}{detection.Confidence.ToPercent()}%";
         }
 
         private static SKColor HexToRgbaSkia(string hexColor, int alpha = 255)

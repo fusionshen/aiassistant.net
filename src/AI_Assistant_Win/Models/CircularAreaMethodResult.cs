@@ -30,7 +30,7 @@ namespace AI_Assistant_Win.Models
         /// 像素面积，像素数量
         /// </summary>
         [Column("pixels")]
-        public int Pixels { get; set; }
+        public long Pixels { get; set; }
         /// <summary>
         /// 置信度
         /// </summary>
@@ -47,7 +47,7 @@ namespace AI_Assistant_Win.Models
         [Column("diameter")]
         public float Diameter { get; set; }
         /// <summary>
-        /// 识别结果
+        /// 识别结果，138356 pixels = 6.09MB so huge 
         /// </summary>
         [Column("prediction")]
         public string Prediction { get; set; }
