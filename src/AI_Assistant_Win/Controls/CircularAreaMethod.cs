@@ -1,4 +1,4 @@
-using AI_Assistant_Win.Business;
+ï»¿using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
@@ -68,7 +68,7 @@ namespace AI_Assistant_Win.Controls
                 var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
                 btnSetScale.Enabled = true;
-                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
             }
             else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Remove)
             {
@@ -79,7 +79,7 @@ namespace AI_Assistant_Win.Controls
                 Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
                 var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
-                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}", AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
             }
         }
 
@@ -116,18 +116,7 @@ namespace AI_Assistant_Win.Controls
             }
             else if (e.PropertyName == "Position")
             {
-                if (string.IsNullOrEmpty(originalCircularAreaResult.Position))
-                {
-                    selectPosition.SelectedValue = null;
-                }
-                else
-                {
-                    var selected = circularAreaMethodBLL.PositionList.FirstOrDefault(t => originalCircularAreaResult.Position.Equals((int)t.Key)).Value;
-                    if (selected != null)
-                    {
-                        selectPosition.SelectedValue = selected;
-                    }
-                }
+                selectPosition.SelectedValue = originalCircularAreaResult.Position;
             }
             else if (e.PropertyName == "OriginImagePath")
             {
@@ -163,7 +152,7 @@ namespace AI_Assistant_Win.Controls
             }
             else if (e.PropertyName == "Item")
             {
-                // ¹Û²ìÕßÄ£Ê½ËäºÃ£¬µ«ÊÇÌøÀ´ÌøÈ¥£¬²»ºÃºÃ¿¼ÂÇ£¬ÕæµÄÈİÒ×¶àĞ´´úÂë
+                // è§‚å¯Ÿè€…æ¨¡å¼è™½å¥½ï¼Œä½†æ˜¯è·³æ¥è·³å»ï¼Œä¸å¥½å¥½è€ƒè™‘ï¼ŒçœŸçš„å®¹æ˜“å¤šå†™ä»£ç 
                 circularAreaPredict.Prediction = originalCircularAreaResult.Item?.Prediction;
             }
         }
@@ -189,7 +178,7 @@ namespace AI_Assistant_Win.Controls
         }
         private void CheckValid()
         {
-            // Êı¾İÑéÖ¤
+            // æ•°æ®éªŒè¯
             if (selectScale.SelectedValue == null)
             {
                 throw new Exception(LocalizeHelper.PLEASE_SELECT_SCALE);
@@ -198,7 +187,7 @@ namespace AI_Assistant_Win.Controls
             {
                 throw new Exception(LocalizeHelper.PLEASE_PREDICT_BEFORE_SAVING);
             }
-            // ±ÈÀı³ß²»Ò»ÖÂ
+            // æ¯”ä¾‹å°ºä¸ä¸€è‡´
             if (!tempCircularAreaResult.CalculateScale.Equals(tempCircularAreaResult.Item.CalculateScale))
             {
                 throw new Exception(LocalizeHelper.PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING);
@@ -241,7 +230,7 @@ namespace AI_Assistant_Win.Controls
                     // call when edit
                     if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
                     {
-                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.PREDICTED_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
+                        AntdUI.Message.success(form, LocalizeHelper.PREDICTED_SUCCESSFULLY);
                     }
                 }
                 else
@@ -302,7 +291,7 @@ namespace AI_Assistant_Win.Controls
                 btnCameraCapture.Enabled = cameraBLL.IsConnected && cameraBLL.IsGrabbing;
                 if (cameraBLL.IsConnected)
                 {
-                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CAMERA_CONNECTED, AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Message.success(form, LocalizeHelper.CAMERA_CONNECTED);
                 }
                 else
                 {
@@ -320,81 +309,87 @@ namespace AI_Assistant_Win.Controls
         }
         private async Task InitializeAsync()
         {
-            // TestNo List
-            await InitializeSelectTestNoAsync();
-            // Scale List
-            if (!InitializeSelectScale())
+            AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
             {
-                // tell client how to do when any scale does not exit.
-                BtnSetScale_Click(null, null);
-            }
-            // Position List
-            InitializeSelectPostion();
-            try
-            {
-                // Í¨¹ı¹Û²ìÕßÄ£Ê½ÊµÏÖ½çÃæÊı¾İĞ§¹û
-                sortedIDs = circularAreaMethodBLL.LoadOriginalResultFromDB(originalCircularAreaResult, EDIT_ITEM_ID);
-                if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
+                // TestNo List
+                await InitializeSelectTestNoAsync();
+                config.OK(LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS);
+                // Scale List
+                if (!InitializeSelectScale())
                 {
-                    // The order is very important.:)
-                    btnNext.Visible = true;
-                    btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != sortedIDs.Count - 1;
-                    btnPrint.Visible = true;
-                    btnPre.Visible = true;
-                    btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
-                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CIRCULAR_AREA_EDIT_MODE(originalCircularAreaResult), AntdUI.TAlignFrom.BR, Font);
-                    return;
+                    // tell client how to do when any scale does not exit.
+                    BtnSetScale_Click(null, null);
                 }
-                else
+                // Position List
+                InitializeSelectPostion();
+                try
                 {
-                    btnNext.Visible = false;
-                    btnPrint.Visible = false;
-                    btnPre.Visible = false;
-                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.NEW_MODE, AntdUI.TAlignFrom.BR, Font);
+                    // é€šè¿‡è§‚å¯Ÿè€…æ¨¡å¼å®ç°ç•Œé¢æ•°æ®æ•ˆæœ
+                    sortedIDs = circularAreaMethodBLL.LoadOriginalResultFromDB(originalCircularAreaResult, EDIT_ITEM_ID);
+                    if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
+                    {
+                        // The order is very important.:)
+                        btnNext.Visible = true;
+                        btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != sortedIDs.Count - 1;
+                        btnPrint.Visible = true;
+                        btnPre.Visible = true;
+                        btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
+                        AntdUI.Message.success(form, LocalizeHelper.CIRCULAR_AREA_EDIT_MODE(originalCircularAreaResult));
+                        return;
+                    }
+                    else
+                    {
+                        btnNext.Visible = false;
+                        btnPrint.Visible = false;
+                        btnPre.Visible = false;
+                        AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
+                    }
+                    var result = cameraBLL.StartRendering();
+                    switch (result)
+                    {
+                        case CameraBLLStatusKind.NoCamera:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA, AntdUI.TAlignFrom.BR, Font);
+                            break;
+                        case CameraBLLStatusKind.NoCameraSettings:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
+                            // å»¶è¿Ÿ1ç§’
+                            await Task.Delay(500);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.NoCameraOpen:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
+                            // å»¶è¿Ÿ1ç§’
+                            await Task.Delay(500);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.NoCameraGrabbing:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
+                            // å»¶è¿Ÿ1ç§’
+                            await Task.Delay(500);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.TriggerMode:
+                            AntdUI.Message.success(form, LocalizeHelper.TRIGGER_MODE);
+                            break;
+                        case CameraBLLStatusKind.ContinuousMode:
+                            AntdUI.Message.success(form, LocalizeHelper.CONTINUOUS_MODE);
+                            break;
+                        default:
+                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.PLEASE_CONTACT_ADMIN, AntdUI.TAlignFrom.BR, Font);
+                            break;
+                    }
                 }
-                var result = cameraBLL.StartRendering();
-                switch (result)
+                catch (CameraSDKException error)
                 {
-                    case CameraBLLStatusKind.NoCamera:
-                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA, AntdUI.TAlignFrom.BR, Font);
-                        break;
-                    case CameraBLLStatusKind.NoCameraSettings:
-                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
-                        // ÑÓ³Ù1Ãë
-                        await Task.Delay(1000);
-                        BtnCameraSetting_Click(null, null);
-                        break;
-                    case CameraBLLStatusKind.NoCameraOpen:
-                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
-                        // ÑÓ³Ù1Ãë
-                        await Task.Delay(1000);
-                        BtnCameraSetting_Click(null, null);
-                        break;
-                    case CameraBLLStatusKind.NoCameraGrabbing:
-                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
-                        // ÑÓ³Ù1Ãë
-                        await Task.Delay(1000);
-                        BtnCameraSetting_Click(null, null);
-                        break;
-                    case CameraBLLStatusKind.TriggerMode:
-                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.TRIGGER_MODE, AntdUI.TAlignFrom.BR, Font);
-                        break;
-                    case CameraBLLStatusKind.ContinuousMode:
-                        AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CONTINUOUS_MODE, AntdUI.TAlignFrom.BR, Font);
-                        break;
-                    default:
-                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.PLEASE_CONTACT_ADMIN, AntdUI.TAlignFrom.BR, Font);
-                        break;
+                    CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
                 }
-            }
-            catch (CameraSDKException error)
-            {
-                CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
-            }
-            catch (Exception error)
-            {
-                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
-            }
+                catch (Exception error)
+                {
+                    AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                }
+                config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
+            }, Font);
+            await Task.Delay(50);
         }
         private void InitializeSelectPostion()
         {
@@ -460,7 +455,7 @@ namespace AI_Assistant_Win.Controls
                     imageProcessBLL.SaveOriginImage(areaMethod_OpenFileDialog.FileName);
                     // stop realtime image render
                     cameraBLL.StopGrabbing();
-                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.UPLOAD_ORIGINAL_IMAGE_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
+                    AntdUI.Message.success(form, LocalizeHelper.UPLOAD_ORIGINAL_IMAGE_SUCCESSFULLY);
                     if (btn.IsDisposed) return;
                     btn.Loading = false;
                 });
@@ -554,7 +549,7 @@ namespace AI_Assistant_Win.Controls
                         }
                         else
                         {
-                            AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.SAVE_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
+                            AntdUI.Message.success(form, LocalizeHelper.SAVE_SUCCESSFULLY);
                             EDIT_ITEM_ID = result.ToString();
                             await InitializeAsync();
                             btn.Enabled = false;
@@ -606,7 +601,7 @@ namespace AI_Assistant_Win.Controls
                 cameraBLL.StopGrabbing();
                 if (btn.IsDisposed) return;
                 btn.Loading = false;
-                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.CAMERA_CAPTURED_SUCCESSFULLY, AntdUI.TAlignFrom.BR, Font);
+                AntdUI.Message.success(form, LocalizeHelper.CAMERA_CAPTURED_SUCCESSFULLY);
             });
         }
         private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
@@ -667,7 +662,7 @@ namespace AI_Assistant_Win.Controls
             }
             else
             {
-                // Òì²½
+                // å¼‚æ­¥
                 BeginInvoke(action);
             }
         }
@@ -720,7 +715,7 @@ namespace AI_Assistant_Win.Controls
             {
                 AntdUI.Drawer.open(form, new BlacknessReport(form, EDIT_ITEM_ID, () => { })
                 {
-                    Size = new Size(420, 596)  // ³£ÓÃµ½µÄÖ½ÕÅ¹æ¸ñÎªA4£¬¼´21cm¡Á29.7cm£¨210mm¡Á297mm£©
+                    Size = new Size(420, 596)  // å¸¸ç”¨åˆ°çš„çº¸å¼ è§„æ ¼ä¸ºA4ï¼Œå³21cmÃ—29.7cmï¼ˆ210mmÃ—297mmï¼‰
                 }, AntdUI.TAlignMini.Right);
             }
             catch (Exception error)
@@ -752,7 +747,7 @@ namespace AI_Assistant_Win.Controls
                 {
                     try
                     {
-                        scaleList["current"] = setting.SaveSettings();   // Í¬Ê±£¬ÕıºÃÀûÓÃÁË×Ô´øµÄ×ªÈ¦È¦µÈ´ıĞ§¹û£¬¼òÖ±ÍêÃÀ2024Äê12ÔÂ25ÈÕ01µã41·Ö
+                        scaleList["current"] = setting.SaveSettings();   // åŒæ—¶ï¼Œæ­£å¥½åˆ©ç”¨äº†è‡ªå¸¦çš„è½¬åœˆåœˆç­‰å¾…æ•ˆæœï¼Œç®€ç›´å®Œç¾2024å¹´12æœˆ25æ—¥01ç‚¹41åˆ†
                         return true;
                     }
                     catch (Exception error)

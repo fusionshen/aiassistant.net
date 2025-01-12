@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Controls
 {
-    partial class BlacknessHistory
+    partial class CircularAreaHistory
     {
         /// <summary>
         ///  Required designer variable.
@@ -31,6 +31,7 @@ namespace AI_Assistant_Win.Controls
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(CircularAreaHistory));
             header1 = new AntdUI.PageHeader();
             pagination1 = new AntdUI.Pagination();
             panel1 = new AntdUI.Panel();
@@ -40,24 +41,24 @@ namespace AI_Assistant_Win.Controls
             inputSearch = new AntdUI.Input();
             btnSearch = new AntdUI.Button();
             inputRangeDate = new AntdUI.DatePickerRange();
-            tableBlacknessHistory = new AntdUI.Table();
+            tableCircularAreaHistory = new AntdUI.Table();
             panel1.SuspendLayout();
             panel6.SuspendLayout();
             SuspendLayout();
             // 
             // header1
             // 
-            header1.Description = "展示黑度检测历史记录，支持搜索、修改、删除、预览、打印、导出、上传等操作。注意：无法在文本框中修改查询时间，如需清空请点击右侧重置按钮。";
+            header1.Description = "展示圆片面积检测历史记录，支持搜索、修改、删除、预览、打印、导出、上传等操作。注意：无法在文本框中修改查询时间，如需清空请点击右侧重置按钮。";
             header1.Dock = DockStyle.Top;
             header1.Font = new Font("Microsoft YaHei UI", 12F);
-            header1.LocalizationDescription = "BlacknessHistory.Description";
-            header1.LocalizationText = "BlacknessHistory.Text";
+            header1.LocalizationDescription = resources.GetString("header1.LocalizationDescription");
+            header1.LocalizationText = "The Historical Record Of Circular Area Measurement";
             header1.Location = new Point(0, 0);
             header1.Name = "header1";
             header1.Padding = new Padding(0, 0, 0, 10);
             header1.Size = new Size(1300, 74);
             header1.TabIndex = 0;
-            header1.Text = "GA板V60黑度检测历史记录";
+            header1.Text = "圆形面积检测历史记录";
             header1.UseTitleFont = true;
             // 
             // pagination1
@@ -160,26 +161,26 @@ namespace AI_Assistant_Win.Controls
             inputRangeDate.TabIndex = 25;
             inputRangeDate.ValueChanged += InputRangeDate_ValueChanged;
             // 
-            // tableBlacknessHistory
+            // tableCircularAreaHistory
             // 
-            tableBlacknessHistory.AutoSizeColumnsMode = AntdUI.ColumnsMode.Fill;
-            tableBlacknessHistory.Font = new Font("Microsoft YaHei UI", 11F);
-            tableBlacknessHistory.Location = new Point(3, 123);
-            tableBlacknessHistory.Name = "tableBlacknessHistory";
-            tableBlacknessHistory.Radius = 6;
-            tableBlacknessHistory.Size = new Size(1294, 507);
-            tableBlacknessHistory.TabIndex = 0;
-            tableBlacknessHistory.CellClick += Table1_CellClick;
-            tableBlacknessHistory.CellButtonClick += Table1_CellButtonClick;
+            tableCircularAreaHistory.AutoSizeColumnsMode = AntdUI.ColumnsMode.Fill;
+            tableCircularAreaHistory.Font = new Font("Microsoft YaHei UI", 11F);
+            tableCircularAreaHistory.Location = new Point(3, 123);
+            tableCircularAreaHistory.Name = "tableCircularAreaHistory";
+            tableCircularAreaHistory.Radius = 6;
+            tableCircularAreaHistory.Size = new Size(1294, 507);
+            tableCircularAreaHistory.TabIndex = 0;
+            tableCircularAreaHistory.CellClick += Table1_CellClick;
+            tableCircularAreaHistory.CellButtonClick += Table1_CellButtonClick;
             // 
-            // BlacknessHistory
+            // CircularAreaHistory
             // 
             Controls.Add(panel1);
             Controls.Add(header1);
-            Controls.Add(tableBlacknessHistory);
+            Controls.Add(tableCircularAreaHistory);
             Controls.Add(pagination1);
             Font = new Font("Microsoft YaHei UI", 16F);
-            Name = "BlacknessHistory";
+            Name = "CircularAreaHistory";
             Size = new Size(1300, 676);
             panel1.ResumeLayout(false);
             panel6.ResumeLayout(false);
@@ -190,7 +191,7 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.PageHeader header1;
         private AntdUI.Pagination pagination1;
         private AntdUI.Panel panel1;
-        private AntdUI.Table tableBlacknessHistory;
+        private AntdUI.Table tableCircularAreaHistory;
         private AntdUI.DatePickerRange inputRangeDate;
         private System.Windows.Forms.Panel panel6;
         private AntdUI.Input inputSearch;

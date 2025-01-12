@@ -25,6 +25,11 @@ namespace AI_Assistant_Win.Utils
         public static string EDIT => Localization.Get("Edit", "修改");
         public static string DELETE => Localization.Get("Delete", "删除");
         public static string UNDER_DEVELOPMENT => Localization.Get("This feature is currently under development.", "此功能目前正在开发中。");
+        public static string LOADING_PAGE => Localization.Get("The page is loading...", "页面正在加载中...");
+        public static string TESTNO_LIST_LOADED_SUCCESS => Localization.Get("The Test List Loaded", "试验清单加载成功");
+        public static string OPENING_THE_CAMERA => Localization.Get("Opening The Camera...", "开启摄像头中...");
+        public static string PAGE_LOADED_SUCCESS => Localization.Get("The Page Loaded", "页面加载成功");
+
         #endregion
         #region login
         public static string LOGIN_MODAL_TITLE => Localization.Get("Please enter your platform account", "请输入平台账户");
@@ -113,20 +118,6 @@ namespace AI_Assistant_Win.Utils
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
         public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
         public static string WOULD_EDIT_BLACKNESS_RESULT => Localization.Get("Would you like to edit the blackness detection result?", "是否对本次黑度检测结果进行修改？");
-        public static string BLACKNESS_TABLE_HEADER_ID => Localization.Get("Id", "编号");
-        public static string BLACKNESS_TABLE_HEADER_TESTNO => Localization.Get("TestNo", "试样编号");
-        public static string BLACKNESS_TABLE_HEADER_SIZE => Localization.Get("Size", "尺寸");
-        public static string BLACKNESS_TABLE_HEADER_UPLOADED => Localization.Get("Uploaded", "是否上传");
-        public static string BLACKNESS_TABLE_HEADER_COILNUMBER => Localization.Get("CoilNumber", "钢卷号");
-        public static string BLACKNESS_TABLE_HEADER_LEVEL => Localization.Get("Level", "等级");
-        public static string BLACKNESS_TABLE_HEADER_ANALYST => Localization.Get("Analyst", "分析人");
-        public static string BLACKNESS_TABLE_HEADER_WORKGROUP => Localization.Get("WorkGroup", "班组");
-        public static string BLACKNESS_TABLE_HEADER_CREATETIME => Localization.Get("CreateTime", "创建时间");
-        public static string BLACKNESS_TABLE_HEADER_UPLOADER => Localization.Get("Uploader", "上传人");
-        public static string BLACKNESS_TABLE_HEADER_UPLOADTIME => Localization.Get("UploadTime", "上传时间");
-        public static string BLACKNESS_TABLE_HEADER_LASTREVISER => Localization.Get("LastReviser", "最近修改人");
-        public static string BLACKNESS_TABLE_HEADER_LASTMODIFIEDTIME => Localization.Get("LastModifiedTime", "最后修改时间");
-        public static string BLACKNESS_TABLE_HEADER_OPERATIONS => Localization.Get("Operations", "操作");
         public static string SURFACE_OP => Localization.Get("SurfaceOP-", "表面OP-");
         public static string SURFACE_CE => Localization.Get("SurfaceCE-", "表面CE-");
         public static string SURFACE_DR => Localization.Get("SurfaceDR-", "表面DR-");
@@ -145,9 +136,9 @@ namespace AI_Assistant_Win.Utils
         public static string WOULD_UPLOAD_BLACKNESS_RESULT => Localization.Get("Would you like to upload this blackness detection report and its results to the business system?", "是否将本次黑度检测报告及结果上传至业务系统？");
         public static string WOULD_REUPLOAD_BLACKNESS_RESULT(string coilNumber) => Localization.Get($"The system has detected that the steel coil number [{coilNumber}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到钢卷号[{coilNumber}]已经上传，是否将本次报告及结果重新上传至业务系统并更新版本？");
         public static string REPORT_UPLOAD_SUCCESS => Localization.Get("Successfully uploaded! The report can be viewed in the [File Management] module; the data can be viewed in the [Sample Management - Data Entry] page.", "成功上传！报告可在【文件管理】模块中查看，数据可在【试样管理-数据录入】查看。");
-        public static string BLACKNESS_RESULT_UPLOADED => Localization.Get("Uploaded", "已上传");
-        public static string BLACKNESS_RESULT_NOT_UPLOADED => Localization.Get("Not Uploaded", "未上传");
-        public static string BLACKNESS_RESULT_AWAITING_REUPLOAD => Localization.Get("Awaiting re-upload", "待重新上传");
+        public static string RESULT_UPLOADED => Localization.Get("Uploaded", "已上传");
+        public static string RESULT_NOT_UPLOADED => Localization.Get("Not Uploaded", "未上传");
+        public static string RESULT_WAITING_REUPLOAD => Localization.Get("Awaiting re-upload", "待重新上传");
         public static string WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the blackness report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次黑度报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
         public static string CLEAR_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to clear this page with unsaved work?",
          "您有未保存的工作，确定要清空该页面吗？");
@@ -184,6 +175,13 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_USE_CORRECT_CIRCULAR_IMAGE => Localization.Get("Please use the correct circular image for identification.", "请使用正确的圆形图片进行识别。");
         public static string CIRCULAR_AREA_EDIT_MODE(CircularAreaResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo},Position:{result.Position}]", $"修改模式[试样编号：{result.TestNo}，部位：{result.Position}]");
 
+        public static string TABLE_UPPER_SURFACE_OP => Localization.Get("UpperSurfaceOP", "上表面OP");
+        public static string TABLE_UPPER_SURFACE_CE => Localization.Get("UpperSurfaceCE", "上表面CE");
+        public static string TABLE_UPPER_SURFACE_DR => Localization.Get("UpperSurfaceDR", "上表面DR");
+        public static string TABLE_LOWER_SURFACE_OP => Localization.Get("LowerSurfaceOP", "下表面OP");
+        public static string TABLE_LOWER_SURFACE_CE => Localization.Get("LowerSurfaceCE", "下表面CE");
+        public static string TABLE_LOWER_SURFACE_DR => Localization.Get("LowerSurfaceDR", "下表面DR");
+        public static string WOULD_EDIT_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to edit the circular area detection result?", "是否对本次圆片面积检测结果进行修改？");
         #endregion
         #region table
         public static string DISPLAY_HEADER => Localization.Get("Display header", "显示表头");
@@ -195,7 +193,27 @@ namespace AI_Assistant_Win.Utils
         public static string DRAG_COLUMN => Localization.Get("Drag colomns", "列拖拽");
         public static string GONG => Localization.Get("Total", "共");
         public static string YE => Localization.Get("Pages", "页");
-
+        public static string TABLE_HEADER_ID => Localization.Get("Id", "编号");
+        public static string TABLE_HEADER_TESTNO => Localization.Get("TestNo", "试样编号");
+        public static string TABLE_HEADER_SIZE => Localization.Get("Size", "尺寸");
+        public static string TABLE_HEADER_UPLOADED => Localization.Get("Uploaded", "是否上传");
+        public static string TABLE_HEADER_COILNUMBER => Localization.Get("CoilNumber", "钢卷号");
+        public static string TABLE_HEADER_LEVEL => Localization.Get("Level", "等级");
+        public static string TABLE_HEADER_ANALYST => Localization.Get("Analyst", "分析人");
+        public static string TABLE_HEADER_WORKGROUP => Localization.Get("WorkGroup", "班组");
+        public static string TABLE_HEADER_CREATETIME => Localization.Get("CreateTime", "创建时间");
+        public static string TABLE_HEADER_UPLOADER => Localization.Get("Uploader", "上传人");
+        public static string TABLE_HEADER_UPLOADTIME => Localization.Get("UploadTime", "上传时间");
+        public static string TABLE_HEADER_LASTREVISER => Localization.Get("LastReviser", "最近修改人");
+        public static string TABLE_HEADER_LASTMODIFIEDTIME => Localization.Get("LastModifiedTime", "最后修改时间");
+        public static string TABLE_HEADER_OPERATIONS => Localization.Get("Operations", "操作");
+        public static string TABLE_HEADER_CREATOR => Localization.Get("Creator", "创建人");
+        public static string CIRCULAR_AREA_DIAMETER => Localization.Get("Diameter:", "类圆直径：");
+        public static string CELL_AREA_OF_PIXELS => Localization.Get("Pixels:", "像素面积：");
+        public static string CELL_TITLE_ANALYST => Localization.Get("Analyst:", "分析人：");
+        public static string CELL_HEADER_CREATETIME => Localization.Get("CreateTime:", "创建时间：");
+        public static string CELL_HEADER_LASTREVISER => Localization.Get("LastReviser:", "最近修改人：");
+        public static string CELL_HEADER_LASTMODIFIEDTIME => Localization.Get("LastModifiedTime:", "最后修改时间：");
         #endregion
     }
 }

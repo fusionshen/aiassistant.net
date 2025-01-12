@@ -76,7 +76,7 @@
             flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new System.Drawing.Size(583, 461);
+            flowLayoutPanel1.Size = new System.Drawing.Size(583, 472);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // panelCurrent
@@ -94,7 +94,7 @@
             panelCurrent.Radius = 10;
             panelCurrent.Shadow = 2;
             panelCurrent.ShadowOpacityAnimation = true;
-            panelCurrent.Size = new System.Drawing.Size(285, 453);
+            panelCurrent.Size = new System.Drawing.Size(285, 466);
             panelCurrent.TabIndex = 21;
             // 
             // labelRatioCurrent
@@ -107,7 +107,7 @@
             labelRatioCurrent.Location = new System.Drawing.Point(9, 422);
             labelRatioCurrent.Name = "labelRatioCurrent";
             labelRatioCurrent.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            labelRatioCurrent.Size = new System.Drawing.Size(267, 22);
+            labelRatioCurrent.Size = new System.Drawing.Size(267, 35);
             labelRatioCurrent.TabIndex = 18;
             labelRatioCurrent.Text = "自动计算";
             labelRatioCurrent.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -272,7 +272,7 @@
             panelAtThatTime.Radius = 10;
             panelAtThatTime.Shadow = 2;
             panelAtThatTime.ShadowOpacityAnimation = true;
-            panelAtThatTime.Size = new System.Drawing.Size(285, 453);
+            panelAtThatTime.Size = new System.Drawing.Size(285, 466);
             panelAtThatTime.TabIndex = 22;
             panelAtThatTime.Visible = false;
             // 
@@ -286,7 +286,7 @@
             labelRatioThatTime.Location = new System.Drawing.Point(9, 422);
             labelRatioThatTime.Name = "labelRatioThatTime";
             labelRatioThatTime.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            labelRatioThatTime.Size = new System.Drawing.Size(267, 22);
+            labelRatioThatTime.Size = new System.Drawing.Size(267, 35);
             labelRatioThatTime.TabIndex = 19;
             labelRatioThatTime.Text = "自动计算";
             labelRatioThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -441,7 +441,7 @@
             // 
             Controls.Add(flowLayoutPanel1);
             Name = "CircularScaleSetting";
-            Size = new System.Drawing.Size(583, 461);
+            Size = new System.Drawing.Size(583, 472);
             flowLayoutPanel1.ResumeLayout(false);
             panelCurrent.ResumeLayout(false);
             panel2.ResumeLayout(false);

@@ -168,8 +168,8 @@ namespace AI_Assistant_Win.Models.Middle
                 !string.IsNullOrEmpty(TestNo) && TestNo.Equals(param.TestNo) &&
                 !string.IsNullOrEmpty(CoilNumber) && CoilNumber.Equals(param.CoilNumber) &&
                 !string.IsNullOrEmpty(Analyst) && Analyst.Equals(param.Analyst) &&
-                Position.Equals(param.Position) &&
-                Item.Equals(param.Item);
+                !string.IsNullOrEmpty(Position) && Position.Equals(param.Position) &&
+                Item != null && Item.Equals(param.Item);
             return result;
         }
 

@@ -4,7 +4,6 @@ using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -47,20 +46,11 @@ namespace AI_Assistant_Win
             {
                 imagePath = currentScale.ImagePath;
                 avatarCurrent.Image = Image.FromFile(imagePath);
-                var settings = JsonConvert.DeserializeObject<List<BlacknessScaleItem>>(currentScale.Settings);
-                //textSurfaceOPPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Pixels;
-                //inputSurfaceOPCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.MeasuredValue;
-                //textSurfaceCEPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Pixels;
-                //inputSurfaceCECurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.MeasuredValue;
-                //textSurfaceDRPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Pixels;
-                //inputSurfaceDRCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.MeasuredValue;
-                //textInsideOPPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Pixels;
-                //inputInsideOPCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.MeasuredValue;
-                //textInsideCEPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Pixels;
-                //inputInsideCECurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.MeasuredValue;
-                //textInsideDRPixels.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Pixels;
-                //inputInsideDRCurrent.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.MeasuredValue;
-                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{currentScale.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+                var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(currentScale.Settings);
+                inputPixels.Text = settings.Pixels;
+                inputArea.Text = settings.MeasuredValue;
+                inputTop.Text = settings.TopGraduations;
+                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{currentScale.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
             }
             #endregion
             #region at that time
@@ -68,20 +58,11 @@ namespace AI_Assistant_Win
             {
                 panelAtThatTime.Visible = true;
                 avatarThatTime.Image = Image.FromFile(scaleAtThatTime.ImagePath);
-                var settings = JsonConvert.DeserializeObject<List<BlacknessScaleItem>>(scaleAtThatTime.Settings);
-                //textSurfaceOPPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Pixels;
-                //inputSurfaceOPThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.MeasuredValue;
-                //textSurfaceCEPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Pixels;
-                //inputSurfaceCEThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.MeasuredValue;
-                //textSurfaceDRPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Pixels;
-                //inputSurfaceDRThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.MeasuredValue;
-                //textInsideOPPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Pixels;
-                //inputInsideOPThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.MeasuredValue;
-                //textInsideCEPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Pixels;
-                //inputInsideCEThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.MeasuredValue;
-                //textInsideDRPixelsThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Pixels;
-                //inputInsideDRThatTime.Text = settings.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.MeasuredValue;
-                //labelRatioAtThatTime.Text = $"{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}";
+                var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(scaleAtThatTime.Settings);
+                inputPixelsThatTime.Text = settings.Pixels;
+                inputAreaThatTime.Text = settings.MeasuredValue;
+                inputTopThatTime.Text = settings.TopGraduations;
+                labelRatioThatTime.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
             }
             #endregion
             // 调整表单大小以适应内容面板

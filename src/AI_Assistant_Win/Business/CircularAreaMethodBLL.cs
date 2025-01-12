@@ -18,42 +18,55 @@ namespace AI_Assistant_Win.Business
 
         private readonly ApiBLL apiBLL = ApiHandler.Instance.GetApiBLL();
 
-        public List<BlacknessMethodResult> GetResultListByConditions(DateTime? startDate, DateTime? endDate, string text)
+        public List<CircularAreaSummaryHistory> GetSummaryListByConditions(DateTime? startDate, DateTime? endDate, string text)
         {
-            var all = connection.Table<BlacknessMethodResult>().ToList();
+            var allSummary = connection.Table<CircularAreaMethodSummary>().ToList();
+            var allMethod = connection.Table<CircularAreaMethodResult>().ToList();
+            var all = allSummary.Select(t => new CircularAreaSummaryHistory
+            {
+                Summary = t,
+                MethodList = [.. allMethod.Where(x => t.TestNo.Equals(x.TestNo) && t.CoilNumber.Equals(x.CoilNumber)).OrderBy(x => x.Position)]
+            }).ToList();
             var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
-            var sorted = filtered.OrderByDescending(t => t.CreateTime).ToList();
+            var sorted = filtered.OrderByDescending(t => t.Summary.CreateTime).ToList();
             return sorted;
         }
 
-        private bool Filter(BlacknessMethodResult t, DateTime? startDate, DateTime? endDate, string text)
+        private bool Filter(CircularAreaSummaryHistory t, DateTime? startDate, DateTime? endDate, string text)
         {
             var result = true;
             if (startDate != null)
             {
-                result = result && t.CreateTime != null && t.CreateTime >= startDate;
+                result = result && t.Summary.CreateTime != null && t.Summary.CreateTime >= startDate;
             }
             if (endDate != null)
             {
-                result = result && t.CreateTime != null && t.CreateTime <= endDate;
+                result = result && t.Summary.CreateTime != null && t.Summary.CreateTime <= endDate;
             }
             if (!string.IsNullOrEmpty(text))
             {
-                result = result && (t.Id.ToString().Equals(text) ||
-                    (!string.IsNullOrEmpty(t.TestNo) && t.TestNo.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.CoilNumber) && t.CoilNumber.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.Size) && t.Size.Contains(text)) ||
-                    (t.IsOK && text.Contains("OK", StringComparison.CurrentCultureIgnoreCase)) ||
-                    (!t.IsOK && text.Contains("NG", StringComparison.CurrentCultureIgnoreCase)) ||
-                    (t.IsUploaded && text.Equals("已上传")) ||
-                    (!t.IsUploaded && text.Equals("未上传")) ||
-                    (!string.IsNullOrEmpty(t.Uploader) && t.Uploader.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.WorkGroup) && t.WorkGroup.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.Analyst) && t.Analyst.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.LastReviser) && t.LastReviser.Contains(text))
+                result = result && (t.Summary.Id.ToString().Equals(text) ||
+                    (!string.IsNullOrEmpty(t.Summary.TestNo) && t.Summary.TestNo.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.Summary.CoilNumber) && t.Summary.CoilNumber.Contains(text)) ||
+                    (t.Summary.IsUploaded && text.Equals("已上传")) ||
+                    (!t.Summary.IsUploaded && text.Equals("未上传")) ||
+                    (!string.IsNullOrEmpty(t.Summary.Creator) && t.Summary.Creator.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.Summary.Uploader) && t.Summary.Uploader.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.Summary.LastReviser) && t.Summary.LastReviser.Contains(text))
                     );
             }
             return result;
+        }
+
+        public CircularAreaMethodResult GetResultById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new Exception(LocalizeHelper.ID_IS_EMPTY);
+            }
+            // if t.Id.ToString().Equals(id), will throw not function toString(), funny!
+            var item = connection.Table<CircularAreaMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
+            return item;
         }
 
         public int SaveResult(CircularAreaResult tempCircularAreaResult)
