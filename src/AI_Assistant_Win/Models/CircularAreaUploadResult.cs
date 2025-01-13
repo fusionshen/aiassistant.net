@@ -2,15 +2,15 @@
 
 namespace AI_Assistant_Win.Models
 {
-    [Table("BlacknessUploadResults")]
-    public class BlacknessUploadResult : FileUploader
+    [Table("CircularAreaUploadResults")]
+    public class CircularAreaUploadResult : FileUploader
     {
         /// <summary>
         /// foreign key
-        /// <see cref="BlacknessMethodResult"/>
+        /// <see cref="CircularAreaMethodSummary"/>
         /// </summary>
-        [Column("result_id")]
-        public int ResultId { get; set; }
+        [Column("summary_id")]
+        public int SummaryId { get; set; }
         /// <summary>
         /// 试样编号
         /// </summary>

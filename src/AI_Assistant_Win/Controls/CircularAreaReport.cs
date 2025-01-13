@@ -1,40 +1,44 @@
 using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Models.Enums;
+using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using YoloDotNet.Extensions;
 
 namespace AI_Assistant_Win.Controls
 {
-    public partial class BlacknessReport : UserControl
+    public partial class CircularAreaReport : UserControl
     {
         private Form form;
 
-        private readonly BlacknessMethodBLL blacknessMethodBLL;
+        private readonly CircularAreaMethodBLL circularAreaMethodBLL;
 
         Bitmap memoryImage;
 
         AntdUI.FormFloatButton floatButton = null;
 
-        private BlacknessMethodResult target;
+        private CircularAreaSummaryHistory target;
 
-        private readonly BlacknessUploadBLL uploadBlacknessBLL;
+        private readonly CircularAreaUploadBLL uploadCircularAreaBLL;
 
-        private readonly string methodId;
+        private readonly string testNo;
 
         private readonly Action callBack;
 
-        public BlacknessReport(Form _form, string _methodId, Action _callBack)
+        public CircularAreaReport(Form _form, string _testNo, Action _callBack)
         {
             form = _form;
-            methodId = _methodId;
+            testNo = _testNo;
             callBack = _callBack;
-            blacknessMethodBLL = new BlacknessMethodBLL();
-            uploadBlacknessBLL = new BlacknessUploadBLL();
+            circularAreaMethodBLL = new CircularAreaMethodBLL();
+            uploadCircularAreaBLL = new CircularAreaUploadBLL();
             InitializeComponent();
-            LoadData(methodId);
+            LoadData(testNo);
             Disposed += BlacknessReport_Disposed;
             AntdUI.ITask.Run(() =>
             {
@@ -54,7 +58,7 @@ namespace AI_Assistant_Win.Controls
                             },
                             new("upload",  "CloudUploadOutlined", true){
                                 Tooltip = LocalizeHelper.PRINT_UPLOAD,
-                                Type= AntdUI.TTypeMini.Error
+                                Type= AntdUI.TTypeMini.Error,
                             },
                             new("setting", "SettingOutlined", true){
                                 Tooltip = LocalizeHelper.PRINT_SETTINGS
@@ -85,7 +89,7 @@ namespace AI_Assistant_Win.Controls
                                 {
                                     Filter = "PDF文件|*.pdf",
                                     DefaultExt = "pdf",
-                                    FileName = $"{target.TestNo}_黑度检测报告.pdf",
+                                    FileName = $"{target.Summary.TestNo}_圆形面积检测报告.pdf",
                                     Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                 };
                                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -109,18 +113,18 @@ namespace AI_Assistant_Win.Controls
                                         AntdUI.TAlignFrom.BR, Font);
                                     return;
                                 }
-                                // check uploaded with the same test number
-                                var lastUploaded = uploadBlacknessBLL.GetLastUploaded(target);
+                                // check uploaded with the same coil number
+                                var lastUploaded = uploadCircularAreaBLL.GetLastUploaded(target);
                                 if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, lastUploaded != null ?
-                                    LocalizeHelper.WOULD_REUPLOAD_BLACKNESS_RESULT(target.TestNo) :
-                                    LocalizeHelper.WOULD_UPLOAD_BLACKNESS_RESULT) == DialogResult.OK)
+                                    LocalizeHelper.WOULD_REUPLOAD_CIRCULAR_AREA_RESULT(target.Summary.TestNo) :
+                                    LocalizeHelper.WOULD_UPLOAD_CIRCULAR_ARE_RESULT) == DialogResult.OK)
                                 {
                                     try
                                     {
                                         btn.Loading = true;
-                                        await uploadBlacknessBLL.Upload(memoryImage, target, lastUploaded);
+                                        await uploadCircularAreaBLL.Upload(memoryImage, target, lastUploaded);
                                         // refresh
-                                        LoadData(methodId);
+                                        LoadData(testNo);
                                         // refresh parent form
                                         BeginInvoke(callBack);
                                         btn.Loading = false;
@@ -156,14 +160,14 @@ namespace AI_Assistant_Win.Controls
 
         }
 
-        private void LoadData(string id)
+        private void LoadData(string testNo)
         {
             try
             {
-                target = blacknessMethodBLL.GetResultById(id);
-                label_Date.Text = target.CreateTime?.ToString("yyyy 年 MM 月 dd 日");
+                target = circularAreaMethodBLL.GetSummaryListByConditions(null, null, testNo).Single();
+                labelDate.Text = target.Summary.CreateTime?.ToString("yyyy 年 MM 月 dd 日");
                 #region workGroup
-                switch (target.WorkGroup)
+                switch (target.MethodList.FirstOrDefault()?.WorkGroup)
                 {
                     case "甲-白":
                         checkbox_Jia_Day.Checked = true;
@@ -257,53 +261,58 @@ namespace AI_Assistant_Win.Controls
                         break;
                 }
                 #endregion
-                label_Analyst.Text = target.Analyst.Split("-").LastOrDefault();
-                label_Coil_Number.Text = target.CoilNumber;
-                label_Size.Text = target.Size;
-                #region OK/NG
-                if (target.IsOK)
-                {
-                    checkbox_OK.Checked = true;
-                    checkbox_NG.Checked = false;
-                }
-                else
-                {
-                    checkbox_OK.Checked = false;
-                    checkbox_NG.Checked = true;
-                }
-                #endregion
+                label_Analyst.Text = target.Summary.Creator.Split("-").LastOrDefault();
+                labelCoilNumber.Text = target.Summary.CoilNumber;
+                labelTestNo.Text = target.Summary.TestNo;
                 #region uploaded
-                if (target.IsUploaded)
-                {
-                    checkbox_Uploaded.Checked = true;
-                    checkbox_Not_Uploaded.Checked = false;
-                }
-                else
-                {
-                    checkbox_Uploaded.Checked = false;
-                    checkbox_Not_Uploaded.Checked = true;
-                }
+                checkboxUploaded.Checked = target.Summary.IsUploaded;
                 #endregion
                 #region image
-                blacknessReport_RenderImage.Image = System.Drawing.Image.FromFile(target.RenderImagePath);
+                var upperSurfaceOPRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.UPPER_SURFACE_OP.Equals(t.Position))?.RenderImagePath;
+                avatarUpperSufaceOP.Image = string.IsNullOrEmpty(upperSurfaceOPRenderImagePath) ? null : Image.FromFile(upperSurfaceOPRenderImagePath);
+                var upperSurfaceCERenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.UPPER_SURFACE_CE.Equals(t.Position))?.RenderImagePath;
+                avatarUpperSufaceCE.Image = string.IsNullOrEmpty(upperSurfaceCERenderImagePath) ? null : Image.FromFile(upperSurfaceCERenderImagePath);
+                var upperSurfaceDRRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.UPPER_SURFACE_DR.Equals(t.Position))?.RenderImagePath;
+                avatarUpperSufaceDR.Image = string.IsNullOrEmpty(upperSurfaceDRRenderImagePath) ? null : Image.FromFile(upperSurfaceDRRenderImagePath);
+                var lowerSurfaceOPRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.LOWER_SURFACE_OP.Equals(t.Position))?.RenderImagePath;
+                avatarLowerSufaceOP.Image = string.IsNullOrEmpty(lowerSurfaceOPRenderImagePath) ? null : Image.FromFile(lowerSurfaceOPRenderImagePath);
+                var lowerSurfaceCERenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.LOWER_SURFACE_CE.Equals(t.Position))?.RenderImagePath;
+                avatarLowerSufaceCE.Image = string.IsNullOrEmpty(lowerSurfaceCERenderImagePath) ? null : Image.FromFile(lowerSurfaceCERenderImagePath);
+                var lowerSurfaceDRRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.LOWER_SURFACE_DR.Equals(t.Position))?.RenderImagePath;
+                avatarLowerSufaceDR.Image = string.IsNullOrEmpty(lowerSurfaceDRRenderImagePath) ? null : Image.FromFile(lowerSurfaceDRRenderImagePath);
                 #endregion
-                label_Surface_OP_Level.Text = target.SurfaceOPLevel;
-                label_Surface_OP_Width.Text = $"{target.SurfaceOPWidth:F2}";
-                label_Surface_CE_Level.Text = target.SurfaceCELevel;
-                label_Surface_CE_Width.Text = $"{target.SurfaceCEWidth:F2}";
-                label_Surface_DR_Level.Text = target.SurfaceDRLevel;
-                label_Surface_DR_Width.Text = $"{target.SurfaceDRWidth:F2}";
-                label_Inside_OP_Level.Text = target.InsideOPLevel;
-                label_Inside_OP_Width.Text = $"{target.InsideOPWidth:F2}";
-                label_Inside_CE_Level.Text = target.InsideCELevel;
-                label_Inside_CE_Width.Text = $"{target.InsideCEWidth:F2}";
-                label_Inside_DR_Level.Text = target.InsideDRLevel;
-                label_Inside_DR_Width.Text = $"{target.InsideDRWidth:F2}";
+                #region details
+                labelUpperSufaceOP.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.UPPER_SURFACE_OP);
+                labelUpperSufaceCE.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.UPPER_SURFACE_CE);
+                labelUpperSufaceDR.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.UPPER_SURFACE_DR);
+                labelLowerSufaceOP.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.LOWER_SURFACE_OP);
+                labelLowerSufaceCE.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.LOWER_SURFACE_CE);
+                labelLowerSufaceDR.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.LOWER_SURFACE_DR);
+                #endregion
             }
             catch (Exception error)
             {
                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
+        }
+
+        private string FormatPositionDetail(List<CircularAreaMethodResult> methodList, CircularPositionKind positionEnum)
+        {
+            string text = string.Empty;
+            var method = methodList.FirstOrDefault(t => positionEnum.Equals(t.Position));
+            if (method != null)
+            {
+                text = $"{LocalizeHelper.CIRCULAR_POSITION_TITLE}{LocalizeHelper.CIRCULAR_POSITION(method.Position)}\n" +
+                    $"{LocalizeHelper.CELL_AREA_OF_PIXELS}{method.Pixels}" +
+                    $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_CONFIDENCE}{method.Confidence.ToPercent()}%\n" +
+                    $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_TITLE}{method.Area:F2}{LocalizeHelper.SQUARE_MILLIMETER}\n" +
+                    $"{LocalizeHelper.CIRCULAR_AREA_DIAMETER}{method.Diameter:F2}{LocalizeHelper.MILLIMETER}\n" +
+                    $"{LocalizeHelper.CELL_TITLE_ANALYST}{method.Analyst}\n" +
+                    $"{LocalizeHelper.CELL_HEADER_CREATETIME}{method.CreateTime}\n" +
+                    $"{LocalizeHelper.CELL_HEADER_LASTREVISER}{method.LastReviser}\n" +
+                    $"{LocalizeHelper.CELL_HEADER_LASTMODIFIEDTIME}{method.LastModifiedTime}";
+            }
+            return text;
         }
 
         private void BlacknessReport_Disposed(object sender, EventArgs e)

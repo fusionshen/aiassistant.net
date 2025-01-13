@@ -105,8 +105,6 @@ namespace AI_Assistant_Win.Business
             return target;
         }
 
-
-
         private CircularAreaMethodResult AddOrUpdateByTransaction(CircularAreaResult tempCircularAreaResult)
         {
             var target = GetResultExitsInDB(tempCircularAreaResult);
@@ -214,7 +212,7 @@ namespace AI_Assistant_Win.Business
                 originalCircularAreaResult.Item = null;
                 return [];
             }
-            // sorted by testNo or coilNumber，then sorted by position
+            // sorted by testNo，then sorted by position
             var allSorted = connection.Table<CircularAreaMethodResult>().OrderBy(t => t.CreateTime).ThenBy(t => t.TestNo).ThenBy(t => t.Position).ToList();
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));

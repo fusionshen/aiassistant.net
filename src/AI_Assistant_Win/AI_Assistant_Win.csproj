@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.6.3</Version>
+	<Version>0.6.4</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolo.net</Description>
@@ -63,6 +63,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\CircularAreaReport.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\CircularAreaHistory.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -111,6 +114,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Controls\CircularAreaReport.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Controls\CircularScaleSetting.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

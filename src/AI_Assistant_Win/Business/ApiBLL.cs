@@ -238,7 +238,7 @@ namespace AI_Assistant_Win.Business
             return result.Data;
         }
 
-        public async Task<int> UploadFileAsync(BlacknessUploadResult uploadResult)
+        public async Task<int> UploadFileAsync(FileUploader uploadResult)
         {
             var uploadFileUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("UploadFileUrl"))?.Value;
 

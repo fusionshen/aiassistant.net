@@ -58,6 +58,7 @@ namespace AI_Assistant_Win.Utils
             _db.CreateTable<CalculateScale>();
             _db.CreateTable<CircularAreaMethodResult>();
             _db.CreateTable<CircularAreaMethodSummary>();
+            _db.CreateTable<CircularAreaUploadResult>();
         }
 
         // 私有静态内部类，负责持有唯一实例

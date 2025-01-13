@@ -181,7 +181,7 @@ namespace AI_Assistant_Win.Controls
                                             {
                                                 Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
                                                 DefaultExt = "jpg",
-                                                FileName = $"{data.FirstOrDefault(t => "coilNumber".Equals(t.key))?.value}_圆片面积检测结果.jpg",
+                                                FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_圆片面积检测结果.jpg",
                                                 Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                             };
                                             if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -198,8 +198,7 @@ namespace AI_Assistant_Win.Controls
                                                         renderImage.Save(saveFileDialog.FileName
                                                             .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_识别图.jpg"), ImageFormat.Jpeg);
                                                     });
-                                                    AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath,
-                                                        AntdUI.TAlignFrom.BR, Font);
+                                                    AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
                                                 }
                                                 catch (Exception error)
                                                 {
@@ -214,10 +213,10 @@ namespace AI_Assistant_Win.Controls
 
                         break;
                     case "report":
-                        var id = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
+                        var testNo = data.FirstOrDefault(t => "testNo".Equals(t.key))?.value.ToString();
                         try
                         {
-                            AntdUI.Drawer.open(form, new BlacknessReport(form, id, () => { BtnSearch_Click(null, null); })
+                            AntdUI.Drawer.open(form, new CircularAreaReport(form, testNo, () => { BtnSearch_Click(null, null); })
                             {
                                 Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                             }, AntdUI.TAlignMini.Right);

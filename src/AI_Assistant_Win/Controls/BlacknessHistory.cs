@@ -126,7 +126,7 @@ namespace AI_Assistant_Win.Controls
                                         {
                                             Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
                                             DefaultExt = "jpg",
-                                            FileName = $"{data.FirstOrDefault(t => "coilNumber".Equals(t.key))?.value}_黑度检测结果.jpg",
+                                            FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_黑度检测结果.jpg",
                                             Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                         };
                                         if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -138,8 +138,7 @@ namespace AI_Assistant_Win.Controls
                                                 originImage.Save(saveFileDialog.FileName.Replace(".jpg", "_原图.jpg"), ImageFormat.Jpeg);
                                                 var renderImage = Image.FromFile(renderImagePath);
                                                 renderImage.Save(saveFileDialog.FileName.Replace(".jpg", "_识别图.jpg"), ImageFormat.Jpeg);
-                                                AntdUI.Notification.success(form, LocalizeHelper.SUCCESS, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath,
-                                                    AntdUI.TAlignFrom.BR, Font);
+                                                AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
                                             }
                                             catch (Exception error)
                                             {
