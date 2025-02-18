@@ -520,6 +520,7 @@ namespace AI_Assistant_Win.Controls
             checkbox_Uploaded.Fill = Color.FromArgb(200, 0, 0);
             checkbox_Uploaded.Font = new Font("Microsoft YaHei UI", 6F);
             checkbox_Uploaded.Location = new Point(1, 1);
+            checkbox_Uploaded.Margin = new Padding(3, 0, 3, 0);
             checkbox_Uploaded.Name = "checkbox_Uploaded";
             checkbox_Uploaded.RightToLeft = RightToLeft.Yes;
             checkbox_Uploaded.Size = new Size(34, 30);
@@ -556,6 +557,7 @@ namespace AI_Assistant_Win.Controls
             checkbox_NG.Fill = Color.FromArgb(200, 0, 0);
             checkbox_NG.Font = new Font("Microsoft YaHei UI", 6F);
             checkbox_NG.Location = new Point(1, 1);
+            checkbox_NG.Margin = new Padding(3, 0, 3, 0);
             checkbox_NG.Name = "checkbox_NG";
             checkbox_NG.RightToLeft = RightToLeft.Yes;
             checkbox_NG.Size = new Size(34, 30);
@@ -578,6 +580,7 @@ namespace AI_Assistant_Win.Controls
             panel20.Controls.Add(button16);
             panel20.Dock = DockStyle.Left;
             panel20.Location = new Point(269, 0);
+            panel20.Margin = new Padding(3, 0, 3, 0);
             panel20.Name = "panel20";
             panel20.Radius = 0;
             panel20.Size = new Size(37, 32);
@@ -593,6 +596,7 @@ namespace AI_Assistant_Win.Controls
             checkbox_OK.Fill = Color.FromArgb(200, 0, 0);
             checkbox_OK.Font = new Font("Microsoft YaHei UI", 6F);
             checkbox_OK.Location = new Point(1, 1);
+            checkbox_OK.Margin = new Padding(3, 0, 3, 0);
             checkbox_OK.Name = "checkbox_OK";
             checkbox_OK.RightToLeft = RightToLeft.Yes;
             checkbox_OK.Size = new Size(34, 30);

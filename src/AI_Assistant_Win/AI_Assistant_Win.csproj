@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.6.4</Version>
+	<Version>0.6.5</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolo.net</Description>
@@ -145,6 +145,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Blackness\model.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Blackness\v3.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Circular\model.onnx">

@@ -189,7 +189,7 @@ namespace AI_Assistant_Win.Controls
             avatarLowerSufaceDR.Image = Properties.Resources.area_template;
             avatarLowerSufaceDR.Location = new Point(213, 369);
             avatarLowerSufaceDR.Name = "avatarLowerSufaceDR";
-            avatarLowerSufaceDR.Radius = 6;
+            avatarLowerSufaceDR.Radius = 1;
             avatarLowerSufaceDR.Size = new Size(203, 147);
             avatarLowerSufaceDR.TabIndex = 18;
             // 
@@ -214,7 +214,7 @@ namespace AI_Assistant_Win.Controls
             avatarUpperSufaceDR.Image = Properties.Resources.area_template;
             avatarUpperSufaceDR.Location = new Point(4, 369);
             avatarUpperSufaceDR.Name = "avatarUpperSufaceDR";
-            avatarUpperSufaceDR.Radius = 6;
+            avatarUpperSufaceDR.Radius = 1;
             avatarUpperSufaceDR.Size = new Size(202, 147);
             avatarUpperSufaceDR.TabIndex = 17;
             // 
@@ -239,7 +239,7 @@ namespace AI_Assistant_Win.Controls
             avatarLowerSufaceCE.Image = Properties.Resources.area_template;
             avatarLowerSufaceCE.Location = new Point(213, 197);
             avatarLowerSufaceCE.Name = "avatarLowerSufaceCE";
-            avatarLowerSufaceCE.Radius = 6;
+            avatarLowerSufaceCE.Radius = 1;
             avatarLowerSufaceCE.Size = new Size(203, 144);
             avatarLowerSufaceCE.TabIndex = 16;
             // 
@@ -264,7 +264,7 @@ namespace AI_Assistant_Win.Controls
             avatarUpperSufaceCE.Image = Properties.Resources.area_template;
             avatarUpperSufaceCE.Location = new Point(4, 197);
             avatarUpperSufaceCE.Name = "avatarUpperSufaceCE";
-            avatarUpperSufaceCE.Radius = 6;
+            avatarUpperSufaceCE.Radius = 1;
             avatarUpperSufaceCE.Size = new Size(202, 144);
             avatarUpperSufaceCE.TabIndex = 15;
             // 
@@ -289,7 +289,7 @@ namespace AI_Assistant_Win.Controls
             avatarLowerSufaceOP.Image = Properties.Resources.area_template;
             avatarLowerSufaceOP.Location = new Point(213, 25);
             avatarLowerSufaceOP.Name = "avatarLowerSufaceOP";
-            avatarLowerSufaceOP.Radius = 6;
+            avatarLowerSufaceOP.Radius = 1;
             avatarLowerSufaceOP.Size = new Size(203, 144);
             avatarLowerSufaceOP.TabIndex = 14;
             // 
@@ -314,7 +314,7 @@ namespace AI_Assistant_Win.Controls
             avatarUpperSufaceOP.Image = Properties.Resources.area_template;
             avatarUpperSufaceOP.Location = new Point(4, 25);
             avatarUpperSufaceOP.Name = "avatarUpperSufaceOP";
-            avatarUpperSufaceOP.Radius = 6;
+            avatarUpperSufaceOP.Radius = 1;
             avatarUpperSufaceOP.Size = new Size(202, 144);
             avatarUpperSufaceOP.TabIndex = 13;
             // 

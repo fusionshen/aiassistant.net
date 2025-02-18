@@ -13,7 +13,9 @@ using Yolov8.Net;
 
 namespace AI_Assistant_Win.Business
 {
-
+    /// <summary>
+    /// TODO: switch to yolodotnet
+    /// </summary>
     public class BlacknessPredict : INotifyPropertyChanged
     {
         private readonly Font font;
@@ -47,7 +49,7 @@ namespace AI_Assistant_Win.Business
         }
         public void Predict(CalculateScale currentScale)
         {
-            using var yolo = YoloV8Predictor.Create("./Resources/Blackness/model.onnx", labels, false);
+            using var yolo = YoloV8Predictor.Create("./Resources/Blackness/v3.onnx", labels, false);
             using var image = Image.Load(imageProcessBLL.OriginImagePath);
             predictions = yolo.Predict(image);
             if (predictions.Length == 6)

@@ -370,3 +370,4 @@ FodyWeavers.xsd
 /src/AI_Assistant_Win/Resources/Blackness/labels.txt
 /src/AI_Assistant_Win/Resources/Blackness/model.onnx
 /src/AI_Assistant_Win/Resources/Circular/model.onnx
+/src/AI_Assistant_Win/Resources/Blackness/v3.onnx

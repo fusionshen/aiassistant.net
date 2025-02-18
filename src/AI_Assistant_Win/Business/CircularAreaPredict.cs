@@ -57,7 +57,7 @@ namespace AI_Assistant_Win.Business
 
             var predictions = yolo.RunSegmentation(image, 0.25, 0.65, 0.45);
 
-            if (predictions.Count == 1)
+            if (predictions.Count == 1)  // Label.Name = Circular
             {
                 prediction = new SimpleSegmentation
                 {
