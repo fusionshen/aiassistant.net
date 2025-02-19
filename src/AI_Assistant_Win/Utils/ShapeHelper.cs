@@ -11,48 +11,82 @@ namespace AI_Assistant_Win.Utils
         // 获取矩形的四个顶点
         public static Quadrilateral GetRectangleVertices(List<PointF> points)
         {
-            // 排序四个点，以确保左上、右上、左下、右下顺序
-            var sortedPoints = SortPointsToRectangle(GetVertices(points));
-
+            // 计算凸包
+            List<PointF> convexHull = ComputeConvexHull(points);
+            // TODO: optimize 排序四个点，以确保左上、右上、左下、右下顺序
+            var maybeFake = SortPointsToRectangle(GetVertices(convexHull));
+            // 校验并替换四个顶点
+            var correctedQuad = ReplaceWithTrueVertices(convexHull, maybeFake);
             // 返回四个顶点
-            return sortedPoints;
+            return correctedQuad;
         }
 
-        // 排序点以确保符合矩形的四个角
-        public static Quadrilateral SortPointsToRectangle(List<PointF> points)
+        // 校验并替换四个顶点
+        public static Quadrilateral ReplaceWithTrueVertices(List<PointF> allPoints, Quadrilateral quad)
         {
-            // 计算质心（所有点的平均值）
-            double centerX = points.Average(p => p.X);
-            double centerY = points.Average(p => p.Y);
-            Point centroid = new Point((int)centerX, (int)centerY);
+            // 初始化四个顶点
+            PointF topLeft = quad.TopLeft;
+            PointF topRight = quad.TopRight;
+            PointF bottomLeft = quad.BottomLeft;
+            PointF bottomRight = quad.BottomRight;
 
-            // 计算每个点相对于质心的极角
-            var sortedPoints = points.Select(p => new { Point = p, Angle = CalculateAngle(centroid, p) })
-                                     .OrderBy(p => p.Angle)
-                                     .Select(p => p.Point)
-                                     .ToList();
+            // 遍历所有点集，找到更合适的四个顶点
+            foreach (var point in allPoints)
+            {
+                // 更新左上点：更左且更上
+                if (point.X <= topLeft.X && point.Y <= topLeft.Y)
+                    topLeft = point;
 
-            // 获取排序后的四个点
-            var topLeft = sortedPoints[0];      // 最小角度点
-            var topRight = sortedPoints[1];     // 第二小角度点
-            var bottomLeft = sortedPoints[2];   // 第三小角度点
-            var bottomRight = sortedPoints[3];  // 最大角度点
+                // 更新右上点：更右且更上
+                if (point.X >= topRight.X && point.Y <= topRight.Y)
+                    topRight = point;
 
-            // 返回四个顶点
+                // 更新左下点：更左且更下
+                if (point.X <= bottomLeft.X && point.Y >= bottomLeft.Y)
+                    bottomLeft = point;
+
+                // 更新右下点：更右且更下
+                if (point.X >= bottomRight.X && point.Y >= bottomRight.Y)
+                    bottomRight = point;
+            }
+
+            // 创建并返回更新后的 Quadrilateral 对象
             return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
         }
 
-        // 计算两点之间的角度
-        private static double CalculateAngle(PointF origin, PointF point)
+        // 获取四个点的具体位置（左上、右上、左下、右下）
+        public static Quadrilateral SortPointsToRectangle(List<PointF> points)
         {
-            return Math.Atan2(point.Y - origin.Y, point.X - origin.X);
+            // 计算质心
+            PointF centroid = new PointF(
+                points.Average(p => p.X),
+                points.Average(p => p.Y)
+            );
+
+            // 计算每个点相对于质心的角度
+            var sortedPoints = points
+                .Select(p => new
+                {
+                    Point = p,
+                    Angle = Math.Atan2(p.Y - centroid.Y, p.X - centroid.X)  // 计算点相对于质心的角度
+                })
+                .OrderBy(p => p.Angle)  // 按角度排序
+                .Select(p => p.Point)
+                .ToList();
+
+            // 按顺时针顺序排列四个点
+            PointF topLeft = sortedPoints[0];
+            PointF topRight = sortedPoints[1];
+            PointF bottomRight = sortedPoints[2];
+            PointF bottomLeft = sortedPoints[3];
+
+            // 返回按照左上、右上、左下、右下排序的四个点
+            return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
         }
 
-        public static List<PointF> GetVertices(List<PointF> points)
-        {
-            // 计算凸包
-            List<PointF> convexHull = ComputeConvexHull(points);
 
+        public static List<PointF> GetVertices(List<PointF> convexHull)
+        {
             // 如果凸包顶点数小于等于4，直接返回
             if (convexHull.Count <= 4)
                 return convexHull;
@@ -67,7 +101,7 @@ namespace AI_Assistant_Win.Utils
             return simplified;
         }
 
-        private static List<PointF> ComputeConvexHull(List<PointF> points)
+        public static List<PointF> ComputeConvexHull(List<PointF> points)
         {
             if (points.Count <= 1)
                 return new List<PointF>(points);
@@ -245,16 +279,10 @@ namespace AI_Assistant_Win.Utils
             return points.OrderBy(p => Math.Atan2(p.Y - center.Y, p.X - center.X)).ToList();
         }
 
-        private struct Vector2D
+        private struct Vector2D(double x, double y)
         {
-            public double X;
-            public double Y;
-
-            public Vector2D(double x, double y)
-            {
-                X = x;
-                Y = y;
-            }
+            public double X = x;
+            public double Y = y;
         }
 
     }
