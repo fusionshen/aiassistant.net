@@ -111,44 +111,48 @@ namespace AI_Assistant_Win.Controls
                 switch (e.Btn.Id)
                 {
                     case "preview":
-                        var renderImagePath = data.FirstOrDefault(t => "renderImage".Equals(t.key))?.value.ToString();
-                        var originImagePath = data.FirstOrDefault(t => "originImage".Equals(t.key))?.value.ToString();
-                        AntdUI.Preview.open(new AntdUI.Preview.Config(form, [Image.FromFile(renderImagePath), Image.FromFile(originImagePath)])
+                        try
                         {
-                            Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
-                            OnBtns = (id, config) =>
+                            var renderImagePath = data.FirstOrDefault(t => "renderImage".Equals(t.key))?.value.ToString();
+                            var originImagePath = data.FirstOrDefault(t => "originImage".Equals(t.key))?.value.ToString();
+                            AntdUI.Preview.open(new AntdUI.Preview.Config(form, [Image.FromFile(renderImagePath), Image.FromFile(originImagePath)])
                             {
-                                switch (id)
+                                Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
+                                OnBtns = (id, config) =>
                                 {
-                                    case "download":
-                                        // 弹出文件保存对话框
-                                        SaveFileDialog saveFileDialog = new()
-                                        {
-                                            Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
-                                            DefaultExt = "jpg",
-                                            FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_黑度检测结果.jpg",
-                                            Title = LocalizeHelper.CHOOSE_THE_LOCATION
-                                        };
-                                        if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                                        {
-                                            try
+                                    switch (id)
+                                    {
+                                        case "download":
+                                            // 弹出文件保存对话框
+                                            SaveFileDialog saveFileDialog = new()
                                             {
+                                                Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                                DefaultExt = "jpg",
+                                                FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_黑度检测结果.jpg",
+                                                Title = LocalizeHelper.CHOOSE_THE_LOCATION
+                                            };
+                                            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                            {
+
                                                 string pdfPath = saveFileDialog.FileName;
                                                 var originImage = Image.FromFile(originImagePath);
                                                 originImage.Save(saveFileDialog.FileName.Replace(".jpg", "_原图.jpg"), ImageFormat.Jpeg);
                                                 var renderImage = Image.FromFile(renderImagePath);
                                                 renderImage.Save(saveFileDialog.FileName.Replace(".jpg", "_识别图.jpg"), ImageFormat.Jpeg);
                                                 AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
+
                                             }
-                                            catch (Exception error)
-                                            {
-                                                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
-                                            }
-                                        }
-                                        break;
+                                            break;
+                                    }
+
                                 }
-                            }
-                        });
+
+                            });
+                        }
+                        catch (Exception error)
+                        {
+                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                        }
                         break;
                     case "report":
                         var id = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();

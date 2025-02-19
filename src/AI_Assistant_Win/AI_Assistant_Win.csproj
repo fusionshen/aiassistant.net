@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.6.5</Version>
+	<Version>0.7.0</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolo.net</Description>
@@ -63,6 +63,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\GaugeScaleSetting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Controls\GaugeBlockMethod.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\CircularAreaReport.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -114,6 +120,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Controls\GaugeScaleSetting.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controls\GaugeBlockMethod.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Controls\CircularAreaReport.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -159,12 +171,19 @@
     <None Update="Resources\database.sqlite">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Gauge\model.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\SourceHanSansCN-Regular.ttf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\template.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Gauge\" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using AI_Assistant_Win.Models.Middle;
-using SQLite;
+﻿using SQLite;
 using System;
 
 namespace AI_Assistant_Win.Models
@@ -59,7 +58,7 @@ namespace AI_Assistant_Win.Models
             if (obj is null) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals(obj as Blackness);
+            return Equals(obj as CalculateScale);
         }
 
         public override int GetHashCode()

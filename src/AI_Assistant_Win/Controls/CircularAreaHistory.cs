@@ -167,48 +167,50 @@ namespace AI_Assistant_Win.Controls
                     case "preview":
                         if (data.FirstOrDefault(t => "methodList".Equals(t.key))?.value is List<CircularAreaMethodResult> methodList)
                         {
-                            var imageList = methodList.SelectMany(t => new List<Image> { Image.FromFile(t.OriginImagePath), Image.FromFile(t.RenderImagePath) }).ToList();
-                            AntdUI.Preview.open(new AntdUI.Preview.Config(form, [.. imageList])
+                            try
                             {
-                                Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
-                                OnBtns = (id, config) =>
+                                var imageList = methodList.SelectMany(t => new List<Image> { Image.FromFile(t.OriginImagePath), Image.FromFile(t.RenderImagePath) }).ToList();
+                                AntdUI.Preview.open(new AntdUI.Preview.Config(form, [.. imageList])
                                 {
-                                    switch (id)
+                                    Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
+                                    OnBtns = (id, config) =>
                                     {
-                                        case "download":
-                                            // 弹出文件保存对话框
-                                            SaveFileDialog saveFileDialog = new()
-                                            {
-                                                Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
-                                                DefaultExt = "jpg",
-                                                FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_圆片面积检测结果.jpg",
-                                                Title = LocalizeHelper.CHOOSE_THE_LOCATION
-                                            };
-                                            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                                            {
-                                                try
+                                        switch (id)
+                                        {
+                                            case "download":
+                                                // 弹出文件保存对话框
+                                                SaveFileDialog saveFileDialog = new()
                                                 {
+                                                    Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                                    DefaultExt = "jpg",
+                                                    FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_圆片面积检测结果.jpg",
+                                                    Title = LocalizeHelper.CHOOSE_THE_LOCATION
+                                                };
+                                                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                                                {
+
                                                     string pdfPath = saveFileDialog.FileName;
                                                     methodList.ForEach(t =>
-                                                    {
-                                                        var originImage = Image.FromFile(t.OriginImagePath);
-                                                        originImage.Save(saveFileDialog.FileName
-                                                            .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_原图.jpg"), ImageFormat.Jpeg);
-                                                        var renderImage = Image.FromFile(t.RenderImagePath);
-                                                        renderImage.Save(saveFileDialog.FileName
-                                                            .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_识别图.jpg"), ImageFormat.Jpeg);
-                                                    });
-                                                    AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
-                                                }
-                                                catch (Exception error)
                                                 {
-                                                    AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                                                    var originImage = Image.FromFile(t.OriginImagePath);
+                                                    originImage.Save(saveFileDialog.FileName
+                                                        .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_原图.jpg"), ImageFormat.Jpeg);
+                                                    var renderImage = Image.FromFile(t.RenderImagePath);
+                                                    renderImage.Save(saveFileDialog.FileName
+                                                        .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_识别图.jpg"), ImageFormat.Jpeg);
+                                                });
+                                                    AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
+
                                                 }
-                                            }
-                                            break;
+                                                break;
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
+                            catch (Exception error)
+                            {
+                                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                            }
                         }
 
                         break;

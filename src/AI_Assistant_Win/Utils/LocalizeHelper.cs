@@ -145,7 +145,7 @@ namespace AI_Assistant_Win.Utils
         public static string PRE_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to open the previous record with unsaved work?", "您有未保存的工作，确定要打开上一条记录吗？");
         public static string NEXT_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to open the next record with unsaved work?", "您有未保存的工作，确定要打开下一条记录吗？");
         #endregion
-        #region blackness scale
+        #region scale setting
         public static string BLACKNESS_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Blackness-width Scale Setting", "黑度宽度比例尺设置");
         public static string SCALE_CACULATED_RATIO_TITLE => Localization.Get("The Result:", "计算结果：");
         public static string BLACKNESS_SCALE_CACULATED_RATIO_UNIT => Localization.Get("mm/100Pixels", "毫米/100像素");
@@ -155,6 +155,7 @@ namespace AI_Assistant_Win.Utils
         public static string SCALE_LOAD_SUCCESSED => Localization.Get("Load Scale Successed:", "加载比例尺成功：");
         public static string NO_NEED_TO_SAVE_THE_SAME_SCALE => Localization.Get("The scale has not changed, so there is no need to save it again.", "比例尺没有变化，无需再次保存。");
         public static string PLEASE_SET_CIRCULAR_AREA_SCALE => Localization.Get("Please set the scale for calculating the correct area of circular.", "请设置比例尺用于计算正确的圆形检测面积。");
+        public static string PLEASE_SET_SCALE => Localization.Get("Please set the scale for methods.", "请设置比例尺用于计算真实值。");
         public static string CIRCULAR_POSITION_TITLE => Localization.Get("Position:", "部位：");
         public static string CIRCULAR_POSITION(CircularPositionKind position) => Localization.Get(position.ToString(), EnumHelper.GetDescriptionOfEnum<CircularPositionKind>(position.ToString()));
         public static string CIRCULAR_AREA_TITLE => Localization.Get(",Area:", "，面积：");
@@ -166,7 +167,9 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_SELECT_POSITION => Localization.Get("Please select a position.", "请选择样品部位。");
         public static string CIRCULAR_SCALE_CACULATED_RATIO_UNIT => Localization.Get("sq mm/100Pixels", "平方毫米/100像素面积");
         public static string PREDICT_FIRSTLY_BEFORE_SETTING_CIRCULAR_SCALE => Localization.Get("Please take a photo or upload a circular detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张圆片面积检测图片并且成功识别后再尝试进行比例尺设置。");
+        public static string PREDICT_FIRSTLY_BEFORE_SETTING_GAUGE_SCALE => Localization.Get("Please take a photo or upload a gauge block image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张方形量块图片并且成功识别后再尝试进行比例尺设置。");
         public static string CIRCULAR_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Circular-area Scale Setting", "圆片面积比例尺设置");
+        public static string GAUGE_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Scale Setting", "比例尺设置");
         public static string AUTO_CALCULATE => Localization.Get("Auto Calculate", "自动计算");
         public static string NO_TOP_GRADUATIONS => Localization.Get("Please enter the platform scale on the upper surface of the sample at this time.", "请输入此时样品上表面的平台刻度。");
         public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the area report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次面积报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");

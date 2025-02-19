@@ -4,8 +4,10 @@ using AI_Assistant_Win.Utils;
 using SkiaSharp;
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using YoloDotNet;
 using YoloDotNet.Configuration;
 using YoloDotNet.Enums;
@@ -14,14 +16,14 @@ using YoloDotNet.Models;
 
 namespace AI_Assistant_Win.Business
 {
-    public class CircularAreaPredict : INotifyPropertyChanged
+    public class GaugeBlockPredict : INotifyPropertyChanged
     {
         private readonly SKFont font;
 
         private readonly ImageProcessBLL imageProcessBLL;
 
-        private SimpleSegmentation prediction;
-        public SimpleSegmentation Prediction
+        private QuadrilateralSegmentation prediction;
+        public QuadrilateralSegmentation Prediction
         {
             get { return prediction; }
             set
@@ -36,7 +38,7 @@ namespace AI_Assistant_Win.Business
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public CircularAreaPredict(ImageProcessBLL _imageProcessBLL)
+        public GaugeBlockPredict(ImageProcessBLL _imageProcessBLL)
         {
             imageProcessBLL = _imageProcessBLL;
             string fontFilePath = "./Resources/SourceHanSansCN-Regular.ttf";
@@ -48,7 +50,7 @@ namespace AI_Assistant_Win.Business
         {
             var yolo = new Yolo(new YoloOptions
             {
-                OnnxModel = "./Resources/Circular/model.onnx",
+                OnnxModel = "./Resources/Gauge/model.onnx",
                 ModelType = ModelType.Segmentation,
                 Cuda = false
             });
@@ -57,14 +59,15 @@ namespace AI_Assistant_Win.Business
 
             var predictions = yolo.RunSegmentation(image, 0.25, 0.65, 0.45);
 
-            if (predictions.Count == 1)  // Label.Name = Circular
+            if (predictions.Count == 1)  // Label.Name = BlockGauge
             {
-                prediction = new SimpleSegmentation
+                prediction = new QuadrilateralSegmentation
                 {
                     Label = predictions[0].Label,
                     Confidence = predictions[0].Confidence,
                     BoundingBox = predictions[0].BoundingBox,
                     SegmentedPixelsCount = predictions[0].SegmentedPixels.Length,
+                    Quadrilateral = ShapeHelper.GetRectangleVertices(predictions[0].SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList())
                 };
                 var rendered = DrawBoxes(image, currentScale, predictions[0]);
                 imageProcessBLL.SaveRenderImage(rendered);  // show render image 
@@ -173,10 +176,17 @@ namespace AI_Assistant_Win.Business
             };
 
             // Bounding box paint
-            using var boxPaint = new SKPaint()
+            using var boxPaint = new SKPaint
             {
                 Style = SKPaintStyle.Stroke,
                 StrokeWidth = borderThickness
+            };
+
+            // Bounding point paint
+            using var pointBgPaint = new SKPaint
+            {
+                Color = SKColors.Red,
+                IsAntialias = true
             };
 
             using var surface = SKSurface.Create(new SKImageInfo(image.Width, image.Height, SKColorType.Rgba8888));
@@ -207,7 +217,7 @@ namespace AI_Assistant_Win.Business
             var text_y = labelBackground.Top + textOffset;
 
             // Bounding-box
-            canvas.DrawRect(box, boxPaint);
+            //canvas.DrawRect(box, boxPaint);
 
             // Label background
             canvas.DrawRect(labelBackground, labelBgPaint);
@@ -217,6 +227,44 @@ namespace AI_Assistant_Win.Business
 
             // Label text
             canvas.DrawText(labelText, text_x, text_y, paintText);
+
+            // quadrilateal
+            var quadrilateal = ShapeHelper.GetRectangleVertices(detection.SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList());
+            // A background
+            canvas.DrawCircle(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y, (int)paintText.MeasureText("A"), pointBgPaint);
+            var a_x = quadrilateal.TopLeft.X - (int)paintText.MeasureText("A") / 2;
+            var a_y = quadrilateal.TopLeft.Y + margin / 2 + labelOffset;
+            // A shadow
+            canvas.DrawText("A", a_x + shadowOffset, a_y + shadowOffset, paintShadow);
+            // A text
+            canvas.DrawText("A", a_x, a_y, paintText);
+
+            // B background
+            canvas.DrawCircle(quadrilateal.TopRight.X, quadrilateal.TopRight.Y, (int)paintText.MeasureText("B"), pointBgPaint);
+            var b_x = quadrilateal.TopRight.X - (int)paintText.MeasureText("B") / 2;
+            var b_y = quadrilateal.TopRight.Y + margin / 2 + labelOffset;
+            // B shadow
+            canvas.DrawText("B", b_x + shadowOffset, b_y + shadowOffset, paintShadow);
+            // B text
+            canvas.DrawText("B", b_x, b_y, paintText);
+
+            // C background
+            canvas.DrawCircle(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y, (int)paintText.MeasureText("C"), pointBgPaint);
+            var c_x = quadrilateal.BottomRight.X - (int)paintText.MeasureText("C") / 2;
+            var c_y = quadrilateal.BottomRight.Y + margin / 2 + labelOffset;
+            // C shadow
+            canvas.DrawText("C", c_x + shadowOffset, c_y + shadowOffset, paintShadow);
+            // C text
+            canvas.DrawText("C", c_x, c_y, paintText);
+
+            // D background
+            canvas.DrawCircle(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y, (int)paintText.MeasureText("D"), pointBgPaint);
+            var d_x = quadrilateal.BottomLeft.X - (int)paintText.MeasureText("D") / 2;
+            var d_y = quadrilateal.BottomLeft.Y + margin / 2 + labelOffset;
+            // D shadow
+            canvas.DrawText("D", d_x + shadowOffset, d_y + shadowOffset, paintShadow);
+            // D text
+            canvas.DrawText("D", d_x, d_y, paintText);
 
             // Execute all pending draw operations
             canvas.Flush();
