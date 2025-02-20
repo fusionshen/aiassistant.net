@@ -227,7 +227,12 @@ namespace AI_Assistant_Win.Business
 
             // Label text
             canvas.DrawText(labelText, text_x, text_y, paintText);
-
+            // Vertices
+            //var points = ShapeHelper.ComputeConvexHull(detection.SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList());
+            //foreach (var item in points)
+            //{
+            //    canvas.DrawCircle(item.X, item.Y, 2, pointBgPaint);
+            //}
             // quadrilateal
             var quadrilateal = ShapeHelper.GetRectangleVertices(detection.SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList());
             // A background
@@ -302,6 +307,7 @@ namespace AI_Assistant_Win.Business
             canvas.DrawText(daText, da_x + shadowOffset, da_y + shadowOffset, paintShadow);
             // DA text
             canvas.DrawText(daText, da_x, da_y, paintText);
+
             // Execute all pending draw operations
             canvas.Flush();
 

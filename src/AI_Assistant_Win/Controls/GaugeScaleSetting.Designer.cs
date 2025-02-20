@@ -30,7 +30,7 @@
         {
             flowLayoutPanel1 = new AntdUI.In.FlowLayoutPanel();
             panelCurrent = new AntdUI.Panel();
-            label10 = new AntdUI.Label();
+            label11 = new AntdUI.Label();
             panel1 = new AntdUI.Panel();
             input1 = new AntdUI.Input();
             label9 = new AntdUI.Label();
@@ -50,6 +50,9 @@
             label4 = new AntdUI.Label();
             label3 = new AntdUI.Label();
             label1 = new AntdUI.Label();
+            panel7 = new AntdUI.Panel();
+            input2 = new AntdUI.Input();
+            label10 = new AntdUI.Label();
             panel2 = new AntdUI.Panel();
             inputTop = new AntdUI.Input();
             label2 = new AntdUI.Label();
@@ -76,6 +79,7 @@
             panelCurrent.SuspendLayout();
             panel1.SuspendLayout();
             tablePanel.SuspendLayout();
+            panel7.SuspendLayout();
             panel2.SuspendLayout();
             panel3.SuspendLayout();
             panelAtThatTime.SuspendLayout();
@@ -92,15 +96,16 @@
             flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new System.Drawing.Size(583, 613);
+            flowLayoutPanel1.Size = new System.Drawing.Size(583, 625);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // panelCurrent
             // 
             panelCurrent.ArrowSize = 10;
-            panelCurrent.Controls.Add(label10);
+            panelCurrent.Controls.Add(label11);
             panelCurrent.Controls.Add(panel1);
             panelCurrent.Controls.Add(tablePanel);
+            panelCurrent.Controls.Add(panel7);
             panelCurrent.Controls.Add(panel2);
             panelCurrent.Controls.Add(panel3);
             panelCurrent.Controls.Add(avatarCurrent);
@@ -111,23 +116,23 @@
             panelCurrent.Radius = 10;
             panelCurrent.Shadow = 2;
             panelCurrent.ShadowOpacityAnimation = true;
-            panelCurrent.Size = new System.Drawing.Size(285, 607);
+            panelCurrent.Size = new System.Drawing.Size(285, 619);
             panelCurrent.TabIndex = 21;
             // 
-            // label10
+            // label11
             // 
-            label10.BackColor = System.Drawing.Color.Transparent;
-            label10.Dock = System.Windows.Forms.DockStyle.Fill;
-            label10.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            label10.ForeColor = System.Drawing.Color.Red;
-            label10.LocalizationText = "Auto Calculation";
-            label10.Location = new System.Drawing.Point(9, 533);
-            label10.Name = "label10";
-            label10.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            label10.Size = new System.Drawing.Size(267, 65);
-            label10.TabIndex = 20;
-            label10.Text = "自动计算";
-            label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            label11.BackColor = System.Drawing.Color.Transparent;
+            label11.Dock = System.Windows.Forms.DockStyle.Fill;
+            label11.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label11.ForeColor = System.Drawing.Color.Red;
+            label11.LocalizationText = "Auto Calculation";
+            label11.Location = new System.Drawing.Point(9, 552);
+            label11.Name = "label11";
+            label11.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            label11.Size = new System.Drawing.Size(267, 58);
+            label11.TabIndex = 21;
+            label11.Text = "自动计算";
+            label11.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panel1
             // 
@@ -136,7 +141,7 @@
             panel1.Controls.Add(input1);
             panel1.Controls.Add(label9);
             panel1.Dock = System.Windows.Forms.DockStyle.Top;
-            panel1.Location = new System.Drawing.Point(9, 500);
+            panel1.Location = new System.Drawing.Point(9, 519);
             panel1.Name = "panel1";
             panel1.Radius = 0;
             panel1.Size = new System.Drawing.Size(267, 33);
@@ -190,7 +195,7 @@
             tablePanel.Controls.Add(label3, 1, 0);
             tablePanel.Controls.Add(label1, 0, 0);
             tablePanel.Dock = System.Windows.Forms.DockStyle.Top;
-            tablePanel.Location = new System.Drawing.Point(9, 345);
+            tablePanel.Location = new System.Drawing.Point(9, 364);
             tablePanel.Name = "tablePanel";
             tablePanel.RowCount = 5;
             tablePanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
@@ -395,6 +400,42 @@
             label1.Text = "边";
             label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // panel7
+            // 
+            panel7.Back = System.Drawing.Color.Transparent;
+            panel7.BackColor = System.Drawing.Color.Transparent;
+            panel7.Controls.Add(input2);
+            panel7.Controls.Add(label10);
+            panel7.Dock = System.Windows.Forms.DockStyle.Top;
+            panel7.Location = new System.Drawing.Point(9, 331);
+            panel7.Name = "panel7";
+            panel7.Radius = 0;
+            panel7.Size = new System.Drawing.Size(267, 33);
+            panel7.TabIndex = 20;
+            // 
+            // input2
+            // 
+            input2.Dock = System.Windows.Forms.DockStyle.Fill;
+            input2.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            input2.Location = new System.Drawing.Point(90, 0);
+            input2.Name = "input2";
+            input2.ReadOnly = true;
+            input2.Size = new System.Drawing.Size(177, 33);
+            input2.TabIndex = 17;
+            // 
+            // label10
+            // 
+            label10.BackColor = System.Drawing.Color.Transparent;
+            label10.Dock = System.Windows.Forms.DockStyle.Left;
+            label10.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label10.LocalizationText = "AreaLoss\n\n\n\n\n\n\n:";
+            label10.Location = new System.Drawing.Point(0, 0);
+            label10.Name = "label10";
+            label10.Size = new System.Drawing.Size(90, 33);
+            label10.TabIndex = 16;
+            label10.Text = "面积损失：";
+            label10.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
             // panel2
             // 
             panel2.Back = System.Drawing.Color.Transparent;
@@ -402,7 +443,7 @@
             panel2.Controls.Add(inputTop);
             panel2.Controls.Add(label2);
             panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            panel2.Location = new System.Drawing.Point(9, 312);
+            panel2.Location = new System.Drawing.Point(9, 298);
             panel2.Name = "panel2";
             panel2.Radius = 0;
             panel2.Size = new System.Drawing.Size(267, 33);
@@ -414,6 +455,7 @@
             inputTop.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputTop.Location = new System.Drawing.Point(90, 0);
             inputTop.Name = "inputTop";
+            inputTop.ReadOnly = true;
             inputTop.Size = new System.Drawing.Size(177, 33);
             inputTop.TabIndex = 17;
             // 
@@ -437,7 +479,7 @@
             panel3.Controls.Add(inputPixels);
             panel3.Controls.Add(AreaOfPixels);
             panel3.Dock = System.Windows.Forms.DockStyle.Top;
-            panel3.Location = new System.Drawing.Point(9, 279);
+            panel3.Location = new System.Drawing.Point(9, 265);
             panel3.Name = "panel3";
             panel3.Radius = 0;
             panel3.Size = new System.Drawing.Size(267, 33);
@@ -473,7 +515,7 @@
             avatarCurrent.Location = new System.Drawing.Point(9, 39);
             avatarCurrent.Name = "avatarCurrent";
             avatarCurrent.Radius = 6;
-            avatarCurrent.Size = new System.Drawing.Size(267, 240);
+            avatarCurrent.Size = new System.Drawing.Size(267, 226);
             avatarCurrent.TabIndex = 12;
             // 
             // lableRenderImageDisplayArea
@@ -674,11 +716,12 @@
             // 
             Controls.Add(flowLayoutPanel1);
             Name = "GaugeScaleSetting";
-            Size = new System.Drawing.Size(583, 613);
+            Size = new System.Drawing.Size(583, 625);
             flowLayoutPanel1.ResumeLayout(false);
             panelCurrent.ResumeLayout(false);
             panel1.ResumeLayout(false);
             tablePanel.ResumeLayout(false);
+            panel7.ResumeLayout(false);
             panel2.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panelAtThatTime.ResumeLayout(false);
@@ -731,9 +774,12 @@
         private AntdUI.Label label4;
         private AntdUI.Label label3;
         private AntdUI.Label label1;
-        private AntdUI.Label label10;
         private AntdUI.Panel panel1;
         private AntdUI.Input input1;
         private AntdUI.Label label9;
+        private AntdUI.Panel panel7;
+        private AntdUI.Input input2;
+        private AntdUI.Label label10;
+        private AntdUI.Label label11;
     }
 }

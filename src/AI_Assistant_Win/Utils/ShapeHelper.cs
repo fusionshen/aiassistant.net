@@ -13,45 +13,53 @@ namespace AI_Assistant_Win.Utils
         {
             // 计算凸包
             List<PointF> convexHull = ComputeConvexHull(points);
-            // TODO: optimize 排序四个点，以确保左上、右上、左下、右下顺序
-            var maybeFake = SortPointsToRectangle(GetVertices(convexHull));
-            // 校验并替换四个顶点
-            var correctedQuad = ReplaceWithTrueVertices(convexHull, maybeFake);
-            // 返回四个顶点
-            return correctedQuad;
+            if (convexHull.Count == 4)
+            {
+                return SortPointsToRectangle(convexHull);
+            }
+            else if (convexHull.Count > 4)
+            {
+                return SortPointsToRectangle(FindBestQuadrilateral(convexHull));
+            }
+            else
+            {
+                throw new ArgumentException(LocalizeHelper.NOT_A_QUADRILATERAL);
+            }
         }
 
-        // 校验并替换四个顶点
-        public static Quadrilateral ReplaceWithTrueVertices(List<PointF> allPoints, Quadrilateral quad)
+        // 从凸包中找出最佳四边形的四个顶点
+        private static List<PointF> FindBestQuadrilateral(List<PointF> convexHull)
         {
-            // 初始化四个顶点
-            PointF topLeft = quad.TopLeft;
-            PointF topRight = quad.TopRight;
-            PointF bottomLeft = quad.BottomLeft;
-            PointF bottomRight = quad.BottomRight;
+            double maxArea = 0;
+            List<PointF> bestQuadrilateralPoints = null;
 
-            // 遍历所有点集，找到更合适的四个顶点
-            foreach (var point in allPoints)
+            int n = convexHull.Count;
+            // 暴力枚举所有可能的四个顶点组合
+            for (int i = 0; i < n; i++)
             {
-                // 更新左上点：更左且更上
-                if (point.X <= topLeft.X && point.Y <= topLeft.Y)
-                    topLeft = point;
+                for (int j = i + 1; j < n; j++)
+                {
+                    for (int k = j + 1; k < n; k++)
+                    {
+                        for (int l = k + 1; l < n; l++)
+                        {
+                            PointF p1 = convexHull[i];
+                            PointF p2 = convexHull[j];
+                            PointF p3 = convexHull[k];
+                            PointF p4 = convexHull[l];
 
-                // 更新右上点：更右且更上
-                if (point.X >= topRight.X && point.Y <= topRight.Y)
-                    topRight = point;
-
-                // 更新左下点：更左且更下
-                if (point.X <= bottomLeft.X && point.Y >= bottomLeft.Y)
-                    bottomLeft = point;
-
-                // 更新右下点：更右且更下
-                if (point.X >= bottomRight.X && point.Y >= bottomRight.Y)
-                    bottomRight = point;
+                            double area = CalculateQuadrilateralArea(p1, p2, p3, p4);
+                            if (area > maxArea)
+                            {
+                                maxArea = area;
+                                bestQuadrilateralPoints = new List<PointF> { p1, p2, p3, p4 };
+                            }
+                        }
+                    }
+                }
             }
 
-            // 创建并返回更新后的 Quadrilateral 对象
-            return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
+            return bestQuadrilateralPoints;
         }
 
         // 获取四个点的具体位置（左上、右上、左下、右下）
@@ -84,26 +92,11 @@ namespace AI_Assistant_Win.Utils
             return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
         }
 
-        public static List<PointF> GetVertices(List<PointF> convexHull)
-        {
-            // 如果凸包顶点数小于等于4，直接返回
-            if (convexHull.Count <= 4)
-                return convexHull;
-
-            // 使用Douglas-Peucker算法简化到四个顶点
-            List<PointF> simplified = SimplifyToFourVertices(convexHull);
-
-            // 如果简化后仍多于四个点，选择四个角度最小的顶点
-            if (simplified.Count > 4)
-                simplified = SelectFourCornersByAngle(simplified);
-
-            return simplified;
-        }
-
+        // 计算凸包
         public static List<PointF> ComputeConvexHull(List<PointF> points)
         {
             if (points.Count <= 1)
-                return new List<PointF>(points);
+                return points;
 
             points.Sort((a, b) => a.X.CompareTo(b.X) != 0 ? a.X.CompareTo(b.X) : a.Y.CompareTo(b.Y));
 
@@ -134,154 +127,6 @@ namespace AI_Assistant_Win.Utils
         private static float Cross(PointF o, PointF a, PointF b)
         {
             return (a.X - o.X) * (b.Y - o.Y) - (a.Y - o.Y) * (b.X - o.X);
-        }
-
-        private static List<PointF> SimplifyToFourVertices(List<PointF> convexHull)
-        {
-            if (convexHull.Count <= 4)
-                return convexHull;
-
-            double low = 0;
-            double high = CalculateMaxEpsilon(convexHull);
-            double epsilon = 0;
-            List<PointF> result = new List<PointF>();
-            int iterations = 0;
-            const int maxIterations = 100;
-
-            while (iterations++ < maxIterations)
-            {
-                epsilon = (low + high) / 2;
-                result = DouglasPeuckerSimplify(convexHull, epsilon);
-
-                if (result.Count == 4)
-                    break;
-                else if (result.Count > 4)
-                    low = epsilon;
-                else
-                    high = epsilon;
-            }
-
-            return result.Count == 4 ? result : SelectFourCornersByAngle(result);
-        }
-
-        private static double CalculateMaxEpsilon(List<PointF> points)
-        {
-            double maxDistance = 0;
-            foreach (PointF p in points)
-            {
-                double dx = p.X - points[0].X;
-                double dy = p.Y - points[0].Y;
-                double distance = Math.Sqrt(dx * dx + dy * dy);
-                if (distance > maxDistance)
-                    maxDistance = distance;
-            }
-            return maxDistance;
-        }
-
-        private static List<PointF> DouglasPeuckerSimplify(List<PointF> points, double epsilon)
-        {
-            if (points.Count <= 2)
-                return new List<PointF>(points);
-
-            int index = 0;
-            double dmax = 0;
-            int last = points.Count - 1;
-
-            for (int i = 1; i < last; i++)
-            {
-                double d = PerpendicularDistance(points[i], points[0], points[last]);
-                if (d > dmax)
-                {
-                    index = i;
-                    dmax = d;
-                }
-            }
-
-            List<PointF> result = new List<PointF>();
-            if (dmax > epsilon)
-            {
-                List<PointF> firstLine = points.Take(index + 1).ToList();
-                List<PointF> secondLine = points.Skip(index).ToList();
-                List<PointF> recResults1 = DouglasPeuckerSimplify(firstLine, epsilon);
-                List<PointF> recResults2 = DouglasPeuckerSimplify(secondLine, epsilon);
-
-                result.AddRange(recResults1.Take(recResults1.Count - 1));
-                result.AddRange(recResults2);
-            }
-            else
-            {
-                result.Add(points[0]);
-                result.Add(points[last]);
-            }
-
-            return result;
-        }
-
-        private static double PerpendicularDistance(PointF point, PointF lineStart, PointF lineEnd)
-        {
-            double area = Math.Abs((lineEnd.X - lineStart.X) * (lineStart.Y - point.Y) -
-                         (lineStart.X - point.X) * (lineEnd.Y - lineStart.Y));
-            double lineLength = Math.Sqrt(Math.Pow(lineEnd.X - lineStart.X, 2) + Math.Pow(lineEnd.Y - lineStart.Y, 2));
-            return lineLength == 0 ? 0 : area / lineLength;
-        }
-
-        private static List<PointF> SelectFourCornersByAngle(List<PointF> convexHull)
-        {
-            // 计算每个顶点的角度并选择四个最小的
-            List<Tuple<PointF, double>> angles = new List<Tuple<PointF, double>>();
-            int count = convexHull.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                int prev = (i - 1 + count) % count;
-                int next = (i + 1) % count;
-
-                PointF a = convexHull[prev];
-                PointF b = convexHull[i];
-                PointF c = convexHull[next];
-
-                double angle = CalculateAngle(a, b, c);
-                angles.Add(Tuple.Create(b, angle));
-            }
-
-            // 按角度升序排序并选择前四个点
-            var sorted = angles.OrderBy(t => t.Item2).Select(t => t.Item1).Take(4).ToList();
-
-            // 确保四个点按顺时针或逆时针顺序排列
-            return OrderVertices(sorted);
-        }
-
-        private static double CalculateAngle(PointF a, PointF b, PointF c)
-        {
-            // 计算向量BA和BC之间的夹角
-            Vector2D ba = new Vector2D(a.X - b.X, a.Y - b.Y);
-            Vector2D bc = new Vector2D(c.X - b.X, c.Y - b.Y);
-
-            double dotProduct = ba.X * bc.X + ba.Y * bc.Y;
-            double magnitudeBA = Math.Sqrt(ba.X * ba.X + ba.Y * ba.Y);
-            double magnitudeBC = Math.Sqrt(bc.X * bc.X + bc.Y * bc.Y);
-
-            if (magnitudeBA == 0 || magnitudeBC == 0)
-                return 0;
-
-            double cosTheta = dotProduct / (magnitudeBA * magnitudeBC);
-            return Math.Acos(Math.Clamp(cosTheta, -1, 1)) * (180 / Math.PI);
-        }
-
-        private static List<PointF> OrderVertices(List<PointF> points)
-        {
-            // 按质心排序顶点
-            PointF center = new PointF(
-                points.Average(p => p.X),
-                points.Average(p => p.Y));
-
-            return points.OrderBy(p => Math.Atan2(p.Y - center.Y, p.X - center.X)).ToList();
-        }
-
-        private struct Vector2D(double x, double y)
-        {
-            public double X = x;
-            public double Y = y;
         }
 
         public static float CalculateDistance(PointF p1, PointF p2)

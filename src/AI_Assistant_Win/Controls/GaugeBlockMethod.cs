@@ -458,13 +458,13 @@ namespace AI_Assistant_Win.Controls
         private void OutputTexts()
         {
             tempGaugeBlockResult.Item = new GaugeBlock(gaugeBlockPredict.Prediction, CurrentScale);
-            inputAreaOfPixels.Text = $"{tempGaugeBlockResult.Item.AreaOfPixels}{LocalizeHelper.AREA_OF_PIXELS}";
+            inputAreaOfPixels.Text = $"{tempGaugeBlockResult.Item.AreaOfPixels}";
             inputConfidence.Text = $"{tempGaugeBlockResult.Item.Confidence.ToPercent()}%";
             OutputScaleTexts(tempGaugeBlockResult.Item.CalculateScale);
             inputCalculatedArea.Text = $"{tempGaugeBlockResult.Item.CalculatedArea:F2}{tempGaugeBlockResult.Item.AreaUnit}";
             inputVertexPositions.Text = tempGaugeBlockResult.Item.PointText;
             inputSidePixels.Text = string.Join(" ", tempGaugeBlockResult.Item.SidePixels.Select(t => $"{t.Key}={t.Value:F2}"));
-            inputCalculatSides.Text= string.Join(" ", tempGaugeBlockResult.Item.CalculateSideLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
+            inputCalculatSides.Text = string.Join(" ", tempGaugeBlockResult.Item.CalculateSideLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
         }
         private void OutputScaleTexts(CalculateScale calculateScale)
         {

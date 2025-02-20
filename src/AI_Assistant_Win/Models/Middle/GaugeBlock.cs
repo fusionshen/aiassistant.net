@@ -54,7 +54,7 @@ namespace AI_Assistant_Win.Models.Middle
 
         public Dictionary<string, float> CalculateSideLengths
         {
-            get => CalculateScale == null ? SidePixels :  SidePixels.ToDictionary(pair => pair.Key, pair => pair.Value * CalculateScale.Value / 100);
+            get => CalculateScale == null ? SidePixels : SidePixels.ToDictionary(pair => pair.Key, pair => pair.Value * CalculateScale.Value / 100);
         }
         /// <summary>
         /// 表述，用于在结果判定区显示
