@@ -30,7 +30,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// </summary>
         public string Description
         {
-            get => $"{LocalizeHelper.CIRCULAR_AREA_TITLE}{CalculatedArea:F2}{Unit}{LocalizeHelper.CIRCULAR_DIAMETER_TITLE}{Diameter:F2}{DiameterUnit}";
+            get => $"{LocalizeHelper.AREA_TITLE}{CalculatedArea:F2}{Unit}{LocalizeHelper.CIRCULAR_DIAMETER_TITLE}{Diameter:F2}{DiameterUnit}";
         }
 
         public string DiameterUnit

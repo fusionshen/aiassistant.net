@@ -118,7 +118,7 @@ namespace AI_Assistant_Win.Business
                     Pixels = tempCircularAreaResult.Item.AreaOfPixels,
                     Confidence = tempCircularAreaResult.Item.Confidence,
                     Area = tempCircularAreaResult.Item.CalculatedArea,
-                    Diameter = tempCircularAreaResult.Item.Diameter,
+                    //Diameter = tempCircularAreaResult.Item.Diameter,
                     Prediction = JsonConvert.SerializeObject(tempCircularAreaResult.Item.Prediction, new JsonSerializerSettings
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
@@ -144,7 +144,7 @@ namespace AI_Assistant_Win.Business
                 target.Pixels = tempCircularAreaResult.Item.AreaOfPixels;
                 target.Confidence = tempCircularAreaResult.Item.Confidence;
                 target.Area = tempCircularAreaResult.Item.CalculatedArea;
-                target.Diameter = tempCircularAreaResult.Item.Diameter;
+                //target.Diameter = tempCircularAreaResult.Item.Diameter;
                 target.Prediction = JsonConvert.SerializeObject(tempCircularAreaResult.Item.Prediction, new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore

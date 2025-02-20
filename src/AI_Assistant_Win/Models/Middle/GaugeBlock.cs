@@ -22,20 +22,19 @@ namespace AI_Assistant_Win.Models.Middle
         /// </summary>
         public float CalculatedArea { get => CalculateScale == null ? Prediction.SegmentedPixelsCount : Prediction.SegmentedPixelsCount * CalculateScale.Value / 100; }
         /// <summary>
-        /// 类圆直径
+        /// 截取四边形像素面积
         /// </summary>
-        public float Diameter { get => (float)(CalculateScale == null ? 2 * Math.Sqrt(AreaOfPixels / Math.PI) : 2 * Math.Sqrt(CalculatedArea / Math.PI)); }
+        public float ExtractedAreaOfPixels
+        {
+            get => (float)ShapeHelper.CalculateQuadrilateralArea(Prediction.Quadrilateral.TopLeft,
+            Prediction.Quadrilateral.TopRight, Prediction.Quadrilateral.BottomRight, Prediction.Quadrilateral.BottomLeft);
+        }
         /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>
         public string Description
         {
-            get => $"{LocalizeHelper.CIRCULAR_AREA_TITLE}{CalculatedArea:F2}{Unit}{LocalizeHelper.CIRCULAR_DIAMETER_TITLE}{Diameter:F2}{DiameterUnit}";
-        }
-
-        public string DiameterUnit
-        {
-            get => CalculateScale == null ? LocalizeHelper.PIXEL : LocalizeHelper.MILLIMETER;
+            get => $"{LocalizeHelper.AREA_TITLE}{CalculatedArea:F2}{Unit}";
         }
 
         public string Unit

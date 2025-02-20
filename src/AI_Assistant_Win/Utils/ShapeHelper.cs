@@ -8,7 +8,7 @@ namespace AI_Assistant_Win.Utils
 {
     public class ShapeHelper
     {
-        // 获取矩形的四个顶点
+        // 获取四边形的四个顶点
         public static Quadrilateral GetRectangleVertices(List<PointF> points)
         {
             // 计算凸包
@@ -83,7 +83,6 @@ namespace AI_Assistant_Win.Utils
             // 返回按照左上、右上、左下、右下排序的四个点
             return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
         }
-
 
         public static List<PointF> GetVertices(List<PointF> convexHull)
         {
@@ -283,6 +282,30 @@ namespace AI_Assistant_Win.Utils
         {
             public double X = x;
             public double Y = y;
+        }
+
+        public static float CalculateDistance(PointF p1, PointF p2)
+        {
+            // 计算两点之间的欧几里得距离
+            return (float)Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));
+        }
+
+        // 计算四边形的面积
+        public static double CalculateQuadrilateralArea(PointF p1, PointF p2, PointF p3, PointF p4)
+        {
+            // 采用四边形顶点按顺时针或逆时针顺序排列
+            double area = 0.0;
+
+            // 使用向量叉积法来计算四边形面积
+            area += p1.X * p2.Y - p2.X * p1.Y;
+            area += p2.X * p3.Y - p3.X * p2.Y;
+            area += p3.X * p4.Y - p4.X * p3.Y;
+            area += p4.X * p1.Y - p1.X * p4.Y;
+
+            // 计算绝对值并除以2
+            area = Math.Abs(area) / 2.0;
+
+            return area;
         }
 
     }

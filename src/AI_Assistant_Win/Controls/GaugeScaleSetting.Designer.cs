@@ -146,10 +146,10 @@
             // 
             input1.Dock = System.Windows.Forms.DockStyle.Fill;
             input1.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            input1.LocalizationPlaceholderText = "The blackness can be set to 0";
+            input1.LocalizationPlaceholderText = "Surface scale of the sample";
             input1.Location = new System.Drawing.Point(90, 0);
             input1.Name = "input1";
-            input1.PlaceholderText = "拍摄距离恒定，黑度可填0";
+            input1.PlaceholderText = "样本上表面刻度";
             input1.ReadOnly = true;
             input1.Size = new System.Drawing.Size(177, 33);
             input1.TabIndex = 17;
@@ -172,8 +172,8 @@
             tablePanel.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
             tablePanel.ColumnCount = 3;
             tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 77F));
-            tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 107F));
+            tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 82F));
+            tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 102F));
             tablePanel.Controls.Add(inputInsideOPCurrent, 2, 4);
             tablePanel.Controls.Add(inputSurfaceDRCurrent, 2, 3);
             tablePanel.Controls.Add(inputSurfaceCECurrent, 2, 2);
@@ -208,12 +208,12 @@
             inputInsideOPCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
             inputInsideOPCurrent.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputInsideOPCurrent.LocalizationPlaceholderText = "Measured value";
-            inputInsideOPCurrent.Location = new System.Drawing.Point(159, 125);
+            inputInsideOPCurrent.Location = new System.Drawing.Point(164, 125);
             inputInsideOPCurrent.Margin = new System.Windows.Forms.Padding(0);
             inputInsideOPCurrent.Name = "inputInsideOPCurrent";
             inputInsideOPCurrent.PlaceholderText = "请输入实际值";
             inputInsideOPCurrent.Radius = 0;
-            inputInsideOPCurrent.Size = new System.Drawing.Size(107, 30);
+            inputInsideOPCurrent.Size = new System.Drawing.Size(102, 30);
             inputInsideOPCurrent.TabIndex = 37;
             // 
             // inputSurfaceDRCurrent
@@ -221,12 +221,12 @@
             inputSurfaceDRCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
             inputSurfaceDRCurrent.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputSurfaceDRCurrent.LocalizationPlaceholderText = "Measured value";
-            inputSurfaceDRCurrent.Location = new System.Drawing.Point(159, 94);
+            inputSurfaceDRCurrent.Location = new System.Drawing.Point(164, 94);
             inputSurfaceDRCurrent.Margin = new System.Windows.Forms.Padding(0);
             inputSurfaceDRCurrent.Name = "inputSurfaceDRCurrent";
             inputSurfaceDRCurrent.PlaceholderText = "请输入实际值";
             inputSurfaceDRCurrent.Radius = 0;
-            inputSurfaceDRCurrent.Size = new System.Drawing.Size(107, 30);
+            inputSurfaceDRCurrent.Size = new System.Drawing.Size(102, 30);
             inputSurfaceDRCurrent.TabIndex = 36;
             // 
             // inputSurfaceCECurrent
@@ -234,12 +234,12 @@
             inputSurfaceCECurrent.Dock = System.Windows.Forms.DockStyle.Fill;
             inputSurfaceCECurrent.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputSurfaceCECurrent.LocalizationPlaceholderText = "Measured value";
-            inputSurfaceCECurrent.Location = new System.Drawing.Point(159, 63);
+            inputSurfaceCECurrent.Location = new System.Drawing.Point(164, 63);
             inputSurfaceCECurrent.Margin = new System.Windows.Forms.Padding(0);
             inputSurfaceCECurrent.Name = "inputSurfaceCECurrent";
             inputSurfaceCECurrent.PlaceholderText = "请输入实际值";
             inputSurfaceCECurrent.Radius = 0;
-            inputSurfaceCECurrent.Size = new System.Drawing.Size(107, 30);
+            inputSurfaceCECurrent.Size = new System.Drawing.Size(102, 30);
             inputSurfaceCECurrent.TabIndex = 35;
             // 
             // inputSurfaceOPCurrent
@@ -247,12 +247,12 @@
             inputSurfaceOPCurrent.Dock = System.Windows.Forms.DockStyle.Fill;
             inputSurfaceOPCurrent.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
             inputSurfaceOPCurrent.LocalizationPlaceholderText = "Measured value";
-            inputSurfaceOPCurrent.Location = new System.Drawing.Point(159, 32);
+            inputSurfaceOPCurrent.Location = new System.Drawing.Point(164, 32);
             inputSurfaceOPCurrent.Margin = new System.Windows.Forms.Padding(0);
             inputSurfaceOPCurrent.Name = "inputSurfaceOPCurrent";
             inputSurfaceOPCurrent.PlaceholderText = "请输入实际值";
             inputSurfaceOPCurrent.Radius = 0;
-            inputSurfaceOPCurrent.Size = new System.Drawing.Size(107, 30);
+            inputSurfaceOPCurrent.Size = new System.Drawing.Size(102, 30);
             inputSurfaceOPCurrent.TabIndex = 34;
             // 
             // textInsideOPPixels
@@ -364,9 +364,9 @@
             label4.Dock = System.Windows.Forms.DockStyle.Fill;
             label4.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F);
             label4.LocalizationText = "Length(mm)";
-            label4.Location = new System.Drawing.Point(162, 4);
+            label4.Location = new System.Drawing.Point(167, 4);
             label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(101, 24);
+            label4.Size = new System.Drawing.Size(96, 24);
             label4.TabIndex = 2;
             label4.Text = "长度(毫米)";
             label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -378,9 +378,9 @@
             label3.LocalizationText = "Pixels";
             label3.Location = new System.Drawing.Point(84, 4);
             label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(71, 24);
+            label3.Size = new System.Drawing.Size(76, 24);
             label3.TabIndex = 1;
-            label3.Text = "像素值";
+            label3.Text = "像素长度";
             label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
@@ -422,12 +422,12 @@
             label2.BackColor = System.Drawing.Color.Transparent;
             label2.Dock = System.Windows.Forms.DockStyle.Left;
             label2.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            label2.LocalizationText = "Vertex Position\n\n\n\n\n\n\n:";
+            label2.LocalizationText = "ExtractedArea\n\n\n\n\n\n\n:";
             label2.Location = new System.Drawing.Point(0, 0);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(90, 33);
             label2.TabIndex = 16;
-            label2.Text = "顶点位置：";
+            label2.Text = "截取面积：";
             label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panel3

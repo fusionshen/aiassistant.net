@@ -238,7 +238,6 @@ namespace AI_Assistant_Win.Business
             canvas.DrawText("A", a_x + shadowOffset, a_y + shadowOffset, paintShadow);
             // A text
             canvas.DrawText("A", a_x, a_y, paintText);
-
             // B background
             canvas.DrawCircle(quadrilateal.TopRight.X, quadrilateal.TopRight.Y, (int)paintText.MeasureText("B"), pointBgPaint);
             var b_x = quadrilateal.TopRight.X - (int)paintText.MeasureText("B") / 2;
@@ -247,7 +246,16 @@ namespace AI_Assistant_Win.Business
             canvas.DrawText("B", b_x + shadowOffset, b_y + shadowOffset, paintShadow);
             // B text
             canvas.DrawText("B", b_x, b_y, paintText);
-
+            // Line AB
+            canvas.DrawLine(new SKPoint(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y), new SKPoint(quadrilateal.TopRight.X, quadrilateal.TopRight.Y), pointBgPaint);
+            var ab_length = ShapeHelper.CalculateDistance(quadrilateal.TopLeft, quadrilateal.TopRight);
+            var abText = SideText(currentScale, ab_length);
+            var ab_x = (quadrilateal.TopLeft.X + quadrilateal.TopRight.X - (int)paintText.MeasureText(abText)) / 2 + margin;
+            var ab_y = (quadrilateal.TopLeft.Y + quadrilateal.TopRight.Y) / 2 + textOffset;
+            // AB shadow
+            canvas.DrawText(abText, ab_x + shadowOffset, ab_y + shadowOffset, paintShadow);
+            // AB text
+            canvas.DrawText(abText, ab_x, ab_y, paintText);
             // C background
             canvas.DrawCircle(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y, (int)paintText.MeasureText("C"), pointBgPaint);
             var c_x = quadrilateal.BottomRight.X - (int)paintText.MeasureText("C") / 2;
@@ -256,7 +264,16 @@ namespace AI_Assistant_Win.Business
             canvas.DrawText("C", c_x + shadowOffset, c_y + shadowOffset, paintShadow);
             // C text
             canvas.DrawText("C", c_x, c_y, paintText);
-
+            // Line BC
+            canvas.DrawLine(new SKPoint(quadrilateal.TopRight.X, quadrilateal.TopRight.Y), new SKPoint(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y), pointBgPaint);
+            var bc_length = ShapeHelper.CalculateDistance(quadrilateal.TopRight, quadrilateal.BottomRight);
+            var bcText = SideText(currentScale, bc_length);
+            var bc_x = (quadrilateal.TopRight.X + quadrilateal.BottomRight.X) / 2 - (int)paintText.MeasureText(bcText) - margin;
+            var bc_y = (quadrilateal.TopRight.Y + quadrilateal.BottomRight.Y) / 2;
+            // BC shadow
+            canvas.DrawText(bcText, bc_x + shadowOffset, bc_y + shadowOffset, paintShadow);
+            // BC text
+            canvas.DrawText(bcText, bc_x, bc_y, paintText);
             // D background
             canvas.DrawCircle(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y, (int)paintText.MeasureText("D"), pointBgPaint);
             var d_x = quadrilateal.BottomLeft.X - (int)paintText.MeasureText("D") / 2;
@@ -265,11 +282,38 @@ namespace AI_Assistant_Win.Business
             canvas.DrawText("D", d_x + shadowOffset, d_y + shadowOffset, paintShadow);
             // D text
             canvas.DrawText("D", d_x, d_y, paintText);
-
+            // Line CD
+            canvas.DrawLine(new SKPoint(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y), new SKPoint(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y), pointBgPaint);
+            var cd_length = ShapeHelper.CalculateDistance(quadrilateal.BottomRight, quadrilateal.BottomLeft);
+            var cdText = SideText(currentScale, cd_length);
+            var cd_x = (quadrilateal.BottomRight.X + quadrilateal.BottomLeft.X - (int)paintText.MeasureText(bcText)) / 2 - margin;
+            var cd_y = (quadrilateal.BottomRight.Y + quadrilateal.BottomLeft.Y) / 2 - textOffset;
+            // CD shadow
+            canvas.DrawText(cdText, cd_x + shadowOffset, cd_y + shadowOffset, paintShadow);
+            // CD text
+            canvas.DrawText(cdText, cd_x, cd_y, paintText);
+            // Lind DA
+            canvas.DrawLine(new SKPoint(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y), new SKPoint(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y), pointBgPaint);
+            var da_length = ShapeHelper.CalculateDistance(quadrilateal.BottomLeft, quadrilateal.TopLeft);
+            var daText = SideText(currentScale, da_length);
+            var da_x = (quadrilateal.BottomLeft.X + quadrilateal.TopLeft.X) / 2 + margin;
+            var da_y = (quadrilateal.BottomLeft.Y + quadrilateal.TopLeft.Y) / 2;
+            // DA shadow
+            canvas.DrawText(daText, da_x + shadowOffset, da_y + shadowOffset, paintShadow);
+            // DA text
+            canvas.DrawText(daText, da_x, da_y, paintText);
             // Execute all pending draw operations
             canvas.Flush();
 
             return surface.Snapshot();
+        }
+
+        private string SideText(CalculateScale currentScale, float length)
+        {
+            var result = currentScale == null ?
+            $"{length:F2}{LocalizeHelper.PIXEL}" :
+            $"{length * currentScale.Value / 100:F2}{LocalizeHelper.MILLIMETER}";
+            return result;
         }
 
         private string LabelText(CalculateScale currentScale, Segmentation detection)

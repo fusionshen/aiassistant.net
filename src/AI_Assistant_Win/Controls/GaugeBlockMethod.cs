@@ -108,15 +108,15 @@ namespace AI_Assistant_Win.Controls
             }
             else if (e.PropertyName == "TestNo")
             {
-                selectTestNo.SelectedValue = originalGaugeBlockResult.TestNo;
+                //selectTestNo.SelectedValue = originalGaugeBlockResult.TestNo;
             }
             else if (e.PropertyName == "CoilNumber")
             {
-                inputCoilNumber.Text = originalGaugeBlockResult.CoilNumber;
+                //inputCoilNumber.Text = originalGaugeBlockResult.CoilNumber;
             }
             else if (e.PropertyName == "Position")
             {
-                selectPosition.SelectedValue = originalGaugeBlockResult.Position;
+                //selectPosition.SelectedValue = originalGaugeBlockResult.Position;
             }
             else if (e.PropertyName == "OriginImagePath")
             {
@@ -196,18 +196,18 @@ namespace AI_Assistant_Win.Controls
             {
                 throw new Exception(LocalizeHelper.PLEASE_SELECT_WORKBENCH);
             }
-            if (selectTestNo.SelectedValue == null)
-            {
-                throw new Exception(LocalizeHelper.PLEASE_SELECT_TESTNO);
-            }
-            if (string.IsNullOrEmpty(inputCoilNumber.Text))
-            {
-                throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
-            }
-            if (selectPosition.SelectedValue == null)
-            {
-                throw new Exception(LocalizeHelper.PLEASE_SELECT_POSITION);
-            }
+            //if (selectTestNo.SelectedValue == null)
+            //{
+            //    throw new Exception(LocalizeHelper.PLEASE_SELECT_TESTNO);
+            //}
+            //if (string.IsNullOrEmpty(inputCoilNumber.Text))
+            //{
+            //    throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
+            //}
+            //if (selectPosition.SelectedValue == null)
+            //{
+            //    throw new Exception(LocalizeHelper.PLEASE_SELECT_POSITION);
+            //}
             if (string.IsNullOrEmpty(inputAnalyst.Text))
             {
                 throw new Exception(LocalizeHelper.PLEASE_INPUT_ANALYST);
@@ -311,9 +311,6 @@ namespace AI_Assistant_Win.Controls
         {
             AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
             {
-                // TestNo List
-                await InitializeSelectTestNoAsync();
-                config.OK(LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS);
                 // Scale List
                 if (!InitializeSelectScale())
                 {
@@ -394,10 +391,10 @@ namespace AI_Assistant_Win.Controls
         private void InitializeSelectPostion()
         {
 
-            selectPosition.Items.Clear();
-            // select position
-            var result = gaugeBlockMethodBLL.PositionList.Select(t => t.Value).ToList();
-            selectPosition.Items.AddRange([.. result]);
+            //selectPosition.Items.Clear();
+            //// select position
+            //var result = gaugeBlockMethodBLL.PositionList.Select(t => t.Value).ToList();
+            //selectPosition.Items.AddRange([.. result]);
         }
         private bool InitializeSelectScale()
         {
@@ -412,29 +409,7 @@ namespace AI_Assistant_Win.Controls
             return true;
         }
         private List<GetTestNoListResponse> testNoList;
-        private async Task InitializeSelectTestNoAsync()
-        {
-            try
-            {
-                selectTestNo.Items.Clear();
-                testNoList = await gaugeBlockMethodBLL.GetTestNoListAsync();
-            }
-            catch (Exception error)
-            {
-                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
-            }
-            // select testNo
-            var result = testNoList.Select(t => t.TestNo).Distinct().OrderDescending().ToList();
-            if (result != null && result.Count != 0)
-            {
-                selectTestNo.Items.AddRange([.. result]);
-            }
-            else
-            {
-                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.ONLY_TEST_NO, AntdUI.TAlignFrom.BR, Font);
-                selectTestNo.Items.AddRange(["test"]);
-            }
-        }
+
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image));
@@ -487,7 +462,7 @@ namespace AI_Assistant_Win.Controls
             inputConfidence.Text = $"{tempGaugeBlockResult.Item.Confidence.ToPercent()}%";
             OutputScaleTexts(tempGaugeBlockResult.Item.CalculateScale);
             inputCalculatedArea.Text = $"{tempGaugeBlockResult.Item.CalculatedArea:F2}{tempGaugeBlockResult.Item.Unit}";
-            inputDiameter.Text = $"{tempGaugeBlockResult.Item.Diameter:F2}{tempGaugeBlockResult.Item.DiameterUnit}";
+            //inputDiameter.Text = $"{tempGaugeBlockResult.Item.Diameter:F2}{tempGaugeBlockResult.Item.DiameterUnit}";
         }
         private void OutputScaleTexts(CalculateScale calculateScale)
         {
@@ -608,24 +583,7 @@ namespace AI_Assistant_Win.Controls
         {
             tempGaugeBlockResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
         }
-        private void SelectTestNo_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
-        {
-            tempGaugeBlockResult.TestNo = selectTestNo.SelectedValue.ToString();
-            // coilNumber
-            var target = testNoList.FirstOrDefault(t => tempGaugeBlockResult.TestNo.Equals(t.TestNo));
-            if (target != null)
-            {
-                inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
-            }
-        }
-        private void InputCoilNumber_TextChanged(object sender, EventArgs e)
-        {
-            tempGaugeBlockResult.CoilNumber = inputCoilNumber.Text;
-        }
-        private void SelectPosition_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
-        {
-            tempGaugeBlockResult.Position = selectPosition.SelectedValue.ToString();
-        }
+
         private void InputAnalyst_TextChanged(object sender, EventArgs e)
         {
             tempGaugeBlockResult.Analyst = inputAnalyst.Text;

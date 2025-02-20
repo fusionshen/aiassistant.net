@@ -452,10 +452,10 @@ namespace AI_Assistant_Win.Controls
             // 
             // inputAnalyst
             // 
-            inputAnalyst.Enabled = false;
             inputAnalyst.Font = new Font("Microsoft YaHei UI", 10F);
             inputAnalyst.Location = new Point(96, -1);
             inputAnalyst.Name = "inputAnalyst";
+            inputAnalyst.ReadOnly = true;
             inputAnalyst.Size = new Size(243, 34);
             inputAnalyst.TabIndex = 17;
             inputAnalyst.TextChanged += InputAnalyst_TextChanged;

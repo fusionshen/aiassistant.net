@@ -158,7 +158,7 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_SET_SCALE => Localization.Get("Please set the scale for methods.", "请设置比例尺用于计算真实值。");
         public static string CIRCULAR_POSITION_TITLE => Localization.Get("Position:", "部位：");
         public static string CIRCULAR_POSITION(CircularPositionKind position) => Localization.Get(position.ToString(), EnumHelper.GetDescriptionOfEnum<CircularPositionKind>(position.ToString()));
-        public static string CIRCULAR_AREA_TITLE => Localization.Get(",Area:", "，面积：");
+        public static string AREA_TITLE => Localization.Get(",Area:", "，面积：");
         public static string CIRCULAR_DIAMETER_TITLE => Localization.Get(",Diameter:", "，直径：");
         public static string AREA_OF_PIXELS => Localization.Get("area of pixels", "像素面积");
         public static string SQUARE_MILLIMETER => Localization.Get("sq mm", "平方毫米");
