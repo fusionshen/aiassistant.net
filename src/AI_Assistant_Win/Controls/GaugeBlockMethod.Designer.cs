@@ -80,17 +80,17 @@ namespace AI_Assistant_Win.Controls
             labelWorkGroup = new AntdUI.Label();
             divider2 = new AntdUI.Divider();
             panel15 = new AntdUI.Panel();
-            input3 = new AntdUI.Input();
+            inputCalculatSides = new AntdUI.Input();
             label3 = new AntdUI.Label();
             panel14 = new AntdUI.Panel();
             input2 = new AntdUI.Input();
             label2 = new AntdUI.Label();
             panel13 = new AntdUI.Panel();
-            input1 = new AntdUI.Input();
-            label1 = new AntdUI.Label();
+            inputSidePixels = new AntdUI.Input();
+            labelSidePixels = new AntdUI.Label();
             panel11 = new AntdUI.Panel();
-            inputDiameter = new AntdUI.Input();
-            labelDiameter = new AntdUI.Label();
+            inputVertexPositions = new AntdUI.Input();
+            labelVertexPosition = new AntdUI.Label();
             panel10 = new AntdUI.Panel();
             inputCalculatedArea = new AntdUI.Input();
             labelCalculatedArea = new AntdUI.Label();
@@ -788,7 +788,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel15.Back = Color.Transparent;
             panel15.BackColor = Color.Transparent;
-            panel15.Controls.Add(input3);
+            panel15.Controls.Add(inputCalculatSides);
             panel15.Controls.Add(label3);
             panel15.Dock = DockStyle.Top;
             panel15.Location = new Point(9, 303);
@@ -797,15 +797,15 @@ namespace AI_Assistant_Win.Controls
             panel15.Size = new Size(342, 33);
             panel15.TabIndex = 30;
             // 
-            // input3
+            // inputCalculatSides
             // 
-            input3.Dock = DockStyle.Fill;
-            input3.Font = new Font("Microsoft YaHei UI", 10F);
-            input3.Location = new Point(90, 0);
-            input3.Name = "input3";
-            input3.ReadOnly = true;
-            input3.Size = new Size(252, 33);
-            input3.TabIndex = 17;
+            inputCalculatSides.Dock = DockStyle.Fill;
+            inputCalculatSides.Font = new Font("Microsoft YaHei UI", 10F);
+            inputCalculatSides.Location = new Point(90, 0);
+            inputCalculatSides.Name = "inputCalculatSides";
+            inputCalculatSides.ReadOnly = true;
+            inputCalculatSides.Size = new Size(252, 33);
+            inputCalculatSides.TabIndex = 17;
             // 
             // label3
             // 
@@ -860,8 +860,8 @@ namespace AI_Assistant_Win.Controls
             // 
             panel13.Back = Color.Transparent;
             panel13.BackColor = Color.Transparent;
-            panel13.Controls.Add(input1);
-            panel13.Controls.Add(label1);
+            panel13.Controls.Add(inputSidePixels);
+            panel13.Controls.Add(labelSidePixels);
             panel13.Dock = DockStyle.Top;
             panel13.Location = new Point(9, 237);
             panel13.Name = "panel13";
@@ -869,35 +869,35 @@ namespace AI_Assistant_Win.Controls
             panel13.Size = new Size(342, 33);
             panel13.TabIndex = 28;
             // 
-            // input1
+            // inputSidePixels
             // 
-            input1.Dock = DockStyle.Fill;
-            input1.Font = new Font("Microsoft YaHei UI", 10F);
-            input1.Location = new Point(90, 0);
-            input1.Name = "input1";
-            input1.ReadOnly = true;
-            input1.Size = new Size(252, 33);
-            input1.TabIndex = 17;
+            inputSidePixels.Dock = DockStyle.Fill;
+            inputSidePixels.Font = new Font("Microsoft YaHei UI", 10F);
+            inputSidePixels.Location = new Point(90, 0);
+            inputSidePixels.Name = "inputSidePixels";
+            inputSidePixels.ReadOnly = true;
+            inputSidePixels.Size = new Size(252, 33);
+            inputSidePixels.TabIndex = 17;
             // 
-            // label1
+            // labelSidePixels
             // 
-            label1.BackColor = Color.Transparent;
-            label1.Dock = DockStyle.Left;
-            label1.Font = new Font("Microsoft YaHei UI", 10F);
-            label1.LocalizationText = "PixelSides:";
-            label1.Location = new Point(0, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(90, 33);
-            label1.TabIndex = 16;
-            label1.Text = "像素边长：";
-            label1.TextAlign = ContentAlignment.MiddleRight;
+            labelSidePixels.BackColor = Color.Transparent;
+            labelSidePixels.Dock = DockStyle.Left;
+            labelSidePixels.Font = new Font("Microsoft YaHei UI", 10F);
+            labelSidePixels.LocalizationText = "PixelSides:";
+            labelSidePixels.Location = new Point(0, 0);
+            labelSidePixels.Name = "labelSidePixels";
+            labelSidePixels.Size = new Size(90, 33);
+            labelSidePixels.TabIndex = 16;
+            labelSidePixels.Text = "像素边长：";
+            labelSidePixels.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel11
             // 
             panel11.Back = Color.Transparent;
             panel11.BackColor = Color.Transparent;
-            panel11.Controls.Add(inputDiameter);
-            panel11.Controls.Add(labelDiameter);
+            panel11.Controls.Add(inputVertexPositions);
+            panel11.Controls.Add(labelVertexPosition);
             panel11.Dock = DockStyle.Top;
             panel11.Location = new Point(9, 204);
             panel11.Name = "panel11";
@@ -905,28 +905,28 @@ namespace AI_Assistant_Win.Controls
             panel11.Size = new Size(342, 33);
             panel11.TabIndex = 18;
             // 
-            // inputDiameter
+            // inputVertexPositions
             // 
-            inputDiameter.Dock = DockStyle.Fill;
-            inputDiameter.Font = new Font("Microsoft YaHei UI", 10F);
-            inputDiameter.Location = new Point(90, 0);
-            inputDiameter.Name = "inputDiameter";
-            inputDiameter.ReadOnly = true;
-            inputDiameter.Size = new Size(252, 33);
-            inputDiameter.TabIndex = 17;
+            inputVertexPositions.Dock = DockStyle.Fill;
+            inputVertexPositions.Font = new Font("Microsoft YaHei UI", 10F);
+            inputVertexPositions.Location = new Point(90, 0);
+            inputVertexPositions.Name = "inputVertexPositions";
+            inputVertexPositions.ReadOnly = true;
+            inputVertexPositions.Size = new Size(252, 33);
+            inputVertexPositions.TabIndex = 17;
             // 
-            // labelDiameter
+            // labelVertexPosition
             // 
-            labelDiameter.BackColor = Color.Transparent;
-            labelDiameter.Dock = DockStyle.Left;
-            labelDiameter.Font = new Font("Microsoft YaHei UI", 10F);
-            labelDiameter.LocalizationText = "VertexPos:";
-            labelDiameter.Location = new Point(0, 0);
-            labelDiameter.Name = "labelDiameter";
-            labelDiameter.Size = new Size(90, 33);
-            labelDiameter.TabIndex = 16;
-            labelDiameter.Text = "顶点坐标：";
-            labelDiameter.TextAlign = ContentAlignment.MiddleRight;
+            labelVertexPosition.BackColor = Color.Transparent;
+            labelVertexPosition.Dock = DockStyle.Left;
+            labelVertexPosition.Font = new Font("Microsoft YaHei UI", 10F);
+            labelVertexPosition.LocalizationText = "VertexPos:";
+            labelVertexPosition.Location = new Point(0, 0);
+            labelVertexPosition.Name = "labelVertexPosition";
+            labelVertexPosition.Size = new Size(90, 33);
+            labelVertexPosition.TabIndex = 16;
+            labelVertexPosition.Text = "顶点坐标：";
+            labelVertexPosition.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel10
             // 
@@ -1197,8 +1197,8 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Button button2;
         private AntdUI.Label labelAreaOfPixels;
         private AntdUI.Input inputAreaOfPixels;
-        private AntdUI.Input inputDiameter;
-        private AntdUI.Label labelDiameter;
+        private AntdUI.Input inputVertexPositions;
+        private AntdUI.Label labelVertexPosition;
         private AntdUI.Input inputCalculatedArea;
         private AntdUI.Label labelCalculatedArea;
         private AntdUI.Input inputScale;
@@ -1230,13 +1230,13 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Input inputGraduations;
         private AntdUI.Label labelGraduations;
         private AntdUI.Panel panel13;
-        private AntdUI.Input input1;
-        private AntdUI.Label label1;
+        private AntdUI.Input inputSidePixels;
+        private AntdUI.Label labelSidePixels;
         private AntdUI.Panel panel14;
         private AntdUI.Input input2;
         private AntdUI.Label label2;
         private AntdUI.Panel panel15;
-        private AntdUI.Input input3;
+        private AntdUI.Input inputCalculatSides;
         private AntdUI.Label label3;
         private AntdUI.Panel panel16;
         private AntdUI.Select select1;

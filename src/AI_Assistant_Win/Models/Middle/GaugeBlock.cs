@@ -1,5 +1,7 @@
 ﻿using AI_Assistant_Win.Utils;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AI_Assistant_Win.Models.Middle
 {
@@ -30,16 +32,46 @@ namespace AI_Assistant_Win.Models.Middle
             Prediction.Quadrilateral.TopRight, Prediction.Quadrilateral.BottomRight, Prediction.Quadrilateral.BottomLeft);
         }
         /// <summary>
+        /// 点坐标展示
+        /// </summary>
+        public string PointText
+        {
+            get => $"({Prediction.Quadrilateral.TopLeft.X},{Prediction.Quadrilateral.TopLeft.Y})({Prediction.Quadrilateral.TopRight.X},{Prediction.Quadrilateral.TopRight.Y})({Prediction.Quadrilateral.BottomRight.X},{Prediction.Quadrilateral.BottomRight.Y})({Prediction.Quadrilateral.BottomLeft.X},{Prediction.Quadrilateral.BottomLeft.Y})";
+        }
+        /// <summary>
+        /// pixels of each side
+        /// </summary>
+        public Dictionary<string, float> SidePixels
+        {
+            get => new()
+            {
+                {"AB", ShapeHelper.CalculateDistance(Prediction.Quadrilateral.TopLeft, Prediction.Quadrilateral.TopRight)},
+                {"BC", ShapeHelper.CalculateDistance(Prediction.Quadrilateral.TopRight, Prediction.Quadrilateral.BottomRight)},
+                {"CD", ShapeHelper.CalculateDistance(Prediction.Quadrilateral.BottomRight, Prediction.Quadrilateral.BottomLeft)},
+                {"DA", ShapeHelper.CalculateDistance(Prediction.Quadrilateral.BottomLeft, Prediction.Quadrilateral.TopLeft)}
+            };
+        }
+
+        public Dictionary<string, float> CalculateSideLengths
+        {
+            get => CalculateScale == null ? SidePixels :  SidePixels.ToDictionary(pair => pair.Key, pair => pair.Value * CalculateScale.Value / 100);
+        }
+        /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>
         public string Description
         {
-            get => $"{LocalizeHelper.AREA_TITLE}{CalculatedArea:F2}{Unit}";
+            get => $"{LocalizeHelper.AREA_TITLE}{CalculatedArea:F2}{AreaUnit}";
         }
 
-        public string Unit
+        public string AreaUnit
         {
             get => CalculateScale == null ? LocalizeHelper.AREA_OF_PIXELS : LocalizeHelper.SQUARE_MILLIMETER;
+        }
+
+        public string LengthUnit
+        {
+            get => CalculateScale == null ? string.Empty : LocalizeHelper.MILLIMETER;
         }
 
         /// <summary>

@@ -461,8 +461,10 @@ namespace AI_Assistant_Win.Controls
             inputAreaOfPixels.Text = $"{tempGaugeBlockResult.Item.AreaOfPixels}{LocalizeHelper.AREA_OF_PIXELS}";
             inputConfidence.Text = $"{tempGaugeBlockResult.Item.Confidence.ToPercent()}%";
             OutputScaleTexts(tempGaugeBlockResult.Item.CalculateScale);
-            inputCalculatedArea.Text = $"{tempGaugeBlockResult.Item.CalculatedArea:F2}{tempGaugeBlockResult.Item.Unit}";
-            //inputDiameter.Text = $"{tempGaugeBlockResult.Item.Diameter:F2}{tempGaugeBlockResult.Item.DiameterUnit}";
+            inputCalculatedArea.Text = $"{tempGaugeBlockResult.Item.CalculatedArea:F2}{tempGaugeBlockResult.Item.AreaUnit}";
+            inputVertexPositions.Text = tempGaugeBlockResult.Item.PointText;
+            inputSidePixels.Text = string.Join(" ", tempGaugeBlockResult.Item.SidePixels.Select(t => $"{t.Key}={t.Value:F2}"));
+            inputCalculatSides.Text= string.Join(" ", tempGaugeBlockResult.Item.CalculateSideLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
         }
         private void OutputScaleTexts(CalculateScale calculateScale)
         {
@@ -489,7 +491,7 @@ namespace AI_Assistant_Win.Controls
             inputScale.Text = string.Empty;
             inputGraduations.Text = string.Empty;
             inputCalculatedArea.Text = string.Empty;
-            inputDiameter.Text = string.Empty;
+            inputVertexPositions.Text = string.Empty;
         }
         private void BtnSave_Click(object sender, EventArgs e)
         {
