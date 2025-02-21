@@ -50,7 +50,7 @@ namespace AI_Assistant_Win
                 inputPixels.Text = settings.Pixels;
                 inputArea.Text = settings.MeasuredValue;
                 inputTop.Text = settings.TopGraduations;
-                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{currentScale.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
+                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RESULT_TITLE}{currentScale.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
             }
             #endregion
             #region at that time
@@ -62,7 +62,7 @@ namespace AI_Assistant_Win
                 inputPixelsThatTime.Text = settings.Pixels;
                 inputAreaThatTime.Text = settings.MeasuredValue;
                 inputTopThatTime.Text = settings.TopGraduations;
-                labelRatioThatTime.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
+                labelRatioThatTime.Text = $"{LocalizeHelper.SCALE_CACULATED_RESULT_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
             }
             #endregion
             // 调整表单大小以适应内容面板
@@ -86,7 +86,7 @@ namespace AI_Assistant_Win
             try
             {
                 var result = CaculateRatio();
-                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{result:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
+                labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RESULT_TITLE}{result:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
             }
             catch (Exception)
             {
@@ -113,9 +113,14 @@ namespace AI_Assistant_Win
                 {
                     Key = "CircularArea",
                     Value = CaculateRatio(),
-                    Unit = LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT,
+                    Unit = LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT,
                     ImagePath = imagePath,
-                    Settings = JsonConvert.SerializeObject(new CircularAreaScaleItem { Pixels = inputPixels.Text, MeasuredValue = inputArea.Text, TopGraduations = inputTop.Text }),
+                    Settings = JsonConvert.SerializeObject(new CircularAreaScaleItem
+                    {
+                        Pixels = inputPixels.Text,
+                        MeasuredValue = inputArea.Text,
+                        TopGraduations = inputTop.Text
+                    }),
                     Creator = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}",
                     CreateTime = DateTime.Now
                 };

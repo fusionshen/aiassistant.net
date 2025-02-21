@@ -147,11 +147,16 @@ namespace AI_Assistant_Win.Utils
         #endregion
         #region scale
         public static string BLACKNESS_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Blackness-width Scale Setting", "黑度宽度比例尺设置");
-        public static string SCALE_CACULATED_RATIO_TITLE => Localization.Get("The Result:", "计算结果：");
+        public static string SCALE_CACULATED_RESULT_TITLE => Localization.Get("The Result:", "计算结果：");
+        public static string LENGTH_SCALE_RESULT_TITLE => Localization.Get("Length Scale:", "长度比例尺：");
+        public static string LENGTH_SCALE_CACULATED_RATIO_UNIT => Localization.Get("mm/pixel size", "毫米/像素边长");
+        public static string AREA_SCALE_RESULT_TITLE => Localization.Get("Area Scale:", "面积比例尺：");
+        public static string AREA_SCALE_CACULATED_RATIO_UNIT => Localization.Get("sq mm/pixel area", "平方毫米/像素面积");
+        public static string CALCULATED_AREA_TITLE => Localization.Get("Calculated Scale:", "测算面积：");
         public static string BLACKNESS_SCALE_CACULATED_RATIO_UNIT => Localization.Get("mm/100Pixels", "毫米/100像素");
         public static string SCALE_INPUT_ERROR => Localization.Get("Invalid Input", "非法输入");
-        public static string CURRENT_SCALE_TITLE => Localization.Get("Current", "当前比例尺");
-        public static string SCALE_TITLE_AT_THAT_TIME => Localization.Get("At That Time", "当时比例尺");
+        public static string CURRENT_SCALE_TITLE => Localization.Get("Current", "当前");
+        public static string SCALE_TITLE_AT_THAT_TIME => Localization.Get("At That Time", "当时");
         public static string SCALE_LOAD_SUCCESSED => Localization.Get("Load Scale Successed:", "加载比例尺成功：");
         public static string NO_NEED_TO_SAVE_THE_SAME_SCALE => Localization.Get("The scale has not changed, so there is no need to save it again.", "比例尺没有变化，无需再次保存。");
         public static string PLEASE_SET_CIRCULAR_AREA_SCALE => Localization.Get("Please set the scale for calculating the correct area of circular.", "请设置比例尺用于计算正确的圆形检测面积。");

@@ -88,11 +88,12 @@ namespace AI_Assistant_Win.Controls
             var text = string.Empty;
             switch (t.Key)
             {
+                // TODO: show MPE Precision、Accuracy、Uncertainty，need many data
                 case "current":
-                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{t.Value.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{t.Value.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}]";
                     break;
                 case "atThatTime":
-                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}]";
                     break;
                 default:
                     break;

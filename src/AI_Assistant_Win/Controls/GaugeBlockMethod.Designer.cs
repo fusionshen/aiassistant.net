@@ -135,7 +135,7 @@ namespace AI_Assistant_Win.Controls
             // 
             // header1
             // 
-            header1.Description = "本方法适用于检测中心AI智能工作台关于[黑度检测]实际宽度和[镀锌圆片面积检测]实际面积的比例尺设置。通过对标准量块长度手动录入确定比例，放置不同长度量块确定其精度。";
+            header1.Description = "本方法适用于检测中心AI智能工作台关于[黑度检测]实际宽度和[镀锌圆片面积检测]实际面积的比例尺设置。通过对标准量块长度手动录入确定比例，放置不同长度量块确定其准确度。";
             header1.Dock = DockStyle.Top;
             header1.Font = new Font("Microsoft YaHei UI", 12F);
             header1.LocalizationDescription = resources.GetString("header1.LocalizationDescription");
@@ -467,12 +467,12 @@ namespace AI_Assistant_Win.Controls
             label6.Dock = DockStyle.Left;
             label6.Enabled = false;
             label6.Font = new Font("Microsoft YaHei UI", 10F);
-            label6.LocalizationText = "AreaPrecision:";
+            label6.LocalizationText = "AreaAccuracy:";
             label6.Location = new Point(0, 0);
             label6.Name = "label6";
             label6.Size = new Size(90, 33);
             label6.TabIndex = 16;
-            label6.Text = "面积精度：";
+            label6.Text = "面积准确度：";
             label6.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel19
@@ -505,12 +505,12 @@ namespace AI_Assistant_Win.Controls
             label5.Dock = DockStyle.Left;
             label5.Enabled = false;
             label5.Font = new Font("Microsoft YaHei UI", 10F);
-            label5.LocalizationText = "LenPrecision:";
+            label5.LocalizationText = "LenAccuracy:";
             label5.Location = new Point(0, 0);
             label5.Name = "label5";
             label5.Size = new Size(90, 33);
             label5.TabIndex = 16;
-            label5.Text = "长度精度：";
+            label5.Text = "长度准确度：";
             label5.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel16

@@ -1,14 +1,12 @@
 ﻿using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
-using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
 using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace AI_Assistant_Win.Business
 {
@@ -252,12 +250,6 @@ namespace AI_Assistant_Win.Business
                 }
             }
             return target;
-        }
-
-        public async Task<List<GetTestNoListResponse>> GetTestNoListAsync()
-        {
-            var list = await apiBLL.GetTestNoListAsync();
-            return list;
         }
 
         public CalculateScale GetCurrentScale()
