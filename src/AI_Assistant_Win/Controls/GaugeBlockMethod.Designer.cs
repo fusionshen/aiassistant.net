@@ -54,15 +54,15 @@ namespace AI_Assistant_Win.Controls
             flowLayoutPanel1 = new FlowLayoutPanel();
             panel6 = new AntdUI.Panel();
             panel20 = new AntdUI.Panel();
-            input5 = new AntdUI.Input();
-            label6 = new AntdUI.Label();
+            inputAreaAccuracy = new AntdUI.Input();
+            labelAreaAccuracy = new AntdUI.Label();
             panel19 = new AntdUI.Panel();
-            input4 = new AntdUI.Input();
-            label5 = new AntdUI.Label();
+            inputLenghtAccuracy = new AntdUI.Input();
+            labelLenghtAccuracy = new AntdUI.Label();
             panel16 = new AntdUI.Panel();
             label7 = new AntdUI.Label();
-            input6 = new AntdUI.Input();
-            select1 = new AntdUI.Select();
+            inputEdgeLength = new AntdUI.Input();
+            selectEdge = new AntdUI.Select();
             label4 = new AntdUI.Label();
             panel17 = new AntdUI.Panel();
             btnNext = new AntdUI.Button();
@@ -80,13 +80,13 @@ namespace AI_Assistant_Win.Controls
             labelWorkGroup = new AntdUI.Label();
             divider2 = new AntdUI.Divider();
             panel15 = new AntdUI.Panel();
-            inputCalculatSides = new AntdUI.Input();
+            inputCalculatdEdges = new AntdUI.Input();
             label3 = new AntdUI.Label();
             panel14 = new AntdUI.Panel();
-            input2 = new AntdUI.Input();
-            label2 = new AntdUI.Label();
+            inputLengthScale = new AntdUI.Input();
+            labelLengthScale = new AntdUI.Label();
             panel13 = new AntdUI.Panel();
-            inputSidePixels = new AntdUI.Input();
+            inputEdgePixels = new AntdUI.Input();
             labelSidePixels = new AntdUI.Label();
             panel11 = new AntdUI.Panel();
             inputVertexPositions = new AntdUI.Input();
@@ -95,8 +95,8 @@ namespace AI_Assistant_Win.Controls
             inputCalculatedArea = new AntdUI.Input();
             labelCalculatedArea = new AntdUI.Label();
             panel9 = new AntdUI.Panel();
-            inputScale = new AntdUI.Input();
-            labelScale = new AntdUI.Label();
+            inputAreaScale = new AntdUI.Input();
+            labelAreaScale = new AntdUI.Label();
             panel3 = new AntdUI.Panel();
             inputAreaOfPixels = new AntdUI.Input();
             labelAreaOfPixels = new AntdUI.Label();
@@ -104,7 +104,7 @@ namespace AI_Assistant_Win.Controls
             inputConfidence = new AntdUI.Input();
             labelConfidence = new AntdUI.Label();
             panel12 = new AntdUI.Panel();
-            inputGraduations = new AntdUI.Input();
+            inputGrade = new AntdUI.Input();
             labelGraduations = new AntdUI.Label();
             labelResultJudgeArea = new AntdUI.Label();
             areaMethod_OpenFileDialog = new OpenFileDialog();
@@ -441,8 +441,8 @@ namespace AI_Assistant_Win.Controls
             // 
             panel20.Back = Color.Transparent;
             panel20.BackColor = Color.Transparent;
-            panel20.Controls.Add(input5);
-            panel20.Controls.Add(label6);
+            panel20.Controls.Add(inputAreaAccuracy);
+            panel20.Controls.Add(labelAreaAccuracy);
             panel20.Dock = DockStyle.Top;
             panel20.Location = new Point(9, 502);
             panel20.Name = "panel20";
@@ -450,37 +450,37 @@ namespace AI_Assistant_Win.Controls
             panel20.Size = new Size(342, 33);
             panel20.TabIndex = 33;
             // 
-            // input5
+            // inputAreaAccuracy
             // 
-            input5.Font = new Font("Microsoft YaHei UI", 10F);
-            input5.LocalizationPlaceholderText = "Auto Calculate";
-            input5.Location = new Point(96, -1);
-            input5.Name = "input5";
-            input5.PlaceholderText = "自动计算";
-            input5.ReadOnly = true;
-            input5.Size = new Size(243, 34);
-            input5.TabIndex = 17;
+            inputAreaAccuracy.Font = new Font("Microsoft YaHei UI", 10F);
+            inputAreaAccuracy.LocalizationPlaceholderText = "Auto Calculate";
+            inputAreaAccuracy.Location = new Point(96, -1);
+            inputAreaAccuracy.Name = "inputAreaAccuracy";
+            inputAreaAccuracy.PlaceholderText = "自动计算";
+            inputAreaAccuracy.ReadOnly = true;
+            inputAreaAccuracy.Size = new Size(243, 34);
+            inputAreaAccuracy.TabIndex = 17;
             // 
-            // label6
+            // labelAreaAccuracy
             // 
-            label6.BackColor = Color.Transparent;
-            label6.Dock = DockStyle.Left;
-            label6.Enabled = false;
-            label6.Font = new Font("Microsoft YaHei UI", 10F);
-            label6.LocalizationText = "AreaAccuracy:";
-            label6.Location = new Point(0, 0);
-            label6.Name = "label6";
-            label6.Size = new Size(90, 33);
-            label6.TabIndex = 16;
-            label6.Text = "面积准确度：";
-            label6.TextAlign = ContentAlignment.MiddleRight;
+            labelAreaAccuracy.BackColor = Color.Transparent;
+            labelAreaAccuracy.Dock = DockStyle.Left;
+            labelAreaAccuracy.Enabled = false;
+            labelAreaAccuracy.Font = new Font("Microsoft YaHei UI", 10F);
+            labelAreaAccuracy.LocalizationText = "AreaAccuracy:";
+            labelAreaAccuracy.Location = new Point(0, 0);
+            labelAreaAccuracy.Name = "labelAreaAccuracy";
+            labelAreaAccuracy.Size = new Size(90, 33);
+            labelAreaAccuracy.TabIndex = 16;
+            labelAreaAccuracy.Text = "面积准确度：";
+            labelAreaAccuracy.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel19
             // 
             panel19.Back = Color.Transparent;
             panel19.BackColor = Color.Transparent;
-            panel19.Controls.Add(input4);
-            panel19.Controls.Add(label5);
+            panel19.Controls.Add(inputLenghtAccuracy);
+            panel19.Controls.Add(labelLenghtAccuracy);
             panel19.Dock = DockStyle.Top;
             panel19.Location = new Point(9, 469);
             panel19.Name = "panel19";
@@ -488,38 +488,38 @@ namespace AI_Assistant_Win.Controls
             panel19.Size = new Size(342, 33);
             panel19.TabIndex = 32;
             // 
-            // input4
+            // inputLenghtAccuracy
             // 
-            input4.Font = new Font("Microsoft YaHei UI", 10F);
-            input4.LocalizationPlaceholderText = "Auto Calculate";
-            input4.Location = new Point(96, -1);
-            input4.Name = "input4";
-            input4.PlaceholderText = "自动计算";
-            input4.ReadOnly = true;
-            input4.Size = new Size(243, 34);
-            input4.TabIndex = 17;
+            inputLenghtAccuracy.Font = new Font("Microsoft YaHei UI", 10F);
+            inputLenghtAccuracy.LocalizationPlaceholderText = "Auto Calculate";
+            inputLenghtAccuracy.Location = new Point(96, -1);
+            inputLenghtAccuracy.Name = "inputLenghtAccuracy";
+            inputLenghtAccuracy.PlaceholderText = "自动计算";
+            inputLenghtAccuracy.ReadOnly = true;
+            inputLenghtAccuracy.Size = new Size(243, 34);
+            inputLenghtAccuracy.TabIndex = 17;
             // 
-            // label5
+            // labelLenghtAccuracy
             // 
-            label5.BackColor = Color.Transparent;
-            label5.Dock = DockStyle.Left;
-            label5.Enabled = false;
-            label5.Font = new Font("Microsoft YaHei UI", 10F);
-            label5.LocalizationText = "LenAccuracy:";
-            label5.Location = new Point(0, 0);
-            label5.Name = "label5";
-            label5.Size = new Size(90, 33);
-            label5.TabIndex = 16;
-            label5.Text = "长度准确度：";
-            label5.TextAlign = ContentAlignment.MiddleRight;
+            labelLenghtAccuracy.BackColor = Color.Transparent;
+            labelLenghtAccuracy.Dock = DockStyle.Left;
+            labelLenghtAccuracy.Enabled = false;
+            labelLenghtAccuracy.Font = new Font("Microsoft YaHei UI", 10F);
+            labelLenghtAccuracy.LocalizationText = "LenAccuracy:";
+            labelLenghtAccuracy.Location = new Point(0, 0);
+            labelLenghtAccuracy.Name = "labelLenghtAccuracy";
+            labelLenghtAccuracy.Size = new Size(90, 33);
+            labelLenghtAccuracy.TabIndex = 16;
+            labelLenghtAccuracy.Text = "长度准确度：";
+            labelLenghtAccuracy.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel16
             // 
             panel16.Back = Color.Transparent;
             panel16.BackColor = Color.Transparent;
             panel16.Controls.Add(label7);
-            panel16.Controls.Add(input6);
-            panel16.Controls.Add(select1);
+            panel16.Controls.Add(inputEdgeLength);
+            panel16.Controls.Add(selectEdge);
             panel16.Controls.Add(label4);
             panel16.Dock = DockStyle.Top;
             panel16.Location = new Point(9, 436);
@@ -541,32 +541,34 @@ namespace AI_Assistant_Win.Controls
             label7.Text = "毫米";
             label7.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // input6
+            // inputEdgeLength
             // 
-            input6.Dock = DockStyle.Left;
-            input6.Font = new Font("Microsoft YaHei UI", 10F);
-            input6.LocalizationPlaceholderText = "input the length";
-            input6.Location = new Point(200, 0);
-            input6.Name = "input6";
-            input6.PlaceholderText = "请输入边长";
-            input6.Size = new Size(105, 33);
-            input6.SuffixText = "";
-            input6.TabIndex = 18;
+            inputEdgeLength.Dock = DockStyle.Left;
+            inputEdgeLength.Font = new Font("Microsoft YaHei UI", 10F);
+            inputEdgeLength.LocalizationPlaceholderText = "input the length";
+            inputEdgeLength.Location = new Point(200, 0);
+            inputEdgeLength.Name = "inputEdgeLength";
+            inputEdgeLength.PlaceholderText = "请输入边长";
+            inputEdgeLength.Size = new Size(105, 33);
+            inputEdgeLength.SuffixText = "";
+            inputEdgeLength.TabIndex = 18;
+            inputEdgeLength.TextChanged += InputEdgeLength_TextChanged;
             // 
-            // select1
+            // selectEdge
             // 
-            select1.AllowClear = true;
-            select1.Dock = DockStyle.Left;
-            select1.DropDownArrow = true;
-            select1.Font = new Font("Microsoft YaHei UI", 10F);
-            select1.Items.AddRange(new object[] { "AB", "BC", "CD", "DA" });
-            select1.LocalizationPlaceholderText = "Select a side";
-            select1.Location = new Point(90, 0);
-            select1.Name = "select1";
-            select1.Padding = new Padding(5, 0, 0, 0);
-            select1.PlaceholderText = "请选择边";
-            select1.Size = new Size(110, 33);
-            select1.TabIndex = 17;
+            selectEdge.AllowClear = true;
+            selectEdge.Dock = DockStyle.Left;
+            selectEdge.DropDownArrow = true;
+            selectEdge.Font = new Font("Microsoft YaHei UI", 10F);
+            selectEdge.Items.AddRange(new object[] { "AB", "BC", "CD", "DA" });
+            selectEdge.LocalizationPlaceholderText = "Select a edge";
+            selectEdge.Location = new Point(90, 0);
+            selectEdge.Name = "selectEdge";
+            selectEdge.Padding = new Padding(5, 0, 0, 0);
+            selectEdge.PlaceholderText = "请选择边";
+            selectEdge.Size = new Size(110, 33);
+            selectEdge.TabIndex = 17;
+            selectEdge.SelectedIndexChanged += SelectEdge_SelectedIndexChanged;
             // 
             // label4
             // 
@@ -788,7 +790,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel15.Back = Color.Transparent;
             panel15.BackColor = Color.Transparent;
-            panel15.Controls.Add(inputCalculatSides);
+            panel15.Controls.Add(inputCalculatdEdges);
             panel15.Controls.Add(label3);
             panel15.Dock = DockStyle.Top;
             panel15.Location = new Point(9, 303);
@@ -797,15 +799,15 @@ namespace AI_Assistant_Win.Controls
             panel15.Size = new Size(342, 33);
             panel15.TabIndex = 30;
             // 
-            // inputCalculatSides
+            // inputCalculatdEdges
             // 
-            inputCalculatSides.Dock = DockStyle.Fill;
-            inputCalculatSides.Font = new Font("Microsoft YaHei UI", 10F);
-            inputCalculatSides.Location = new Point(90, 0);
-            inputCalculatSides.Name = "inputCalculatSides";
-            inputCalculatSides.ReadOnly = true;
-            inputCalculatSides.Size = new Size(252, 33);
-            inputCalculatSides.TabIndex = 17;
+            inputCalculatdEdges.Dock = DockStyle.Fill;
+            inputCalculatdEdges.Font = new Font("Microsoft YaHei UI", 10F);
+            inputCalculatdEdges.Location = new Point(90, 0);
+            inputCalculatdEdges.Name = "inputCalculatdEdges";
+            inputCalculatdEdges.ReadOnly = true;
+            inputCalculatdEdges.Size = new Size(252, 33);
+            inputCalculatdEdges.TabIndex = 17;
             // 
             // label3
             // 
@@ -824,8 +826,8 @@ namespace AI_Assistant_Win.Controls
             // 
             panel14.Back = Color.Transparent;
             panel14.BackColor = Color.Transparent;
-            panel14.Controls.Add(input2);
-            panel14.Controls.Add(label2);
+            panel14.Controls.Add(inputLengthScale);
+            panel14.Controls.Add(labelLengthScale);
             panel14.Dock = DockStyle.Top;
             panel14.Location = new Point(9, 270);
             panel14.Name = "panel14";
@@ -833,34 +835,34 @@ namespace AI_Assistant_Win.Controls
             panel14.Size = new Size(342, 33);
             panel14.TabIndex = 29;
             // 
-            // input2
+            // inputLengthScale
             // 
-            input2.Dock = DockStyle.Fill;
-            input2.Font = new Font("Microsoft YaHei UI", 10F);
-            input2.Location = new Point(90, 0);
-            input2.Name = "input2";
-            input2.ReadOnly = true;
-            input2.Size = new Size(252, 33);
-            input2.TabIndex = 17;
+            inputLengthScale.Dock = DockStyle.Fill;
+            inputLengthScale.Font = new Font("Microsoft YaHei UI", 10F);
+            inputLengthScale.Location = new Point(90, 0);
+            inputLengthScale.Name = "inputLengthScale";
+            inputLengthScale.ReadOnly = true;
+            inputLengthScale.Size = new Size(252, 33);
+            inputLengthScale.TabIndex = 17;
             // 
-            // label2
+            // labelLengthScale
             // 
-            label2.BackColor = Color.Transparent;
-            label2.Dock = DockStyle.Left;
-            label2.Font = new Font("Microsoft YaHei UI", 10F);
-            label2.LocalizationText = "Sides:";
-            label2.Location = new Point(0, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(90, 33);
-            label2.TabIndex = 16;
-            label2.Text = "长度比例尺：";
-            label2.TextAlign = ContentAlignment.MiddleRight;
+            labelLengthScale.BackColor = Color.Transparent;
+            labelLengthScale.Dock = DockStyle.Left;
+            labelLengthScale.Font = new Font("Microsoft YaHei UI", 10F);
+            labelLengthScale.LocalizationText = "Sides:";
+            labelLengthScale.Location = new Point(0, 0);
+            labelLengthScale.Name = "labelLengthScale";
+            labelLengthScale.Size = new Size(90, 33);
+            labelLengthScale.TabIndex = 16;
+            labelLengthScale.Text = "长度比例尺：";
+            labelLengthScale.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel13
             // 
             panel13.Back = Color.Transparent;
             panel13.BackColor = Color.Transparent;
-            panel13.Controls.Add(inputSidePixels);
+            panel13.Controls.Add(inputEdgePixels);
             panel13.Controls.Add(labelSidePixels);
             panel13.Dock = DockStyle.Top;
             panel13.Location = new Point(9, 237);
@@ -869,15 +871,15 @@ namespace AI_Assistant_Win.Controls
             panel13.Size = new Size(342, 33);
             panel13.TabIndex = 28;
             // 
-            // inputSidePixels
+            // inputEdgePixels
             // 
-            inputSidePixels.Dock = DockStyle.Fill;
-            inputSidePixels.Font = new Font("Microsoft YaHei UI", 10F);
-            inputSidePixels.Location = new Point(90, 0);
-            inputSidePixels.Name = "inputSidePixels";
-            inputSidePixels.ReadOnly = true;
-            inputSidePixels.Size = new Size(252, 33);
-            inputSidePixels.TabIndex = 17;
+            inputEdgePixels.Dock = DockStyle.Fill;
+            inputEdgePixels.Font = new Font("Microsoft YaHei UI", 10F);
+            inputEdgePixels.Location = new Point(90, 0);
+            inputEdgePixels.Name = "inputEdgePixels";
+            inputEdgePixels.ReadOnly = true;
+            inputEdgePixels.Size = new Size(252, 33);
+            inputEdgePixels.TabIndex = 17;
             // 
             // labelSidePixels
             // 
@@ -968,8 +970,8 @@ namespace AI_Assistant_Win.Controls
             // 
             panel9.Back = Color.Transparent;
             panel9.BackColor = Color.Transparent;
-            panel9.Controls.Add(inputScale);
-            panel9.Controls.Add(labelScale);
+            panel9.Controls.Add(inputAreaScale);
+            panel9.Controls.Add(labelAreaScale);
             panel9.Dock = DockStyle.Top;
             panel9.Location = new Point(9, 138);
             panel9.Name = "panel9";
@@ -977,28 +979,28 @@ namespace AI_Assistant_Win.Controls
             panel9.Size = new Size(342, 33);
             panel9.TabIndex = 16;
             // 
-            // inputScale
+            // inputAreaScale
             // 
-            inputScale.Dock = DockStyle.Fill;
-            inputScale.Font = new Font("Microsoft YaHei UI", 10F);
-            inputScale.Location = new Point(90, 0);
-            inputScale.Name = "inputScale";
-            inputScale.ReadOnly = true;
-            inputScale.Size = new Size(252, 33);
-            inputScale.TabIndex = 17;
+            inputAreaScale.Dock = DockStyle.Fill;
+            inputAreaScale.Font = new Font("Microsoft YaHei UI", 10F);
+            inputAreaScale.Location = new Point(90, 0);
+            inputAreaScale.Name = "inputAreaScale";
+            inputAreaScale.ReadOnly = true;
+            inputAreaScale.Size = new Size(252, 33);
+            inputAreaScale.TabIndex = 17;
             // 
-            // labelScale
+            // labelAreaScale
             // 
-            labelScale.BackColor = Color.Transparent;
-            labelScale.Dock = DockStyle.Left;
-            labelScale.Font = new Font("Microsoft YaHei UI", 10F);
-            labelScale.LocalizationText = "AeaScale:";
-            labelScale.Location = new Point(0, 0);
-            labelScale.Name = "labelScale";
-            labelScale.Size = new Size(90, 33);
-            labelScale.TabIndex = 16;
-            labelScale.Text = "面积比例尺：";
-            labelScale.TextAlign = ContentAlignment.MiddleRight;
+            labelAreaScale.BackColor = Color.Transparent;
+            labelAreaScale.Dock = DockStyle.Left;
+            labelAreaScale.Font = new Font("Microsoft YaHei UI", 10F);
+            labelAreaScale.LocalizationText = "AeaScale:";
+            labelAreaScale.Location = new Point(0, 0);
+            labelAreaScale.Name = "labelAreaScale";
+            labelAreaScale.Size = new Size(90, 33);
+            labelAreaScale.TabIndex = 16;
+            labelAreaScale.Text = "面积比例尺：";
+            labelAreaScale.TextAlign = ContentAlignment.MiddleRight;
             // 
             // panel3
             // 
@@ -1076,7 +1078,7 @@ namespace AI_Assistant_Win.Controls
             // 
             panel12.Back = Color.Transparent;
             panel12.BackColor = Color.Transparent;
-            panel12.Controls.Add(inputGraduations);
+            panel12.Controls.Add(inputGrade);
             panel12.Controls.Add(labelGraduations);
             panel12.Dock = DockStyle.Top;
             panel12.Location = new Point(9, 39);
@@ -1085,15 +1087,15 @@ namespace AI_Assistant_Win.Controls
             panel12.Size = new Size(342, 33);
             panel12.TabIndex = 16;
             // 
-            // inputGraduations
+            // inputGrade
             // 
-            inputGraduations.Dock = DockStyle.Fill;
-            inputGraduations.Font = new Font("Microsoft YaHei UI", 10F);
-            inputGraduations.Location = new Point(90, 0);
-            inputGraduations.Name = "inputGraduations";
-            inputGraduations.ReadOnly = true;
-            inputGraduations.Size = new Size(252, 33);
-            inputGraduations.TabIndex = 17;
+            inputGrade.Dock = DockStyle.Fill;
+            inputGrade.Font = new Font("Microsoft YaHei UI", 10F);
+            inputGrade.Location = new Point(90, 0);
+            inputGrade.Name = "inputGrade";
+            inputGrade.ReadOnly = true;
+            inputGrade.Size = new Size(252, 33);
+            inputGrade.TabIndex = 17;
             // 
             // labelGraduations
             // 
@@ -1201,8 +1203,8 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Label labelVertexPosition;
         private AntdUI.Input inputCalculatedArea;
         private AntdUI.Label labelCalculatedArea;
-        private AntdUI.Input inputScale;
-        private AntdUI.Label labelScale;
+        private AntdUI.Input inputAreaScale;
+        private AntdUI.Label labelAreaScale;
         private AntdUI.Input inputConfidence;
         private AntdUI.Label labelConfidence;
         private AntdUI.Divider divider2;
@@ -1227,27 +1229,27 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Select selectScale;
         private AntdUI.Checkbox checkboxRedefine;
         private AntdUI.Panel panel12;
-        private AntdUI.Input inputGraduations;
+        private AntdUI.Input inputGrade;
         private AntdUI.Label labelGraduations;
         private AntdUI.Panel panel13;
-        private AntdUI.Input inputSidePixels;
+        private AntdUI.Input inputEdgePixels;
         private AntdUI.Label labelSidePixels;
         private AntdUI.Panel panel14;
-        private AntdUI.Input input2;
-        private AntdUI.Label label2;
+        private AntdUI.Input inputLengthScale;
+        private AntdUI.Label labelLengthScale;
         private AntdUI.Panel panel15;
-        private AntdUI.Input inputCalculatSides;
+        private AntdUI.Input inputCalculatdEdges;
         private AntdUI.Label label3;
         private AntdUI.Panel panel16;
-        private AntdUI.Select select1;
+        private AntdUI.Select selectEdge;
         private AntdUI.Label label4;
         private AntdUI.Panel panel20;
-        private AntdUI.Input input5;
-        private AntdUI.Label label6;
+        private AntdUI.Input inputAreaAccuracy;
+        private AntdUI.Label labelAreaAccuracy;
         private AntdUI.Panel panel19;
-        private AntdUI.Input input4;
-        private AntdUI.Label label5;
-        private AntdUI.Input input6;
+        private AntdUI.Input inputLenghtAccuracy;
+        private AntdUI.Label labelLenghtAccuracy;
+        private AntdUI.Input inputEdgeLength;
         private AntdUI.Label label7;
     }
 }

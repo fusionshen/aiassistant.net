@@ -18,48 +18,6 @@ namespace AI_Assistant_Win.Models.Middle
             }
         }
 
-        private string _testNo = string.Empty;
-        public string TestNo
-        {
-            get { return _testNo; }
-            set
-            {
-                if (string.IsNullOrEmpty(_testNo) || !_testNo.Equals(value))
-                {
-                    _testNo = value;
-                    OnPropertyChanged(nameof(TestNo));
-                }
-            }
-        }
-
-        private string _coilNumber = string.Empty;
-        public string CoilNumber
-        {
-            get { return _coilNumber; }
-            set
-            {
-                if (!_coilNumber.Equals(value))
-                {
-                    _coilNumber = value;
-                    OnPropertyChanged(nameof(CoilNumber));
-                }
-            }
-        }
-
-        private string _postion = string.Empty;
-        public string Position
-        {
-            get { return _postion; }
-            set
-            {
-                if (!_postion.Equals(value))
-                {
-                    _postion = value;
-                    OnPropertyChanged(nameof(Position));
-                }
-            }
-        }
-
         private string _originImagePath = string.Empty;
         public string OriginImagePath
         {
@@ -130,6 +88,34 @@ namespace AI_Assistant_Win.Models.Middle
             }
         }
 
+        private string _inputEdge = string.Empty;
+        public string InputEdge
+        {
+            get { return _inputEdge; }
+            set
+            {
+                if (!_inputEdge.Equals(value))
+                {
+                    _inputEdge = value;
+                    OnPropertyChanged(nameof(InputEdge));
+                }
+            }
+        }
+
+        private string _inputEdgeLength = string.Empty;
+        public string InputEdgeLength
+        {
+            get { return _inputEdgeLength; }
+            set
+            {
+                if (_inputEdgeLength != value)
+                {
+                    _inputEdgeLength = value;
+                    OnPropertyChanged(nameof(InputEdgeLength));
+                }
+            }
+        }
+
         public bool IsUploaded { get; set; } = false;
 
         private CalculateScale calculateScale = new();
@@ -162,13 +148,12 @@ namespace AI_Assistant_Win.Models.Middle
             if (obj.GetType() != this.GetType()) return false;
             var param = (GaugeBlockResult)obj;
             var result = Id.Equals(param.Id) &&
-                !string.IsNullOrEmpty(WorkGroup) && WorkGroup.Equals(param.WorkGroup) &&
                 !string.IsNullOrEmpty(OriginImagePath) && OriginImagePath.Equals(param.OriginImagePath) &&
                 !string.IsNullOrEmpty(RenderImagePath) && RenderImagePath.Equals(param.RenderImagePath) &&
-                !string.IsNullOrEmpty(TestNo) && TestNo.Equals(param.TestNo) &&
-                !string.IsNullOrEmpty(CoilNumber) && CoilNumber.Equals(param.CoilNumber) &&
+                !string.IsNullOrEmpty(WorkGroup) && WorkGroup.Equals(param.WorkGroup) &&
                 !string.IsNullOrEmpty(Analyst) && Analyst.Equals(param.Analyst) &&
-                !string.IsNullOrEmpty(Position) && Position.Equals(param.Position) &&
+                !string.IsNullOrEmpty(InputEdge) && Analyst.Equals(param.InputEdge) &&
+                !string.IsNullOrEmpty(InputEdgeLength) && Analyst.Equals(param.InputEdgeLength) &&
                 Item != null && Item.Equals(param.Item);
             return result;
         }

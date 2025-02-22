@@ -30,19 +30,19 @@
         {
             flowLayoutPanel1 = new AntdUI.In.FlowLayoutPanel();
             panelCurrent = new AntdUI.Panel();
-            label1ResultDescription = new AntdUI.Label();
+            labelResultDescription = new AntdUI.Label();
             panel1 = new AntdUI.Panel();
             inputTopGrade = new AntdUI.Input();
             label9 = new AntdUI.Label();
             tablePanel = new System.Windows.Forms.TableLayoutPanel();
-            textSideDAPixels = new AntdUI.Input();
-            textSideCDPixels = new AntdUI.Input();
-            textSideBCPixels = new AntdUI.Input();
-            textSideABPixels = new AntdUI.Input();
-            inputSideDALength = new AntdUI.Input();
-            inputSideCDLength = new AntdUI.Input();
-            inputSideBCLength = new AntdUI.Input();
-            inputSideABLength = new AntdUI.Input();
+            textEdgeDAPixels = new AntdUI.Input();
+            textEdgeCDPixels = new AntdUI.Input();
+            textEdgeBCPixels = new AntdUI.Input();
+            textEdgeABPixels = new AntdUI.Input();
+            inputEdgeDALength = new AntdUI.Input();
+            inputEdgeCDLength = new AntdUI.Input();
+            inputEdgeBCLength = new AntdUI.Input();
+            inputEdgeABLength = new AntdUI.Input();
             labelInsideOP = new AntdUI.Label();
             labelSurfaceDR = new AntdUI.Label();
             labelSurfaceCE = new AntdUI.Label();
@@ -62,16 +62,34 @@
             avatarCurrent = new AntdUI.Avatar();
             lableRenderImageDisplayArea = new AntdUI.Label();
             panelAtThatTime = new AntdUI.Panel();
-            labelRatioThatTime = new AntdUI.Label();
-            panel6 = new AntdUI.Panel();
-            inputTopThatTime = new AntdUI.Input();
+            labelResultDescriptionThatTime = new AntdUI.Label();
+            panel8 = new AntdUI.Panel();
+            inputTopGradeThatTime = new AntdUI.Input();
+            label17 = new AntdUI.Label();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            textEdgeDAPixelsThatTime = new AntdUI.Input();
+            textEdgeCDPixelsThatTime = new AntdUI.Input();
+            textEdgeBCPixelsThatTime = new AntdUI.Input();
+            textEdgeABPixelsThatTime = new AntdUI.Input();
+            inputEdgeDALengthThatTime = new AntdUI.Input();
+            inputEdgeCDLengthThatTime = new AntdUI.Input();
+            inputEdgeBCLengthThatTime = new AntdUI.Input();
+            inputEdgeABLengthThatTime = new AntdUI.Input();
             label8 = new AntdUI.Label();
-            panel5 = new AntdUI.Panel();
-            inputAreaThatTime = new AntdUI.Input();
-            label6 = new AntdUI.Label();
+            label11 = new AntdUI.Label();
+            label12 = new AntdUI.Label();
+            label13 = new AntdUI.Label();
+            label14 = new AntdUI.Label();
+            label15 = new AntdUI.Label();
+            label16 = new AntdUI.Label();
+            panel6 = new AntdUI.Panel();
+            inputAreaLossThatTime = new AntdUI.Input();
             label7 = new AntdUI.Label();
+            panel5 = new AntdUI.Panel();
+            inputExtractedAreaThatTime = new AntdUI.Input();
+            label6 = new AntdUI.Label();
             panel4 = new AntdUI.Panel();
-            inputPixelsThatTime = new AntdUI.Input();
+            inputAreaOfPixelsThatTime = new AntdUI.Input();
             label5 = new AntdUI.Label();
             avatarThatTime = new AntdUI.Avatar();
             label20 = new AntdUI.Label();
@@ -83,6 +101,8 @@
             panel2.SuspendLayout();
             panel3.SuspendLayout();
             panelAtThatTime.SuspendLayout();
+            panel8.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             panel6.SuspendLayout();
             panel5.SuspendLayout();
             panel4.SuspendLayout();
@@ -96,13 +116,13 @@
             flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new System.Drawing.Size(716, 625);
+            flowLayoutPanel1.Size = new System.Drawing.Size(688, 625);
             flowLayoutPanel1.TabIndex = 0;
             // 
             // panelCurrent
             // 
             panelCurrent.ArrowSize = 10;
-            panelCurrent.Controls.Add(label1ResultDescription);
+            panelCurrent.Controls.Add(labelResultDescription);
             panelCurrent.Controls.Add(panel1);
             panelCurrent.Controls.Add(tablePanel);
             panelCurrent.Controls.Add(panel7);
@@ -119,20 +139,20 @@
             panelCurrent.Size = new System.Drawing.Size(337, 619);
             panelCurrent.TabIndex = 21;
             // 
-            // label1ResultDescription
+            // labelResultDescription
             // 
-            label1ResultDescription.BackColor = System.Drawing.Color.Transparent;
-            label1ResultDescription.Dock = System.Windows.Forms.DockStyle.Fill;
-            label1ResultDescription.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            label1ResultDescription.ForeColor = System.Drawing.Color.Red;
-            label1ResultDescription.LocalizationText = "Auto Calculation";
-            label1ResultDescription.Location = new System.Drawing.Point(9, 552);
-            label1ResultDescription.Name = "label1ResultDescription";
-            label1ResultDescription.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            label1ResultDescription.Size = new System.Drawing.Size(319, 58);
-            label1ResultDescription.TabIndex = 21;
-            label1ResultDescription.Text = "自动计算";
-            label1ResultDescription.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            labelResultDescription.BackColor = System.Drawing.Color.Transparent;
+            labelResultDescription.Dock = System.Windows.Forms.DockStyle.Fill;
+            labelResultDescription.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            labelResultDescription.ForeColor = System.Drawing.Color.Red;
+            labelResultDescription.LocalizationText = "Auto Calculation";
+            labelResultDescription.Location = new System.Drawing.Point(9, 552);
+            labelResultDescription.Name = "labelResultDescription";
+            labelResultDescription.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            labelResultDescription.Size = new System.Drawing.Size(319, 58);
+            labelResultDescription.TabIndex = 21;
+            labelResultDescription.Text = "自动计算";
+            labelResultDescription.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panel1
             // 
@@ -178,14 +198,14 @@
             tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104F));
             tablePanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 121F));
-            tablePanel.Controls.Add(textSideDAPixels, 1, 4);
-            tablePanel.Controls.Add(textSideCDPixels, 1, 3);
-            tablePanel.Controls.Add(textSideBCPixels, 1, 2);
-            tablePanel.Controls.Add(textSideABPixels, 1, 1);
-            tablePanel.Controls.Add(inputSideDALength, 2, 4);
-            tablePanel.Controls.Add(inputSideCDLength, 2, 3);
-            tablePanel.Controls.Add(inputSideBCLength, 2, 2);
-            tablePanel.Controls.Add(inputSideABLength, 2, 1);
+            tablePanel.Controls.Add(textEdgeDAPixels, 1, 4);
+            tablePanel.Controls.Add(textEdgeCDPixels, 1, 3);
+            tablePanel.Controls.Add(textEdgeBCPixels, 1, 2);
+            tablePanel.Controls.Add(textEdgeABPixels, 1, 1);
+            tablePanel.Controls.Add(inputEdgeDALength, 2, 4);
+            tablePanel.Controls.Add(inputEdgeCDLength, 2, 3);
+            tablePanel.Controls.Add(inputEdgeBCLength, 2, 2);
+            tablePanel.Controls.Add(inputEdgeABLength, 2, 1);
             tablePanel.Controls.Add(labelInsideOP, 0, 4);
             tablePanel.Controls.Add(labelSurfaceDR, 0, 3);
             tablePanel.Controls.Add(labelSurfaceCE, 0, 2);
@@ -209,115 +229,115 @@
             // 
             // textSideDAPixels
             // 
-            textSideDAPixels.Dock = System.Windows.Forms.DockStyle.Fill;
-            textSideDAPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            textSideDAPixels.LocalizationPlaceholderText = "";
-            textSideDAPixels.Location = new System.Drawing.Point(92, 125);
-            textSideDAPixels.Margin = new System.Windows.Forms.Padding(0);
-            textSideDAPixels.Name = "textSideDAPixels";
-            textSideDAPixels.PlaceholderText = "";
-            textSideDAPixels.Radius = 0;
-            textSideDAPixels.ReadOnly = true;
-            textSideDAPixels.Size = new System.Drawing.Size(104, 30);
-            textSideDAPixels.TabIndex = 41;
+            textEdgeDAPixels.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeDAPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeDAPixels.LocalizationPlaceholderText = "";
+            textEdgeDAPixels.Location = new System.Drawing.Point(92, 125);
+            textEdgeDAPixels.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeDAPixels.Name = "textSideDAPixels";
+            textEdgeDAPixels.PlaceholderText = "";
+            textEdgeDAPixels.Radius = 0;
+            textEdgeDAPixels.ReadOnly = true;
+            textEdgeDAPixels.Size = new System.Drawing.Size(104, 30);
+            textEdgeDAPixels.TabIndex = 41;
             // 
             // textSideCDPixels
             // 
-            textSideCDPixels.Dock = System.Windows.Forms.DockStyle.Fill;
-            textSideCDPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            textSideCDPixels.LocalizationPlaceholderText = "";
-            textSideCDPixels.Location = new System.Drawing.Point(92, 94);
-            textSideCDPixels.Margin = new System.Windows.Forms.Padding(0);
-            textSideCDPixels.Name = "textSideCDPixels";
-            textSideCDPixels.PlaceholderText = "";
-            textSideCDPixels.Radius = 0;
-            textSideCDPixels.ReadOnly = true;
-            textSideCDPixels.Size = new System.Drawing.Size(104, 30);
-            textSideCDPixels.TabIndex = 40;
+            textEdgeCDPixels.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeCDPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeCDPixels.LocalizationPlaceholderText = "";
+            textEdgeCDPixels.Location = new System.Drawing.Point(92, 94);
+            textEdgeCDPixels.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeCDPixels.Name = "textSideCDPixels";
+            textEdgeCDPixels.PlaceholderText = "";
+            textEdgeCDPixels.Radius = 0;
+            textEdgeCDPixels.ReadOnly = true;
+            textEdgeCDPixels.Size = new System.Drawing.Size(104, 30);
+            textEdgeCDPixels.TabIndex = 40;
             // 
             // textSideBCPixels
             // 
-            textSideBCPixels.Dock = System.Windows.Forms.DockStyle.Fill;
-            textSideBCPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            textSideBCPixels.LocalizationPlaceholderText = "";
-            textSideBCPixels.Location = new System.Drawing.Point(92, 63);
-            textSideBCPixels.Margin = new System.Windows.Forms.Padding(0);
-            textSideBCPixels.Name = "textSideBCPixels";
-            textSideBCPixels.PlaceholderText = "";
-            textSideBCPixels.Radius = 0;
-            textSideBCPixels.ReadOnly = true;
-            textSideBCPixels.Size = new System.Drawing.Size(104, 30);
-            textSideBCPixels.TabIndex = 39;
+            textEdgeBCPixels.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeBCPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeBCPixels.LocalizationPlaceholderText = "";
+            textEdgeBCPixels.Location = new System.Drawing.Point(92, 63);
+            textEdgeBCPixels.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeBCPixels.Name = "textSideBCPixels";
+            textEdgeBCPixels.PlaceholderText = "";
+            textEdgeBCPixels.Radius = 0;
+            textEdgeBCPixels.ReadOnly = true;
+            textEdgeBCPixels.Size = new System.Drawing.Size(104, 30);
+            textEdgeBCPixels.TabIndex = 39;
             // 
             // textSideABPixels
             // 
-            textSideABPixels.Dock = System.Windows.Forms.DockStyle.Fill;
-            textSideABPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            textSideABPixels.LocalizationPlaceholderText = "";
-            textSideABPixels.Location = new System.Drawing.Point(92, 32);
-            textSideABPixels.Margin = new System.Windows.Forms.Padding(0);
-            textSideABPixels.Name = "textSideABPixels";
-            textSideABPixels.PlaceholderText = "";
-            textSideABPixels.Radius = 0;
-            textSideABPixels.ReadOnly = true;
-            textSideABPixels.Size = new System.Drawing.Size(104, 30);
-            textSideABPixels.TabIndex = 38;
+            textEdgeABPixels.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeABPixels.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeABPixels.LocalizationPlaceholderText = "";
+            textEdgeABPixels.Location = new System.Drawing.Point(92, 32);
+            textEdgeABPixels.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeABPixels.Name = "textSideABPixels";
+            textEdgeABPixels.PlaceholderText = "";
+            textEdgeABPixels.Radius = 0;
+            textEdgeABPixels.ReadOnly = true;
+            textEdgeABPixels.Size = new System.Drawing.Size(104, 30);
+            textEdgeABPixels.TabIndex = 38;
             // 
             // inputSideDALength
             // 
-            inputSideDALength.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputSideDALength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            inputSideDALength.LocalizationPlaceholderText = "Measured value";
-            inputSideDALength.Location = new System.Drawing.Point(197, 125);
-            inputSideDALength.Margin = new System.Windows.Forms.Padding(0);
-            inputSideDALength.Name = "inputSideDALength";
-            inputSideDALength.PlaceholderText = "请输入实际值";
-            inputSideDALength.Radius = 0;
-            inputSideDALength.Size = new System.Drawing.Size(121, 30);
-            inputSideDALength.TabIndex = 37;
-            inputSideDALength.TextChanged += InputSideDALength_TextChanged;
+            inputEdgeDALength.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeDALength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeDALength.LocalizationPlaceholderText = "Measured value";
+            inputEdgeDALength.Location = new System.Drawing.Point(197, 125);
+            inputEdgeDALength.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeDALength.Name = "inputSideDALength";
+            inputEdgeDALength.PlaceholderText = "请输入实际值";
+            inputEdgeDALength.Radius = 0;
+            inputEdgeDALength.Size = new System.Drawing.Size(121, 30);
+            inputEdgeDALength.TabIndex = 37;
+            inputEdgeDALength.TextChanged += InputEdgeDALength_TextChanged;
             // 
             // inputSideCDLength
             // 
-            inputSideCDLength.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputSideCDLength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            inputSideCDLength.LocalizationPlaceholderText = "Measured value";
-            inputSideCDLength.Location = new System.Drawing.Point(197, 94);
-            inputSideCDLength.Margin = new System.Windows.Forms.Padding(0);
-            inputSideCDLength.Name = "inputSideCDLength";
-            inputSideCDLength.PlaceholderText = "请输入实际值";
-            inputSideCDLength.Radius = 0;
-            inputSideCDLength.Size = new System.Drawing.Size(121, 30);
-            inputSideCDLength.TabIndex = 36;
-            inputSideCDLength.TextChanged += InputSideCDLength_TextChanged;
+            inputEdgeCDLength.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeCDLength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeCDLength.LocalizationPlaceholderText = "Measured value";
+            inputEdgeCDLength.Location = new System.Drawing.Point(197, 94);
+            inputEdgeCDLength.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeCDLength.Name = "inputSideCDLength";
+            inputEdgeCDLength.PlaceholderText = "请输入实际值";
+            inputEdgeCDLength.Radius = 0;
+            inputEdgeCDLength.Size = new System.Drawing.Size(121, 30);
+            inputEdgeCDLength.TabIndex = 36;
+            inputEdgeCDLength.TextChanged += InputEdgeCDLength_TextChanged;
             // 
             // inputSideBCLength
             // 
-            inputSideBCLength.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputSideBCLength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            inputSideBCLength.LocalizationPlaceholderText = "Measured value";
-            inputSideBCLength.Location = new System.Drawing.Point(197, 63);
-            inputSideBCLength.Margin = new System.Windows.Forms.Padding(0);
-            inputSideBCLength.Name = "inputSideBCLength";
-            inputSideBCLength.PlaceholderText = "请输入实际值";
-            inputSideBCLength.Radius = 0;
-            inputSideBCLength.Size = new System.Drawing.Size(121, 30);
-            inputSideBCLength.TabIndex = 35;
-            inputSideBCLength.TextChanged += InputSideBCLength_TextChanged;
+            inputEdgeBCLength.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeBCLength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeBCLength.LocalizationPlaceholderText = "Measured value";
+            inputEdgeBCLength.Location = new System.Drawing.Point(197, 63);
+            inputEdgeBCLength.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeBCLength.Name = "inputSideBCLength";
+            inputEdgeBCLength.PlaceholderText = "请输入实际值";
+            inputEdgeBCLength.Radius = 0;
+            inputEdgeBCLength.Size = new System.Drawing.Size(121, 30);
+            inputEdgeBCLength.TabIndex = 35;
+            inputEdgeBCLength.TextChanged += InputEdgeBCLength_TextChanged;
             // 
             // inputSideABLength
             // 
-            inputSideABLength.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputSideABLength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            inputSideABLength.LocalizationPlaceholderText = "Measured value";
-            inputSideABLength.Location = new System.Drawing.Point(197, 32);
-            inputSideABLength.Margin = new System.Windows.Forms.Padding(0);
-            inputSideABLength.Name = "inputSideABLength";
-            inputSideABLength.PlaceholderText = "请输入实际值";
-            inputSideABLength.Radius = 0;
-            inputSideABLength.Size = new System.Drawing.Size(121, 30);
-            inputSideABLength.TabIndex = 34;
-            inputSideABLength.TextChanged += InputSideABLength_TextChanged;
+            inputEdgeABLength.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeABLength.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeABLength.LocalizationPlaceholderText = "Measured value";
+            inputEdgeABLength.Location = new System.Drawing.Point(197, 32);
+            inputEdgeABLength.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeABLength.Name = "inputSideABLength";
+            inputEdgeABLength.PlaceholderText = "请输入实际值";
+            inputEdgeABLength.Radius = 0;
+            inputEdgeABLength.Size = new System.Drawing.Size(121, 30);
+            inputEdgeABLength.TabIndex = 34;
+            inputEdgeABLength.TextChanged += InputEdgeABLength_TextChanged;
             // 
             // labelInsideOP
             // 
@@ -542,7 +562,9 @@
             // panelAtThatTime
             // 
             panelAtThatTime.ArrowSize = 10;
-            panelAtThatTime.Controls.Add(labelRatioThatTime);
+            panelAtThatTime.Controls.Add(labelResultDescriptionThatTime);
+            panelAtThatTime.Controls.Add(panel8);
+            panelAtThatTime.Controls.Add(tableLayoutPanel1);
             panelAtThatTime.Controls.Add(panel6);
             panelAtThatTime.Controls.Add(panel5);
             panelAtThatTime.Controls.Add(panel4);
@@ -554,133 +576,393 @@
             panelAtThatTime.Radius = 10;
             panelAtThatTime.Shadow = 2;
             panelAtThatTime.ShadowOpacityAnimation = true;
-            panelAtThatTime.Size = new System.Drawing.Size(285, 466);
+            panelAtThatTime.Size = new System.Drawing.Size(337, 619);
             panelAtThatTime.TabIndex = 22;
             panelAtThatTime.Visible = false;
             // 
-            // labelRatioThatTime
+            // labelResultDescriptionThatTime
             // 
-            labelRatioThatTime.BackColor = System.Drawing.Color.Transparent;
-            labelRatioThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            labelRatioThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            labelRatioThatTime.ForeColor = System.Drawing.Color.Red;
-            labelRatioThatTime.LocalizationText = "Auto Calculation";
-            labelRatioThatTime.Location = new System.Drawing.Point(9, 422);
-            labelRatioThatTime.Name = "labelRatioThatTime";
-            labelRatioThatTime.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            labelRatioThatTime.Size = new System.Drawing.Size(267, 35);
-            labelRatioThatTime.TabIndex = 19;
-            labelRatioThatTime.Text = "自动计算";
-            labelRatioThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            labelResultDescriptionThatTime.BackColor = System.Drawing.Color.Transparent;
+            labelResultDescriptionThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            labelResultDescriptionThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            labelResultDescriptionThatTime.ForeColor = System.Drawing.Color.Red;
+            labelResultDescriptionThatTime.LocalizationText = "Auto Calculation";
+            labelResultDescriptionThatTime.Location = new System.Drawing.Point(9, 552);
+            labelResultDescriptionThatTime.Name = "labelResultDescriptionThatTime";
+            labelResultDescriptionThatTime.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            labelResultDescriptionThatTime.Size = new System.Drawing.Size(319, 58);
+            labelResultDescriptionThatTime.TabIndex = 24;
+            labelResultDescriptionThatTime.Text = "自动计算";
+            labelResultDescriptionThatTime.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // panel8
+            // 
+            panel8.Back = System.Drawing.Color.Transparent;
+            panel8.BackColor = System.Drawing.Color.Transparent;
+            panel8.Controls.Add(inputTopGradeThatTime);
+            panel8.Controls.Add(label17);
+            panel8.Dock = System.Windows.Forms.DockStyle.Top;
+            panel8.Location = new System.Drawing.Point(9, 519);
+            panel8.Name = "panel8";
+            panel8.Radius = 0;
+            panel8.Size = new System.Drawing.Size(319, 33);
+            panel8.TabIndex = 23;
+            // 
+            // inputTopGradeThatTime
+            // 
+            inputTopGradeThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputTopGradeThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputTopGradeThatTime.LocalizationPlaceholderText = "";
+            inputTopGradeThatTime.Location = new System.Drawing.Point(110, 0);
+            inputTopGradeThatTime.Name = "inputTopGradeThatTime";
+            inputTopGradeThatTime.PlaceholderText = "";
+            inputTopGradeThatTime.ReadOnly = true;
+            inputTopGradeThatTime.Size = new System.Drawing.Size(209, 33);
+            inputTopGradeThatTime.TabIndex = 17;
+            // 
+            // label17
+            // 
+            label17.BackColor = System.Drawing.Color.Transparent;
+            label17.Dock = System.Windows.Forms.DockStyle.Left;
+            label17.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label17.LocalizationText = "TopGrade:";
+            label17.Location = new System.Drawing.Point(0, 0);
+            label17.Name = "label17";
+            label17.Size = new System.Drawing.Size(110, 33);
+            label17.TabIndex = 16;
+            label17.Text = "上表面刻度：";
+            label17.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.CellBorderStyle = System.Windows.Forms.TableLayoutPanelCellBorderStyle.Single;
+            tableLayoutPanel1.ColumnCount = 3;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 104F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 121F));
+            tableLayoutPanel1.Controls.Add(textEdgeDAPixelsThatTime, 1, 4);
+            tableLayoutPanel1.Controls.Add(textEdgeCDPixelsThatTime, 1, 3);
+            tableLayoutPanel1.Controls.Add(textEdgeBCPixelsThatTime, 1, 2);
+            tableLayoutPanel1.Controls.Add(textEdgeABPixelsThatTime, 1, 1);
+            tableLayoutPanel1.Controls.Add(inputEdgeDALengthThatTime, 2, 4);
+            tableLayoutPanel1.Controls.Add(inputEdgeCDLengthThatTime, 2, 3);
+            tableLayoutPanel1.Controls.Add(inputEdgeBCLengthThatTime, 2, 2);
+            tableLayoutPanel1.Controls.Add(inputEdgeABLengthThatTime, 2, 1);
+            tableLayoutPanel1.Controls.Add(label8, 0, 4);
+            tableLayoutPanel1.Controls.Add(label11, 0, 3);
+            tableLayoutPanel1.Controls.Add(label12, 0, 2);
+            tableLayoutPanel1.Controls.Add(label13, 0, 1);
+            tableLayoutPanel1.Controls.Add(label14, 2, 0);
+            tableLayoutPanel1.Controls.Add(label15, 1, 0);
+            tableLayoutPanel1.Controls.Add(label16, 0, 0);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
+            tableLayoutPanel1.Location = new System.Drawing.Point(9, 364);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 5;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(319, 155);
+            tableLayoutPanel1.TabIndex = 22;
+            // 
+            // textSideDAPixelsThatTime
+            // 
+            textEdgeDAPixelsThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeDAPixelsThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeDAPixelsThatTime.LocalizationPlaceholderText = "";
+            textEdgeDAPixelsThatTime.Location = new System.Drawing.Point(92, 125);
+            textEdgeDAPixelsThatTime.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeDAPixelsThatTime.Name = "textSideDAPixelsThatTime";
+            textEdgeDAPixelsThatTime.PlaceholderText = "";
+            textEdgeDAPixelsThatTime.Radius = 0;
+            textEdgeDAPixelsThatTime.ReadOnly = true;
+            textEdgeDAPixelsThatTime.Size = new System.Drawing.Size(104, 30);
+            textEdgeDAPixelsThatTime.TabIndex = 41;
+            // 
+            // textSideCDPixelsThatTime
+            // 
+            textEdgeCDPixelsThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeCDPixelsThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeCDPixelsThatTime.LocalizationPlaceholderText = "";
+            textEdgeCDPixelsThatTime.Location = new System.Drawing.Point(92, 94);
+            textEdgeCDPixelsThatTime.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeCDPixelsThatTime.Name = "textSideCDPixelsThatTime";
+            textEdgeCDPixelsThatTime.PlaceholderText = "";
+            textEdgeCDPixelsThatTime.Radius = 0;
+            textEdgeCDPixelsThatTime.ReadOnly = true;
+            textEdgeCDPixelsThatTime.Size = new System.Drawing.Size(104, 30);
+            textEdgeCDPixelsThatTime.TabIndex = 40;
+            // 
+            // textSideBCPixelsThatTime
+            // 
+            textEdgeBCPixelsThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeBCPixelsThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeBCPixelsThatTime.LocalizationPlaceholderText = "";
+            textEdgeBCPixelsThatTime.Location = new System.Drawing.Point(92, 63);
+            textEdgeBCPixelsThatTime.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeBCPixelsThatTime.Name = "textSideBCPixelsThatTime";
+            textEdgeBCPixelsThatTime.PlaceholderText = "";
+            textEdgeBCPixelsThatTime.Radius = 0;
+            textEdgeBCPixelsThatTime.ReadOnly = true;
+            textEdgeBCPixelsThatTime.Size = new System.Drawing.Size(104, 30);
+            textEdgeBCPixelsThatTime.TabIndex = 39;
+            // 
+            // textSideABPixelsThatTime
+            // 
+            textEdgeABPixelsThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            textEdgeABPixelsThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            textEdgeABPixelsThatTime.LocalizationPlaceholderText = "";
+            textEdgeABPixelsThatTime.Location = new System.Drawing.Point(92, 32);
+            textEdgeABPixelsThatTime.Margin = new System.Windows.Forms.Padding(0);
+            textEdgeABPixelsThatTime.Name = "textSideABPixelsThatTime";
+            textEdgeABPixelsThatTime.PlaceholderText = "";
+            textEdgeABPixelsThatTime.Radius = 0;
+            textEdgeABPixelsThatTime.ReadOnly = true;
+            textEdgeABPixelsThatTime.Size = new System.Drawing.Size(104, 30);
+            textEdgeABPixelsThatTime.TabIndex = 38;
+            // 
+            // inputSideDALengthThatTime
+            // 
+            inputEdgeDALengthThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeDALengthThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeDALengthThatTime.LocalizationPlaceholderText = "";
+            inputEdgeDALengthThatTime.Location = new System.Drawing.Point(197, 125);
+            inputEdgeDALengthThatTime.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeDALengthThatTime.Name = "inputSideDALengthThatTime";
+            inputEdgeDALengthThatTime.PlaceholderText = "";
+            inputEdgeDALengthThatTime.Radius = 0;
+            inputEdgeDALengthThatTime.ReadOnly = true;
+            inputEdgeDALengthThatTime.Size = new System.Drawing.Size(121, 30);
+            inputEdgeDALengthThatTime.TabIndex = 37;
+            // 
+            // inputSideCDLengthThatTime
+            // 
+            inputEdgeCDLengthThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeCDLengthThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeCDLengthThatTime.LocalizationPlaceholderText = "";
+            inputEdgeCDLengthThatTime.Location = new System.Drawing.Point(197, 94);
+            inputEdgeCDLengthThatTime.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeCDLengthThatTime.Name = "inputSideCDLengthThatTime";
+            inputEdgeCDLengthThatTime.PlaceholderText = "";
+            inputEdgeCDLengthThatTime.Radius = 0;
+            inputEdgeCDLengthThatTime.ReadOnly = true;
+            inputEdgeCDLengthThatTime.Size = new System.Drawing.Size(121, 30);
+            inputEdgeCDLengthThatTime.TabIndex = 36;
+            // 
+            // inputSideBCLengthThatTime
+            // 
+            inputEdgeBCLengthThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeBCLengthThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeBCLengthThatTime.LocalizationPlaceholderText = "";
+            inputEdgeBCLengthThatTime.Location = new System.Drawing.Point(197, 63);
+            inputEdgeBCLengthThatTime.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeBCLengthThatTime.Name = "inputSideBCLengthThatTime";
+            inputEdgeBCLengthThatTime.PlaceholderText = "";
+            inputEdgeBCLengthThatTime.Radius = 0;
+            inputEdgeBCLengthThatTime.ReadOnly = true;
+            inputEdgeBCLengthThatTime.Size = new System.Drawing.Size(121, 30);
+            inputEdgeBCLengthThatTime.TabIndex = 35;
+            // 
+            // inputSideABLengthThatTime
+            // 
+            inputEdgeABLengthThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputEdgeABLengthThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputEdgeABLengthThatTime.LocalizationPlaceholderText = "";
+            inputEdgeABLengthThatTime.Location = new System.Drawing.Point(197, 32);
+            inputEdgeABLengthThatTime.Margin = new System.Windows.Forms.Padding(0);
+            inputEdgeABLengthThatTime.Name = "inputSideABLengthThatTime";
+            inputEdgeABLengthThatTime.PlaceholderText = "";
+            inputEdgeABLengthThatTime.Radius = 0;
+            inputEdgeABLengthThatTime.ReadOnly = true;
+            inputEdgeABLengthThatTime.Size = new System.Drawing.Size(121, 30);
+            inputEdgeABLengthThatTime.TabIndex = 34;
+            // 
+            // label8
+            // 
+            label8.BackColor = System.Drawing.Color.Transparent;
+            label8.Dock = System.Windows.Forms.DockStyle.Fill;
+            label8.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label8.LocalizationText = "DA";
+            label8.Location = new System.Drawing.Point(4, 128);
+            label8.Name = "label8";
+            label8.Size = new System.Drawing.Size(84, 24);
+            label8.TabIndex = 26;
+            label8.Text = "DA";
+            label8.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label11
+            // 
+            label11.BackColor = System.Drawing.Color.Transparent;
+            label11.Dock = System.Windows.Forms.DockStyle.Fill;
+            label11.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label11.LocalizationText = "CD";
+            label11.Location = new System.Drawing.Point(4, 97);
+            label11.Name = "label11";
+            label11.Size = new System.Drawing.Size(84, 24);
+            label11.TabIndex = 23;
+            label11.Text = "CD";
+            label11.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label12
+            // 
+            label12.BackColor = System.Drawing.Color.Transparent;
+            label12.Dock = System.Windows.Forms.DockStyle.Fill;
+            label12.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label12.LocalizationText = "BC";
+            label12.Location = new System.Drawing.Point(4, 66);
+            label12.Name = "label12";
+            label12.Size = new System.Drawing.Size(84, 24);
+            label12.TabIndex = 20;
+            label12.Text = "BC";
+            label12.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label13
+            // 
+            label13.BackColor = System.Drawing.Color.Transparent;
+            label13.Dock = System.Windows.Forms.DockStyle.Fill;
+            label13.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label13.LocalizationText = "AB";
+            label13.Location = new System.Drawing.Point(4, 35);
+            label13.Name = "label13";
+            label13.Size = new System.Drawing.Size(84, 24);
+            label13.TabIndex = 17;
+            label13.Text = "AB";
+            label13.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label14
+            // 
+            label14.Dock = System.Windows.Forms.DockStyle.Fill;
+            label14.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F);
+            label14.LocalizationText = "Length(mm)";
+            label14.Location = new System.Drawing.Point(200, 4);
+            label14.Name = "label14";
+            label14.Size = new System.Drawing.Size(115, 24);
+            label14.TabIndex = 2;
+            label14.Text = "长度(毫米)";
+            label14.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label15
+            // 
+            label15.Dock = System.Windows.Forms.DockStyle.Fill;
+            label15.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F);
+            label15.LocalizationText = "Pixels";
+            label15.Location = new System.Drawing.Point(95, 4);
+            label15.Name = "label15";
+            label15.Size = new System.Drawing.Size(98, 24);
+            label15.TabIndex = 1;
+            label15.Text = "像素长度";
+            label15.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label16
+            // 
+            label16.Dock = System.Windows.Forms.DockStyle.Fill;
+            label16.Font = new System.Drawing.Font("Microsoft YaHei UI", 12F);
+            label16.LocalizationText = "Side";
+            label16.Location = new System.Drawing.Point(4, 4);
+            label16.Name = "label16";
+            label16.Size = new System.Drawing.Size(84, 24);
+            label16.TabIndex = 0;
+            label16.Text = "边";
+            label16.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel6
             // 
             panel6.Back = System.Drawing.Color.Transparent;
             panel6.BackColor = System.Drawing.Color.Transparent;
-            panel6.Controls.Add(inputTopThatTime);
-            panel6.Controls.Add(label8);
+            panel6.Controls.Add(inputAreaLossThatTime);
+            panel6.Controls.Add(label7);
             panel6.Dock = System.Windows.Forms.DockStyle.Top;
-            panel6.Location = new System.Drawing.Point(9, 389);
+            panel6.Location = new System.Drawing.Point(9, 331);
             panel6.Name = "panel6";
             panel6.Radius = 0;
-            panel6.Size = new System.Drawing.Size(267, 33);
-            panel6.TabIndex = 18;
+            panel6.Size = new System.Drawing.Size(319, 33);
+            panel6.TabIndex = 21;
             // 
-            // inputTopThatTime
+            // inputAreaLossThatTime
             // 
-            inputTopThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputTopThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            inputTopThatTime.Location = new System.Drawing.Point(90, 0);
-            inputTopThatTime.Name = "inputTopThatTime";
-            inputTopThatTime.ReadOnly = true;
-            inputTopThatTime.Size = new System.Drawing.Size(177, 33);
-            inputTopThatTime.TabIndex = 17;
-            // 
-            // label8
-            // 
-            label8.BackColor = System.Drawing.Color.Transparent;
-            label8.Dock = System.Windows.Forms.DockStyle.Left;
-            label8.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            label8.LocalizationText = "Top Graduations:";
-            label8.Location = new System.Drawing.Point(0, 0);
-            label8.Name = "label8";
-            label8.Size = new System.Drawing.Size(90, 33);
-            label8.TabIndex = 16;
-            label8.Text = "上表面刻度：";
-            label8.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // panel5
-            // 
-            panel5.Back = System.Drawing.Color.Transparent;
-            panel5.BackColor = System.Drawing.Color.Transparent;
-            panel5.Controls.Add(inputAreaThatTime);
-            panel5.Controls.Add(label6);
-            panel5.Controls.Add(label7);
-            panel5.Dock = System.Windows.Forms.DockStyle.Top;
-            panel5.Location = new System.Drawing.Point(9, 356);
-            panel5.Name = "panel5";
-            panel5.Radius = 0;
-            panel5.Size = new System.Drawing.Size(267, 33);
-            panel5.TabIndex = 17;
-            // 
-            // inputAreaThatTime
-            // 
-            inputAreaThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputAreaThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            inputAreaThatTime.Location = new System.Drawing.Point(90, 0);
-            inputAreaThatTime.Name = "inputAreaThatTime";
-            inputAreaThatTime.ReadOnly = true;
-            inputAreaThatTime.Size = new System.Drawing.Size(127, 33);
-            inputAreaThatTime.TabIndex = 18;
-            // 
-            // label6
-            // 
-            label6.BackColor = System.Drawing.Color.Transparent;
-            label6.Dock = System.Windows.Forms.DockStyle.Right;
-            label6.Font = new System.Drawing.Font("Microsoft YaHei UI", 8F);
-            label6.LocalizationText = "sq mm";
-            label6.Location = new System.Drawing.Point(217, 0);
-            label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(50, 33);
-            label6.TabIndex = 17;
-            label6.Text = "平方毫米";
-            label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            inputAreaLossThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputAreaLossThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputAreaLossThatTime.Location = new System.Drawing.Point(110, 0);
+            inputAreaLossThatTime.Name = "inputAreaLossThatTime";
+            inputAreaLossThatTime.ReadOnly = true;
+            inputAreaLossThatTime.Size = new System.Drawing.Size(209, 33);
+            inputAreaLossThatTime.TabIndex = 17;
             // 
             // label7
             // 
             label7.BackColor = System.Drawing.Color.Transparent;
             label7.Dock = System.Windows.Forms.DockStyle.Left;
             label7.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            label7.LocalizationText = "Area:";
+            label7.LocalizationText = "AreaLoss\n\n\n\n\n\n\n:";
             label7.Location = new System.Drawing.Point(0, 0);
             label7.Name = "label7";
-            label7.Size = new System.Drawing.Size(90, 33);
+            label7.Size = new System.Drawing.Size(110, 33);
             label7.TabIndex = 16;
-            label7.Text = "实际面积：";
+            label7.Text = "面积损失：";
             label7.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // panel5
+            // 
+            panel5.Back = System.Drawing.Color.Transparent;
+            panel5.BackColor = System.Drawing.Color.Transparent;
+            panel5.Controls.Add(inputExtractedAreaThatTime);
+            panel5.Controls.Add(label6);
+            panel5.Dock = System.Windows.Forms.DockStyle.Top;
+            panel5.Location = new System.Drawing.Point(9, 298);
+            panel5.Name = "panel5";
+            panel5.Radius = 0;
+            panel5.Size = new System.Drawing.Size(319, 33);
+            panel5.TabIndex = 18;
+            // 
+            // inputExtractedAreaThatTime
+            // 
+            inputExtractedAreaThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputExtractedAreaThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputExtractedAreaThatTime.Location = new System.Drawing.Point(110, 0);
+            inputExtractedAreaThatTime.Name = "inputExtractedAreaThatTime";
+            inputExtractedAreaThatTime.ReadOnly = true;
+            inputExtractedAreaThatTime.Size = new System.Drawing.Size(209, 33);
+            inputExtractedAreaThatTime.TabIndex = 17;
+            // 
+            // label6
+            // 
+            label6.BackColor = System.Drawing.Color.Transparent;
+            label6.Dock = System.Windows.Forms.DockStyle.Left;
+            label6.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            label6.LocalizationText = "ExtractedArea\n\n\n\n\n\n\n:";
+            label6.Location = new System.Drawing.Point(0, 0);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(110, 33);
+            label6.TabIndex = 16;
+            label6.Text = "截取像素面积：";
+            label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // panel4
             // 
             panel4.Back = System.Drawing.Color.Transparent;
             panel4.BackColor = System.Drawing.Color.Transparent;
-            panel4.Controls.Add(inputPixelsThatTime);
+            panel4.Controls.Add(inputAreaOfPixelsThatTime);
             panel4.Controls.Add(label5);
             panel4.Dock = System.Windows.Forms.DockStyle.Top;
-            panel4.Location = new System.Drawing.Point(9, 323);
+            panel4.Location = new System.Drawing.Point(9, 265);
             panel4.Name = "panel4";
             panel4.Radius = 0;
-            panel4.Size = new System.Drawing.Size(267, 33);
+            panel4.Size = new System.Drawing.Size(319, 33);
             panel4.TabIndex = 16;
             // 
-            // inputPixelsThatTime
+            // inputAreaOfPixelsThatTime
             // 
-            inputPixelsThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
-            inputPixelsThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
-            inputPixelsThatTime.Location = new System.Drawing.Point(90, 0);
-            inputPixelsThatTime.Name = "inputPixelsThatTime";
-            inputPixelsThatTime.ReadOnly = true;
-            inputPixelsThatTime.Size = new System.Drawing.Size(177, 33);
-            inputPixelsThatTime.TabIndex = 17;
+            inputAreaOfPixelsThatTime.Dock = System.Windows.Forms.DockStyle.Fill;
+            inputAreaOfPixelsThatTime.Font = new System.Drawing.Font("Microsoft YaHei UI", 10F);
+            inputAreaOfPixelsThatTime.Location = new System.Drawing.Point(110, 0);
+            inputAreaOfPixelsThatTime.Name = "inputAreaOfPixelsThatTime";
+            inputAreaOfPixelsThatTime.ReadOnly = true;
+            inputAreaOfPixelsThatTime.Size = new System.Drawing.Size(209, 33);
+            inputAreaOfPixelsThatTime.TabIndex = 17;
             // 
             // label5
             // 
@@ -690,7 +972,7 @@
             label5.LocalizationText = "AreaOfPixels:";
             label5.Location = new System.Drawing.Point(0, 0);
             label5.Name = "label5";
-            label5.Size = new System.Drawing.Size(90, 33);
+            label5.Size = new System.Drawing.Size(110, 33);
             label5.TabIndex = 16;
             label5.Text = "像素面积：";
             label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -702,7 +984,7 @@
             avatarThatTime.Location = new System.Drawing.Point(9, 39);
             avatarThatTime.Name = "avatarThatTime";
             avatarThatTime.Radius = 6;
-            avatarThatTime.Size = new System.Drawing.Size(267, 284);
+            avatarThatTime.Size = new System.Drawing.Size(319, 226);
             avatarThatTime.TabIndex = 12;
             // 
             // label20
@@ -714,7 +996,7 @@
             label20.LocalizationText = "The Scale At That Time";
             label20.Location = new System.Drawing.Point(9, 9);
             label20.Name = "label20";
-            label20.Size = new System.Drawing.Size(267, 30);
+            label20.Size = new System.Drawing.Size(319, 30);
             label20.TabIndex = 11;
             label20.Text = "当 时 比 例 尺";
             label20.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -723,7 +1005,7 @@
             // 
             Controls.Add(flowLayoutPanel1);
             Name = "GaugeScaleSetting";
-            Size = new System.Drawing.Size(716, 625);
+            Size = new System.Drawing.Size(688, 625);
             flowLayoutPanel1.ResumeLayout(false);
             panelCurrent.ResumeLayout(false);
             panel1.ResumeLayout(false);
@@ -732,6 +1014,8 @@
             panel2.ResumeLayout(false);
             panel3.ResumeLayout(false);
             panelAtThatTime.ResumeLayout(false);
+            panel8.ResumeLayout(false);
+            tableLayoutPanel1.ResumeLayout(false);
             panel6.ResumeLayout(false);
             panel5.ResumeLayout(false);
             panel4.ResumeLayout(false);
@@ -754,22 +1038,11 @@
         private AntdUI.Panel panel2;
         private AntdUI.Input inputExtractedArea;
         private AntdUI.Label label2;
-        private AntdUI.Label labelRatioThatTime;
-        private AntdUI.Panel panel6;
-        private AntdUI.Input inputTopThatTime;
-        private AntdUI.Label label8;
-        private AntdUI.Panel panel5;
-        private AntdUI.Input inputAreaThatTime;
-        private AntdUI.Label label6;
-        private AntdUI.Label label7;
-        private AntdUI.Panel panel4;
-        private AntdUI.Input inputPixelsThatTime;
-        private AntdUI.Label label5;
         private System.Windows.Forms.TableLayoutPanel tablePanel;
-        private AntdUI.Input inputSideDALength;
-        private AntdUI.Input inputSideCDLength;
-        private AntdUI.Input inputSideBCLength;
-        private AntdUI.Input inputSideABLength;
+        private AntdUI.Input inputEdgeDALength;
+        private AntdUI.Input inputEdgeCDLength;
+        private AntdUI.Input inputEdgeBCLength;
+        private AntdUI.Input inputEdgeABLength;
         private AntdUI.Label labelInsideOP;
         private AntdUI.Label labelSurfaceDR;
         private AntdUI.Label labelSurfaceCE;
@@ -783,10 +1056,39 @@
         private AntdUI.Panel panel7;
         private AntdUI.Input inputAreaLoss;
         private AntdUI.Label label10;
-        private AntdUI.Label label1ResultDescription;
-        private AntdUI.Input textSideDAPixels;
-        private AntdUI.Input textSideCDPixels;
-        private AntdUI.Input textSideBCPixels;
-        private AntdUI.Input textSideABPixels;
+        private AntdUI.Label labelResultDescription;
+        private AntdUI.Input textEdgeDAPixels;
+        private AntdUI.Input textEdgeCDPixels;
+        private AntdUI.Input textEdgeBCPixels;
+        private AntdUI.Input textEdgeABPixels;
+        private AntdUI.Label labelResultDescriptionThatTime;
+        private AntdUI.Panel panel8;
+        private AntdUI.Input inputTopGradeThatTime;
+        private AntdUI.Label label17;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private AntdUI.Input textEdgeDAPixelsThatTime;
+        private AntdUI.Input textEdgeCDPixelsThatTime;
+        private AntdUI.Input textEdgeBCPixelsThatTime;
+        private AntdUI.Input textEdgeABPixelsThatTime;
+        private AntdUI.Input inputEdgeDALengthThatTime;
+        private AntdUI.Input inputEdgeCDLengthThatTime;
+        private AntdUI.Input inputEdgeBCLengthThatTime;
+        private AntdUI.Input inputEdgeABLengthThatTime;
+        private AntdUI.Label label8;
+        private AntdUI.Label label11;
+        private AntdUI.Label label12;
+        private AntdUI.Label label13;
+        private AntdUI.Label label14;
+        private AntdUI.Label label15;
+        private AntdUI.Label label16;
+        private AntdUI.Panel panel6;
+        private AntdUI.Input inputAreaLossThatTime;
+        private AntdUI.Label label7;
+        private AntdUI.Panel panel5;
+        private AntdUI.Input inputExtractedAreaThatTime;
+        private AntdUI.Label label6;
+        private AntdUI.Panel panel4;
+        private AntdUI.Input inputAreaOfPixelsThatTime;
+        private AntdUI.Label label5;
     }
 }

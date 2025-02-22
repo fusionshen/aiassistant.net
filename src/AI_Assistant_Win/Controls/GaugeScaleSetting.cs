@@ -5,6 +5,7 @@ using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
 using System;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace AI_Assistant_Win
@@ -47,20 +48,29 @@ namespace AI_Assistant_Win
                 inputAreaOfPixels.Text = gaugeBlockDetection.Item.AreaOfPixels.ToString();
                 inputExtractedArea.Text = $"{gaugeBlockDetection.Item.ExtractedAreaOfPixels:F2}";
                 inputAreaLoss.Text = $"{(gaugeBlockDetection.Item.AreaOfPixels - gaugeBlockDetection.Item.ExtractedAreaOfPixels) / gaugeBlockDetection.Item.AreaOfPixels:P2}";
-                textSideABPixels.Text = $"{gaugeBlockDetection.Item.SidePixels["AB"]:F2}";
-                textSideBCPixels.Text = $"{gaugeBlockDetection.Item.SidePixels["BC"]:F2}";
-                textSideCDPixels.Text = $"{gaugeBlockDetection.Item.SidePixels["CD"]:F2}";
-                textSideDAPixels.Text = $"{gaugeBlockDetection.Item.SidePixels["DA"]:F2}";
+                textEdgeABPixels.Text = $"{gaugeBlockDetection.Item.EdgePixels["AB"]:F2}";
+                textEdgeBCPixels.Text = $"{gaugeBlockDetection.Item.EdgePixels["BC"]:F2}";
+                textEdgeCDPixels.Text = $"{gaugeBlockDetection.Item.EdgePixels["CD"]:F2}";
+                textEdgeDAPixels.Text = $"{gaugeBlockDetection.Item.EdgePixels["DA"]:F2}";
             }
             else
             {
                 imagePath = currentScale.ImagePath;
                 avatarCurrent.Image = Image.FromFile(imagePath);
-                var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(currentScale.Settings);
+                var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(currentScale.Settings);
                 inputAreaOfPixels.Text = settings.Pixels;
-                //inputArea.Text = settings.MeasuredValue;
-                //inputTop.Text = settings.TopGraduations;
-                //labelRatioCurrent.Text = $"{LocalizeHelper.SCALE_CACULATED_RATIO_TITLE}{currentScale.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
+                inputExtractedArea.Text = settings.ExtractedPixels;
+                inputAreaLoss.Text = settings.AreaLoss;
+                textEdgeABPixels.Text = settings.Edges.FirstOrDefault(t => "AB".Equals(t.Edge))?.PixelLength;
+                textEdgeBCPixels.Text = settings.Edges.FirstOrDefault(t => "BC".Equals(t.Edge))?.PixelLength;
+                textEdgeCDPixels.Text = settings.Edges.FirstOrDefault(t => "CD".Equals(t.Edge))?.PixelLength;
+                textEdgeDAPixels.Text = settings.Edges.FirstOrDefault(t => "DA".Equals(t.Edge))?.PixelLength;
+                inputEdgeABLength.Text = settings.Edges.FirstOrDefault(t => "AB".Equals(t.Edge))?.RealLength;
+                inputEdgeBCLength.Text = settings.Edges.FirstOrDefault(t => "BC".Equals(t.Edge))?.RealLength;
+                inputEdgeCDLength.Text = settings.Edges.FirstOrDefault(t => "CD".Equals(t.Edge))?.RealLength;
+                inputEdgeDALength.Text = settings.Edges.FirstOrDefault(t => "DA".Equals(t.Edge))?.RealLength;
+                inputTopGrade.Text = settings.TopGraduations;
+                labelResultDescription.Text = settings.DisplayText;
             }
             #endregion
             #region at that time
@@ -68,157 +78,166 @@ namespace AI_Assistant_Win
             {
                 panelAtThatTime.Visible = true;
                 avatarThatTime.Image = Image.FromFile(scaleAtThatTime.ImagePath);
-                var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(scaleAtThatTime.Settings);
-                inputPixelsThatTime.Text = settings.Pixels;
-                inputAreaThatTime.Text = settings.MeasuredValue;
-                inputTopThatTime.Text = settings.TopGraduations;
-                labelRatioThatTime.Text = $"{LocalizeHelper.SCALE_CACULATED_RESULT_TITLE}{scaleAtThatTime.Value}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
+                var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(scaleAtThatTime.Settings);
+                inputAreaOfPixelsThatTime.Text = settings.Pixels;
+                inputExtractedAreaThatTime.Text = settings.ExtractedPixels;
+                inputAreaLossThatTime.Text = settings.AreaLoss;
+                textEdgeABPixelsThatTime.Text = settings.Edges.FirstOrDefault(t => "AB".Equals(t.Edge))?.PixelLength;
+                textEdgeBCPixelsThatTime.Text = settings.Edges.FirstOrDefault(t => "BC".Equals(t.Edge))?.PixelLength;
+                textEdgeCDPixelsThatTime.Text = settings.Edges.FirstOrDefault(t => "CD".Equals(t.Edge))?.PixelLength;
+                textEdgeDAPixelsThatTime.Text = settings.Edges.FirstOrDefault(t => "DA".Equals(t.Edge))?.PixelLength;
+                inputEdgeABLengthThatTime.Text = settings.Edges.FirstOrDefault(t => "AB".Equals(t.Edge))?.RealLength;
+                inputEdgeBCLengthThatTime.Text = settings.Edges.FirstOrDefault(t => "BC".Equals(t.Edge))?.RealLength;
+                inputEdgeCDLengthThatTime.Text = settings.Edges.FirstOrDefault(t => "CD".Equals(t.Edge))?.RealLength;
+                inputEdgeDALengthThatTime.Text = settings.Edges.FirstOrDefault(t => "DA".Equals(t.Edge))?.RealLength;
+                inputTopGradeThatTime.Text = settings.TopGraduations;
+                labelResultDescriptionThatTime.Text = settings.DisplayText;
             }
             #endregion
             // 调整表单大小以适应内容面板
             AdjustFormSizeToContent();
         }
 
-        private void InputSideABLength_TextChanged(object sender, EventArgs e)
+        private void InputEdgeABLength_TextChanged(object sender, EventArgs e)
         {
             if (isUpdating) return;  // 防止递归调用
 
             isUpdating = true;
 
-            if (!string.IsNullOrEmpty(inputSideABLength.Text))
+            if (!string.IsNullOrEmpty(inputEdgeABLength.Text))
             {
                 DisplayCaculatedResult("AB");
             }
             else
             {
-                ClearSideResult("AB");
-                label1ResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
+                ClearEdgeResult("AB");
+                labelResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
             }
 
             isUpdating = false;
         }
 
-        private void InputSideBCLength_TextChanged(object sender, EventArgs e)
+        private void InputEdgeBCLength_TextChanged(object sender, EventArgs e)
         {
             if (isUpdating) return;  // 防止递归调用
 
             isUpdating = true;
 
-            if (!string.IsNullOrEmpty(inputSideBCLength.Text))
+            if (!string.IsNullOrEmpty(inputEdgeBCLength.Text))
             {
                 DisplayCaculatedResult("BC");
             }
             else
             {
-                ClearSideResult("BC");
-                label1ResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
+                ClearEdgeResult("BC");
+                labelResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
             }
 
             isUpdating = false;
         }
 
-        private void InputSideCDLength_TextChanged(object sender, EventArgs e)
+        private void InputEdgeCDLength_TextChanged(object sender, EventArgs e)
         {
             if (isUpdating) return;  // 防止递归调用
 
             isUpdating = true;
 
-            if (!string.IsNullOrEmpty(inputSideCDLength.Text))
+            if (!string.IsNullOrEmpty(inputEdgeCDLength.Text))
             {
                 DisplayCaculatedResult("CD");
             }
             else
             {
-                ClearSideResult("CD");
-                label1ResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
+                ClearEdgeResult("CD");
+                labelResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
             }
 
             isUpdating = false;
         }
 
-        private void InputSideDALength_TextChanged(object sender, EventArgs e)
+        private void InputEdgeDALength_TextChanged(object sender, EventArgs e)
         {
             if (isUpdating) return;  // 防止递归调用
 
             isUpdating = true;
 
-            if (!string.IsNullOrEmpty(inputSideDALength.Text))
+            if (!string.IsNullOrEmpty(inputEdgeDALength.Text))
             {
                 DisplayCaculatedResult("DA");
             }
             else
             {
-                ClearSideResult("DA");
-                label1ResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
+                ClearEdgeResult("DA");
+                labelResultDescription.Text = LocalizeHelper.AUTO_CALCULATE;
             }
 
             isUpdating = false;
         }
 
-        private void DisplayCaculatedResult(string side)
+        private void DisplayCaculatedResult(string edge)
         {
             try
             {
-                switch (side)
+                switch (edge)
                 {
                     case "AB":
-                        inputSideBCLength.Text = $"{float.Parse(textSideBCPixels.Text) * float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text):F2}";
-                        inputSideCDLength.Text = $"{float.Parse(textSideCDPixels.Text) * float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text):F2}";
-                        inputSideDALength.Text = $"{float.Parse(textSideDAPixels.Text) * float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text):F2}";
+                        inputEdgeBCLength.Text = $"{float.Parse(textEdgeBCPixels.Text) * float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text):F2}";
+                        inputEdgeCDLength.Text = $"{float.Parse(textEdgeCDPixels.Text) * float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text):F2}";
+                        inputEdgeDALength.Text = $"{float.Parse(textEdgeDAPixels.Text) * float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text):F2}";
                         break;
                     case "BC":
-                        inputSideABLength.Text = $"{float.Parse(textSideABPixels.Text) * float.Parse(inputSideBCLength.Text) / float.Parse(textSideBCPixels.Text):F2}";
-                        inputSideCDLength.Text = $"{float.Parse(textSideCDPixels.Text) * float.Parse(inputSideBCLength.Text) / float.Parse(textSideBCPixels.Text):F2}";
-                        inputSideDALength.Text = $"{float.Parse(textSideDAPixels.Text) * float.Parse(inputSideBCLength.Text) / float.Parse(textSideBCPixels.Text):F2}";
+                        inputEdgeABLength.Text = $"{float.Parse(textEdgeABPixels.Text) * float.Parse(inputEdgeBCLength.Text) / float.Parse(textEdgeBCPixels.Text):F2}";
+                        inputEdgeCDLength.Text = $"{float.Parse(textEdgeCDPixels.Text) * float.Parse(inputEdgeBCLength.Text) / float.Parse(textEdgeBCPixels.Text):F2}";
+                        inputEdgeDALength.Text = $"{float.Parse(textEdgeDAPixels.Text) * float.Parse(inputEdgeBCLength.Text) / float.Parse(textEdgeBCPixels.Text):F2}";
                         break;
                     case "CD":
-                        inputSideABLength.Text = $"{float.Parse(textSideABPixels.Text) * float.Parse(inputSideCDLength.Text) / float.Parse(textSideCDPixels.Text):F2}";
-                        inputSideBCLength.Text = $"{float.Parse(textSideBCPixels.Text) * float.Parse(inputSideCDLength.Text) / float.Parse(textSideCDPixels.Text):F2}";
-                        inputSideDALength.Text = $"{float.Parse(textSideDAPixels.Text) * float.Parse(inputSideCDLength.Text) / float.Parse(textSideCDPixels.Text):F2}";
+                        inputEdgeABLength.Text = $"{float.Parse(textEdgeABPixels.Text) * float.Parse(inputEdgeCDLength.Text) / float.Parse(textEdgeCDPixels.Text):F2}";
+                        inputEdgeBCLength.Text = $"{float.Parse(textEdgeBCPixels.Text) * float.Parse(inputEdgeCDLength.Text) / float.Parse(textEdgeCDPixels.Text):F2}";
+                        inputEdgeDALength.Text = $"{float.Parse(textEdgeDAPixels.Text) * float.Parse(inputEdgeCDLength.Text) / float.Parse(textEdgeCDPixels.Text):F2}";
                         break;
                     case "DA":
-                        inputSideABLength.Text = $"{float.Parse(textSideABPixels.Text) * float.Parse(inputSideDALength.Text) / float.Parse(textSideDAPixels.Text):F2}";
-                        inputSideBCLength.Text = $"{float.Parse(textSideBCPixels.Text) * float.Parse(inputSideDALength.Text) / float.Parse(textSideDAPixels.Text):F2}";
-                        inputSideCDLength.Text = $"{float.Parse(textSideCDPixels.Text) * float.Parse(inputSideDALength.Text) / float.Parse(textSideDAPixels.Text):F2}";
+                        inputEdgeABLength.Text = $"{float.Parse(textEdgeABPixels.Text) * float.Parse(inputEdgeDALength.Text) / float.Parse(textEdgeDAPixels.Text):F2}";
+                        inputEdgeBCLength.Text = $"{float.Parse(textEdgeBCPixels.Text) * float.Parse(inputEdgeDALength.Text) / float.Parse(textEdgeDAPixels.Text):F2}";
+                        inputEdgeCDLength.Text = $"{float.Parse(textEdgeCDPixels.Text) * float.Parse(inputEdgeDALength.Text) / float.Parse(textEdgeDAPixels.Text):F2}";
                         break;
                     default:
                         break;
                 }
 
-                label1ResultDescription.Text = $"{LocalizeHelper.LENGTH_SCALE_RESULT_TITLE}{float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text):F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}\n" +
-                    $"{LocalizeHelper.AREA_SCALE_RESULT_TITLE}{Math.Pow(float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text), 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}\n" +
-                    $"{LocalizeHelper.CALCULATED_AREA_TITLE}{float.Parse(inputAreaOfPixels.Text) * Math.Pow(float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text), 2):F4}±{(float.Parse(inputAreaOfPixels.Text) - float.Parse(inputExtractedArea.Text)) * Math.Pow(float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text), 2):F4}{LocalizeHelper.SQUARE_MILLIMETER}";
+                labelResultDescription.Text = $"{LocalizeHelper.LENGTH_SCALE_RESULT_TITLE}{float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text):F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}\n" +
+                    $"{LocalizeHelper.AREA_SCALE_RESULT_TITLE}{Math.Pow(float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text), 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}\n" +
+                    $"{LocalizeHelper.CALCULATED_AREA_TITLE}{float.Parse(inputAreaOfPixels.Text) * Math.Pow(float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text), 2):F4}±{(float.Parse(inputAreaOfPixels.Text) - float.Parse(inputExtractedArea.Text)) * Math.Pow(float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text), 2):F4}{LocalizeHelper.SQUARE_MILLIMETER}";
             }
             catch (Exception)
             {
-                ClearSideResult(side);
-                label1ResultDescription.Text = LocalizeHelper.SCALE_INPUT_ERROR;
+                ClearEdgeResult(edge);
+                labelResultDescription.Text = LocalizeHelper.SCALE_INPUT_ERROR;
             }
         }
 
-        private void ClearSideResult(string side)
+        private void ClearEdgeResult(string edge)
         {
-            switch (side)
+            switch (edge)
             {
                 case "AB":
-                    inputSideBCLength.Text = string.Empty;
-                    inputSideCDLength.Text = string.Empty;
-                    inputSideDALength.Text = string.Empty;
+                    inputEdgeBCLength.Text = string.Empty;
+                    inputEdgeCDLength.Text = string.Empty;
+                    inputEdgeDALength.Text = string.Empty;
                     break;
                 case "BC":
-                    inputSideABLength.Text = string.Empty;
-                    inputSideCDLength.Text = string.Empty;
-                    inputSideDALength.Text = string.Empty;
+                    inputEdgeABLength.Text = string.Empty;
+                    inputEdgeCDLength.Text = string.Empty;
+                    inputEdgeDALength.Text = string.Empty;
                     break;
                 case "CD":
-                    inputSideABLength.Text = string.Empty;
-                    inputSideBCLength.Text = string.Empty;
-                    inputSideDALength.Text = string.Empty;
+                    inputEdgeABLength.Text = string.Empty;
+                    inputEdgeBCLength.Text = string.Empty;
+                    inputEdgeDALength.Text = string.Empty;
                     break;
                 case "DA":
-                    inputSideABLength.Text = string.Empty;
-                    inputSideBCLength.Text = string.Empty;
-                    inputSideCDLength.Text = string.Empty;
+                    inputEdgeABLength.Text = string.Empty;
+                    inputEdgeBCLength.Text = string.Empty;
+                    inputEdgeCDLength.Text = string.Empty;
                     break;
                 default:
                     break;
@@ -227,16 +246,17 @@ namespace AI_Assistant_Win
 
         public CalculateScale SaveSettings()
         {
+
+            if (string.IsNullOrEmpty(inputTopGrade.Text))
+            {
+                throw new Exception(LocalizeHelper.NO_TOP_GRADUATIONS);
+            }
             try
             {
-                if (string.IsNullOrEmpty(inputTopGrade.Text))
-                {
-                    throw new Exception(LocalizeHelper.NO_TOP_GRADUATIONS);
-                }
                 var add = new CalculateScale
                 {
                     Key = "GaugeBlock",
-                    Value = float.Parse(inputSideABLength.Text) / float.Parse(textSideABPixels.Text),
+                    Value = float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text),
                     Unit = LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT,
                     ImagePath = imagePath,
                     Settings = JsonConvert.SerializeObject(new GaugeBlockScaleItem
@@ -246,13 +266,13 @@ namespace AI_Assistant_Win
                         ExtractedPixels = inputExtractedArea.Text,
                         AreaLoss = inputAreaLoss.Text,
                         Prediction = gaugeBlockDetection.Item.Prediction, // 顶点位置
-                        Sides = [
-                                new QuadrilateralSide("AB", textSideABPixels.Text , inputSideABLength.Text),
-                                new QuadrilateralSide("BC", textSideBCPixels.Text , inputSideBCLength.Text),
-                                new QuadrilateralSide("CD", textSideCDPixels.Text , inputSideCDLength.Text),
-                                new QuadrilateralSide("DA", textSideDAPixels.Text , inputSideDALength.Text)
+                        Edges = [
+                                new QuadrilateralEdge("AB", textEdgeABPixels.Text , inputEdgeABLength.Text),
+                                new QuadrilateralEdge("BC", textEdgeBCPixels.Text , inputEdgeBCLength.Text),
+                                new QuadrilateralEdge("CD", textEdgeCDPixels.Text , inputEdgeCDLength.Text),
+                                new QuadrilateralEdge("DA", textEdgeDAPixels.Text , inputEdgeDALength.Text)
                             ],
-                        DisplayText = label1ResultDescription.Text
+                        DisplayText = labelResultDescription.Text
                     }, new JsonSerializerSettings
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore

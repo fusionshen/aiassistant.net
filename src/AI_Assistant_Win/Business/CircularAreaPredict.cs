@@ -229,7 +229,7 @@ namespace AI_Assistant_Win.Business
             var result = currentScale == null ?
              $"{detection.SegmentedPixels.Length}{LocalizeHelper.AREA_OF_PIXELS}" :
              $"{detection.SegmentedPixels.Length * currentScale.Value / 100:F2}{LocalizeHelper.SQUARE_MILLIMETER}";
-            return $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_TITLE}{result}{LocalizeHelper.CIRCULAR_AREA_PREDICTION_CONFIDENCE}{detection.Confidence.ToPercent()}%";
+            return $"{LocalizeHelper.AREA_PREDICTION_TITLE}{result}{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{detection.Confidence.ToPercent()}%";
         }
 
         private static SKColor HexToRgbaSkia(string hexColor, int alpha = 255)

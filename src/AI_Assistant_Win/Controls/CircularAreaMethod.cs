@@ -606,16 +606,19 @@ namespace AI_Assistant_Win.Controls
         }
         private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempCircularAreaResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
+            tempCircularAreaResult.WorkGroup = selectWorkGroup.SelectedValue?.ToString();
         }
         private void SelectTestNo_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempCircularAreaResult.TestNo = selectTestNo.SelectedValue.ToString();
-            // coilNumber
-            var target = testNoList.FirstOrDefault(t => tempCircularAreaResult.TestNo.Equals(t.TestNo));
-            if (target != null)
+            tempCircularAreaResult.TestNo = selectTestNo.SelectedValue?.ToString();
+            if (tempCircularAreaResult.TestNo != null)
             {
-                inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
+                // coilNumber
+                var target = testNoList.FirstOrDefault(t => tempCircularAreaResult.TestNo.Equals(t.TestNo));
+                if (target != null)
+                {
+                    inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
+                }
             }
         }
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)
@@ -624,7 +627,7 @@ namespace AI_Assistant_Win.Controls
         }
         private void SelectPosition_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempCircularAreaResult.Position = selectPosition.SelectedValue.ToString();
+            tempCircularAreaResult.Position = selectPosition.SelectedValue?.ToString();
         }
         private void InputAnalyst_TextChanged(object sender, EventArgs e)
         {

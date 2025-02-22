@@ -147,8 +147,8 @@ namespace AI_Assistant_Win.Controls
             {
                 text = $"{LocalizeHelper.CIRCULAR_POSITION_TITLE}{LocalizeHelper.CIRCULAR_POSITION(method.Position)}\n" +
                     $"{LocalizeHelper.CELL_AREA_OF_PIXELS}{method.Pixels}" +
-                    $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_CONFIDENCE}{method.Confidence.ToPercent()}%\n" +
-                    $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_TITLE}{method.Area:F2}{LocalizeHelper.SQUARE_MILLIMETER}\n" +
+                    $"{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{method.Confidence.ToPercent()}%\n" +
+                    $"{LocalizeHelper.AREA_PREDICTION_TITLE}{method.Area:F2}{LocalizeHelper.SQUARE_MILLIMETER}\n" +
                     $"{LocalizeHelper.CIRCULAR_AREA_DIAMETER}{method.Diameter:F2}{LocalizeHelper.MILLIMETER}\n" +
                     $"{LocalizeHelper.CELL_TITLE_ANALYST}{method.Analyst}\n" +
                     $"{LocalizeHelper.CELL_HEADER_CREATETIME}{method.CreateTime}\n" +

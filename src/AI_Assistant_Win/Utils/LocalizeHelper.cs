@@ -100,13 +100,15 @@ namespace AI_Assistant_Win.Utils
         public static string LEVEL => Localization.Get("Level:", "等级：");
         public static string BLACKNESS_WITH => Localization.Get(",Width:", "，宽度：");
         public static string MILLIMETER => Localization.Get("mm", "毫米");
-        public static string PIXEL => Localization.Get("pixels", "像素");
+        public static string PIXEL => Localization.Get("pixel", "像素");
         public static string PLEASE_SELECT_SCALE => Localization.Get("Please select a scale.", "请选择比例尺。");
         public static string PLEASE_PREDICT_BEFORE_SAVING => Localization.Get("Please predict before saving.", "请进行识别后再保存。");
         public static string PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING => Localization.Get("Please predict with the new scale before saving.", "请使用新的比例尺进行识别后再保存。");
         public static string PLEASE_SELECT_WORKBENCH => Localization.Get("Please select a workbench.", "请选择班组。");
         public static string PLEASE_SELECT_TESTNO => Localization.Get("Please select a test no.", "请选择试样编号。");
+        public static string PLEASE_SELECT_EDGE => Localization.Get("Select one edge of the identified quadrilateral.", "请选择识别出的四边形的某一条边。");
         public static string PLEASE_INPUT_COIL_NUMBER => Localization.Get("Please text a coil number.", "请输入钢卷号。");
+        public static string PLEASE_INPUT_EDGE_LENGTH(string edge) => Localization.Get($"Please enter the length of Edge {edge}.", $"请输入{edge}边的长度。");
         public static string PLEASE_INPUT_SIZE => Localization.Get("Please text a size.", "请输入尺寸。");
         public static string PLEASE_INPUT_ANALYST => Localization.Get("Please text a analyst.", "请输入分析人。");
         public static string PLEASE_USE_CORRECT_BLACKNESS_IMAGE => Localization.Get("Please use the correct blackness reference image for identification.", "请使用正确的黑度样板图片进行识别。");
@@ -167,8 +169,8 @@ namespace AI_Assistant_Win.Utils
         public static string CIRCULAR_DIAMETER_TITLE => Localization.Get(",Diameter:", "，直径：");
         public static string AREA_OF_PIXELS => Localization.Get("area of pixels", "像素面积");
         public static string SQUARE_MILLIMETER => Localization.Get("sq mm", "平方毫米");
-        public static string CIRCULAR_AREA_PREDICTION_TITLE => Localization.Get("Area:", "面积：");
-        public static string CIRCULAR_AREA_PREDICTION_CONFIDENCE => Localization.Get(",Confidence:", "，置信度：");
+        public static string AREA_PREDICTION_TITLE => Localization.Get("Area:", "面积：");
+        public static string AREA_PREDICTION_CONFIDENCE => Localization.Get(",Confidence:", "，置信度：");
         public static string PLEASE_SELECT_POSITION => Localization.Get("Please select a position.", "请选择样品部位。");
         public static string CIRCULAR_SCALE_CACULATED_RATIO_UNIT => Localization.Get("sq mm/100Pixels", "平方毫米/100像素面积");
         public static string PREDICT_FIRSTLY_BEFORE_SETTING_CIRCULAR_SCALE => Localization.Get("Please take a photo or upload a circular detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张圆片面积检测图片并且成功识别后再尝试进行比例尺设置。");
@@ -178,8 +180,12 @@ namespace AI_Assistant_Win.Utils
         public static string AUTO_CALCULATE => Localization.Get("Auto Calculate", "自动计算");
         public static string NO_TOP_GRADUATIONS => Localization.Get("Please enter the platform scale on the upper surface of the sample at this time.", "请输入此时样品上表面的平台刻度。");
         public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the area report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次面积报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
+        public static string WOULD_RESAVE_SCALE_PRECISION_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the accuracy report for this scale has already been uploaded. Do you confirm saving the current measurement results for updating the scale accuracy? If yes, please remember to upload this report and results again to the business system.", $"系统检测到本比例尺精度报告已经上传，是否确认保存本次测量结果，用于比例尺精度更新？如果是，请记得将本次报告及结果重新上传至业务系统。");
         public static string WOULD_SAVE_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to save the area detection result?", "是否保存本次面积检测结果？");
+        public static string WOULD_SAVE_SCALE_PRECISION_RESULT => Localization.Get("Do you want to save the current scale accuracy test results and perform the accuracy update?", "是否保存本次比例尺准确度检测结果并进行精度更新？");
+
         public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_ON_THIS_POSITION(string position) => Localization.Get($"The system has detected an existing area report for the {position} section. Do you confirm to overwrite and update it?", $"系统检测到已存在{position}部位的面积报告，是否确认覆盖更新？");
+        public static string WOULD_RESAVE_SCALE_PRECISION_RESULT_ON_THIS_GRADE(string grade) => Localization.Get($"The system has detected that accuracy test results already exist for this scale at the [{grade}] level. Do you confirm saving the current measurement results for updating the scale accuracy?", $"系统检测到本比例尺在【{grade}】刻度下已存在准确度检测结果，是否确认保存本次测量结果，用于比例尺精度更新？");
         public static string PLEASE_USE_CORRECT_CIRCULAR_IMAGE => Localization.Get("Please use the correct circular image for identification.", "请使用正确的圆形图片进行识别。");
         public static string CIRCULAR_AREA_EDIT_MODE(CircularAreaResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo},Position:{result.Position}]", $"修改模式[试样编号：{result.TestNo}，部位：{result.Position}]");
         public static string TABLE_UPPER_SURFACE_OP => Localization.Get("UpperSurfaceOP", "上表面OP");

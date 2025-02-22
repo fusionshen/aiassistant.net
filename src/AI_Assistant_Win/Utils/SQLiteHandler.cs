@@ -59,6 +59,8 @@ namespace AI_Assistant_Win.Utils
             _db.CreateTable<CircularAreaMethodResult>();
             _db.CreateTable<CircularAreaMethodSummary>();
             _db.CreateTable<CircularAreaUploadResult>();
+            _db.CreateTable<GaugeBlockMethodResult>();
+
         }
 
         // 私有静态内部类，负责持有唯一实例

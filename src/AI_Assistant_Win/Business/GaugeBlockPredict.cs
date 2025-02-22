@@ -254,7 +254,7 @@ namespace AI_Assistant_Win.Business
             // Line AB
             canvas.DrawLine(new SKPoint(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y), new SKPoint(quadrilateal.TopRight.X, quadrilateal.TopRight.Y), pointBgPaint);
             var ab_length = ShapeHelper.CalculateDistance(quadrilateal.TopLeft, quadrilateal.TopRight);
-            var abText = SideText(currentScale, ab_length);
+            var abText = EdgeText(currentScale, ab_length);
             var ab_x = (quadrilateal.TopLeft.X + quadrilateal.TopRight.X - (int)paintText.MeasureText(abText)) / 2 + margin;
             var ab_y = (quadrilateal.TopLeft.Y + quadrilateal.TopRight.Y) / 2 + textOffset;
             // AB shadow
@@ -272,7 +272,7 @@ namespace AI_Assistant_Win.Business
             // Line BC
             canvas.DrawLine(new SKPoint(quadrilateal.TopRight.X, quadrilateal.TopRight.Y), new SKPoint(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y), pointBgPaint);
             var bc_length = ShapeHelper.CalculateDistance(quadrilateal.TopRight, quadrilateal.BottomRight);
-            var bcText = SideText(currentScale, bc_length);
+            var bcText = EdgeText(currentScale, bc_length);
             var bc_x = (quadrilateal.TopRight.X + quadrilateal.BottomRight.X) / 2 - (int)paintText.MeasureText(bcText) - margin;
             var bc_y = (quadrilateal.TopRight.Y + quadrilateal.BottomRight.Y) / 2;
             // BC shadow
@@ -290,7 +290,7 @@ namespace AI_Assistant_Win.Business
             // Line CD
             canvas.DrawLine(new SKPoint(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y), new SKPoint(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y), pointBgPaint);
             var cd_length = ShapeHelper.CalculateDistance(quadrilateal.BottomRight, quadrilateal.BottomLeft);
-            var cdText = SideText(currentScale, cd_length);
+            var cdText = EdgeText(currentScale, cd_length);
             var cd_x = (quadrilateal.BottomRight.X + quadrilateal.BottomLeft.X - (int)paintText.MeasureText(bcText)) / 2 - margin;
             var cd_y = (quadrilateal.BottomRight.Y + quadrilateal.BottomLeft.Y) / 2 - textOffset;
             // CD shadow
@@ -300,7 +300,7 @@ namespace AI_Assistant_Win.Business
             // Lind DA
             canvas.DrawLine(new SKPoint(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y), new SKPoint(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y), pointBgPaint);
             var da_length = ShapeHelper.CalculateDistance(quadrilateal.BottomLeft, quadrilateal.TopLeft);
-            var daText = SideText(currentScale, da_length);
+            var daText = EdgeText(currentScale, da_length);
             var da_x = (quadrilateal.BottomLeft.X + quadrilateal.TopLeft.X) / 2 + margin;
             var da_y = (quadrilateal.BottomLeft.Y + quadrilateal.TopLeft.Y) / 2;
             // DA shadow
@@ -314,11 +314,9 @@ namespace AI_Assistant_Win.Business
             return surface.Snapshot();
         }
 
-        private string SideText(CalculateScale currentScale, float length)
+        private string EdgeText(CalculateScale currentScale, float length)
         {
-            var result = currentScale == null ?
-            $"{length:F2}{LocalizeHelper.PIXEL}" :
-            $"{length * currentScale.Value / 100:F2}{LocalizeHelper.MILLIMETER}";
+            var result = currentScale == null ? $"{length:F2}" : $"{length * currentScale.Value:F2}{LocalizeHelper.MILLIMETER}";
             return result;
         }
 
@@ -326,8 +324,8 @@ namespace AI_Assistant_Win.Business
         {
             var result = currentScale == null ?
              $"{detection.SegmentedPixels.Length}{LocalizeHelper.AREA_OF_PIXELS}" :
-             $"{detection.SegmentedPixels.Length * currentScale.Value / 100:F2}{LocalizeHelper.SQUARE_MILLIMETER}";
-            return $"{LocalizeHelper.CIRCULAR_AREA_PREDICTION_TITLE}{result}{LocalizeHelper.CIRCULAR_AREA_PREDICTION_CONFIDENCE}{detection.Confidence.ToPercent()}%";
+             $"{detection.SegmentedPixels.Length * Math.Pow(currentScale.Value, 2):F4}{LocalizeHelper.SQUARE_MILLIMETER}";
+            return $"{LocalizeHelper.AREA_PREDICTION_TITLE}{result}{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{detection.Confidence:P2}";
         }
 
         private static SKColor HexToRgbaSkia(string hexColor, int alpha = 255)

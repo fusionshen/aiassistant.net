@@ -93,22 +93,20 @@ namespace AI_Assistant_Win.Business
             { CircularPositionKind.LOWER_SURFACE_DR , LocalizeHelper.CIRCULAR_POSITION(CircularPositionKind.LOWER_SURFACE_DR)}
         };
 
-        public CircularAreaMethodResult GetResultExitsInDB(GaugeBlockResult tempCircularAreaResult)
+        public GaugeBlockMethodResult GetResultExitsInDB(GaugeBlockResult tempGaugeBlockResult)
         {
-            var positionEnum = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key;
-            var target = connection.Table<CircularAreaMethodResult>()
-                .FirstOrDefault(t => tempCircularAreaResult.TestNo.Equals(t.TestNo) &&
-                                     tempCircularAreaResult.CoilNumber.Equals(t.CoilNumber) &&
-                                     positionEnum.Equals(t.Position));
+            var target = connection.Table<GaugeBlockMethodResult>()
+                .FirstOrDefault(t => tempGaugeBlockResult.CalculateScale.Id.Equals(t.ScaleId) &&
+                                     tempGaugeBlockResult.InputEdgeLength.Equals(t.MeasuredLength));
             return target;
         }
 
-        private CircularAreaMethodResult AddOrUpdateByTransaction(GaugeBlockResult tempCircularAreaResult)
+        private GaugeBlockMethodResult AddOrUpdateByTransaction(GaugeBlockResult tempCircularAreaResult)
         {
             var target = GetResultExitsInDB(tempCircularAreaResult);
             if (target == null)
             {
-                target = new CircularAreaMethodResult
+                target = new GaugeBlockMethodResult
                 {
                     OriginImagePath = tempCircularAreaResult.OriginImagePath,
                     RenderImagePath = tempCircularAreaResult.RenderImagePath,
@@ -122,9 +120,9 @@ namespace AI_Assistant_Win.Business
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     }),
                     WorkGroup = tempCircularAreaResult.WorkGroup,
-                    TestNo = tempCircularAreaResult.TestNo,
-                    CoilNumber = tempCircularAreaResult.CoilNumber,
-                    Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key,
+                    //TestNo = tempCircularAreaResult.TestNo,
+                    //CoilNumber = tempCircularAreaResult.CoilNumber,
+                    //Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key,
                     Analyst = tempCircularAreaResult.Analyst,
                     CreateTime = DateTime.Now
                 };
@@ -148,9 +146,9 @@ namespace AI_Assistant_Win.Business
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
                 target.WorkGroup = tempCircularAreaResult.WorkGroup;
-                target.TestNo = tempCircularAreaResult.TestNo;
-                target.CoilNumber = tempCircularAreaResult.CoilNumber;
-                target.Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key;
+                //target.TestNo = tempCircularAreaResult.TestNo;
+                //target.CoilNumber = tempCircularAreaResult.CoilNumber;
+                //target.Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key;
                 target.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
                 target.LastModifiedTime = DateTime.Now;
                 var ok = connection.Update(target);
@@ -163,36 +161,36 @@ namespace AI_Assistant_Win.Business
             return target;
         }
 
-        private void AddOrUpdateSummary(CircularAreaMethodResult circularAreaMethodResult)
+        private void AddOrUpdateSummary(GaugeBlockMethodResult circularAreaMethodResult)
         {
             // 查询summary是否存在
-            var summary = connection.Table<CircularAreaMethodSummary>().FirstOrDefault(t => circularAreaMethodResult.TestNo.Equals(t.TestNo) && circularAreaMethodResult.CoilNumber.Equals(t.CoilNumber));
-            if (summary == null)
-            {
-                // 构造summary
-                summary = new CircularAreaMethodSummary
-                {
-                    TestNo = circularAreaMethodResult.TestNo,
-                    CoilNumber = circularAreaMethodResult.CoilNumber,
-                    Creator = circularAreaMethodResult.Analyst,
-                    CreateTime = DateTime.Now
-                };
-                var ok = connection.Insert(summary);
-                if (ok == 0)
-                {
-                    throw new Exception(LocalizeHelper.ADD_SUMMARY_FAILED);
-                }
-            }
-            else
-            {
-                summary.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
-                summary.LastModifiedTime = DateTime.Now;
-                var ok = connection.Update(summary);
-                if (ok == 0)
-                {
-                    throw new Exception(LocalizeHelper.UPDATE_SUMMARY_FAILED);
-                }
-            }
+            //var summary = connection.Table<CircularAreaMethodSummary>().FirstOrDefault(t => circularAreaMethodResult.ScaleId.Equals(t.TestNo) && circularAreaMethodResult.CoilNumber.Equals(t.CoilNumber));
+            //if (summary == null)
+            //{
+            //    // 构造summary
+            //    summary = new CircularAreaMethodSummary
+            //    {
+            //        TestNo = circularAreaMethodResult.TestNo,
+            //        CoilNumber = circularAreaMethodResult.CoilNumber,
+            //        Creator = circularAreaMethodResult.Analyst,
+            //        CreateTime = DateTime.Now
+            //    };
+            //    var ok = connection.Insert(summary);
+            //    if (ok == 0)
+            //    {
+            //        throw new Exception(LocalizeHelper.ADD_SUMMARY_FAILED);
+            //    }
+            //}
+            //else
+            //{
+            //    summary.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
+            //    summary.LastModifiedTime = DateTime.Now;
+            //    var ok = connection.Update(summary);
+            //    if (ok == 0)
+            //    {
+            //        throw new Exception(LocalizeHelper.UPDATE_SUMMARY_FAILED);
+            //    }
+            //}
         }
 
         public List<int> LoadOriginalResultFromDB(GaugeBlockResult originalGaugeBlockResult, string id)
@@ -200,13 +198,12 @@ namespace AI_Assistant_Win.Business
             if (string.IsNullOrEmpty(id))
             {
                 originalGaugeBlockResult.Id = 0;
-                originalGaugeBlockResult.TestNo = string.Empty;
-                originalGaugeBlockResult.CoilNumber = string.Empty;
-                originalGaugeBlockResult.Position = string.Empty;
                 originalGaugeBlockResult.OriginImagePath = string.Empty;
                 originalGaugeBlockResult.RenderImagePath = string.Empty;
                 originalGaugeBlockResult.WorkGroup = string.Empty;
                 originalGaugeBlockResult.Analyst = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
+                originalGaugeBlockResult.InputEdge = string.Empty;
+                originalGaugeBlockResult.InputEdgeLength = string.Empty;
                 originalGaugeBlockResult.Item = null;
                 return [];
             }
@@ -215,9 +212,9 @@ namespace AI_Assistant_Win.Business
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));
             originalGaugeBlockResult.Id = body.Id;
-            originalGaugeBlockResult.TestNo = body.TestNo;
-            originalGaugeBlockResult.Position = PositionList.FirstOrDefault(t => body.Position.Equals(t.Key)).Value;
-            originalGaugeBlockResult.CoilNumber = body.CoilNumber;
+            //originalGaugeBlockResult.TestNo = body.TestNo;
+            //originalGaugeBlockResult.Position = PositionList.FirstOrDefault(t => body.Position.Equals(t.Key)).Value;
+            //originalGaugeBlockResult.CoilNumber = body.CoilNumber;
             originalGaugeBlockResult.OriginImagePath = body.OriginImagePath;
             originalGaugeBlockResult.RenderImagePath = body.RenderImagePath;
             originalGaugeBlockResult.WorkGroup = body.WorkGroup;

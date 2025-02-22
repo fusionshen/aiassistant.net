@@ -607,17 +607,20 @@ namespace AI_Assistant_Win.Controls
 
         private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempBlacknessResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
+            tempBlacknessResult.WorkGroup = selectWorkGroup.SelectedValue?.ToString();
         }
 
         private void SelectTestNo_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempBlacknessResult.TestNo = selectTestNo.SelectedValue.ToString();
+            tempBlacknessResult.TestNo = selectTestNo.SelectedValue?.ToString();
             // coilNumber
-            var target = testNoList.FirstOrDefault(t => tempBlacknessResult.TestNo.Equals(t.TestNo));
-            if (target != null)
+            if (tempBlacknessResult.TestNo != null)
             {
-                inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
+                var target = testNoList.FirstOrDefault(t => tempBlacknessResult.TestNo.Equals(t.TestNo));
+                if (target != null)
+                {
+                    inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
+                }
             }
         }
 

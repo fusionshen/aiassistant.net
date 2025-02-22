@@ -9,13 +9,13 @@ namespace AI_Assistant_Win.Models.Middle
         public string ExtractedPixels { get; set; }
         public string AreaLoss { get; set; }
         public QuadrilateralSegmentation Prediction { get; set; }
-        public List<QuadrilateralSide> Sides { get; set; }
+        public List<QuadrilateralEdge> Edges { get; set; }
         public string DisplayText { get; set; }
     }
 
-    public class QuadrilateralSide(string side, string pixelLength, string realLength)
+    public class QuadrilateralEdge(string edge, string pixelLength, string realLength)
     {
-        public string Side { get; set; } = side;
+        public string Edge { get; set; } = edge;
         public string PixelLength { get; set; } = pixelLength;
         public string RealLength { get; set; } = realLength;
     }

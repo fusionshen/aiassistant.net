@@ -11,7 +11,6 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using YoloDotNet.Extensions;
 
 namespace AI_Assistant_Win.Controls
 {
@@ -107,18 +106,6 @@ namespace AI_Assistant_Win.Controls
             {
                 tempGaugeBlockResult.Id = originalGaugeBlockResult.Id;
             }
-            else if (e.PropertyName == "TestNo")
-            {
-                //selectTestNo.SelectedValue = originalGaugeBlockResult.TestNo;
-            }
-            else if (e.PropertyName == "CoilNumber")
-            {
-                //inputCoilNumber.Text = originalGaugeBlockResult.CoilNumber;
-            }
-            else if (e.PropertyName == "Position")
-            {
-                //selectPosition.SelectedValue = originalGaugeBlockResult.Position;
-            }
             else if (e.PropertyName == "OriginImagePath")
             {
                 imageProcessBLL.OriginImagePath = originalGaugeBlockResult.OriginImagePath;
@@ -134,6 +121,14 @@ namespace AI_Assistant_Win.Controls
             else if (e.PropertyName == "Analyst")
             {
                 inputAnalyst.Text = originalGaugeBlockResult.Analyst;
+            }
+            else if (e.PropertyName == "InputEdge")
+            {
+                selectEdge.SelectedValue = originalGaugeBlockResult.InputEdge;
+            }
+            else if (e.PropertyName == "InputEdgeLength")
+            {
+                inputEdgeLength.Text = originalGaugeBlockResult.InputEdgeLength;
             }
             else if (e.PropertyName == "CalculateScale")
             {
@@ -197,18 +192,14 @@ namespace AI_Assistant_Win.Controls
             {
                 throw new Exception(LocalizeHelper.PLEASE_SELECT_WORKBENCH);
             }
-            //if (selectTestNo.SelectedValue == null)
-            //{
-            //    throw new Exception(LocalizeHelper.PLEASE_SELECT_TESTNO);
-            //}
-            //if (string.IsNullOrEmpty(inputCoilNumber.Text))
-            //{
-            //    throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
-            //}
-            //if (selectPosition.SelectedValue == null)
-            //{
-            //    throw new Exception(LocalizeHelper.PLEASE_SELECT_POSITION);
-            //}
+            if (selectEdge.SelectedValue == null)
+            {
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_EDGE);
+            }
+            if (string.IsNullOrEmpty(inputEdgeLength.Text))
+            {
+                throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
+            }
             if (string.IsNullOrEmpty(inputAnalyst.Text))
             {
                 throw new Exception(LocalizeHelper.PLEASE_INPUT_ANALYST);
@@ -318,8 +309,6 @@ namespace AI_Assistant_Win.Controls
                     // tell client how to do when any scale does not exit.
                     BtnSetScale_Click(null, null);
                 }
-                // Position List
-                InitializeSelectPostion();
                 try
                 {
                     // 通过观察者模式实现界面数据效果
@@ -389,14 +378,7 @@ namespace AI_Assistant_Win.Controls
             }, Font);
             await Task.Delay(50);
         }
-        private void InitializeSelectPostion()
-        {
 
-            //selectPosition.Items.Clear();
-            //// select position
-            //var result = gaugeBlockMethodBLL.PositionList.Select(t => t.Value).ToList();
-            //selectPosition.Items.AddRange([.. result]);
-        }
         private bool InitializeSelectScale()
         {
             scaleList.Clear();
@@ -460,28 +442,30 @@ namespace AI_Assistant_Win.Controls
         {
             tempGaugeBlockResult.Item = new GaugeBlock(gaugeBlockPredict.Prediction, CurrentScale);
             inputAreaOfPixels.Text = $"{tempGaugeBlockResult.Item.AreaOfPixels}";
-            inputConfidence.Text = $"{tempGaugeBlockResult.Item.Confidence.ToPercent()}%";
+            inputConfidence.Text = $"{tempGaugeBlockResult.Item.Confidence:P2}";
             OutputScaleTexts(tempGaugeBlockResult.Item.CalculateScale);
-            inputCalculatedArea.Text = $"{tempGaugeBlockResult.Item.CalculatedArea:F2}{tempGaugeBlockResult.Item.AreaUnit}";
-            inputVertexPositions.Text = tempGaugeBlockResult.Item.PointText;
-            inputSidePixels.Text = string.Join(" ", tempGaugeBlockResult.Item.SidePixels.Select(t => $"{t.Key}={t.Value:F2}"));
-            inputCalculatSides.Text = string.Join(" ", tempGaugeBlockResult.Item.CalculateSideLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
+            inputCalculatedArea.Text = $"{tempGaugeBlockResult.Item.CalculatedArea:F4}{tempGaugeBlockResult.Item.AreaUnit}";
+            inputVertexPositions.Text = tempGaugeBlockResult.Item.VertexText;
+            inputEdgePixels.Text = string.Join(" ", tempGaugeBlockResult.Item.EdgePixels.Select(t => $"{t.Key}={t.Value:F2}"));
+            inputCalculatdEdges.Text = string.Join(" ", tempGaugeBlockResult.Item.CalculatedEdgeLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
         }
         private void OutputScaleTexts(CalculateScale calculateScale)
         {
             if (calculateScale != null)
             {
-                inputScale.Text = $"{calculateScale.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
+                inputLengthScale.Text = $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}";
+                inputAreaScale.Text = $"{Math.Pow(calculateScale.Value, 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}";
                 var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(calculateScale.Settings);
                 if (settings != null)
                 {
-                    inputGraduations.Text = settings.TopGraduations;
+                    inputGrade.Text = settings.TopGraduations;
                 }
             }
             else
             {
-                inputScale.Text = string.Empty;
-                inputGraduations.Text = string.Empty;
+                inputLengthScale.Text = string.Empty;
+                inputAreaScale.Text = string.Empty;
+                inputGrade.Text = string.Empty;
             }
         }
         private void ClearTexts()
@@ -489,8 +473,8 @@ namespace AI_Assistant_Win.Controls
             tempGaugeBlockResult.Item = null;
             inputAreaOfPixels.Text = string.Empty;
             inputConfidence.Text = string.Empty;
-            inputScale.Text = string.Empty;
-            inputGraduations.Text = string.Empty;
+            inputAreaScale.Text = string.Empty;
+            inputGrade.Text = string.Empty;
             inputCalculatedArea.Text = string.Empty;
             inputVertexPositions.Text = string.Empty;
         }
@@ -507,10 +491,10 @@ namespace AI_Assistant_Win.Controls
                 return;
             }
             if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalGaugeBlockResult.IsUploaded ?
-                LocalizeHelper.WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADING :
+                LocalizeHelper.WOULD_RESAVE_SCALE_PRECISION_RESULT_AFTER_UPLOADING :
                 gaugeBlockMethodBLL.GetResultExitsInDB(tempGaugeBlockResult) != null ?
-                  LocalizeHelper.WOULD_RESAVE_CIRCULAR_AREA_RESULT_ON_THIS_POSITION(tempGaugeBlockResult.Position) :
-                LocalizeHelper.WOULD_SAVE_CIRCULAR_AREA_RESULT) == DialogResult.OK)
+                  LocalizeHelper.WOULD_RESAVE_SCALE_PRECISION_RESULT_ON_THIS_GRADE(inputGrade.Text) :
+                LocalizeHelper.WOULD_SAVE_SCALE_PRECISION_RESULT) == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
                 btn.LoadingWaveValue = 0;
@@ -584,13 +568,59 @@ namespace AI_Assistant_Win.Controls
         }
         private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
-            tempGaugeBlockResult.WorkGroup = selectWorkGroup.SelectedValue.ToString();
+            tempGaugeBlockResult.WorkGroup = selectWorkGroup.SelectedValue?.ToString();
         }
 
         private void InputAnalyst_TextChanged(object sender, EventArgs e)
         {
             tempGaugeBlockResult.Analyst = inputAnalyst.Text;
         }
+
+        private void SelectEdge_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
+        {
+
+            tempGaugeBlockResult.InputEdge = selectEdge.SelectedValue?.ToString();
+            DisplayAccuracy();
+        }
+
+        private void InputEdgeLength_TextChanged(object sender, EventArgs e)
+        {
+            tempGaugeBlockResult.InputEdgeLength = inputEdgeLength.Text;
+            DisplayAccuracy();
+        }
+
+        private void DisplayAccuracy()
+        {
+            if (tempGaugeBlockResult.Item != null &&
+                tempGaugeBlockResult.Item.CalculateScale != null &&
+                !string.IsNullOrEmpty(tempGaugeBlockResult.InputEdge) &&
+                !string.IsNullOrEmpty(tempGaugeBlockResult.InputEdgeLength))
+            {
+                try
+                {
+                    // length Accuracy
+                    var calculatedLength = tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge];
+                    var realLenght = float.Parse(tempGaugeBlockResult.InputEdgeLength);
+                    inputLenghtAccuracy.Text = $"{1 - Math.Abs(calculatedLength - realLenght) / Math.Abs(realLenght):P2}";
+                    // area Accuracy
+                    var calculatedArea = tempGaugeBlockResult.Item.CalculatedArea;
+                    var realArea = Math.Pow(realLenght, 2) * calculatedArea / Math.Pow(calculatedLength, 2);
+                    inputAreaAccuracy.Text = $"{realArea:F4}{LocalizeHelper.SQUARE_MILLIMETER} {1 - Math.Abs(calculatedArea - realArea) / Math.Abs(realArea):P2}";
+                }
+                catch (Exception)
+                {
+                    inputLenghtAccuracy.Text = string.Empty;
+                    inputAreaAccuracy.Text = string.Empty;
+                }
+            }
+            else
+            {
+                inputLenghtAccuracy.Text = string.Empty;
+                inputAreaAccuracy.Text = string.Empty;
+            }
+        }
+
+
         private void BtnClear_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
@@ -674,7 +704,7 @@ namespace AI_Assistant_Win.Controls
         {
             try
             {
-                AntdUI.Drawer.open(form, new CircularAreaReport(form, originalGaugeBlockResult.TestNo, () => { })
+                AntdUI.Drawer.open(form, new CircularAreaReport(form, originalGaugeBlockResult.Analyst, () => { })
                 {
                     Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                 }, AntdUI.TAlignMini.Right);

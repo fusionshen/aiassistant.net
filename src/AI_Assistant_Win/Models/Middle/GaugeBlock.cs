@@ -22,7 +22,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 计算后的面积，用于保存数据库和history、report展示
         /// </summary>
-        public float CalculatedArea { get => CalculateScale == null ? Prediction.SegmentedPixelsCount : Prediction.SegmentedPixelsCount * CalculateScale.Value / 100; }
+        public float CalculatedArea { get => (float)(CalculateScale == null ? Prediction.SegmentedPixelsCount : Prediction.SegmentedPixelsCount * Math.Pow(CalculateScale.Value, 2)); }
         /// <summary>
         /// 截取四边形像素面积
         /// </summary>
@@ -34,14 +34,14 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 点坐标展示
         /// </summary>
-        public string PointText
+        public string VertexText
         {
             get => $"({Prediction.Quadrilateral.TopLeft.X},{Prediction.Quadrilateral.TopLeft.Y})({Prediction.Quadrilateral.TopRight.X},{Prediction.Quadrilateral.TopRight.Y})({Prediction.Quadrilateral.BottomRight.X},{Prediction.Quadrilateral.BottomRight.Y})({Prediction.Quadrilateral.BottomLeft.X},{Prediction.Quadrilateral.BottomLeft.Y})";
         }
         /// <summary>
-        /// pixels of each side
+        /// pixels of each edge
         /// </summary>
-        public Dictionary<string, float> SidePixels
+        public Dictionary<string, float> EdgePixels
         {
             get => new()
             {
@@ -52,9 +52,9 @@ namespace AI_Assistant_Win.Models.Middle
             };
         }
 
-        public Dictionary<string, float> CalculateSideLengths
+        public Dictionary<string, float> CalculatedEdgeLengths
         {
-            get => CalculateScale == null ? SidePixels : SidePixels.ToDictionary(pair => pair.Key, pair => pair.Value * CalculateScale.Value / 100);
+            get => CalculateScale == null ? EdgePixels : EdgePixels.ToDictionary(pair => pair.Key, pair => pair.Value * CalculateScale.Value);
         }
         /// <summary>
         /// 表述，用于在结果判定区显示
