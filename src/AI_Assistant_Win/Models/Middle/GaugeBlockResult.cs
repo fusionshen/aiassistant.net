@@ -94,7 +94,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _inputEdge; }
             set
             {
-                if (!_inputEdge.Equals(value))
+                if (_inputEdge == null || !_inputEdge.Equals(value))
                 {
                     _inputEdge = value;
                     OnPropertyChanged(nameof(InputEdge));

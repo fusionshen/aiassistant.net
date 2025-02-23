@@ -18,61 +18,63 @@ namespace AI_Assistant_Win.Business
 
         public List<CircularAreaSummaryHistory> GetSummaryListByConditions(DateTime? startDate, DateTime? endDate, string text)
         {
-            var allSummary = connection.Table<CircularAreaMethodSummary>().ToList();
-            var allMethod = connection.Table<CircularAreaMethodResult>().ToList();
-            var all = allSummary.Select(t => new CircularAreaSummaryHistory
-            {
-                Summary = t,
-                MethodList = [.. allMethod.Where(x => t.TestNo.Equals(x.TestNo) && t.CoilNumber.Equals(x.CoilNumber)).OrderBy(x => x.Position)]
-            }).ToList();
-            var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
-            var sorted = filtered.OrderByDescending(t => t.Summary.CreateTime).ToList();
-            return sorted;
+            //var allSummary = connection.Table<ScaleAccuracyTracer>().ToList();
+            //var allMethod = connection.Table<GaugeBlockMethodResult>().ToList();
+            //var all = allSummary.Select(t => new CircularAreaSummaryHistory
+            //{
+            //    Summary = t,
+            //    MethodList = [.. allMethod.Where(x => t.TestNo.Equals(x.TestNo) && t.CoilNumber.Equals(x.CoilNumber)).OrderBy(x => x.Position)]
+            //}).ToList();
+            //var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
+            //var sorted = filtered.OrderByDescending(t => t.Summary.CreateTime).ToList();
+            //return sorted;
+            return null;
         }
 
         private bool Filter(CircularAreaSummaryHistory t, DateTime? startDate, DateTime? endDate, string text)
         {
-            var result = true;
-            if (startDate != null)
-            {
-                result = result && t.Summary.CreateTime != null && t.Summary.CreateTime >= startDate;
-            }
-            if (endDate != null)
-            {
-                result = result && t.Summary.CreateTime != null && t.Summary.CreateTime <= endDate;
-            }
-            if (!string.IsNullOrEmpty(text))
-            {
-                result = result && (t.Summary.Id.ToString().Equals(text) ||
-                    (!string.IsNullOrEmpty(t.Summary.TestNo) && t.Summary.TestNo.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.Summary.CoilNumber) && t.Summary.CoilNumber.Contains(text)) ||
-                    (t.Summary.IsUploaded && text.Equals("已上传")) ||
-                    (!t.Summary.IsUploaded && text.Equals("未上传")) ||
-                    (!string.IsNullOrEmpty(t.Summary.Creator) && t.Summary.Creator.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.Summary.Uploader) && t.Summary.Uploader.Contains(text)) ||
-                    (!string.IsNullOrEmpty(t.Summary.LastReviser) && t.Summary.LastReviser.Contains(text))
-                    );
-            }
-            return result;
+            //var result = true;
+            //if (startDate != null)
+            //{
+            //    result = result && t.Summary.CreateTime != null && t.Summary.CreateTime >= startDate;
+            //}
+            //if (endDate != null)
+            //{
+            //    result = result && t.Summary.CreateTime != null && t.Summary.CreateTime <= endDate;
+            //}
+            //if (!string.IsNullOrEmpty(text))
+            //{
+            //    result = result && (t.Summary.Id.ToString().Equals(text) ||
+            //        (!string.IsNullOrEmpty(t.Summary.TestNo) && t.Summary.TestNo.Contains(text)) ||
+            //        (!string.IsNullOrEmpty(t.Summary.CoilNumber) && t.Summary.CoilNumber.Contains(text)) ||
+            //        (t.Summary.IsUploaded && text.Equals("已上传")) ||
+            //        (!t.Summary.IsUploaded && text.Equals("未上传")) ||
+            //        (!string.IsNullOrEmpty(t.Summary.Creator) && t.Summary.Creator.Contains(text)) ||
+            //        (!string.IsNullOrEmpty(t.Summary.Uploader) && t.Summary.Uploader.Contains(text)) ||
+            //        (!string.IsNullOrEmpty(t.Summary.LastReviser) && t.Summary.LastReviser.Contains(text))
+            //        );
+            //}
+            //return result;
+            return true;
         }
 
-        public CircularAreaMethodResult GetResultById(string id)
+        public GaugeBlockMethodResult GetResultById(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
                 throw new Exception(LocalizeHelper.ID_IS_EMPTY);
             }
             // if t.Id.ToString().Equals(id), will throw not function toString(), funny!
-            var item = connection.Table<CircularAreaMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
+            var item = connection.Table<GaugeBlockMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
             return item;
         }
 
-        public int SaveResult(GaugeBlockResult tempCircularAreaResult)
+        public int SaveResult(GaugeBlockResult tempGaugeBlockResult)
         {
             connection.BeginTransaction();
             try
             {
-                var result = AddOrUpdateByTransaction(tempCircularAreaResult);
+                var result = AddOrUpdateByTransaction(tempGaugeBlockResult);
                 connection.Commit();
                 return result.Id;
             }
@@ -83,47 +85,41 @@ namespace AI_Assistant_Win.Business
             }
         }
 
-        public Dictionary<CircularPositionKind, string> PositionList => new()
-        {
-            { CircularPositionKind.UPPER_SURFACE_OP , LocalizeHelper.CIRCULAR_POSITION(CircularPositionKind.UPPER_SURFACE_OP)},
-            { CircularPositionKind.UPPER_SURFACE_CE , LocalizeHelper.CIRCULAR_POSITION(CircularPositionKind.UPPER_SURFACE_CE)},
-            { CircularPositionKind.UPPER_SURFACE_DR , LocalizeHelper.CIRCULAR_POSITION(CircularPositionKind.UPPER_SURFACE_DR)},
-            { CircularPositionKind.LOWER_SURFACE_OP , LocalizeHelper.CIRCULAR_POSITION(CircularPositionKind.LOWER_SURFACE_OP)},
-            { CircularPositionKind.LOWER_SURFACE_CE , LocalizeHelper.CIRCULAR_POSITION(CircularPositionKind.LOWER_SURFACE_CE)},
-            { CircularPositionKind.LOWER_SURFACE_DR , LocalizeHelper.CIRCULAR_POSITION(CircularPositionKind.LOWER_SURFACE_DR)}
-        };
-
         public GaugeBlockMethodResult GetResultExitsInDB(GaugeBlockResult tempGaugeBlockResult)
         {
             var target = connection.Table<GaugeBlockMethodResult>()
                 .FirstOrDefault(t => tempGaugeBlockResult.CalculateScale.Id.Equals(t.ScaleId) &&
-                                     tempGaugeBlockResult.InputEdgeLength.Equals(t.MeasuredLength));
+                                     tempGaugeBlockResult.InputEdgeLength.Equals(t.InputLength));
             return target;
         }
 
-        private GaugeBlockMethodResult AddOrUpdateByTransaction(GaugeBlockResult tempCircularAreaResult)
+        private GaugeBlockMethodResult AddOrUpdateByTransaction(GaugeBlockResult tempGaugeBlockResult)
         {
-            var target = GetResultExitsInDB(tempCircularAreaResult);
-            if (target == null)
+            var target = new GaugeBlockMethodResult();
+            if (tempGaugeBlockResult.Id == 0)
             {
                 target = new GaugeBlockMethodResult
                 {
-                    OriginImagePath = tempCircularAreaResult.OriginImagePath,
-                    RenderImagePath = tempCircularAreaResult.RenderImagePath,
-                    ScaleId = tempCircularAreaResult.Item.CalculateScale.Id, //tempBlacknessResult.CalculateScale.Id,
-                    Pixels = tempCircularAreaResult.Item.AreaOfPixels,
-                    Confidence = tempCircularAreaResult.Item.Confidence,
-                    Area = tempCircularAreaResult.Item.CalculatedArea,
-                    //Diameter = tempCircularAreaResult.Item.Diameter,
-                    Prediction = JsonConvert.SerializeObject(tempCircularAreaResult.Item.Prediction, new JsonSerializerSettings
+                    OriginImagePath = tempGaugeBlockResult.OriginImagePath,
+                    RenderImagePath = tempGaugeBlockResult.RenderImagePath,
+                    ScaleId = tempGaugeBlockResult.Item.CalculateScale.Id, //tempBlacknessResult.CalculateScale.Id,
+                    Confidence = tempGaugeBlockResult.Item.Confidence,
+                    Pixels = tempGaugeBlockResult.Item.AreaOfPixels,
+                    Area = tempGaugeBlockResult.Item.CalculatedArea,
+                    VertexPositions = tempGaugeBlockResult.Item.VertexPositonsText,
+                    EdgePixels = string.Join(" ", tempGaugeBlockResult.Item.EdgePixels.Select(t => $"{t.Key}={t.Value:F2}")),
+                    CalculatdEdges = string.Join(" ", tempGaugeBlockResult.Item.CalculatedEdgeLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}")),
+                    Prediction = JsonConvert.SerializeObject(tempGaugeBlockResult.Item.Prediction, new JsonSerializerSettings
                     {
                         ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                     }),
-                    WorkGroup = tempCircularAreaResult.WorkGroup,
-                    //TestNo = tempCircularAreaResult.TestNo,
-                    //CoilNumber = tempCircularAreaResult.CoilNumber,
-                    //Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key,
-                    Analyst = tempCircularAreaResult.Analyst,
+                    WorkGroup = tempGaugeBlockResult.WorkGroup,
+                    Analyst = tempGaugeBlockResult.Analyst,
+                    InputEdge = tempGaugeBlockResult.InputEdge,
+                    CalculatedLength = tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge],
+                    InputLength = float.Parse(tempGaugeBlockResult.InputEdgeLength),
+                    LengthAccuracy = $"{1 - Math.Abs(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge] - float.Parse(tempGaugeBlockResult.InputEdgeLength)) / Math.Abs(float.Parse(tempGaugeBlockResult.InputEdgeLength)):P2}",
+                    AreaAccuracy = $"{Math.Pow(float.Parse(tempGaugeBlockResult.InputEdgeLength), 2) * tempGaugeBlockResult.Item.CalculatedArea / Math.Pow(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge], 2):F4}{LocalizeHelper.SQUARE_MILLIMETER} {1 - Math.Abs(tempGaugeBlockResult.Item.CalculatedArea - Math.Pow(float.Parse(tempGaugeBlockResult.InputEdgeLength), 2) * tempGaugeBlockResult.Item.CalculatedArea / Math.Pow(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge], 2)) / Math.Abs(Math.Pow(float.Parse(tempGaugeBlockResult.InputEdgeLength), 2) * tempGaugeBlockResult.Item.CalculatedArea / Math.Pow(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge], 2)):P2}",
                     CreateTime = DateTime.Now
                 };
                 var ok = connection.Insert(target);
@@ -134,21 +130,27 @@ namespace AI_Assistant_Win.Business
             }
             else // update
             {
-                target.OriginImagePath = tempCircularAreaResult.OriginImagePath;
-                target.RenderImagePath = tempCircularAreaResult.RenderImagePath;
-                target.ScaleId = tempCircularAreaResult.Item.CalculateScale.Id; //tempBlacknessResult.CalculateScale.Id,
-                target.Pixels = tempCircularAreaResult.Item.AreaOfPixels;
-                target.Confidence = tempCircularAreaResult.Item.Confidence;
-                target.Area = tempCircularAreaResult.Item.CalculatedArea;
-                //target.Diameter = tempCircularAreaResult.Item.Diameter;
-                target.Prediction = JsonConvert.SerializeObject(tempCircularAreaResult.Item.Prediction, new JsonSerializerSettings
+                // find result
+                target = GetResultById(tempGaugeBlockResult.Id.ToString()) ?? throw new Exception(LocalizeHelper.FIND_SUBJECT_FAILED);
+                target.OriginImagePath = tempGaugeBlockResult.OriginImagePath;
+                target.RenderImagePath = tempGaugeBlockResult.RenderImagePath;
+                target.ScaleId = tempGaugeBlockResult.Item.CalculateScale.Id; //tempBlacknessResult.CalculateScale.Id,
+                target.Confidence = tempGaugeBlockResult.Item.Confidence;
+                target.Pixels = tempGaugeBlockResult.Item.AreaOfPixels;
+                target.Area = tempGaugeBlockResult.Item.CalculatedArea;
+                target.VertexPositions = tempGaugeBlockResult.Item.VertexPositonsText;
+                target.EdgePixels = string.Join(" ", tempGaugeBlockResult.Item.EdgePixels.Select(t => $"{t.Key}={t.Value:F2}"));
+                target.CalculatdEdges = string.Join(" ", tempGaugeBlockResult.Item.CalculatedEdgeLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
+                target.Prediction = JsonConvert.SerializeObject(tempGaugeBlockResult.Item.Prediction, new JsonSerializerSettings
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 });
-                target.WorkGroup = tempCircularAreaResult.WorkGroup;
-                //target.TestNo = tempCircularAreaResult.TestNo;
-                //target.CoilNumber = tempCircularAreaResult.CoilNumber;
-                //target.Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key;
+                target.WorkGroup = tempGaugeBlockResult.WorkGroup;
+                target.InputEdge = tempGaugeBlockResult.InputEdge;
+                target.CalculatedLength = tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge];
+                target.InputLength = float.Parse(tempGaugeBlockResult.InputEdgeLength);
+                target.LengthAccuracy = $"{1 - Math.Abs(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge] - float.Parse(tempGaugeBlockResult.InputEdgeLength)) / Math.Abs(float.Parse(tempGaugeBlockResult.InputEdgeLength)):P2}";
+                target.AreaAccuracy = $"{Math.Pow(float.Parse(tempGaugeBlockResult.InputEdgeLength), 2) * tempGaugeBlockResult.Item.CalculatedArea / Math.Pow(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge], 2):F4}{LocalizeHelper.SQUARE_MILLIMETER} {1 - Math.Abs(tempGaugeBlockResult.Item.CalculatedArea - Math.Pow(float.Parse(tempGaugeBlockResult.InputEdgeLength), 2) * tempGaugeBlockResult.Item.CalculatedArea / Math.Pow(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge], 2)) / Math.Abs(Math.Pow(float.Parse(tempGaugeBlockResult.InputEdgeLength), 2) * tempGaugeBlockResult.Item.CalculatedArea / Math.Pow(tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge], 2)):P2}";
                 target.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
                 target.LastModifiedTime = DateTime.Now;
                 var ok = connection.Update(target);
@@ -157,40 +159,146 @@ namespace AI_Assistant_Win.Business
                     throw new Exception(LocalizeHelper.UPDATE_SUBJECT_FAILED);
                 }
             }
-            AddOrUpdateSummary(target);
+            AddOrUpdateTracer(target);
             return target;
         }
 
-        private void AddOrUpdateSummary(GaugeBlockMethodResult circularAreaMethodResult)
+        private void AddOrUpdateTracer(GaugeBlockMethodResult gaugeBlockMethodResult)
         {
-            // 查询summary是否存在
-            //var summary = connection.Table<CircularAreaMethodSummary>().FirstOrDefault(t => circularAreaMethodResult.ScaleId.Equals(t.TestNo) && circularAreaMethodResult.CoilNumber.Equals(t.CoilNumber));
-            //if (summary == null)
-            //{
-            //    // 构造summary
-            //    summary = new CircularAreaMethodSummary
-            //    {
-            //        TestNo = circularAreaMethodResult.TestNo,
-            //        CoilNumber = circularAreaMethodResult.CoilNumber,
-            //        Creator = circularAreaMethodResult.Analyst,
-            //        CreateTime = DateTime.Now
-            //    };
-            //    var ok = connection.Insert(summary);
-            //    if (ok == 0)
-            //    {
-            //        throw new Exception(LocalizeHelper.ADD_SUMMARY_FAILED);
-            //    }
-            //}
-            //else
-            //{
-            //    summary.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
-            //    summary.LastModifiedTime = DateTime.Now;
-            //    var ok = connection.Update(summary);
-            //    if (ok == 0)
-            //    {
-            //        throw new Exception(LocalizeHelper.UPDATE_SUMMARY_FAILED);
-            //    }
-            //}
+            // 查询tracer是否存在
+            var tracer = connection.Table<ScaleAccuracyTracer>()
+                .FirstOrDefault(t => gaugeBlockMethodResult.ScaleId == t.ScaleId && gaugeBlockMethodResult.InputLength == t.MeasuredLength);
+            if (tracer == null)
+            {
+                // 构造tracer
+                tracer = new ScaleAccuracyTracer
+                {
+                    ScaleId = gaugeBlockMethodResult.ScaleId,
+                    MeasuredLength = gaugeBlockMethodResult.InputLength,
+                    Creator = gaugeBlockMethodResult.Analyst,
+                    CreateTime = DateTime.Now
+                };
+                var ok = connection.Insert(tracer);
+                if (ok == 0)
+                {
+                    throw new Exception(LocalizeHelper.ADD_ACCURACY_TRACER_FAILED);
+                }
+            }
+            else
+            {
+                tracer.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
+                tracer.LastModifiedTime = DateTime.Now;
+                var ok = connection.Update(tracer);
+                if (ok == 0)
+                {
+                    throw new Exception(LocalizeHelper.UPDATE_ACCURACY_TRACER_FAILED);
+                }
+            }
+            // 更新该比例尺下的所有精度信息
+            var tracersInSameScale = connection.Table<ScaleAccuracyTracer>().Where(t => gaugeBlockMethodResult.ScaleId == t.ScaleId);
+            foreach (var scaleTracer in tracersInSameScale)
+            {
+                // 获取相同scale下所有的测量数据
+                var resultsInSameScale = connection.Table<GaugeBlockMethodResult>().Where(t => scaleTracer.ScaleId == t.ScaleId).ToList();
+                // mpe
+                var mpe = resultsInSameScale.Max(t => Math.Abs(t.CalculatedLength - scaleTracer.MeasuredLength));
+                scaleTracer.MPE = mpe;
+                // 获取相同scale下相同(scaleTracer.MeasuredLength)的测量数据
+                var resultsInMeasurement = connection.Table<GaugeBlockMethodResult>().Where(t => scaleTracer.ScaleId == t.ScaleId && scaleTracer.MeasuredLength == t.InputLength).ToList();
+                // 1. 输入校验
+                if (resultsInMeasurement != null && resultsInMeasurement.Count >= 2)
+                {
+                    // 2. 计算样本均值
+                    var mean = resultsInMeasurement.Average(t => t.CalculatedLength);
+                    scaleTracer.Average = mean;
+                    // 3. 计算样本方差（无偏估计，分母为n-1）
+                    double sumOfSquares = resultsInMeasurement.Sum(x => Math.Pow(x.CalculatedLength - mean, 2));
+                    double variance = sumOfSquares / (resultsInMeasurement.Count - 1);
+                    // 4. 计算标准差（随机误差）
+                    double standardDeviation = Math.Sqrt(variance);
+                    scaleTracer.StandardDeviation = standardDeviation;
+                    // 5. 计算标准误差, 平均值的标准不确定度：
+                    double standardError = standardDeviation / Math.Sqrt(resultsInMeasurement.Count);
+                    scaleTracer.StandardError = standardError;
+                    // 合成不确定度
+                    double uncertainty = Math.Sqrt(Math.Pow(mpe, 2) + Math.Pow(standardError, 2));
+                    scaleTracer.Uncertainty = uncertainty;
+                    FormatConfidence(scaleTracer, uncertainty, resultsInMeasurement.Select(t => t.CalculatedLength).ToArray());
+                }
+                var ok = connection.Update(scaleTracer);
+                if (ok == 0)
+                {
+                    throw new Exception(LocalizeHelper.UPDATE_ACCURACY_TRACER_FAILED);
+                }
+            }
+        }
+
+        private void FormatConfidence(ScaleAccuracyTracer scaleTracer, double uncertainty, double[] doubles)
+        {
+            var (pct1Sigma, pct2Sigma, pct3Sigma) = CalculateSigmaConfidence(doubles);
+            scaleTracer.Pct1Sigma = pct1Sigma;
+            scaleTracer.Pct2Sigma = pct2Sigma;
+            scaleTracer.Pct3Sigma = pct3Sigma;
+            if (pct1Sigma < 0.6827f)
+            {
+                scaleTracer.DisplayName = $"±{uncertainty:F4}mm(μ±1σ:{pct1Sigma:P2})(理论68.27%)";
+            }
+            else
+            {
+                if (pct2Sigma < 0.9545f)
+                {
+                    scaleTracer.DisplayName = $"±{uncertainty:F4}mm(k=1,68.27%)(实际{pct1Sigma:P2})";
+                }
+                else
+                {
+                    if (pct3Sigma < 0.9973f)
+                    {
+                        scaleTracer.DisplayName = $"±{uncertainty:F4}mm(k=2,95.45%)(实际{pct2Sigma:P2})";
+                    }
+                    else
+                    {
+                        scaleTracer.DisplayName = $"±{uncertainty:F4}mm(k=3,99.73%)(实际{pct3Sigma:P2})";
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// 计算数据落在 μ±kσ 范围内的比例（k=1,2,3）
+        /// 宽松控制（k=2）：允许 5% 的误差超限（如一般工业检测）；
+        /// 严格控制（k=3）：仅允许 0.3% 的误差超限（如航空航天、医疗设备）。
+        /// </summary>
+        /// <param name="data">输入数据数组</param>
+        /// <returns>元组：(比例1σ, 比例2σ, 比例3σ)</returns>
+        private (double pct1Sigma, double pct2Sigma, double pct3Sigma)
+            CalculateSigmaConfidence(double[] data)
+        {
+            // 1. 输入校验
+            if (data == null || data.Length == 0)
+                throw new ArgumentException("输入数据不能为null或空数组");
+
+            // 2. 计算均值和标准差
+            double mean = data.Average();
+            double variance = data.Sum(x => Math.Pow(x - mean, 2)) / (data.Length - 1);
+            double stdDev = Math.Sqrt(variance);
+
+            // 3. 统计落在不同区间的数量
+            int count1Sigma = 0, count2Sigma = 0, count3Sigma = 0;
+            foreach (double x in data)
+            {
+                double deviation = Math.Abs(x - mean);
+                if (deviation <= 1 * stdDev) count1Sigma++;
+                if (deviation <= 2 * stdDev) count2Sigma++;
+                if (deviation <= 3 * stdDev) count3Sigma++;
+            }
+
+            // 4. 计算比例（置信度）
+            double total = data.Length;
+            return (
+                count1Sigma / total,
+                count2Sigma / total,
+                count3Sigma / total
+            );
         }
 
         public List<int> LoadOriginalResultFromDB(GaugeBlockResult originalGaugeBlockResult, string id)
@@ -208,42 +316,47 @@ namespace AI_Assistant_Win.Business
                 return [];
             }
             // sorted by testNo，then sorted by position
-            var allSorted = connection.Table<CircularAreaMethodResult>().OrderBy(t => t.CreateTime).ThenBy(t => t.TestNo).ThenBy(t => t.Position).ToList();
+            var allSorted = connection.Table<GaugeBlockMethodResult>().OrderBy(t => t.CreateTime).ThenBy(t => t.ScaleId).ThenBy(t => t.InputLength).ToList();
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));
             originalGaugeBlockResult.Id = body.Id;
-            //originalGaugeBlockResult.TestNo = body.TestNo;
-            //originalGaugeBlockResult.Position = PositionList.FirstOrDefault(t => body.Position.Equals(t.Key)).Value;
-            //originalGaugeBlockResult.CoilNumber = body.CoilNumber;
             originalGaugeBlockResult.OriginImagePath = body.OriginImagePath;
             originalGaugeBlockResult.RenderImagePath = body.RenderImagePath;
             originalGaugeBlockResult.WorkGroup = body.WorkGroup;
             originalGaugeBlockResult.Analyst = body.Analyst;
             originalGaugeBlockResult.CalculateScale = scaleAtThatTime; // must before items
             originalGaugeBlockResult.Item = new GaugeBlock(JsonConvert.DeserializeObject<QuadrilateralSegmentation>(body.Prediction), scaleAtThatTime);
-            originalGaugeBlockResult.IsUploaded = GetSummaryExitsInDB(body).IsUploaded; // promot before saving
+            originalGaugeBlockResult.IsUploaded = GetOrAddTracerExitsInDB(body).IsUploaded; // promot before saving
             return allSorted.Select(t => t.Id).ToList();
         }
-
-        public CircularAreaMethodSummary GetSummaryExitsInDB(CircularAreaMethodResult result)
+        public List<ScaleAccuracyTracer> GetTracerListByScaleId(string scaleId)
         {
-            var target = connection.Table<CircularAreaMethodSummary>()
-                .FirstOrDefault(t => result.TestNo.Equals(t.TestNo) &&
-                                     result.CoilNumber.Equals(t.CoilNumber));
+            if (string.IsNullOrEmpty(scaleId))
+            {
+                throw new Exception(LocalizeHelper.ID_IS_EMPTY);
+            }
+            var list = connection.Table<ScaleAccuracyTracer>().Where(t => t.ScaleId.Equals(scaleId)).ToList();
+            return list;
+        }
+        public ScaleAccuracyTracer GetOrAddTracerExitsInDB(GaugeBlockMethodResult result)
+        {
+            var target = connection.Table<ScaleAccuracyTracer>()
+                .FirstOrDefault(t => result.ScaleId == t.ScaleId &&
+                                     result.InputLength == t.MeasuredLength);
             if (target == null)
             {
-                // 补齐summary
-                var summary = new CircularAreaMethodSummary
+                // 补齐tracer
+                var summary = new ScaleAccuracyTracer
                 {
-                    TestNo = result.TestNo,
-                    CoilNumber = result.CoilNumber,
+                    ScaleId = result.ScaleId,
+                    MeasuredLength = result.InputLength,
                     Creator = result.Analyst,
                     CreateTime = DateTime.Now
                 };
                 var ok = connection.Insert(summary);
                 if (ok == 0)
                 {
-                    throw new Exception(LocalizeHelper.ADD_SUMMARY_FAILED);
+                    throw new Exception(LocalizeHelper.ADD_ACCURACY_TRACER_FAILED);
                 }
             }
             return target;

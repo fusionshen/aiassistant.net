@@ -39,7 +39,7 @@ namespace AI_Assistant_Win.Models
         /// 测算面积(平方毫米)
         /// </summary>
         [Column("area")]
-        public float Area { get; set; }
+        public double Area { get; set; }
         /// <summary>
         /// 顶点坐标描述
         /// </summary>
@@ -74,13 +74,18 @@ namespace AI_Assistant_Win.Models
         /// <summary>
         /// 真实输入边
         /// </summary>
-        [Column("measured_edge")]
-        public string MeasuredEdge { get; set; }
+        [Column("input_edge")]
+        public string InputEdge { get; set; }
+        /// <summary>
+        /// 计算边长
+        /// </summary>
+        [Column("calculated_length")]
+        public double CalculatedLength { get; set; }
         /// <summary>
         /// 真实输入边长
         /// </summary>
-        [Column("measured_length")]
-        public float MeasuredLength { get; set; }
+        [Column("input_length")]
+        public double InputLength { get; set; }
         /// <summary>
         /// 长度准确度描述
         /// </summary>

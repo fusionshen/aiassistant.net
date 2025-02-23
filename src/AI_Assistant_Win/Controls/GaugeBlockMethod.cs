@@ -60,11 +60,11 @@ namespace AI_Assistant_Win.Controls
         private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
         {
             selectScale.Items.Clear();
-            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleName(t)}").ToArray());
+            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleItemName(t)}").ToArray());
             if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Add)
             {
                 Console.WriteLine($"Added: Key={e.Key}, Value={e.NewValue}");
-                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
                 btnSetScale.Enabled = true;
                 AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
@@ -76,28 +76,62 @@ namespace AI_Assistant_Win.Controls
             else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Update)
             {
                 Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
-                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
                 AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
             }
         }
 
-        private string FormatScaleName(KeyValuePair<string, CalculateScale> t)
+        private string FormatScaleItemName(KeyValuePair<string, CalculateScale> t)
         {
             var text = string.Empty;
+            var (topGraduations, scaleDetails, _ ,_) = GetScaleParts(t.Value);
             switch (t.Key)
             {
-                // TODO: show MPE Precision、Accuracy、Uncertainty，need many data
                 case "current":
-                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{t.Value.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{topGraduations};{scaleDetails}]";
                     break;
                 case "atThatTime":
-                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{topGraduations};{scaleDetails}]";
                     break;
                 default:
                     break;
             }
             return text;
+        }
+        /// <summary>
+        /// show MPE Precision、Accuracy、Uncertainty
+        /// part1: 刻度0
+        /// part2: 0.15毫米/像素边长
+        /// part3: MPE=±0.06mm
+        /// part4: ±0.6135mm(k=3,99.73%)(实际100.00%)
+        /// </summary>
+        /// <param name="calculateScale"></param>
+        /// <returns></returns>
+        private (string topGraduations, string scaleDetails, string mpe, string accuracy) GetScaleParts(CalculateScale calculateScale)
+        {
+            // 刻度0;0.15毫米/像素边长;MPE=±0.06mm;±0.6135mm(k=3,99.73%)(实际100.00%)
+            var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(calculateScale.Settings);
+            var tracers = gaugeBlockMethodBLL.GetTracerListByScaleId(calculateScale.Id.ToString());
+            var tracerInMaxMPE = tracers.OrderBy(t => t.MPE).FirstOrDefault();
+            if (tracerInMaxMPE != null) 
+            {
+                return (
+                    $"{LocalizeHelper.SCALE_GRADE_TITLE}{settings?.TopGraduations}",
+                    $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}",
+                    $"MPE=±{tracerInMaxMPE.MPE:F4}mm",
+                    $"{tracerInMaxMPE.DisplayName}"
+                 );
+            }
+            else
+            {
+                return (
+                    $"{LocalizeHelper.SCALE_GRADE_TITLE}{settings?.TopGraduations}",
+                    $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}",
+                    string.Empty,
+                    string.Empty
+                );
+            }
         }
 
         private void OriginalGaugeBlockResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -391,7 +425,6 @@ namespace AI_Assistant_Win.Controls
             scaleList["current"] = currentScaleFromDB;
             return true;
         }
-        private List<GetTestNoListResponse> testNoList;
 
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
         {
@@ -436,7 +469,7 @@ namespace AI_Assistant_Win.Controls
         }
         private CalculateScale CurrentScale
         {
-            get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+            get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
         }
         private void OutputTexts()
         {
@@ -445,7 +478,7 @@ namespace AI_Assistant_Win.Controls
             inputConfidence.Text = $"{tempGaugeBlockResult.Item.Confidence:P2}";
             OutputScaleTexts(tempGaugeBlockResult.Item.CalculateScale);
             inputCalculatedArea.Text = $"{tempGaugeBlockResult.Item.CalculatedArea:F4}{tempGaugeBlockResult.Item.AreaUnit}";
-            inputVertexPositions.Text = tempGaugeBlockResult.Item.VertexText;
+            inputVertexPositions.Text = tempGaugeBlockResult.Item.VertexPositonsText;
             inputEdgePixels.Text = string.Join(" ", tempGaugeBlockResult.Item.EdgePixels.Select(t => $"{t.Key}={t.Value:F2}"));
             inputCalculatdEdges.Text = string.Join(" ", tempGaugeBlockResult.Item.CalculatedEdgeLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
         }
@@ -453,9 +486,10 @@ namespace AI_Assistant_Win.Controls
         {
             if (calculateScale != null)
             {
-                inputLengthScale.Text = $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}";
+                var (_,scaleDetails,mpe,accuracy) = GetScaleParts(calculateScale);
+                inputLengthScale.Text = $"{scaleDetails};{mpe};{accuracy}";
                 inputAreaScale.Text = $"{Math.Pow(calculateScale.Value, 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}";
-                var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(calculateScale.Settings);
+                var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(calculateScale.Settings);
                 if (settings != null)
                 {
                     inputGrade.Text = settings.TopGraduations;
@@ -471,12 +505,17 @@ namespace AI_Assistant_Win.Controls
         private void ClearTexts()
         {
             tempGaugeBlockResult.Item = null;
-            inputAreaOfPixels.Text = string.Empty;
-            inputConfidence.Text = string.Empty;
-            inputAreaScale.Text = string.Empty;
             inputGrade.Text = string.Empty;
+            inputConfidence.Text = string.Empty;
+            inputAreaOfPixels.Text = string.Empty;
+            inputAreaScale.Text = string.Empty;
             inputCalculatedArea.Text = string.Empty;
             inputVertexPositions.Text = string.Empty;
+            inputEdgePixels.Text = string.Empty;
+            inputLengthScale.Text = string.Empty;
+            inputCalculatdEdges.Text = string.Empty;
+            selectEdge.SelectedValue = null;
+            inputEdgeLength.Text = string.Empty;
         }
         private void BtnSave_Click(object sender, EventArgs e)
         {
@@ -757,7 +796,7 @@ namespace AI_Assistant_Win.Controls
         {
             if (selectScale.SelectedValue != null)
             {
-                var selected = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+                var selected = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
                 tempGaugeBlockResult.CalculateScale = selected;
             }
             else

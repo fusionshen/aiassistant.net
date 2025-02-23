@@ -56,6 +56,8 @@ namespace AI_Assistant_Win.Utils
         public static string UPDATE_SUBJECT_FAILED => Localization.Get("Failed to update the subject.", "更新主体失败。");
         public static string HAVE_NO_SUBJECT => Localization.Get(" has no subject data.", "没有主体数据。");
         public static string HAVE_NO_DETAILS => Localization.Get(" has no details data.", "没有明细数据。");
+        public static string ADD_ACCURACY_TRACER_FAILED => Localization.Get("Failed to add a new summary.", "新增精度溯源失败。");
+        public static string UPDATE_ACCURACY_TRACER_FAILED => Localization.Get("Failed to save the summary.", "更新精度溯源失败。");
         public static string CERTAIN_ID(string id) => Localization.Get($"ID[{id}]", $"编号[{id}]");
         #endregion
         #region MainWindow
@@ -168,6 +170,7 @@ namespace AI_Assistant_Win.Utils
         public static string AREA_TITLE => Localization.Get(",Area:", "，面积：");
         public static string CIRCULAR_DIAMETER_TITLE => Localization.Get(",Diameter:", "，直径：");
         public static string AREA_OF_PIXELS => Localization.Get("area of pixels", "像素面积");
+        public static string SCALE_GRADE_TITLE => Localization.Get("Grade:", "刻度:");
         public static string SQUARE_MILLIMETER => Localization.Get("sq mm", "平方毫米");
         public static string AREA_PREDICTION_TITLE => Localization.Get("Area:", "面积：");
         public static string AREA_PREDICTION_CONFIDENCE => Localization.Get(",Confidence:", "，置信度：");

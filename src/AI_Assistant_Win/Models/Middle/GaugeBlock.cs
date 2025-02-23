@@ -34,7 +34,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 点坐标展示
         /// </summary>
-        public string VertexText
+        public string VertexPositonsText
         {
             get => $"({Prediction.Quadrilateral.TopLeft.X},{Prediction.Quadrilateral.TopLeft.Y})({Prediction.Quadrilateral.TopRight.X},{Prediction.Quadrilateral.TopRight.Y})({Prediction.Quadrilateral.BottomRight.X},{Prediction.Quadrilateral.BottomRight.Y})({Prediction.Quadrilateral.BottomLeft.X},{Prediction.Quadrilateral.BottomLeft.Y})";
         }
