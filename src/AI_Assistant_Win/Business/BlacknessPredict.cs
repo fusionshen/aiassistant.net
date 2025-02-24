@@ -94,7 +94,7 @@ namespace AI_Assistant_Win.Business
         {
             var result = calculateScale == null ?
                 $"{pred.Rectangle.Height:F2}{LocalizeHelper.PIXEL}" :
-                $"{pred.Rectangle.Height * calculateScale.Value / 100:F2}{LocalizeHelper.MILLIMETER}";
+                $"{pred.Rectangle.Height * calculateScale.Value:F2}{LocalizeHelper.MILLIMETER}";
             return result;
         }
 

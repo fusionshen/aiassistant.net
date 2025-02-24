@@ -257,7 +257,7 @@ namespace AI_Assistant_Win
                 {
                     Key = "GaugeBlock",
                     Value = float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text),
-                    Unit = LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT,
+                    Unit = LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT,
                     ImagePath = imagePath,
                     Settings = JsonConvert.SerializeObject(new GaugeBlockScaleItem
                     {

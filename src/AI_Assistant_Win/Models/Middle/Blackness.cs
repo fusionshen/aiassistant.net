@@ -31,7 +31,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 计算过后的宽度，用于保存数据库和history、report展示
         /// </summary>
-        public float CalculatedWidth { get => CalculateScale == null ? Prediction.Rectangle.Height : Prediction.Rectangle.Height * CalculateScale.Value / 100; }
+        public double CalculatedWidth { get => CalculateScale == null ? Prediction.Rectangle.Height : Prediction.Rectangle.Height * CalculateScale.Value; }
         /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>

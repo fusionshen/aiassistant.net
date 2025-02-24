@@ -46,17 +46,17 @@ namespace AI_Assistant_Win.Models
         /// 曝光时间
         /// </summary>
         [Column("exposure_time")]
-        public float ExposureTime { get; set; }
+        public double ExposureTime { get; set; }
         /// <summary>
         /// 增益
         /// </summary>
         [Column("gain")]
-        public float Gain { get; set; }
+        public double Gain { get; set; }
         /// <summary>
         /// 帧率
         /// </summary>
         [Column("resulting_frame_rate")]
-        public float ResultingFrameRate { get; set; }
+        public double ResultingFrameRate { get; set; }
         /// <summary>
         /// 像素格式
         /// </summary>

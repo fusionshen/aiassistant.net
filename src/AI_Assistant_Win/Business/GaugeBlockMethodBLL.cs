@@ -1,5 +1,4 @@
 ﻿using AI_Assistant_Win.Models;
-using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
@@ -337,6 +336,43 @@ namespace AI_Assistant_Win.Business
             }
             var list = connection.Table<ScaleAccuracyTracer>().Where(t => t.ScaleId.Equals(scaleId)).ToList();
             return list;
+        }
+
+        /// <summary>
+        /// show MPE Precision、Accuracy、Uncertainty
+        /// part1: 刻度0
+        /// part2: 0.15毫米/像素边长
+        /// part3: MPE=±0.06mm
+        /// part4: ±0.6135mm(k=3,99.73%)(实际100.00%)
+        /// </summary>
+        /// <param name="calculateScale"></param>
+        /// <returns></returns>
+        public (string topGraduations, string lengthScale, string areaScale, string mpe, string accuracy) GetScaleParts(CalculateScale calculateScale)
+        {
+            // 刻度0;0.15毫米/像素边长;MPE=±0.06mm;±0.6135mm(k=3,99.73%)(实际100.00%)
+            var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(calculateScale.Settings);
+            var tracers = GetTracerListByScaleId(calculateScale.Id.ToString());
+            var tracerInMaxMPE = tracers.OrderBy(t => t.MPE).FirstOrDefault();
+            if (tracerInMaxMPE != null)
+            {
+                return (
+                    $"{LocalizeHelper.SCALE_GRADE_TITLE}{settings?.TopGraduations}",
+                    $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}",
+                    $"{Math.Pow(calculateScale.Value, 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}",
+                    $"MPE=±{tracerInMaxMPE.MPE:F4}mm",
+                    $"{tracerInMaxMPE.DisplayName}"
+                 );
+            }
+            else
+            {
+                return (
+                    $"{LocalizeHelper.SCALE_GRADE_TITLE}{settings?.TopGraduations}",
+                    $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}",
+                    $"{Math.Pow(calculateScale.Value, 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}",
+                    string.Empty,
+                    string.Empty
+                );
+            }
         }
         public ScaleAccuracyTracer GetOrAddTracerExitsInDB(GaugeBlockMethodResult result)
         {

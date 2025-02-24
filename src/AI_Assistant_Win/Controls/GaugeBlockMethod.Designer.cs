@@ -107,7 +107,7 @@ namespace AI_Assistant_Win.Controls
             inputGrade = new AntdUI.Input();
             labelGraduations = new AntdUI.Label();
             labelResultJudgeArea = new AntdUI.Label();
-            areaMethod_OpenFileDialog = new OpenFileDialog();
+            gaugeMethod_OpenFileDialog = new OpenFileDialog();
             areaMethod_FileSystemWatcher = new System.IO.FileSystemWatcher();
             panel1.SuspendLayout();
             panel2.SuspendLayout();
@@ -1126,7 +1126,7 @@ namespace AI_Assistant_Win.Controls
             // 
             // areaMethod_OpenFileDialog
             // 
-            areaMethod_OpenFileDialog.FileName = "file";
+            gaugeMethod_OpenFileDialog.FileName = "file";
             // 
             // areaMethod_FileSystemWatcher
             // 
@@ -1181,7 +1181,7 @@ namespace AI_Assistant_Win.Controls
         private AntdUI.Button btnUploadImage;
         private FlowLayoutPanel flowLayoutPanel1;
         private AntdUI.Panel panel6;
-        private OpenFileDialog areaMethod_OpenFileDialog;
+        private OpenFileDialog gaugeMethod_OpenFileDialog;
         private System.IO.FileSystemWatcher areaMethod_FileSystemWatcher;
         private AntdUI.Button btnCameraCapture;
         private AntdUI.Label labelResultJudgeArea;

@@ -21,6 +21,8 @@ namespace AI_Assistant_Win.Controls
 
         private readonly BlacknessMethodBLL blacknessMethodBLL;
 
+        private readonly GaugeBlockMethodBLL gaugeBlockMethodBLL;
+
         private readonly ImageProcessBLL imageProcessBLL;
 
         private readonly CameraBLL cameraBLL;
@@ -40,6 +42,7 @@ namespace AI_Assistant_Win.Controls
             form = _form;
             InitializeComponent();
             blacknessMethodBLL = new BlacknessMethodBLL();
+            gaugeBlockMethodBLL = new GaugeBlockMethodBLL();
             imageProcessBLL = new ImageProcessBLL("Blackness");
             imageProcessBLL.PropertyChanged += ImageProcessBLL_PropertyChanged;
             blacknessPredict = new BlacknessPredict(imageProcessBLL);
@@ -59,11 +62,11 @@ namespace AI_Assistant_Win.Controls
         private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
         {
             selectScale.Items.Clear();
-            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleName(t)}").ToArray());
+            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleItemName(t)}").ToArray());
             if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Add)
             {
                 Console.WriteLine($"Added: Key={e.Key}, Value={e.NewValue}");
-                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
                 btnSetScale.Enabled = true;
                 AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
@@ -75,22 +78,23 @@ namespace AI_Assistant_Win.Controls
             else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Update)
             {
                 Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
-                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
                 AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
             }
         }
 
-        private string FormatScaleName(KeyValuePair<string, CalculateScale> t)
+        private string FormatScaleItemName(KeyValuePair<string, CalculateScale> t)
         {
             var text = string.Empty;
+            var (_, lengthScale, _, mpe, accuracy) = gaugeBlockMethodBLL.GetScaleParts(t.Value);
             switch (t.Key)
             {
                 case "current":
-                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{t.Value.Value:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{lengthScale};{mpe};{accuracy}]";
                     break;
                 case "atThatTime":
-                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.BLACKNESS_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{lengthScale};{mpe};{accuracy}]";
                     break;
                 default:
                     break;
@@ -227,6 +231,7 @@ namespace AI_Assistant_Win.Controls
                     if (scaleList.Count == 0)
                     {
                         BtnSetScale_Click(null, null);
+                        return;
                     }
                     // call when edit
                     if (!originalBlacknessResult.OriginImagePath.Equals(tempBlacknessResult.OriginImagePath))
@@ -324,6 +329,7 @@ namespace AI_Assistant_Win.Controls
                 {
                     // tell client how to do when any scale does not exit.
                     BtnSetScale_Click(null, null);
+                    return;
                 }
                 try
                 {
@@ -398,7 +404,7 @@ namespace AI_Assistant_Win.Controls
         private bool InitializeSelectScale()
         {
             scaleList.Clear();
-            var currentScaleFromDB = blacknessMethodBLL.GetCurrentScale();
+            var currentScaleFromDB = gaugeBlockMethodBLL.GetCurrentScale();
             if (currentScaleFromDB == null)
             {
                 AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
@@ -481,7 +487,7 @@ namespace AI_Assistant_Win.Controls
 
         private CalculateScale CurrentScale
         {
-            get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+            get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
         }
 
         private void OutputTexts()
@@ -740,37 +746,40 @@ namespace AI_Assistant_Win.Controls
 
         private void BtnSetScale_Click(object sender, EventArgs e)
         {
-            if ((string.IsNullOrEmpty(tempBlacknessResult.RenderImagePath) || tempBlacknessResult.Items == null || tempBlacknessResult.Items.Count == 0) &&
-                    (scaleList.Count == 0 ||   // for the first time
-                    checkboxRedefine.Checked)
-                )
+            // for the first time or want to redefine the scale.
+            if (scaleList.Count == 0 || checkboxRedefine.Checked)
             {
-                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PREDICT_FIRSTLY_BEFORE_SETTING_BLACKNESS_SCALE, AntdUI.TAlignFrom.BR, Font);
+                // go to the gauge block method page
+                if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, scaleList.Count == 0 ? $"{LocalizeHelper.SETTING_SCALE_FIRSTLY_BEFORE_PREDICTING}{LocalizeHelper.JUMP_TO_GAUGE_BLOCK_METHOD}" : $"{LocalizeHelper.RESETTING_SCALE_BEFORE_PREDICTING}{LocalizeHelper.JUMP_TO_GAUGE_BLOCK_METHOD}") == DialogResult.OK)
+                {
+                    try
+                    {
+                        BeginInvoke(new Action(() =>
+                        {
+                            form.OpenPage("Scale Setting");
+                        }));
+                    }
+                    catch (Exception error)
+                    {
+                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                    }
+                }
+                else
+                {
+                    checkboxRedefine.Checked = false;
+                }
                 return;
             }
-            var setting = new BlacknessScaleSetting(form);
-            setting.SetCurrentScaleDetails(tempBlacknessResult, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
-            var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.BLACKNESS_SCALE_SETTINGS_MODAL_TITLE, setting)
+            var setting = new GaugeScaleSetting(form);
+            setting.SetCurrentScaleDetails(null, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
+            var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.BLACKNESS_SCALE_MODAL_TITLE, setting)
             {
                 OnButtonStyle = (id, btn) =>
                 {
                     btn.BackExtend = "135, #6253E1, #04BEFE";
                 },
-                CancelText = LocalizeHelper.CANCEL,
-                OkText = LocalizeHelper.SETTING_SAVE,
-                OnOk = config =>
-                {
-                    try
-                    {
-                        scaleList["current"] = setting.SaveSettings();   // 同时，正好利用了自带的转圈圈等待效果，简直完美2024年12月25日01点41分
-                        return true;
-                    }
-                    catch (Exception error)
-                    {
-                        AntdUI.Notification.error(form, LocalizeHelper.FAIL, error.Message, AntdUI.TAlignFrom.BR, Font);
-                        return false;
-                    }
-                }
+                CancelText = null,
+                OkText = LocalizeHelper.CONFIRM
             });
             if (result == DialogResult.OK)
             {
@@ -782,7 +791,7 @@ namespace AI_Assistant_Win.Controls
         {
             if (selectScale.SelectedValue != null)
             {
-                tempBlacknessResult.CalculateScale = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+                tempBlacknessResult.CalculateScale = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
             }
             else
             {

@@ -4,7 +4,8 @@ using System;
 namespace AI_Assistant_Win.Models
 {
     [Table("ScaleAccuracyTracers")]
-    public class ScaleAccuracyTracer   {
+    public class ScaleAccuracyTracer
+    {
         [PrimaryKey, AutoIncrement]
         [Column("id")]
         public int Id { get; set; }
@@ -89,7 +90,7 @@ namespace AI_Assistant_Win.Models
         /// 99.7% 的数据落在 μ±3σ 内。
         /// </summary>
         [Column("display_name")]
-        public string DisplayName {  get; set; }
+        public string DisplayName { get; set; }
         /// <summary>
         /// 是否上传至业务系统
         /// </summary>

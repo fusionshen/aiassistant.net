@@ -4,7 +4,6 @@ using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,6 +21,8 @@ namespace AI_Assistant_Win.Controls
         private readonly MainWindow form;
 
         private readonly CircularAreaMethodBLL circularAreaMethodBLL;
+
+        private readonly GaugeBlockMethodBLL gaugeBlockMethodBLL;
 
         private readonly ImageProcessBLL imageProcessBLL;
 
@@ -42,6 +43,7 @@ namespace AI_Assistant_Win.Controls
             form = _form;
             InitializeComponent();
             circularAreaMethodBLL = new CircularAreaMethodBLL();
+            gaugeBlockMethodBLL = new GaugeBlockMethodBLL();
             imageProcessBLL = new ImageProcessBLL("CircularArea");
             imageProcessBLL.PropertyChanged += ImageProcessBLL_PropertyChanged;
             circularAreaPredict = new CircularAreaPredict(imageProcessBLL);
@@ -61,11 +63,11 @@ namespace AI_Assistant_Win.Controls
         private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
         {
             selectScale.Items.Clear();
-            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleName(t)}").ToArray());
+            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleItemName(t)}").ToArray());
             if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Add)
             {
                 Console.WriteLine($"Added: Key={e.Key}, Value={e.NewValue}");
-                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
                 btnSetScale.Enabled = true;
                 AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
@@ -77,22 +79,23 @@ namespace AI_Assistant_Win.Controls
             else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Update)
             {
                 Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
-                var text = FormatScaleName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
                 selectScale.SelectedValue = text;
                 AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
             }
         }
 
-        private string FormatScaleName(KeyValuePair<string, CalculateScale> t)
+        private string FormatScaleItemName(KeyValuePair<string, CalculateScale> t)
         {
             var text = string.Empty;
+            var (topGraduations, _, areaScale, _, _) = gaugeBlockMethodBLL.GetScaleParts(t.Value);
             switch (t.Key)
             {
                 case "current":
-                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{t.Value.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{topGraduations};{areaScale}]";
                     break;
                 case "atThatTime":
-                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{t.Value.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}]";
+                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{topGraduations};{areaScale}]";
                     break;
                 default:
                     break;
@@ -226,6 +229,7 @@ namespace AI_Assistant_Win.Controls
                     if (scaleList.Count == 0)
                     {
                         BtnSetScale_Click(null, null);
+                        return;
                     }
                     // call when edit
                     if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
@@ -319,6 +323,7 @@ namespace AI_Assistant_Win.Controls
                 {
                     // tell client how to do when any scale does not exit.
                     BtnSetScale_Click(null, null);
+                    return;
                 }
                 // Position List
                 InitializeSelectPostion();
@@ -402,7 +407,7 @@ namespace AI_Assistant_Win.Controls
         private bool InitializeSelectScale()
         {
             scaleList.Clear();
-            var currentScaleFromDB = circularAreaMethodBLL.GetCurrentScale();
+            var currentScaleFromDB = gaugeBlockMethodBLL.GetCurrentScale();
             if (currentScaleFromDB == null)
             {
                 AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_SET_CIRCULAR_AREA_SCALE, AntdUI.TAlignFrom.BR, Font);
@@ -478,7 +483,7 @@ namespace AI_Assistant_Win.Controls
         }
         private CalculateScale CurrentScale
         {
-            get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+            get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
         }
         private void OutputTexts()
         {
@@ -493,17 +498,14 @@ namespace AI_Assistant_Win.Controls
         {
             if (calculateScale != null)
             {
-                inputScale.Text = $"{calculateScale.Value:F2}{LocalizeHelper.CIRCULAR_SCALE_CACULATED_RATIO_UNIT}";
-                var settings = JsonConvert.DeserializeObject<CircularAreaScaleItem>(calculateScale.Settings);
-                if (settings != null)
-                {
-                    inputGraduations.Text = settings.TopGraduations;
-                }
+                var (topGraduations, _, areaScale, _, _) = gaugeBlockMethodBLL.GetScaleParts(calculateScale);
+                inputScale.Text = $"{areaScale}";
+                inputGrade.Text = topGraduations.Split(":")[1];
             }
             else
             {
                 inputScale.Text = string.Empty;
-                inputGraduations.Text = string.Empty;
+                inputGrade.Text = string.Empty;
             }
         }
         private void ClearTexts()
@@ -512,7 +514,7 @@ namespace AI_Assistant_Win.Controls
             inputAreaOfPixels.Text = string.Empty;
             inputConfidence.Text = string.Empty;
             inputScale.Text = string.Empty;
-            inputGraduations.Text = string.Empty;
+            inputGrade.Text = string.Empty;
             inputCalculatedArea.Text = string.Empty;
             inputDiameter.Text = string.Empty;
         }
@@ -728,37 +730,40 @@ namespace AI_Assistant_Win.Controls
         }
         private void BtnSetScale_Click(object sender, EventArgs e)
         {
-            if ((string.IsNullOrEmpty(tempCircularAreaResult.RenderImagePath) || tempCircularAreaResult.Item == null) &&
-                    (scaleList.Count == 0 ||   // for the first time
-                    checkboxRedefine.Checked)
-                )
+            // for the first time or want to redefine the scale.
+            if (scaleList.Count == 0 || checkboxRedefine.Checked)
             {
-                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PREDICT_FIRSTLY_BEFORE_SETTING_CIRCULAR_SCALE, AntdUI.TAlignFrom.BR, Font);
+                // go to the gauge block method page
+                if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, scaleList.Count == 0 ? $"{LocalizeHelper.SETTING_SCALE_FIRSTLY_BEFORE_PREDICTING}{LocalizeHelper.JUMP_TO_GAUGE_BLOCK_METHOD}" : $"{LocalizeHelper.RESETTING_SCALE_BEFORE_PREDICTING}{LocalizeHelper.JUMP_TO_GAUGE_BLOCK_METHOD}") == DialogResult.OK)
+                {
+                    try
+                    {
+                        BeginInvoke(new Action(() =>
+                        {
+                            form.OpenPage("Scale Setting");
+                        }));
+                    }
+                    catch (Exception error)
+                    {
+                        AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                    }
+                }
+                else
+                {
+                    checkboxRedefine.Checked = false;
+                }
                 return;
             }
-            var setting = new CircularScaleSetting(form);
-            setting.SetCurrentScaleDetails(tempCircularAreaResult, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
-            var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.CIRCULAR_SCALE_SETTINGS_MODAL_TITLE, setting)
+            var setting = new GaugeScaleSetting(form);
+            setting.SetCurrentScaleDetails(null, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
+            var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.CIRCULAR_SCALE_MODAL_TITLE, setting)
             {
                 OnButtonStyle = (id, btn) =>
                 {
                     btn.BackExtend = "135, #6253E1, #04BEFE";
                 },
-                CancelText = LocalizeHelper.CANCEL,
-                OkText = LocalizeHelper.SETTING_SAVE,
-                OnOk = config =>
-                {
-                    try
-                    {
-                        scaleList["current"] = setting.SaveSettings();   // 同时，正好利用了自带的转圈圈等待效果，简直完美2024年12月25日01点41分
-                        return true;
-                    }
-                    catch (Exception error)
-                    {
-                        AntdUI.Notification.error(form, LocalizeHelper.FAIL, error.Message, AntdUI.TAlignFrom.BR, Font);
-                        return false;
-                    }
-                }
+                CancelText = null,
+                OkText = LocalizeHelper.CONFIRM
             });
             if (result == DialogResult.OK)
             {
@@ -769,7 +774,7 @@ namespace AI_Assistant_Win.Controls
         {
             if (selectScale.SelectedValue != null)
             {
-                var selected = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleName(t))).Value;
+                var selected = scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
                 tempCircularAreaResult.CalculateScale = selected;
             }
             else

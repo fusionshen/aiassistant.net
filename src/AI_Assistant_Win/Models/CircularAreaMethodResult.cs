@@ -40,12 +40,12 @@ namespace AI_Assistant_Win.Models
         /// 测算面积(平方毫米)
         /// </summary>
         [Column("area")]
-        public float Area { get; set; }
+        public double Area { get; set; }
         /// <summary>
         /// 类圆直径(毫米)
         /// </summary>
         [Column("diameter")]
-        public float Diameter { get; set; }
+        public double Diameter { get; set; }
         /// <summary>
         /// 识别结果，138356 pixels = 6.09MB so huge 
         /// </summary>

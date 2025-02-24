@@ -20,11 +20,11 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 计算后的面积，用于保存数据库和history、report展示
         /// </summary>
-        public float CalculatedArea { get => CalculateScale == null ? Prediction.SegmentedPixelsCount : Prediction.SegmentedPixelsCount * CalculateScale.Value / 100; }
+        public double CalculatedArea { get => CalculateScale == null ? Prediction.SegmentedPixelsCount : Prediction.SegmentedPixelsCount * Math.Pow(CalculateScale.Value, 2); }
         /// <summary>
         /// 类圆直径
         /// </summary>
-        public float Diameter { get => (float)(CalculateScale == null ? 2 * Math.Sqrt(AreaOfPixels / Math.PI) : 2 * Math.Sqrt(CalculatedArea / Math.PI)); }
+        public double Diameter { get => (CalculateScale == null ? 2 * Math.Sqrt(AreaOfPixels / Math.PI) : 2 * Math.Sqrt(CalculatedArea / Math.PI)); }
         /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>

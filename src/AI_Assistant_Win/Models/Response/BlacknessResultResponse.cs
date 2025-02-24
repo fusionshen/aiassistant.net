@@ -32,55 +32,55 @@ namespace AI_Assistant_Win.Models.Response
         public string SurfaceOPLevel { get; set; }
 
         [JsonProperty("surfaceOPWidth")]
-        public float SurfaceOPWidth { get; set; }
+        public double SurfaceOPWidth { get; set; }
 
         [JsonProperty("surfaceOPScore")]
-        public float SurfaceOPScore { get; set; }
+        public double SurfaceOPScore { get; set; }
 
         [JsonProperty("surfaceCELevel")]
         public string SurfaceCELevel { get; set; }
 
         [JsonProperty("surfaceCEWidth")]
-        public float? SurfaceCEWidth { get; set; }
+        public double? SurfaceCEWidth { get; set; }
 
         [JsonProperty("surfaceCEScore")]
-        public float? SurfaceCEScore { get; set; }
+        public double? SurfaceCEScore { get; set; }
 
         [JsonProperty("surfaceDRLevel")]
         public string SurfaceDRLevel { get; set; }
 
         [JsonProperty("surfaceDRWidth")]
-        public float SurfaceDRWidth { get; set; }
+        public double SurfaceDRWidth { get; set; }
 
         [JsonProperty("surfaceDRScore")]
-        public float SurfaceDRScore { get; set; }
+        public double SurfaceDRScore { get; set; }
 
         [JsonProperty("insideOPLevel")]
         public string InsideOPLevel { get; set; }
 
         [JsonProperty("insideOPWidth")]
-        public float InsideOPWidth { get; set; }
+        public double InsideOPWidth { get; set; }
 
         [JsonProperty("insideOPScore")]
-        public float InsideOPScore { get; set; }
+        public double InsideOPScore { get; set; }
 
         [JsonProperty("insideCELevel")]
         public string InsideCELevel { get; set; }
 
         [JsonProperty("insideCEWidth")]
-        public float InsideCEWidth { get; set; }
+        public double InsideCEWidth { get; set; }
 
         [JsonProperty("insideCEScore")]
-        public float InsideCEScore { get; set; }
+        public double InsideCEScore { get; set; }
 
         [JsonProperty("insideDRLevel")]
         public string InsideDRLevel { get; set; }
 
         [JsonProperty("insideDRWidth")]
-        public float InsideDRWidth { get; set; }
+        public double InsideDRWidth { get; set; }
 
         [JsonProperty("insideDRScore")]
-        public float InsideDRScore { get; set; }
+        public double InsideDRScore { get; set; }
 
         [JsonProperty("isUploaded")]
         public bool IsUploaded { get; set; }
@@ -125,10 +125,10 @@ namespace AI_Assistant_Win.Models.Response
         public string Level { get; set; }
 
         [JsonProperty("score")]
-        public float Score { get; set; }
+        public double Score { get; set; }
 
         [JsonProperty("width")]
-        public float Width { get; set; }
+        public double Width { get; set; }
 
         [JsonProperty("prediction")]
         public string Prediction { get; set; }

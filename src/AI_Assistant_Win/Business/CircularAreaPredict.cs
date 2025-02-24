@@ -228,8 +228,8 @@ namespace AI_Assistant_Win.Business
         {
             var result = currentScale == null ?
              $"{detection.SegmentedPixels.Length}{LocalizeHelper.AREA_OF_PIXELS}" :
-             $"{detection.SegmentedPixels.Length * currentScale.Value / 100:F2}{LocalizeHelper.SQUARE_MILLIMETER}";
-            return $"{LocalizeHelper.AREA_PREDICTION_TITLE}{result}{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{detection.Confidence.ToPercent()}%";
+             $"{detection.SegmentedPixels.Length * Math.Pow(currentScale.Value, 2):F4}{LocalizeHelper.SQUARE_MILLIMETER}";
+            return $"{LocalizeHelper.AREA_PREDICTION_TITLE}{result}{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{detection.Confidence:P2}";
         }
 
         private static SKColor HexToRgbaSkia(string hexColor, int alpha = 255)

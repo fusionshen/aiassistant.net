@@ -18,7 +18,7 @@ namespace AI_Assistant_Win.Models
         /// scale ratio
         /// </summary>
         [Column("value")]
-        public float Value { get; set; }
+        public double Value { get; set; }
         /// <summary>
         /// 单位名称
         /// </summary>

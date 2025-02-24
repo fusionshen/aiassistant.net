@@ -112,7 +112,6 @@ namespace AI_Assistant_Win.Controls
             panel16.SuspendLayout();
             panel15.SuspendLayout();
             panel14.SuspendLayout();
-            panel8.SuspendLayout();
             panel13.SuspendLayout();
             panel12.SuspendLayout();
             panel11.SuspendLayout();
@@ -401,11 +400,11 @@ namespace AI_Assistant_Win.Controls
             // 
             panel6.ArrowSize = 10;
             panel6.Controls.Add(label3);
-            panel6.Controls.Add(panel18);
             panel6.Controls.Add(panel17);
             panel6.Controls.Add(panel16);
             panel6.Controls.Add(panel15);
             panel6.Controls.Add(panel14);
+            panel6.Controls.Add(panel18);
             panel6.Controls.Add(panel8);
             panel6.Controls.Add(divider2);
             panel6.Controls.Add(panel13);
@@ -1049,7 +1048,6 @@ namespace AI_Assistant_Win.Controls
             panel16.ResumeLayout(false);
             panel15.ResumeLayout(false);
             panel14.ResumeLayout(false);
-            panel8.ResumeLayout(false);
             panel13.ResumeLayout(false);
             panel13.PerformLayout();
             panel12.ResumeLayout(false);

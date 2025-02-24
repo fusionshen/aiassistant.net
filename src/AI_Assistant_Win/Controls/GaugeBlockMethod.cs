@@ -2,9 +2,7 @@
 using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
-using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -85,53 +83,19 @@ namespace AI_Assistant_Win.Controls
         private string FormatScaleItemName(KeyValuePair<string, CalculateScale> t)
         {
             var text = string.Empty;
-            var (topGraduations, scaleDetails, _ ,_) = GetScaleParts(t.Value);
+            var (topGraduations, lengthScale, _, mpe, accuracy) = gaugeBlockMethodBLL.GetScaleParts(t.Value);
             switch (t.Key)
             {
                 case "current":
-                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{topGraduations};{scaleDetails}]";
+                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{topGraduations};{lengthScale};{mpe};{accuracy}]";
                     break;
                 case "atThatTime":
-                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{topGraduations};{scaleDetails}]";
+                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{topGraduations};{lengthScale};{mpe};{accuracy}]";
                     break;
                 default:
                     break;
             }
             return text;
-        }
-        /// <summary>
-        /// show MPE Precision、Accuracy、Uncertainty
-        /// part1: 刻度0
-        /// part2: 0.15毫米/像素边长
-        /// part3: MPE=±0.06mm
-        /// part4: ±0.6135mm(k=3,99.73%)(实际100.00%)
-        /// </summary>
-        /// <param name="calculateScale"></param>
-        /// <returns></returns>
-        private (string topGraduations, string scaleDetails, string mpe, string accuracy) GetScaleParts(CalculateScale calculateScale)
-        {
-            // 刻度0;0.15毫米/像素边长;MPE=±0.06mm;±0.6135mm(k=3,99.73%)(实际100.00%)
-            var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(calculateScale.Settings);
-            var tracers = gaugeBlockMethodBLL.GetTracerListByScaleId(calculateScale.Id.ToString());
-            var tracerInMaxMPE = tracers.OrderBy(t => t.MPE).FirstOrDefault();
-            if (tracerInMaxMPE != null) 
-            {
-                return (
-                    $"{LocalizeHelper.SCALE_GRADE_TITLE}{settings?.TopGraduations}",
-                    $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}",
-                    $"MPE=±{tracerInMaxMPE.MPE:F4}mm",
-                    $"{tracerInMaxMPE.DisplayName}"
-                 );
-            }
-            else
-            {
-                return (
-                    $"{LocalizeHelper.SCALE_GRADE_TITLE}{settings?.TopGraduations}",
-                    $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}",
-                    string.Empty,
-                    string.Empty
-                );
-            }
         }
 
         private void OriginalGaugeBlockResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -266,7 +230,7 @@ namespace AI_Assistant_Win.Controls
                     ClearTexts();
                     if (!originalGaugeBlockResult.OriginImagePath.Equals(tempGaugeBlockResult.OriginImagePath))
                     {
-                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_USE_CORRECT_CIRCULAR_IMAGE, AntdUI.TAlignFrom.BR, Font);
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_USE_CORRECT_GAUGE_IMAGE, AntdUI.TAlignFrom.BR, Font);
                     }
                 }
             }
@@ -355,7 +319,7 @@ namespace AI_Assistant_Win.Controls
                         btnPrint.Visible = true;
                         btnPre.Visible = true;
                         btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
-                        //AntdUI.Message.success(form, LocalizeHelper.CIRCULAR_AREA_EDIT_MODE(originalGaugeBlockResult));
+                        AntdUI.Message.success(form, LocalizeHelper.GAUGE_BLOCK_EDIT_MODE(originalGaugeBlockResult));
                         return;
                     }
                     else
@@ -436,14 +400,14 @@ namespace AI_Assistant_Win.Controls
         }
         private void BtnUploadImage_Click(object sender, System.EventArgs e)
         {
-            if (areaMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
+            if (gaugeMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
                 btn.LoadingWaveValue = 0;
                 btn.Loading = true;
                 AntdUI.ITask.Run(() =>
                 {
-                    imageProcessBLL.SaveOriginImage(areaMethod_OpenFileDialog.FileName);
+                    imageProcessBLL.SaveOriginImage(gaugeMethod_OpenFileDialog.FileName);
                     // stop realtime image render
                     cameraBLL.StopGrabbing();
                     AntdUI.Message.success(form, LocalizeHelper.UPLOAD_ORIGINAL_IMAGE_SUCCESSFULLY);
@@ -486,14 +450,10 @@ namespace AI_Assistant_Win.Controls
         {
             if (calculateScale != null)
             {
-                var (_,scaleDetails,mpe,accuracy) = GetScaleParts(calculateScale);
-                inputLengthScale.Text = $"{scaleDetails};{mpe};{accuracy}";
-                inputAreaScale.Text = $"{Math.Pow(calculateScale.Value, 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}";
-                var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(calculateScale.Settings);
-                if (settings != null)
-                {
-                    inputGrade.Text = settings.TopGraduations;
-                }
+                var (topGraduations, lengthScale, areaScale, mpe, accuracy) = gaugeBlockMethodBLL.GetScaleParts(calculateScale);
+                inputLengthScale.Text = $"{lengthScale};{mpe};{accuracy}";
+                inputAreaScale.Text = $"{areaScale}";
+                inputGrade.Text = topGraduations.Split(":")[1];
             }
             else
             {
@@ -698,7 +658,7 @@ namespace AI_Assistant_Win.Controls
         }
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.JUMP_TO_HISTORY) == DialogResult.OK)
+            if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.JUMP_TO_ACCURACY_TRACER) == DialogResult.OK)
             {
                 try
                 {

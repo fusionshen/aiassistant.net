@@ -41,7 +41,7 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// pixels of each edge
         /// </summary>
-        public Dictionary<string, float> EdgePixels
+        public Dictionary<string, double> EdgePixels
         {
             get => new()
             {
@@ -52,7 +52,7 @@ namespace AI_Assistant_Win.Models.Middle
             };
         }
 
-        public Dictionary<string, float> CalculatedEdgeLengths
+        public Dictionary<string, double> CalculatedEdgeLengths
         {
             get => CalculateScale == null ? EdgePixels : EdgePixels.ToDictionary(pair => pair.Key, pair => pair.Value * CalculateScale.Value);
         }

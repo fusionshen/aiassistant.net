@@ -314,7 +314,7 @@ namespace AI_Assistant_Win.Business
             return surface.Snapshot();
         }
 
-        private string EdgeText(CalculateScale currentScale, float length)
+        private string EdgeText(CalculateScale currentScale, double length)
         {
             var result = currentScale == null ? $"{length:F2}" : $"{length * currentScale.Value:F2}{LocalizeHelper.MILLIMETER}";
             return result;

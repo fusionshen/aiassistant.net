@@ -124,15 +124,15 @@ namespace AI_Assistant_Win.Utils
             return lower;
         }
 
-        private static float Cross(PointF o, PointF a, PointF b)
+        private static double Cross(PointF o, PointF a, PointF b)
         {
             return (a.X - o.X) * (b.Y - o.Y) - (a.Y - o.Y) * (b.X - o.X);
         }
 
-        public static float CalculateDistance(PointF p1, PointF p2)
+        public static double CalculateDistance(PointF p1, PointF p2)
         {
             // 计算两点之间的欧几里得距离
-            return (float)Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));
+            return Math.Sqrt(Math.Pow(p2.X - p1.X, 2) + Math.Pow(p2.Y - p1.Y, 2));
         }
 
         // 计算四边形的面积
