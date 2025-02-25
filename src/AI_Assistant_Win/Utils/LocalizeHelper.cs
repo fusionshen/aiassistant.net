@@ -11,6 +11,7 @@ namespace AI_Assistant_Win.Utils
         public static string FAIL => Localization.Get("Fail", "失败");
         public static string PROMPT => Localization.Get("Prompt", "提示");
         public static string CONFIRM => Localization.Get("Confirm", "确认");
+        public static string SAMPLE_SIZE => Localization.Get("Sample Size: ", "样本数量：");
         public static string CANCEL => Localization.Get("Cancel", "取消");
         public static string SETTING => Localization.Get("Setting", "设置");
         public static string SETTING_SAVE => Localization.Get("Save Settings", "保存设置");
@@ -31,6 +32,8 @@ namespace AI_Assistant_Win.Utils
         public static string TESTNO_LIST_LOADED_SUCCESS => Localization.Get("The Test List Loaded", "试验清单加载成功");
         public static string OPENING_THE_CAMERA => Localization.Get("Opening The Camera...", "开启摄像头中...");
         public static string PAGE_LOADED_SUCCESS => Localization.Get("The Page Loaded", "页面加载成功");
+        public static string IN_USE => Localization.Get("In use", "正在使用");
+        public static string DEPRECATED => Localization.Get("Deprecated", "已弃用");
 
         #endregion
         #region login
@@ -180,6 +183,7 @@ namespace AI_Assistant_Win.Utils
         public static string PREDICT_FIRSTLY_BEFORE_SETTING_CIRCULAR_SCALE => Localization.Get("Please take a photo or upload a circular detection image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张圆片面积检测图片并且成功识别后再尝试进行比例尺设置。");
         public static string PREDICT_FIRSTLY_BEFORE_SETTING_GAUGE_SCALE => Localization.Get("Please take a photo or upload a gauge block image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张方形量块图片并且成功识别后再尝试进行比例尺设置。");
         public static string CIRCULAR_SCALE_MODAL_TITLE => Localization.Get("Circular-Area Scale", "圆片面积比例尺");
+        public static string SCALE_PREVIEW_MODAL_TITLE => Localization.Get("Scale Preview", "比例尺查看");
         public static string GAUGE_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Scale Setting", "比例尺设置");
         public static string AUTO_CALCULATE => Localization.Get("Auto Calculate", "自动计算");
         public static string NO_TOP_GRADUATIONS => Localization.Get("Please enter the platform scale on the upper surface of the sample at this time.", "请输入此时样品上表面的平台刻度。");
@@ -194,6 +198,12 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_USE_CORRECT_GAUGE_IMAGE => Localization.Get("Please use the correct gauge image for identification.", "请使用正确的量块图片进行识别。");
         public static string CIRCULAR_AREA_EDIT_MODE(CircularAreaResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo},Position:{result.Position}]", $"修改模式[试样编号：{result.TestNo}，部位：{result.Position}]");
         public static string GAUGE_BLOCK_EDIT_MODE(GaugeBlockResult result) => Localization.Get($"Edit Mode[ID:{result.Id},Length:{result.InputEdgeLength}]", $"修改模式[编号：{result.Id}，测量长度：{result.InputEdgeLength}]");
+        public static string TABLE_MPE => Localization.Get("MPE(Maximum Permissible Error)", "MPE(最大允许误差)");
+        public static string TABLE_AVERAGE => Localization.Get("Average", "平均值");
+        public static string TABLE_STANDARD_DEVIATION => Localization.Get("StandardDeviationσ", "标准差σ");
+        public static string TABLE_STANDARD_ERROR => Localization.Get("StandardError", "标准误差");
+        public static string TABLE_UNCERTAINTY => Localization.Get("Uncertainty", "总不确定度");
+        public static string TABLE_CONFIDENCE => Localization.Get("Confidence", "置信度");
         public static string TABLE_UPPER_SURFACE_OP => Localization.Get("UpperSurfaceOP", "上表面OP");
         public static string TABLE_UPPER_SURFACE_CE => Localization.Get("UpperSurfaceCE", "上表面CE");
         public static string TABLE_UPPER_SURFACE_DR => Localization.Get("UpperSurfaceDR", "上表面DR");
@@ -217,9 +227,12 @@ namespace AI_Assistant_Win.Utils
         public static string YE => Localization.Get("Pages", "页");
         public static string TABLE_HEADER_ID => Localization.Get("Id", "编号");
         public static string TABLE_HEADER_TESTNO => Localization.Get("TestNo", "试样编号");
+        public static string TABLE_HEADER_SCALE => Localization.Get("Scale", "比例尺");
         public static string TABLE_HEADER_SIZE => Localization.Get("Size", "尺寸");
         public static string TABLE_HEADER_UPLOADED => Localization.Get("Uploaded", "是否上传");
+        public static string TABLE_HEADER_IN_USE => Localization.Get("In Use", "使用");
         public static string TABLE_HEADER_COILNUMBER => Localization.Get("CoilNumber", "钢卷号");
+        public static string TABLE_HEADER_MEASUREDLENGTH => Localization.Get("MeasuringLength", "测量长度");
         public static string TABLE_HEADER_LEVEL => Localization.Get("Level", "等级");
         public static string TABLE_HEADER_ANALYST => Localization.Get("Analyst", "分析人");
         public static string TABLE_HEADER_WORKGROUP => Localization.Get("WorkGroup", "班组");

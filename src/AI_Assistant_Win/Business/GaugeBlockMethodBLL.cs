@@ -15,46 +15,48 @@ namespace AI_Assistant_Win.Business
 
         private readonly ApiBLL apiBLL = ApiHandler.Instance.GetApiBLL();
 
-        public List<CircularAreaSummaryHistory> GetSummaryListByConditions(DateTime? startDate, DateTime? endDate, string text)
+        public List<ScaleAccuracyTracerHistory> GetTracerListByConditions(DateTime? startDate, DateTime? endDate, string text)
         {
-            //var allSummary = connection.Table<ScaleAccuracyTracer>().ToList();
-            //var allMethod = connection.Table<GaugeBlockMethodResult>().ToList();
-            //var all = allSummary.Select(t => new CircularAreaSummaryHistory
-            //{
-            //    Summary = t,
-            //    MethodList = [.. allMethod.Where(x => t.TestNo.Equals(x.TestNo) && t.CoilNumber.Equals(x.CoilNumber)).OrderBy(x => x.Position)]
-            //}).ToList();
-            //var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
-            //var sorted = filtered.OrderByDescending(t => t.Summary.CreateTime).ToList();
-            //return sorted;
-            return null;
+            var allTracers = connection.Table<ScaleAccuracyTracer>().ToList();
+            var allScales = connection.Table<CalculateScale>().Where(t => "GaugeBlock".Equals(t.Key)).ToList();
+            var allMethods = connection.Table<GaugeBlockMethodResult>().ToList();
+            var all = allTracers.Select(t => new ScaleAccuracyTracerHistory
+            {
+                Tracer = t,
+                Scale = allScales.FirstOrDefault(x => t.ScaleId.Equals(x.Id)),
+                InUse = t.ScaleId == allScales.Max(x => x.Id),
+                MPEList = [.. allMethods.Where(x => t.ScaleId.Equals(x.ScaleId)).OrderBy(x => x.CreateTime)],
+                MethodList = [.. allMethods.Where(x => t.ScaleId.Equals(x.ScaleId) && t.MeasuredLength.Equals(x.InputLength)).OrderBy(x => x.CreateTime)]
+            }).ToList();
+            var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
+            var sorted = filtered.OrderByDescending(t => t.Tracer.ScaleId).ToList();
+            return sorted;
         }
 
-        private bool Filter(CircularAreaSummaryHistory t, DateTime? startDate, DateTime? endDate, string text)
+        private bool Filter(ScaleAccuracyTracerHistory t, DateTime? startDate, DateTime? endDate, string text)
         {
-            //var result = true;
-            //if (startDate != null)
-            //{
-            //    result = result && t.Summary.CreateTime != null && t.Summary.CreateTime >= startDate;
-            //}
-            //if (endDate != null)
-            //{
-            //    result = result && t.Summary.CreateTime != null && t.Summary.CreateTime <= endDate;
-            //}
-            //if (!string.IsNullOrEmpty(text))
-            //{
-            //    result = result && (t.Summary.Id.ToString().Equals(text) ||
-            //        (!string.IsNullOrEmpty(t.Summary.TestNo) && t.Summary.TestNo.Contains(text)) ||
-            //        (!string.IsNullOrEmpty(t.Summary.CoilNumber) && t.Summary.CoilNumber.Contains(text)) ||
-            //        (t.Summary.IsUploaded && text.Equals("已上传")) ||
-            //        (!t.Summary.IsUploaded && text.Equals("未上传")) ||
-            //        (!string.IsNullOrEmpty(t.Summary.Creator) && t.Summary.Creator.Contains(text)) ||
-            //        (!string.IsNullOrEmpty(t.Summary.Uploader) && t.Summary.Uploader.Contains(text)) ||
-            //        (!string.IsNullOrEmpty(t.Summary.LastReviser) && t.Summary.LastReviser.Contains(text))
-            //        );
-            //}
-            //return result;
-            return true;
+            var result = true;
+            if (startDate != null)
+            {
+                result = result && t.Tracer.CreateTime != null && t.Tracer.CreateTime >= startDate;
+            }
+            if (endDate != null)
+            {
+                result = result && t.Tracer.CreateTime != null && t.Tracer.CreateTime <= endDate;
+            }
+            if (!string.IsNullOrEmpty(text))
+            {
+                result = result && (t.Tracer.Id.ToString().Equals(text) ||
+                    (t.Tracer.ScaleId != null && t.Tracer.ScaleId.ToString().Contains(text)) ||
+                    (t.Tracer.MeasuredLength.ToString("F2").Contains(text)) ||
+                    (t.Tracer.IsUploaded && text.Equals("已上传")) ||
+                    (!t.Tracer.IsUploaded && text.Equals("未上传")) ||
+                    (!string.IsNullOrEmpty(t.Tracer.Creator) && t.Tracer.Creator.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.Tracer.Uploader) && t.Tracer.Uploader.Contains(text)) ||
+                    (!string.IsNullOrEmpty(t.Tracer.LastReviser) && t.Tracer.LastReviser.Contains(text))
+                    );
+            }
+            return result;
         }
 
         public GaugeBlockMethodResult GetResultById(string id)
@@ -323,6 +325,8 @@ namespace AI_Assistant_Win.Business
             originalGaugeBlockResult.RenderImagePath = body.RenderImagePath;
             originalGaugeBlockResult.WorkGroup = body.WorkGroup;
             originalGaugeBlockResult.Analyst = body.Analyst;
+            originalGaugeBlockResult.InputEdge = body.InputEdge;
+            originalGaugeBlockResult.InputEdgeLength = body.InputLength.ToString();
             originalGaugeBlockResult.CalculateScale = scaleAtThatTime; // must before items
             originalGaugeBlockResult.Item = new GaugeBlock(JsonConvert.DeserializeObject<QuadrilateralSegmentation>(body.Prediction), scaleAtThatTime);
             originalGaugeBlockResult.IsUploaded = GetOrAddTracerExitsInDB(body).IsUploaded; // promot before saving

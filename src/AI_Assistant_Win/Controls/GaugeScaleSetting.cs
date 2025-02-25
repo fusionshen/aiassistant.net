@@ -36,11 +36,12 @@ namespace AI_Assistant_Win
         }
 
         private string imagePath;
-        public void SetCurrentScaleDetails(GaugeBlockResult gaugeBlockResult, bool reDefined, CalculateScale scaleAtThatTime)
+        public void SetCurrentScaleDetails(GaugeBlockResult gaugeBlockResult, bool reDefined, CalculateScale scaleAtThatTime, CalculateScale preview = null)
         {
             gaugeBlockDetection = gaugeBlockResult;
             #region current
-            var currentScale = gaugeBlockMethodBLL.GetCurrentScale();
+            var currentScale = preview == null ? gaugeBlockMethodBLL.GetCurrentScale() : preview;
+            lableRenderImageDisplayArea.Visible = preview == null ? true : false;
             if (reDefined || currentScale == null)
             {
                 imagePath = gaugeBlockDetection.RenderImagePath;

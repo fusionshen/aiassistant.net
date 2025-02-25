@@ -57,7 +57,7 @@ namespace AI_Assistant_Win.Utils
             _db.CreateTable<BlacknessUploadResult>();
             _db.CreateTable<CalculateScale>();
             _db.CreateTable<CircularAreaMethodResult>();
-            _db.CreateTable<ScaleAccuracyTracer>();
+            _db.CreateTable<CircularAreaMethodSummary>();
             _db.CreateTable<CircularAreaUploadResult>();
             _db.CreateTable<GaugeBlockMethodResult>();
             _db.CreateTable<ScaleAccuracyTracer>();

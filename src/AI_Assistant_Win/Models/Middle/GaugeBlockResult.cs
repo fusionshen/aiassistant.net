@@ -152,8 +152,8 @@ namespace AI_Assistant_Win.Models.Middle
                 !string.IsNullOrEmpty(RenderImagePath) && RenderImagePath.Equals(param.RenderImagePath) &&
                 !string.IsNullOrEmpty(WorkGroup) && WorkGroup.Equals(param.WorkGroup) &&
                 !string.IsNullOrEmpty(Analyst) && Analyst.Equals(param.Analyst) &&
-                !string.IsNullOrEmpty(InputEdge) && Analyst.Equals(param.InputEdge) &&
-                !string.IsNullOrEmpty(InputEdgeLength) && Analyst.Equals(param.InputEdgeLength) &&
+                !string.IsNullOrEmpty(InputEdge) && InputEdge.Equals(param.InputEdge) &&
+                !string.IsNullOrEmpty(InputEdgeLength) && InputEdgeLength.Equals(param.InputEdgeLength) &&
                 Item != null && Item.Equals(param.Item);
             return result;
         }
