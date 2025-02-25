@@ -36,7 +36,7 @@ namespace AI_Assistant_Win
         }
 
         private string imagePath;
-        public void SetCurrentScaleDetails(GaugeBlockResult gaugeBlockResult, bool reDefined, CalculateScale scaleAtThatTime, CalculateScale preview = null)
+        public void SetScaleDetails(GaugeBlockResult gaugeBlockResult, bool reDefined, CalculateScale scaleAtThatTime, CalculateScale preview = null)
         {
             gaugeBlockDetection = gaugeBlockResult;
             #region current

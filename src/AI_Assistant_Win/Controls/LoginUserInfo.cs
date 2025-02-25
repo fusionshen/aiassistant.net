@@ -61,7 +61,7 @@ namespace AI_Assistant_Win
             if (result == DialogResult.OK)
             {
                 apiBLL.Logout();
-            };
+            }
         }
     }
 }

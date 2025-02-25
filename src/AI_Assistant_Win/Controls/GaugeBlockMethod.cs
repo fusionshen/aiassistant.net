@@ -648,7 +648,7 @@ namespace AI_Assistant_Win.Controls
                 if (result == DialogResult.OK)
                 {
                     BeginInvoke(action);
-                };
+                }
             }
             else
             {
@@ -724,7 +724,7 @@ namespace AI_Assistant_Win.Controls
                 return;
             }
             var setting = new GaugeScaleSetting(form);
-            setting.SetCurrentScaleDetails(tempGaugeBlockResult, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
+            setting.SetScaleDetails(tempGaugeBlockResult, checkboxRedefine.Checked, scaleList.FirstOrDefault(t => "atThatTime".Equals(t.Key)).Value);
             var result = AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.GAUGE_SCALE_SETTINGS_MODAL_TITLE, setting)
             {
                 OnButtonStyle = (id, btn) =>

@@ -138,8 +138,7 @@ namespace Yolov8.Net
             foreach (var item in modelOutputs) // add outputs for processing
             {
                 output.Add(result.First(x => x.Name == item).Value as DenseTensor<float>);
-            };
-
+            }
             return [.. output];
         }
 

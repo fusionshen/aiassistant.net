@@ -1,6 +1,5 @@
 using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
-using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using AntdUI;
@@ -10,7 +9,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
-using YoloDotNet.Extensions;
 
 namespace AI_Assistant_Win.Controls
 {
@@ -101,13 +99,13 @@ namespace AI_Assistant_Win.Controls
             {
                 if (data.FirstOrDefault(t => "cellItem".Equals(t.key))?.value is ScaleAccuracyTracerHistory tracerHistory)
                 {
-                    string postionDetail = string.Empty;
+                    var currentStep = -1;
                     switch (e.ColumnIndex)
                     {
                         // scale
                         case 2:
                             var setting = new GaugeScaleSetting(form);
-                            setting.SetCurrentScaleDetails(null, false, null, tracerHistory.Scale);
+                            setting.SetScaleDetails(null, false, null, tracerHistory.Scale);
                             AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.SCALE_PREVIEW_MODAL_TITLE, setting)
                             {
                                 OnButtonStyle = (id, btn) =>
@@ -119,48 +117,50 @@ namespace AI_Assistant_Win.Controls
                             });
                             break;
                         case 3:
-                            postionDetail = $"{LocalizeHelper.SAMPLE_SIZE}{tracerHistory.MethodList.Count}";
+                            var text = $"{LocalizeHelper.SAMPLE_SIZE(tracerHistory.Tracer.MeasuredLength)}{tracerHistory.MethodList.Count}。\n" +
+                                $"{LocalizeHelper.TOTAL_SAMPLE_SIZE}{tracerHistory.MethodList.Count}。";
+                            AntdUI.Popover.open(new AntdUI.Popover.Config(tableTracerAreaHistory, text) { Offset = e.Rect });
                             break;
-                        case 4:
-                            //var page = new CalculatedDetails(form);
-                            //AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.SCALE_PREVIEW_MODAL_TITLE, page)
-                            //{
-                            //    OnButtonStyle = (id, btn) =>
-                            //    {
-                            //        btn.BackExtend = "135, #6253E1, #04BEFE";
-                            //    },
-                            //    CancelText = null,
-                            //    OkText = LocalizeHelper.CONFIRM
-                            //});
+                        case 5:
+                            currentStep = 0;
+                            break;
+                        case 6:
+                            currentStep = 2;
+                            break;
+                        case 7:
+                            currentStep = 3;
+                            break;
+                        case 8:
+                            currentStep = 4;
+                            break;
+                        case 9:
+                            currentStep = 5;
+                            break;
+                        case 10:
+                            currentStep = 6;
+                            break;
+                        case 17:
+                            currentStep = 7;
                             break;
                         default:
                             break;
                     }
-                    if (!string.IsNullOrEmpty(postionDetail))
+                    if (currentStep != -1)
                     {
-                        AntdUI.Popover.open(new AntdUI.Popover.Config(tableTracerAreaHistory, postionDetail) { Offset = e.Rect });
+                        var page = new CalculatedStep(form);
+                        page.SetTracerDetails(tracerHistory, currentStep);
+                        AntdUI.Modal.open(new AntdUI.Modal.Config(form, LocalizeHelper.SCALE_ACCURAY_TRACER_MODAL_TITLE, page)
+                        {
+                            OnButtonStyle = (id, btn) =>
+                            {
+                                btn.BackExtend = "135, #6253E1, #04BEFE";
+                            },
+                            CancelText = null,
+                            OkText = LocalizeHelper.CONFIRM
+                        });
                     }
                 }
             }
-        }
-
-        private string FormatPositionDetail(List<CircularAreaMethodResult> methodList, CircularPositionKind positionEnum)
-        {
-            string text = string.Empty;
-            var method = methodList.FirstOrDefault(t => positionEnum.Equals(t.Position));
-            if (method != null)
-            {
-                text = $"{LocalizeHelper.CIRCULAR_POSITION_TITLE}{LocalizeHelper.CIRCULAR_POSITION(method.Position)}\n" +
-                    $"{LocalizeHelper.CELL_AREA_OF_PIXELS}{method.Pixels}" +
-                    $"{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{method.Confidence.ToPercent()}%\n" +
-                    $"{LocalizeHelper.AREA_PREDICTION_TITLE}{method.Area:F2}{LocalizeHelper.SQUARE_MILLIMETER}\n" +
-                    $"{LocalizeHelper.CIRCULAR_AREA_DIAMETER}{method.Diameter:F2}{LocalizeHelper.MILLIMETER}\n" +
-                    $"{LocalizeHelper.CELL_TITLE_ANALYST}{method.Analyst}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_CREATETIME}{method.CreateTime}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_LASTREVISER}{method.LastReviser}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_LASTMODIFIEDTIME}{method.LastModifiedTime}";
-            }
-            return text;
         }
 
         void Table1_CellButtonClick(object sender, AntdUI.TableButtonEventArgs e)
@@ -281,11 +281,11 @@ namespace AI_Assistant_Win.Controls
                     new("measuredLength", $"{t.Tracer.MeasuredLength}mm"),
                     new("inUse", t.InUse ? new CellTag($"{LocalizeHelper.IN_USE}", TTypeMini.Success) :new CellTag($"{LocalizeHelper.DEPRECATED}", TTypeMini.Error)),
                     new("isUploaded", CreateIsUploadedCellBadge(t.Tracer)),
-                    new("mpe", $"{t.Tracer.MPE:F4}mm"),
-                    new("average", $"{t.Tracer.Average:F4}mm"),
-                    new("standardDeviation", $"{t.Tracer.StandardDeviation:F4}mm"),
-                    new("standardError", $"{t.Tracer.StandardError:F4}mm"),
-                    new("uncertainty", $"{t.Tracer.Uncertainty:F4}mm"),
+                    new("mpe", $"{t.Tracer.MPE:F2}mm"),
+                    new("average", $"{t.Tracer.Average:F2}mm"),
+                    new("standardDeviation", $"{t.Tracer.StandardDeviation:F3}mm"),
+                    new("standardError", $"{t.Tracer.StandardError:F3}mm"),
+                    new("uncertainty", $"{t.Tracer.Uncertainty:F3}mm"),
                     new("confidence", t.Tracer.DisplayName),
                     new("creator", t.Tracer.Creator),
                     new("createTime", t.Tracer.CreateTime),

@@ -242,23 +242,23 @@ namespace AI_Assistant_Win.Business
             scaleTracer.Pct3Sigma = pct3Sigma;
             if (pct1Sigma < 0.6827f)
             {
-                scaleTracer.DisplayName = $"±{uncertainty:F4}mm(μ±1σ:{pct1Sigma:P2})(理论68.27%)";
+                scaleTracer.DisplayName = $"±{uncertainty:F3}mm(μ±1σ:{pct1Sigma:P2})(理论68.27%)";
             }
             else
             {
                 if (pct2Sigma < 0.9545f)
                 {
-                    scaleTracer.DisplayName = $"±{uncertainty:F4}mm(k=1,68.27%)(实际{pct1Sigma:P2})";
+                    scaleTracer.DisplayName = $"±{uncertainty:F3}mm(k=1,68.27%)(实际{pct1Sigma:P2})";
                 }
                 else
                 {
                     if (pct3Sigma < 0.9973f)
                     {
-                        scaleTracer.DisplayName = $"±{uncertainty:F4}mm(k=2,95.45%)(实际{pct2Sigma:P2})";
+                        scaleTracer.DisplayName = $"±{uncertainty:F3}mm(k=2,95.45%)(实际{pct2Sigma:P2})";
                     }
                     else
                     {
-                        scaleTracer.DisplayName = $"±{uncertainty:F4}mm(k=3,99.73%)(实际{pct3Sigma:P2})";
+                        scaleTracer.DisplayName = $"±{uncertainty:F3}mm(k=3,99.73%)(实际{pct3Sigma:P2})";
                     }
                 }
             }
@@ -363,7 +363,7 @@ namespace AI_Assistant_Win.Business
                     $"{LocalizeHelper.SCALE_GRADE_TITLE}{settings?.TopGraduations}",
                     $"{calculateScale.Value:F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}",
                     $"{Math.Pow(calculateScale.Value, 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}",
-                    $"MPE=±{tracerInMaxMPE.MPE:F4}mm",
+                    $"MPE=±{tracerInMaxMPE.MPE:F2}mm",
                     $"{tracerInMaxMPE.DisplayName}"
                  );
             }

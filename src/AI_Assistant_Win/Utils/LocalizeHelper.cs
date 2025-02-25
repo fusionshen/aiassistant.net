@@ -11,7 +11,8 @@ namespace AI_Assistant_Win.Utils
         public static string FAIL => Localization.Get("Fail", "失败");
         public static string PROMPT => Localization.Get("Prompt", "提示");
         public static string CONFIRM => Localization.Get("Confirm", "确认");
-        public static string SAMPLE_SIZE => Localization.Get("Sample Size: ", "样本数量：");
+        public static string TOTAL_SAMPLE_SIZE => Localization.Get("Total Size Of Samples: ", "总样本数量：");
+        public static string SAMPLE_SIZE(double measurement) => Localization.Get($"Sample Size Of Gauge Block[{measurement}]: ", $"{measurement}毫米量块样本数量：");
         public static string CANCEL => Localization.Get("Cancel", "取消");
         public static string SETTING => Localization.Get("Setting", "设置");
         public static string SETTING_SAVE => Localization.Get("Save Settings", "保存设置");
@@ -184,6 +185,7 @@ namespace AI_Assistant_Win.Utils
         public static string PREDICT_FIRSTLY_BEFORE_SETTING_GAUGE_SCALE => Localization.Get("Please take a photo or upload a gauge block image first and successfully recognize it before attempting to set the scale.", "请先拍照或者上传一张方形量块图片并且成功识别后再尝试进行比例尺设置。");
         public static string CIRCULAR_SCALE_MODAL_TITLE => Localization.Get("Circular-Area Scale", "圆片面积比例尺");
         public static string SCALE_PREVIEW_MODAL_TITLE => Localization.Get("Scale Preview", "比例尺查看");
+        public static string SCALE_ACCURAY_TRACER_MODAL_TITLE => Localization.Get("Scale Accuracy Tracer", "精度溯源");
         public static string GAUGE_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Scale Setting", "比例尺设置");
         public static string AUTO_CALCULATE => Localization.Get("Auto Calculate", "自动计算");
         public static string NO_TOP_GRADUATIONS => Localization.Get("Please enter the platform scale on the upper surface of the sample at this time.", "请输入此时样品上表面的平台刻度。");
@@ -197,7 +199,7 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_USE_CORRECT_CIRCULAR_IMAGE => Localization.Get("Please use the correct circular image for identification.", "请使用正确的圆形图片进行识别。");
         public static string PLEASE_USE_CORRECT_GAUGE_IMAGE => Localization.Get("Please use the correct gauge image for identification.", "请使用正确的量块图片进行识别。");
         public static string CIRCULAR_AREA_EDIT_MODE(CircularAreaResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo},Position:{result.Position}]", $"修改模式[试样编号：{result.TestNo}，部位：{result.Position}]");
-        public static string GAUGE_BLOCK_EDIT_MODE(GaugeBlockResult result) => Localization.Get($"Edit Mode[ID:{result.Id},Length:{result.InputEdgeLength}]", $"修改模式[编号：{result.Id}，测量长度：{result.InputEdgeLength}]");
+        public static string GAUGE_BLOCK_EDIT_MODE(GaugeBlockResult result) => Localization.Get($"Edit Mode[ID:{result.Id},Length:{result.InputEdgeLength}]", $"修改模式[编号：{result.Id}，测量长度：{result.InputEdgeLength}mm]");
         public static string TABLE_MPE => Localization.Get("MPE(Maximum Permissible Error)", "MPE(最大允许误差)");
         public static string TABLE_AVERAGE => Localization.Get("Average", "平均值");
         public static string TABLE_STANDARD_DEVIATION => Localization.Get("StandardDeviationσ", "标准差σ");
