@@ -25,8 +25,8 @@ namespace AI_Assistant_Win.Business
                 Tracer = t,
                 Scale = allScales.FirstOrDefault(x => t.ScaleId.Equals(x.Id)),
                 InUse = t.ScaleId == allScales.Max(x => x.Id),
-                MPEList = [.. allMethods.Where(x => t.ScaleId.Equals(x.ScaleId)).OrderBy(x => x.CreateTime)],
-                MethodList = [.. allMethods.Where(x => t.ScaleId.Equals(x.ScaleId) && t.MeasuredLength.Equals(x.InputLength)).OrderBy(x => x.CreateTime)]
+                MPEList = [.. allMethods.Where(x => t.ScaleId.Equals(x.ScaleId)).OrderByDescending(x => x.CreateTime)],
+                MethodList = [.. allMethods.Where(x => t.ScaleId.Equals(x.ScaleId) && t.MeasuredLength.Equals(x.InputLength)).OrderByDescending(x => x.CreateTime)]
             }).ToList();
             var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
             var sorted = filtered.OrderByDescending(t => t.Tracer.ScaleId).ToList();
@@ -47,7 +47,7 @@ namespace AI_Assistant_Win.Business
             if (!string.IsNullOrEmpty(text))
             {
                 result = result && (t.Tracer.Id.ToString().Equals(text) ||
-                    (t.Tracer.ScaleId != null && t.Tracer.ScaleId.ToString().Contains(text)) ||
+                    (t.Scale != null && t.Scale.Value.ToString("F2").Equals(text)) ||
                     (t.Tracer.MeasuredLength.ToString("F2").Contains(text)) ||
                     (t.Tracer.IsUploaded && text.Equals("已上传")) ||
                     (!t.Tracer.IsUploaded && text.Equals("未上传")) ||
@@ -311,13 +311,13 @@ namespace AI_Assistant_Win.Business
                 originalGaugeBlockResult.RenderImagePath = string.Empty;
                 originalGaugeBlockResult.WorkGroup = string.Empty;
                 originalGaugeBlockResult.Analyst = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
+                originalGaugeBlockResult.Item = null;
                 originalGaugeBlockResult.InputEdge = string.Empty;
                 originalGaugeBlockResult.InputEdgeLength = string.Empty;
-                originalGaugeBlockResult.Item = null;
                 return [];
             }
             // sorted by testNo，then sorted by position
-            var allSorted = connection.Table<GaugeBlockMethodResult>().OrderBy(t => t.CreateTime).ThenBy(t => t.ScaleId).ThenBy(t => t.InputLength).ToList();
+            var allSorted = connection.Table<GaugeBlockMethodResult>().OrderBy(t => t.ScaleId).ThenBy(t => t.InputLength).ThenBy(t => t.CreateTime).ToList();
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));
             originalGaugeBlockResult.Id = body.Id;
@@ -325,12 +325,12 @@ namespace AI_Assistant_Win.Business
             originalGaugeBlockResult.RenderImagePath = body.RenderImagePath;
             originalGaugeBlockResult.WorkGroup = body.WorkGroup;
             originalGaugeBlockResult.Analyst = body.Analyst;
-            originalGaugeBlockResult.InputEdge = body.InputEdge;
-            originalGaugeBlockResult.InputEdgeLength = body.InputLength.ToString();
             originalGaugeBlockResult.CalculateScale = scaleAtThatTime; // must before items
             originalGaugeBlockResult.Item = new GaugeBlock(JsonConvert.DeserializeObject<QuadrilateralSegmentation>(body.Prediction), scaleAtThatTime);
+            originalGaugeBlockResult.InputEdge = body.InputEdge;
+            originalGaugeBlockResult.InputEdgeLength = body.InputLength.ToString();
             originalGaugeBlockResult.IsUploaded = GetOrAddTracerExitsInDB(body).IsUploaded; // promot before saving
-            return allSorted.Select(t => t.Id).ToList();
+            return [.. allSorted.Select(t => t.Id)];
         }
         public List<ScaleAccuracyTracer> GetTracerListByScaleId(string scaleId)
         {

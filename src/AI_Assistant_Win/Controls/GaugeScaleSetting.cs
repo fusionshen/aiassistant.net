@@ -204,10 +204,15 @@ namespace AI_Assistant_Win
                     default:
                         break;
                 }
-
-                labelResultDescription.Text = $"{LocalizeHelper.LENGTH_SCALE_RESULT_TITLE}{float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text):F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}\n" +
-                    $"{LocalizeHelper.AREA_SCALE_RESULT_TITLE}{Math.Pow(float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text), 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}\n" +
-                    $"{LocalizeHelper.CALCULATED_AREA_TITLE}{float.Parse(inputAreaOfPixels.Text) * Math.Pow(float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text), 2):F4}±{(float.Parse(inputAreaOfPixels.Text) - float.Parse(inputExtractedArea.Text)) * Math.Pow(float.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text), 2):F4}{LocalizeHelper.SQUARE_MILLIMETER}";
+                if (double.Parse(inputEdgeABLength.Text) <= 0)
+                {
+                    ClearEdgeResult(edge);
+                    labelResultDescription.Text = LocalizeHelper.SCALE_INPUT_ERROR;
+                    return;
+                }
+                labelResultDescription.Text = $"{LocalizeHelper.LENGTH_SCALE_RESULT_TITLE}{double.Parse(inputEdgeABLength.Text) / double.Parse(textEdgeABPixels.Text):F2}{LocalizeHelper.LENGTH_SCALE_CACULATED_RATIO_UNIT}\n" +
+                $"{LocalizeHelper.AREA_SCALE_RESULT_TITLE}{Math.Pow(double.Parse(inputEdgeABLength.Text) / float.Parse(textEdgeABPixels.Text), 2):F4}{LocalizeHelper.AREA_SCALE_CACULATED_RATIO_UNIT}\n" +
+                $"{LocalizeHelper.CALCULATED_AREA_TITLE}{double.Parse(inputAreaOfPixels.Text) * Math.Pow(float.Parse(inputEdgeABLength.Text) / double.Parse(textEdgeABPixels.Text), 2):F4}±{(double.Parse(inputAreaOfPixels.Text) - double.Parse(inputExtractedArea.Text)) * Math.Pow(double.Parse(inputEdgeABLength.Text) / double.Parse(textEdgeABPixels.Text), 2):F4}{LocalizeHelper.SQUARE_MILLIMETER}";
             }
             catch (Exception)
             {

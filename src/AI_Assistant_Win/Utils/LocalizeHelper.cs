@@ -116,6 +116,7 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_SELECT_TESTNO => Localization.Get("Please select a test no.", "请选择试样编号。");
         public static string PLEASE_SELECT_EDGE => Localization.Get("Select one edge of the identified quadrilateral.", "请选择识别出的四边形的某一条边。");
         public static string PLEASE_INPUT_COIL_NUMBER => Localization.Get("Please text a coil number.", "请输入钢卷号。");
+        public static string PLEASE_INPUT_CORRECT_EDGE_LENGTH => Localization.Get("Please text a correct edge length.", "请输入正确的边长。");
         public static string PLEASE_INPUT_EDGE_LENGTH(string edge) => Localization.Get($"Please enter the length of Edge {edge}.", $"请输入{edge}边的长度。");
         public static string PLEASE_INPUT_SIZE => Localization.Get("Please text a size.", "请输入尺寸。");
         public static string PLEASE_INPUT_ANALYST => Localization.Get("Please text a analyst.", "请输入分析人。");
@@ -213,8 +214,12 @@ namespace AI_Assistant_Win.Utils
         public static string TABLE_LOWER_SURFACE_CE => Localization.Get("LowerSurfaceCE", "下表面CE");
         public static string TABLE_LOWER_SURFACE_DR => Localization.Get("LowerSurfaceDR", "下表面DR");
         public static string WOULD_EDIT_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to edit the circular area detection result?", "是否对本次圆片面积检测结果进行修改？");
-        public static string WOULD_UPLOAD_CIRCULAR_ARE_RESULT => Localization.Get("Would you like to upload this circular area detection report and its results to the business system?", "是否将本次圆片面积检测报告及结果上传至业务系统？");
+        public static string WOULD_EDIT_SCALE_ACCURACY_RESULT => Localization.Get("Would you like to edit the gauge block detection result?", "是否对该比例尺下的量块长度检测结果进行修改？");
+        public static string WOULD_UPLOAD_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to upload this circular area detection report and its results to the business system?", "是否将本次圆片面积检测报告及结果上传至业务系统？");
         public static string WOULD_REUPLOAD_CIRCULAR_AREA_RESULT(string testNo) => Localization.Get($"The system has detected that the test number [{testNo}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到[{testNo}]已经上传，是否将本次圆片面积检测报告及结果重新上传至业务系统并更新版本？");
+        public static string WOULD_UPLOAD_SCALE_ACCURACY_RESULT => Localization.Get("Would you like to upload this scale accuracy report to the business system?", "是否将本次比例尺精度报告及结果上传至业务系统？");
+        public static string WOULD_REUPLOAD_SCALE_ACCURACY_RESULT(ScaleAccuracyTracerHistory history) => Localization.Get($"The system has detected that the accuracy report[{history.Scale.Value}mm/pixel size scale under {history.Tracer.MeasuredLength}mm] has already been uploaded. Would you like to re-upload this report and update the version?", $"系统检测到精度报告[在{history.Tracer.MeasuredLength}mm下的{history.Scale.Value}毫米/像素边长比例尺]已经上传，是否将本次报告重新上传至业务系统并更新版本？");
+
         public static string NOT_A_QUADRILATERAL => Localization.Get("Point set cannot form a quadrilateral.", "点集无法构成四边形。");
         #endregion
         #region table

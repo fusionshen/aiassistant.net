@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -126,21 +127,20 @@ namespace AI_Assistant_Win.Controls
                                             // 弹出文件保存对话框
                                             SaveFileDialog saveFileDialog = new()
                                             {
-                                                Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
-                                                DefaultExt = "jpg",
-                                                FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_黑度检测结果.jpg",
+                                                //Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                                //DefaultExt = "jpg",
+                                                FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_黑度检测结果",
                                                 Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                             };
                                             if (saveFileDialog.ShowDialog() == DialogResult.OK)
                                             {
-
-                                                string pdfPath = saveFileDialog.FileName;
+                                                string directoryPath = saveFileDialog.FileName;
+                                                Directory.CreateDirectory(directoryPath);
                                                 var originImage = Image.FromFile(originImagePath);
-                                                originImage.Save(saveFileDialog.FileName.Replace(".jpg", "_原图.jpg"), ImageFormat.Jpeg);
+                                                originImage.Save(Path.Combine(directoryPath, $"原图.jpg"), ImageFormat.Jpeg);
                                                 var renderImage = Image.FromFile(renderImagePath);
-                                                renderImage.Save(saveFileDialog.FileName.Replace(".jpg", "_识别图.jpg"), ImageFormat.Jpeg);
-                                                AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
-
+                                                renderImage.Save(Path.Combine(directoryPath, $"识别图.jpg"), ImageFormat.Jpeg);
+                                                AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + directoryPath);
                                             }
                                             break;
                                     }

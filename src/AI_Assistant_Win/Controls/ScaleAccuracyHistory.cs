@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -117,8 +118,10 @@ namespace AI_Assistant_Win.Controls
                             });
                             break;
                         case 3:
-                            var text = $"{LocalizeHelper.SAMPLE_SIZE(tracerHistory.Tracer.MeasuredLength)}{tracerHistory.MethodList.Count}。\n" +
-                                $"{LocalizeHelper.TOTAL_SAMPLE_SIZE}{tracerHistory.MethodList.Count}。";
+                            var text = $">>{LocalizeHelper.SAMPLE_SIZE(tracerHistory.Tracer.MeasuredLength)}{tracerHistory.MethodList.Count}:\n" +
+                                $"{ShowResultDividedBy8([.. tracerHistory.MethodList.Select(t => t.CalculatedLength)])}。\n" +
+                                $">>{LocalizeHelper.TOTAL_SAMPLE_SIZE}{tracerHistory.MPEList.Count}:\n" +
+                                $"{ShowResultDividedBy8([.. tracerHistory.MPEList.Select(t => t.CalculatedLength)])}。";
                             AntdUI.Popover.open(new AntdUI.Popover.Config(tableTracerAreaHistory, text) { Offset = e.Rect });
                             break;
                         case 5:
@@ -163,6 +166,16 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
+        private string ShowResultDividedBy8(List<double> numbers)
+        {
+            var grouped = numbers.Select((x, index) => new { x, group = index / 8 })
+                             .GroupBy(g => g.group)
+                             .Select(g => g.Select(x => $"{x.x:F2}mm").ToList())
+                             .ToList();
+            var result = string.Join(",\n", grouped.Select(t => string.Join(",", t)));
+            return result;
+        }
+
         void Table1_CellButtonClick(object sender, AntdUI.TableButtonEventArgs e)
         {
             if (e.Record is IList<AntdUI.AntItem> data)
@@ -170,11 +183,11 @@ namespace AI_Assistant_Win.Controls
                 switch (e.Btn.Id)
                 {
                     case "preview":
-                        if (data.FirstOrDefault(t => "methodList".Equals(t.key))?.value is List<CircularAreaMethodResult> methodList)
+                        if (data.FirstOrDefault(t => "cellItem".Equals(t.key))?.value is ScaleAccuracyTracerHistory tracerHistory)
                         {
                             try
                             {
-                                var imageList = methodList.SelectMany(t => new List<Image> { Image.FromFile(t.OriginImagePath), Image.FromFile(t.RenderImagePath) }).ToList();
+                                var imageList = tracerHistory.MethodList.SelectMany(t => new List<Image> { Image.FromFile(t.OriginImagePath), Image.FromFile(t.RenderImagePath) }).ToList();
                                 AntdUI.Preview.open(new AntdUI.Preview.Config(form, [.. imageList])
                                 {
                                     Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
@@ -186,25 +199,23 @@ namespace AI_Assistant_Win.Controls
                                                 // 弹出文件保存对话框
                                                 SaveFileDialog saveFileDialog = new()
                                                 {
-                                                    Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
-                                                    DefaultExt = "jpg",
-                                                    FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_圆片面积检测结果.jpg",
+                                                    //Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                                    //DefaultExt = "jpg",
+                                                    FileName = $"{data.FirstOrDefault(t => "scale".Equals(t.key))?.value.ToString().Replace("/", "每")}_{data.FirstOrDefault(t => "measuredLength".Equals(t.key))?.value}_测量结果",
                                                     Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                                 };
                                                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                                                 {
-
-                                                    string pdfPath = saveFileDialog.FileName;
-                                                    methodList.ForEach(t =>
+                                                    string directoryPath = saveFileDialog.FileName;
+                                                    Directory.CreateDirectory(directoryPath);
+                                                    tracerHistory.MethodList.ForEach(t =>
                                                 {
                                                     var originImage = Image.FromFile(t.OriginImagePath);
-                                                    originImage.Save(saveFileDialog.FileName
-                                                        .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_原图.jpg"), ImageFormat.Jpeg);
+                                                    originImage.Save(Path.Combine(directoryPath, $"{t.InputEdge}_原图_{t.CreateTime:yyyyMMddHHmmss}.jpg"), ImageFormat.Jpeg);
                                                     var renderImage = Image.FromFile(t.RenderImagePath);
-                                                    renderImage.Save(saveFileDialog.FileName
-                                                        .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_识别图.jpg"), ImageFormat.Jpeg);
+                                                    renderImage.Save(Path.Combine(directoryPath, $"{t.InputEdge}_识别图_{t.CreateTime:yyyyMMddHHmmss}.jpg"), ImageFormat.Jpeg);
                                                 });
-                                                    AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
+                                                    AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + directoryPath);
 
                                                 }
                                                 break;
@@ -220,28 +231,31 @@ namespace AI_Assistant_Win.Controls
 
                         break;
                     case "report":
-                        var testNo = data.FirstOrDefault(t => "testNo".Equals(t.key))?.value.ToString();
-                        try
-                        {
-                            AntdUI.Drawer.open(form, new CircularAreaReport(form, testNo, () => { BtnSearch_Click(null, null); })
-                            {
-                                Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
-                            }, AntdUI.TAlignMini.Right);
-                        }
-                        catch (Exception error)
-                        {
-                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
-                        }
-                        break;
-                    case "edit":
-                        if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.WOULD_EDIT_CIRCULAR_AREA_RESULT) == DialogResult.OK)
+                        if (data.FirstOrDefault(t => "cellItem".Equals(t.key))?.value is ScaleAccuracyTracerHistory tracer)
                         {
                             try
                             {
-                                if (data.FirstOrDefault(t => "methodList".Equals(t.key))?.value is List<CircularAreaMethodResult> methodList1)
+                                AntdUI.Drawer.open(form, new ScaleAccuracyReport(form, tracer, () => { BtnSearch_Click(null, null); })
                                 {
-                                    CircularAreaMethod.EDIT_ITEM_ID = methodList1.FirstOrDefault()?.Id.ToString();
-                                    ((MainWindow)form).OpenPage("Circular Area Measurement On Galvanized Sheet");
+                                    Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
+                                }, AntdUI.TAlignMini.Right);
+                            }
+                            catch (Exception error)
+                            {
+                                AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                            }
+                        }
+
+                        break;
+                    case "edit":
+                        if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.WOULD_EDIT_SCALE_ACCURACY_RESULT) == DialogResult.OK)
+                        {
+                            try
+                            {
+                                if (data.FirstOrDefault(t => "cellItem".Equals(t.key))?.value is ScaleAccuracyTracerHistory tracer1)
+                                {
+                                    GaugeBlockMethod.EDIT_ITEM_ID = tracer1.MethodList.FirstOrDefault()?.Id.ToString();
+                                    ((MainWindow)form).OpenPage("Scale Setting");
                                 }
 
                             }

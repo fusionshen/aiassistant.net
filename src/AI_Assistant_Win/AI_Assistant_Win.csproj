@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.7.3</Version>
+	<Version>0.7.4</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolo.net</Description>
@@ -63,6 +63,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Controls\ScaleAccuracyReport.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="Controls\ScaleAccuracyHistory.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -123,6 +126,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Controls\ScaleAccuracyReport.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Controls\GaugeScaleSetting.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

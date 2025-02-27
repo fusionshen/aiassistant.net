@@ -61,6 +61,7 @@ namespace AI_Assistant_Win.Utils
             _db.CreateTable<CircularAreaUploadResult>();
             _db.CreateTable<GaugeBlockMethodResult>();
             _db.CreateTable<ScaleAccuracyTracer>();
+            _db.CreateTable<ScaleAccuracyUploadResult>();
 
         }
 

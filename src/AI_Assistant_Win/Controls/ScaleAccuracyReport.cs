@@ -1,45 +1,37 @@
 using AI_Assistant_Win.Business;
-using AI_Assistant_Win.Models;
-using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
+using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using YoloDotNet.Extensions;
 
 namespace AI_Assistant_Win.Controls
 {
-    public partial class CircularAreaReport : UserControl
+    public partial class ScaleAccuracyReport : UserControl
     {
         private Form form;
-
-        private readonly CircularAreaMethodBLL circularAreaMethodBLL;
 
         Bitmap memoryImage;
 
         AntdUI.FormFloatButton floatButton = null;
 
-        private CircularAreaSummaryHistory target;
+        private ScaleAccuracyTracerHistory target;
 
-        private readonly CircularAreaUploadBLL uploadCircularAreaBLL;
-
-        private readonly string testNo;
+        private readonly ScaleAccuracyUploadBLL scaleAccuracyUploadBLL;
 
         private readonly Action callBack;
 
-        public CircularAreaReport(Form _form, string _testNo, Action _callBack)
+        public ScaleAccuracyReport(Form _form, ScaleAccuracyTracerHistory _target, Action _callBack)
         {
             form = _form;
-            testNo = _testNo;
+            target = _target;
             callBack = _callBack;
-            circularAreaMethodBLL = new CircularAreaMethodBLL();
-            uploadCircularAreaBLL = new CircularAreaUploadBLL();
+            scaleAccuracyUploadBLL = new ScaleAccuracyUploadBLL();
             InitializeComponent();
-            LoadData(testNo);
-            Disposed += BlacknessReport_Disposed;
+            LoadData();
+            Disposed += ScaleAccuracyReport_Disposed;
             AntdUI.ITask.Run(() =>
             {
                 System.Threading.Thread.Sleep(1000);
@@ -89,7 +81,7 @@ namespace AI_Assistant_Win.Controls
                                 {
                                     Filter = "PDF文件|*.pdf",
                                     DefaultExt = "pdf",
-                                    FileName = $"{target.Summary.TestNo}_圆形面积检测报告.pdf",
+                                    FileName = $"{target.Scale.Value}毫米每像素边长_{target.Tracer.MeasuredLength}mm_精度报告.pdf",
                                     Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                 };
                                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -114,17 +106,17 @@ namespace AI_Assistant_Win.Controls
                                     return;
                                 }
                                 // check uploaded with the same coil number
-                                var lastUploaded = uploadCircularAreaBLL.GetLastUploaded(target);
+                                var lastUploaded = scaleAccuracyUploadBLL.GetLastUploaded(target);
                                 if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, lastUploaded != null ?
-                                    LocalizeHelper.WOULD_REUPLOAD_CIRCULAR_AREA_RESULT(target.Summary.TestNo) :
-                                    LocalizeHelper.WOULD_UPLOAD_CIRCULAR_AREA_RESULT) == DialogResult.OK)
+                                    LocalizeHelper.WOULD_REUPLOAD_SCALE_ACCURACY_RESULT(target) :
+                                    LocalizeHelper.WOULD_UPLOAD_SCALE_ACCURACY_RESULT) == DialogResult.OK)
                                 {
                                     try
                                     {
                                         btn.Loading = true;
-                                        await uploadCircularAreaBLL.Upload(memoryImage, target, lastUploaded);
+                                        await scaleAccuracyUploadBLL.Upload(memoryImage, target, lastUploaded);
                                         // refresh
-                                        LoadData(testNo);
+                                        LoadData();
                                         // refresh parent form
                                         BeginInvoke(callBack);
                                         btn.Loading = false;
@@ -160,12 +152,11 @@ namespace AI_Assistant_Win.Controls
 
         }
 
-        private void LoadData(string testNo)
+        private void LoadData()
         {
             try
             {
-                target = circularAreaMethodBLL.GetSummaryListByConditions(null, null, testNo).Single();
-                labelDate.Text = target.Summary.CreateTime?.ToString("yyyy 年 MM 月 dd 日");
+                labelDate.Text = target.Tracer.CreateTime?.ToString("yyyy 年 MM 月 dd 日");
                 #region workGroup
                 switch (target.MethodList.FirstOrDefault()?.WorkGroup)
                 {
@@ -261,34 +252,32 @@ namespace AI_Assistant_Win.Controls
                         break;
                 }
                 #endregion
-                label_Analyst.Text = target.Summary.Creator.Split("-").LastOrDefault();
-                labelCoilNumber.Text = target.Summary.CoilNumber;
-                labelTestNo.Text = target.Summary.TestNo;
-                #region uploaded
-                checkboxUploaded.Checked = target.Summary.IsUploaded;
-                #endregion
-                #region image
-                var upperSurfaceOPRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.UPPER_SURFACE_OP.Equals(t.Position))?.RenderImagePath;
-                avatarUpperSufaceOP.Image = string.IsNullOrEmpty(upperSurfaceOPRenderImagePath) ? null : Image.FromFile(upperSurfaceOPRenderImagePath);
-                var upperSurfaceCERenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.UPPER_SURFACE_CE.Equals(t.Position))?.RenderImagePath;
-                avatarUpperSufaceCE.Image = string.IsNullOrEmpty(upperSurfaceCERenderImagePath) ? null : Image.FromFile(upperSurfaceCERenderImagePath);
-                var upperSurfaceDRRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.UPPER_SURFACE_DR.Equals(t.Position))?.RenderImagePath;
-                avatarUpperSufaceDR.Image = string.IsNullOrEmpty(upperSurfaceDRRenderImagePath) ? null : Image.FromFile(upperSurfaceDRRenderImagePath);
-                var lowerSurfaceOPRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.LOWER_SURFACE_OP.Equals(t.Position))?.RenderImagePath;
-                avatarLowerSufaceOP.Image = string.IsNullOrEmpty(lowerSurfaceOPRenderImagePath) ? null : Image.FromFile(lowerSurfaceOPRenderImagePath);
-                var lowerSurfaceCERenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.LOWER_SURFACE_CE.Equals(t.Position))?.RenderImagePath;
-                avatarLowerSufaceCE.Image = string.IsNullOrEmpty(lowerSurfaceCERenderImagePath) ? null : Image.FromFile(lowerSurfaceCERenderImagePath);
-                var lowerSurfaceDRRenderImagePath = target.MethodList.FirstOrDefault(t => CircularPositionKind.LOWER_SURFACE_DR.Equals(t.Position))?.RenderImagePath;
-                avatarLowerSufaceDR.Image = string.IsNullOrEmpty(lowerSurfaceDRRenderImagePath) ? null : Image.FromFile(lowerSurfaceDRRenderImagePath);
-                #endregion
-                #region details
-                labelUpperSufaceOP.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.UPPER_SURFACE_OP);
-                labelUpperSufaceCE.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.UPPER_SURFACE_CE);
-                labelUpperSufaceDR.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.UPPER_SURFACE_DR);
-                labelLowerSufaceOP.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.LOWER_SURFACE_OP);
-                labelLowerSufaceCE.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.LOWER_SURFACE_CE);
-                labelLowerSufaceDR.Text = FormatPositionDetail(target.MethodList, CircularPositionKind.LOWER_SURFACE_DR);
-                #endregion
+                label_Analyst.Text = target.Tracer.Creator.Split("-").LastOrDefault();
+                avatarScaleRenderImage.Image = Image.FromFile(target.Scale.ImagePath);
+                var settings = JsonConvert.DeserializeObject<GaugeBlockScaleItem>(target.Scale.Settings);
+                textEdgeABPixels.Text = settings.Edges.FirstOrDefault(t => "AB".Equals(t.Edge))?.PixelLength;
+                textEdgeBCPixels.Text = settings.Edges.FirstOrDefault(t => "BC".Equals(t.Edge))?.PixelLength;
+                textEdgeCDPixels.Text = settings.Edges.FirstOrDefault(t => "CD".Equals(t.Edge))?.PixelLength;
+                textEdgeDAPixels.Text = settings.Edges.FirstOrDefault(t => "DA".Equals(t.Edge))?.PixelLength;
+                inputEdgeABLength.Text = settings.Edges.FirstOrDefault(t => "AB".Equals(t.Edge))?.RealLength + "mm";
+                inputEdgeBCLength.Text = settings.Edges.FirstOrDefault(t => "BC".Equals(t.Edge))?.RealLength + "mm";
+                inputEdgeCDLength.Text = settings.Edges.FirstOrDefault(t => "CD".Equals(t.Edge))?.RealLength + "mm";
+                inputEdgeDALength.Text = settings.Edges.FirstOrDefault(t => "DA".Equals(t.Edge))?.RealLength + "mm";
+                labelTopGrade.Text = $"上表面刻度：{settings.TopGraduations}";
+                labelLengthScale.Text = $"{target.Scale.Value:F2}毫米/像素边长";
+                labelAreaScale.Text = $"{Math.Pow(target.Scale.Value, 2):F2}平方毫米/像素面积";
+                stepsCalculate.Current = 7;
+                labelMPE.Text = $"最大允许误差(MPE, Maximum Permissible Error)是仪器或测量系统在特定条件下允许的最大误差值。编号[{target.Scale.Id}]共测量样本数为{target.MPEList.Count}，最大误差值为{target.Tracer.MPE:F2}mm。";
+                labelSame.Text = $"{target.Tracer.MeasuredLength}mm量块重复测量{target.MethodList.Count}次：{string.Join(",", target.MethodList.Select(t => $"{t.CalculatedLength:F2}mm"))}。";
+                labelAverage.Text = $"{target.Tracer.Average:F2}mm";
+                labelStandardDiviation.Text = target.MethodList.Count < 2 ? "至少需要两个值才能计算" : $"σ≈{target.Tracer.StandardDeviation:F3}mm";
+                labelStandardError.Text = target.MethodList.Count < 2 ? "至少需要两个值才能计算" : $"{target.Tracer.StandardError:F3}mm";
+                labelUncertainty.Text = target.MethodList.Count < 2 ? "至少需要两个值才能计算" : $"{target.Tracer.Uncertainty:F3}mm";
+                labelDistribution.Text = target.MethodList.Count < 2 ? "至少需要两个值才能计算" : $"μ±1σ 内: {target.Tracer.Pct1Sigma:P2} (理论68.27%)\n" +
+                    $"μ±2σ 内: {target.Tracer.Pct2Sigma:P2} (理论95.45%)\n" +
+                    $"μ±3σ 内: {target.Tracer.Pct3Sigma:P2} (理论99.73%)";
+                labelConfidence.Text = target.MethodList.Count < 2 ? "至少需要两个值才能计算" : $"{target.Tracer.DisplayName}";
+
             }
             catch (Exception error)
             {
@@ -296,26 +285,7 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-        private string FormatPositionDetail(List<CircularAreaMethodResult> methodList, CircularPositionKind positionEnum)
-        {
-            string text = string.Empty;
-            var method = methodList.FirstOrDefault(t => positionEnum.Equals(t.Position));
-            if (method != null)
-            {
-                text = $"{LocalizeHelper.CIRCULAR_POSITION_TITLE}{LocalizeHelper.CIRCULAR_POSITION(method.Position)}\n" +
-                    $"{LocalizeHelper.CELL_AREA_OF_PIXELS}{method.Pixels}" +
-                    $"{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{method.Confidence.ToPercent()}%\n" +
-                    $"{LocalizeHelper.AREA_PREDICTION_TITLE}{method.Area:F2}{LocalizeHelper.SQUARE_MILLIMETER}\n" +
-                    $"{LocalizeHelper.CIRCULAR_AREA_DIAMETER}{method.Diameter:F2}{LocalizeHelper.MILLIMETER}\n" +
-                    $"{LocalizeHelper.CELL_TITLE_ANALYST}{method.Analyst}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_CREATETIME}{method.CreateTime}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_LASTREVISER}{method.LastReviser}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_LASTMODIFIEDTIME}{method.LastModifiedTime}";
-            }
-            return text;
-        }
-
-        private void BlacknessReport_Disposed(object sender, EventArgs e)
+        private void ScaleAccuracyReport_Disposed(object sender, EventArgs e)
         {
             if (floatButton != null)
             {
@@ -333,6 +303,16 @@ namespace AI_Assistant_Win.Controls
         {
             memoryImage = new Bitmap(this.Width, this.Height);
             this.DrawToBitmap(memoryImage, new Rectangle(0, 0, this.Width, this.Height));
+            // Deepseek
+            avatarErrorFormula.DrawToBitmap(memoryImage, new Rectangle(avatarErrorFormula.Left, avatarErrorFormula.Top, avatarErrorFormula.Width, avatarErrorFormula.Height));
+            avatarMPE.DrawToBitmap(memoryImage, new Rectangle(avatarMPE.Left, avatarMPE.Top, avatarMPE.Width, avatarMPE.Height));
+            avatarNumbers.DrawToBitmap(memoryImage, new Rectangle(avatarNumbers.Left, avatarNumbers.Top, avatarNumbers.Width, avatarNumbers.Height));
+            avatarAverage.DrawToBitmap(memoryImage, new Rectangle(avatarAverage.Left, avatarAverage.Top, avatarAverage.Width, avatarAverage.Height));
+            avatarStandardDiviation.DrawToBitmap(memoryImage, new Rectangle(avatarStandardDiviation.Left, avatarStandardDiviation.Top, avatarStandardDiviation.Width, avatarStandardDiviation.Height));
+            avatarStandardError.DrawToBitmap(memoryImage, new Rectangle(avatarStandardError.Left, avatarStandardError.Top, avatarStandardError.Width, avatarStandardError.Height));
+            avatarUncertaincy.DrawToBitmap(memoryImage, new Rectangle(avatarUncertaincy.Left, avatarUncertaincy.Top, avatarUncertaincy.Width, avatarUncertaincy.Height));
+            avatarDistribution.DrawToBitmap(memoryImage, new Rectangle(avatarDistribution.Left, avatarDistribution.Top, avatarDistribution.Width, avatarDistribution.Height));
+            avatarWholeFormula.DrawToBitmap(memoryImage, new Rectangle(avatarWholeFormula.Left, avatarWholeFormula.Top, avatarWholeFormula.Width, avatarWholeFormula.Height));
             e.Graphics.DrawImage(memoryImage, e.MarginBounds);
         }
     }

@@ -196,7 +196,7 @@ namespace AI_Assistant_Win.Controls
             }
             if (string.IsNullOrEmpty(inputEdgeLength.Text))
             {
-                throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
+                throw new Exception(LocalizeHelper.PLEASE_INPUT_CORRECT_EDGE_LENGTH);
             }
             if (string.IsNullOrEmpty(inputAnalyst.Text))
             {
@@ -600,6 +600,12 @@ namespace AI_Assistant_Win.Controls
                     // length Accuracy
                     var calculatedLength = tempGaugeBlockResult.Item.CalculatedEdgeLengths[tempGaugeBlockResult.InputEdge];
                     var realLenght = float.Parse(tempGaugeBlockResult.InputEdgeLength);
+                    if (realLenght <= 0)
+                    {
+                        inputLenghtAccuracy.Text = string.Empty;
+                        inputAreaAccuracy.Text = string.Empty;
+                        return;
+                    }
                     inputLenghtAccuracy.Text = $"{1 - Math.Abs(calculatedLength - realLenght) / Math.Abs(realLenght):P2}";
                     // area Accuracy
                     var calculatedArea = tempGaugeBlockResult.Item.CalculatedArea;

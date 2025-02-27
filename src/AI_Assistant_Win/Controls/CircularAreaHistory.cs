@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using YoloDotNet.Extensions;
@@ -181,25 +182,23 @@ namespace AI_Assistant_Win.Controls
                                                 // 弹出文件保存对话框
                                                 SaveFileDialog saveFileDialog = new()
                                                 {
-                                                    Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
-                                                    DefaultExt = "jpg",
-                                                    FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_圆片面积检测结果.jpg",
+                                                    //Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                                    //DefaultExt = "jpg",
+                                                    FileName = $"{data.FirstOrDefault(t => "testNo".Equals(t.key))?.value}_圆片面积检测结果",
                                                     Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                                 };
                                                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                                                 {
-
-                                                    string pdfPath = saveFileDialog.FileName;
+                                                    string directoryPath = saveFileDialog.FileName;
+                                                    Directory.CreateDirectory(directoryPath);
                                                     methodList.ForEach(t =>
                                                 {
                                                     var originImage = Image.FromFile(t.OriginImagePath);
-                                                    originImage.Save(saveFileDialog.FileName
-                                                        .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_原图.jpg"), ImageFormat.Jpeg);
+                                                    originImage.Save(Path.Combine(directoryPath, $"{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_原图.jpg"), ImageFormat.Jpeg);
                                                     var renderImage = Image.FromFile(t.RenderImagePath);
-                                                    renderImage.Save(saveFileDialog.FileName
-                                                        .Replace(".jpg", $"_{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_识别图.jpg"), ImageFormat.Jpeg);
+                                                    renderImage.Save(Path.Combine(directoryPath, $"{LocalizeHelper.CIRCULAR_POSITION(t.Position)}_识别图.jpg"), ImageFormat.Jpeg);
                                                 });
-                                                    AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + pdfPath);
+                                                    AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + directoryPath);
 
                                                 }
                                                 break;
