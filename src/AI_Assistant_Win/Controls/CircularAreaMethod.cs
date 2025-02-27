@@ -6,6 +6,7 @@ using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -313,22 +314,39 @@ namespace AI_Assistant_Win.Controls
         }
         private async Task InitializeAsync()
         {
+            var sw = Stopwatch.StartNew();
+            // 使用TaskCompletionSource创建可等待的Task
+            var tcs = new TaskCompletionSource<bool>();
+            // 用户提供的`InitializeAsync`方法内部使用了`AntdUI.Message.loading`，并传入了一个异步委托。
+            // 这里可能存在一个问题：`AntdUI.Message.loading`方法可能不会返回一个可以等待的任务，或者用户传入的异步委托没有被正确等待。
+            // 此外，整个`Message.loading`的调用后面跟着一个`await Task.Delay(50);`，这可能不足以等待所有内部操作完成。
+            // 问题可能出在`AntdUI.Message.loading`方法是否支持异步操作。
+            // 如果这个方法启动了一个异步操作但没有返回一个`Task`，那么`await InitializeAsync()`实际上并不会等待这个异步操作完成，因为`Message.loading`可能没有正确关联到返回的`Task`。
+            // 此外，`Message.loading`内部的异步委托可能没有被正确等待，导致整个方法提前完成。
+            // 可能的解决方案包括：
+            // 1. * *确保`Message.loading`返回一个可以等待的`Task`**：需要检查`AntdUI.Message.loading`的返回值是否是`Task`或类似的可等待对象。如果该方法没有返回`Task`，那么内部的异步操作不会被`await`捕获，导致方法提前完成。
+            // 2. * *使用`TaskCompletionSource`来手动控制完成信号 * *：如果`Message.loading`没有提供返回`Task`的方式，可以创建一个`TaskCompletionSource`，在异步委托完成时设置结果，然后在`InitializeAsync`中等待这个任务。
+            // 3. * *调整`Message.loading`的调用方式 * *：可能需要将内部的异步操作移到外部，或者确保所有异步操作都被正确等待。
+            // 此外，用户代码中在`Message.loading`的回调中使用了`config.OK`，这可能在设置完成状态，但不确定这是否会影响异步流程。
+            // 另一个需要注意的地方是，`Message.loading`可能是在UI线程上运行，而其中的异步操作如果没有正确配置上下文，可能导致某些代码在错误的线程上执行，从而引发问题。不过这可能不是当前问题的直接原因，但也是需要考虑的因素。
+            // 现在，我需要将这些思考整理成一个解决方案，并给出具体的代码修改建议，确保`InitializeAsync`方法正确等待所有内部异步操作完成，从而使得调用`await InitializeAsync()`后的代码在正确的时间执行。
             AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
             {
-                // TestNo List
-                await InitializeSelectTestNoAsync();
-                config.OK(LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS);
-                // Scale List
-                if (!InitializeSelectScale())
-                {
-                    // tell client how to do when any scale does not exit.
-                    BtnSetScale_Click(null, null);
-                    return;
-                }
-                // Position List
-                InitializeSelectPostion();
                 try
                 {
+                    // TestNo List
+                    await InitializeSelectTestNoAsync().ConfigureAwait(true);  // 添加.ConfigureAwait(true)保证后续代码在UI线程执行
+                    config.OK(LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS);
+                    // Scale List
+                    if (!InitializeSelectScale())
+                    {
+                        // tell client how to do when any scale does not exit.
+                        BtnSetScale_Click(null, null);
+                        tcs.SetResult(true); // 这里需要根据业务决定是否设置结果
+                        return;
+                    }
+                    // Position List
+                    InitializeSelectPostion();
                     // 通过观察者模式实现界面数据效果
                     sortedIDs = circularAreaMethodBLL.LoadOriginalResultFromDB(originalCircularAreaResult, EDIT_ITEM_ID);
                     if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
@@ -358,19 +376,19 @@ namespace AI_Assistant_Win.Controls
                         case CameraBLLStatusKind.NoCameraSettings:
                             AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
                             // 延迟1秒
-                            await Task.Delay(500);
+                            await Task.Delay(1000).ConfigureAwait(true);
                             BtnCameraSetting_Click(null, null);
                             break;
                         case CameraBLLStatusKind.NoCameraOpen:
                             AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
                             // 延迟1秒
-                            await Task.Delay(500);
+                            await Task.Delay(1000).ConfigureAwait(true);
                             BtnCameraSetting_Click(null, null);
                             break;
                         case CameraBLLStatusKind.NoCameraGrabbing:
                             AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
                             // 延迟1秒
-                            await Task.Delay(500);
+                            await Task.Delay(1000).ConfigureAwait(true);
                             BtnCameraSetting_Click(null, null);
                             break;
                         case CameraBLLStatusKind.TriggerMode:
@@ -392,9 +410,14 @@ namespace AI_Assistant_Win.Controls
                 {
                     AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                 }
-                config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
+                finally
+                {
+                    config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
+                    tcs.SetResult(true); // 标记整个异步操作完成
+                }
             }, Font);
-            await Task.Delay(50);
+            await tcs.Task.ConfigureAwait(true); // 这里才是真正的等待点
+            Console.WriteLine($"InitializeAsync took {sw.ElapsedMilliseconds}ms");
         }
         private void InitializeSelectPostion()
         {
@@ -518,6 +541,27 @@ namespace AI_Assistant_Win.Controls
             inputCalculatedArea.Text = string.Empty;
             inputDiameter.Text = string.Empty;
         }
+        /// <summary>
+        /// 首先，我需要回忆一下C#中async/await的工作机制。当使用await关键字时，当前方法会异步等待任务完成，然后继续执行后续代码。
+        /// 因此，如果在await InitializeAsync();之后直接写那两个语句，理论上是应该等待InitializeAsync完成后再执行的。那为什么用户会遇到这个问题呢？
+        /// 可能的原因有几个。首先，检查用户代码中的await InitializeAsync(); 是否正确。可能InitializeAsync方法没有正确返回Task，导致await无法正确等待。
+        /// 例如，如果InitializeAsync是一个同步方法或者没有返回Task，那么await会立即继续执行后面的代码，而不会等待。
+        /// 另一个可能性是，用户可能在InitializeAsync内部没有正确地实现异步操作，比如没有使用await关键字来等待内部的异步方法，导致整个InitializeAsync实际上同步执行。
+        /// 这时候，虽然方法标记为async，但实际并没有异步操作，所以await会立即返回。
+        /// 此外，还要检查AntdUI.ITask.Run的使用是否正确。AntdUI可能封装了任务的运行方式，可能存在特定的线程或上下文处理问题。
+        /// 比如，AntdUI的任务调度是否在主线程执行，而InitializeAsync可能在后台线程执行，导致UI更新出现问题，但这里的问题不是UI更新，而是执行顺序的问题，所以可能需要更多的信息。
+        /// 总结用户需要确保两点：
+        /// 1. InitializeAsync方法内部所有的异步操作都正确使用await，从而保证整个方法异步完成。
+        /// 2. InitializeAsync方法的返回类型是Task，而不是void。
+        /// 如果这两个条件都满足，那么await InitializeAsync(); 之后的代码应该会在方法完成后执行。
+        /// 如果问题仍然存在，可能需要进一步检查InitializeAsync的实现，或者查看是否有其他并发的代码干扰。
+        /// 此外，还可以尝试在InitializeAsync内部添加日志或断点，确认其实际执行时间，以及是否真的异步执行。比如，在方法的开始和结束处输出日志，观察执行顺序。
+        /// 另外，考虑AntdUI.ITask.Run是否可能影响执行上下文。例如，是否在某个特定的同步上下文下运行，导致await之后的代码在错误的线程上执行，从而引发问题。
+        /// 不过，btn.Enabled和静态变量的赋值通常不依赖线程上下文，所以可能性较低。
+        /// 综上，用户需要检查InitializeAsync的实现是否正确异步，并正确返回Task，以及所有内部操作都被正确等待。如果这些都没问题，那么可能是其他地方的代码干扰，需要进一步排查。
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // double check
@@ -553,6 +597,7 @@ namespace AI_Assistant_Win.Controls
                         {
                             AntdUI.Message.success(form, LocalizeHelper.SAVE_SUCCESSFULLY);
                             EDIT_ITEM_ID = result.ToString();
+                            // 这里现在会正确等待所有初始化操作
                             await InitializeAsync();
                             btn.Enabled = false;
                             MainWindow.SOMETHING_IS_UNDONE = false;

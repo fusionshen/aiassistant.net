@@ -4,6 +4,7 @@ using AI_Assistant_Win.Utils;
 using System;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Controls
@@ -122,14 +123,35 @@ namespace AI_Assistant_Win.Controls
                                         // refresh
                                         LoadData(methodId);
                                         // refresh parent form
-                                        BeginInvoke(callBack);
-                                        btn.Loading = false;
+                                        var tcs = new TaskCompletionSource<bool>();
+                                        BeginInvoke(new Action(() =>
+                                        {
+                                            try
+                                            {
+                                                callBack();
+                                                tcs.SetResult(true);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                tcs.SetException(ex);
+                                            }
+                                        }));
+                                        await tcs.Task; // 等待回调完成
                                         AntdUI.Message.success(form, LocalizeHelper.REPORT_UPLOAD_SUCCESS);
                                     }
                                     catch (Exception ex)
                                     {
-                                        btn.Loading = false;
                                         AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);
+                                    }
+                                    finally
+                                    {
+                                        btn.Loading = false;
+                                        // 安全释放资源
+                                        memoryImage?.Dispose();
+                                        if (!this.IsDisposed)
+                                        {
+                                            this.Dispose();
+                                        }
                                     }
                                 }
                                 break;

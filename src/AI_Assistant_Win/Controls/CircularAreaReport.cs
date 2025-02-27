@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using YoloDotNet.Extensions;
 
@@ -126,16 +127,58 @@ namespace AI_Assistant_Win.Controls
                                         // refresh
                                         LoadData(testNo);
                                         // refresh parent form
-                                        BeginInvoke(callBack);
-                                        btn.Loading = false;
+                                        // 方案一：改用同步调用Invoke（推荐）
+                                        // Invoke(callBack); // 注意：这里改用同步调用
+                                        // 关键说明：
+                                        // 1.Invoke是同步方法，会阻塞当前线程直到回调执行完成
+                                        // 2.确保callBack中没有死循环或长时间阻塞操作，否则会卡住UI线程
+                                        // 3. 适用于需要严格保证执行顺序的场景
+                                        // 方案二：异步等待BeginInvoke完成（复杂场景）
+                                        // 将BeginInvoke转换为可等待的Task
+                                        var tcs = new TaskCompletionSource<bool>();
+                                        BeginInvoke(new Action(() =>
+                                        {
+                                            try
+                                            {
+                                                callBack();
+                                                tcs.SetResult(true);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                tcs.SetException(ex);
+                                            }
+                                        }));
+                                        await tcs.Task; // 等待回调完成
+                                        // 关键说明：
+                                        // 1.使用TaskCompletionSource将异步回调转换为可等待的Task
+                                        // 2.能捕获回调中抛出的异常并通过await传播到catch块
+                                        // 3.适用于需要保持UI响应的长时间操作
+                                        // 4.注意线程切换问题，回调中的UI操作不需要额外Invoke
                                         AntdUI.Message.success(form, LocalizeHelper.REPORT_UPLOAD_SUCCESS);
+                                        // 两种方案对比：
+                                        // 特性       方案一（Invoke）	方案二（BeginInvoke + Task）
+                                        // 线程阻塞          是           否
+                                        // UI响应性       可能卡顿       保持流畅
+                                        // 异常处理        直接抛出     通过Task传播
+                                        // 代码复杂度        简单         较复杂
+                                        // 适用场景         短操作        长操作
                                     }
                                     catch (Exception ex)
                                     {
-                                        btn.Loading = false;
                                         AntdUI.Notification.error(form, LocalizeHelper.ERROR, ex.Message, AntdUI.TAlignFrom.BR, Font);
                                     }
+                                    finally
+                                    {
+                                        btn.Loading = false;
+                                        // 安全释放资源
+                                        memoryImage?.Dispose();
+                                        if (!this.IsDisposed)
+                                        {
+                                            this.Dispose();
+                                        }
+                                    }
                                 }
+                                // 选择方案时应根据实际业务场景决定。如果回调操作耗时短（<200ms），建议使用方案一；如果包含复杂操作，推荐方案二以保证UI流畅性。
                                 break;
                             case "setting":
                                 pageSetupDialog1.Document = printDocument1;

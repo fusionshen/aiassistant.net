@@ -5,6 +5,7 @@ using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
@@ -299,6 +300,9 @@ namespace AI_Assistant_Win.Controls
         }
         private async Task InitializeAsync()
         {
+            var sw = Stopwatch.StartNew();
+            // 使用TaskCompletionSource创建可等待的Task
+            var tcs = new TaskCompletionSource<bool>();
             AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
             {
                 // Scale List
@@ -338,19 +342,19 @@ namespace AI_Assistant_Win.Controls
                         case CameraBLLStatusKind.NoCameraSettings:
                             AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
                             // 延迟1秒
-                            await Task.Delay(500);
+                            await Task.Delay(1000).ConfigureAwait(true);
                             BtnCameraSetting_Click(null, null);
                             break;
                         case CameraBLLStatusKind.NoCameraOpen:
                             AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
                             // 延迟1秒
-                            await Task.Delay(500);
+                            await Task.Delay(1000).ConfigureAwait(true);
                             BtnCameraSetting_Click(null, null);
                             break;
                         case CameraBLLStatusKind.NoCameraGrabbing:
                             AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
                             // 延迟1秒
-                            await Task.Delay(500);
+                            await Task.Delay(1000).ConfigureAwait(true);
                             BtnCameraSetting_Click(null, null);
                             break;
                         case CameraBLLStatusKind.TriggerMode:
@@ -372,9 +376,14 @@ namespace AI_Assistant_Win.Controls
                 {
                     AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
                 }
-                config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
+                finally
+                {
+                    config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
+                    tcs.SetResult(true); // 标记整个异步操作完成
+                }
             }, Font);
-            await Task.Delay(50);
+            await tcs.Task.ConfigureAwait(true); // 这里才是真正的等待点
+            Console.WriteLine($"InitializeAsync took {sw.ElapsedMilliseconds}ms");
         }
 
         private bool InitializeSelectScale()
