@@ -66,7 +66,6 @@ namespace AI_Assistant_Win
                     CancelText = null,
                     OkText = "确认"
                 });
-
                 // 优雅地关闭应用程序
                 Application.Exit();
             }
