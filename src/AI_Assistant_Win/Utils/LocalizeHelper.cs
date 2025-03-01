@@ -35,7 +35,10 @@ namespace AI_Assistant_Win.Utils
         public static string PAGE_LOADED_SUCCESS => Localization.Get("The Page Loaded", "页面加载成功");
         public static string IN_USE => Localization.Get("In use", "正在使用");
         public static string DEPRECATED => Localization.Get("Deprecated", "已弃用");
-
+        public static string PROLONGED_INACTIVITY => Localization.Get("Prolonged inactivity", "长时间无操作");
+        public static string SCHEDULED_SHUTDOWN => Localization.Get("Scheduled shutdown", "定时关机");
+        public static string APPLICATION_WILL_SHUT_DOWN_IN_SECONDS(int seconds) => Localization.Get($"The application will shut down in {seconds} seconds...", $"程序将于{seconds}秒钟后关闭...");
+        public static string SHUTDOWN_PROCESS_HAS_BEEN_CANCELLED => Localization.Get("User activity detected, the automatic shutdown process has been cancelled.", "用户活跃，自动关闭流程已取消。");
         #endregion
         #region login
         public static string LOGIN_MODAL_TITLE => Localization.Get("Please enter your platform account", "请输入平台账户");
