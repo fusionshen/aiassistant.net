@@ -14,7 +14,7 @@ using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Controls
 {
-    public partial class BlacknessMethod : UserControl
+    public partial class BlacknessMethod : UserControl, IAsyncInit
     {
         public static string EDIT_METHOD_ID = string.Empty;
 
@@ -38,6 +38,8 @@ namespace AI_Assistant_Win.Controls
 
         private readonly ObservableDictionary<string, CalculateScale> scaleList = [];
 
+        private List<GetTestNoListResponse> testNoList;
+
         public BlacknessMethod(MainWindow _form)
         {
             form = _form;
@@ -56,8 +58,100 @@ namespace AI_Assistant_Win.Controls
             tempBlacknessResult = new BlacknessResult();
             tempBlacknessResult.PropertyChanged += TempBlacknessResult_PropertyChanged;
             scaleList.Changed += ScaleList_Changed;
-            this.Load += async (s, e) => await InitializeAsync();
+            // this.Load += async (s, e) => await InitializeAsync();
             this.HandleDestroyed += async (s, e) => await DestoryAsync();
+        }
+
+        public async Task InitializeAsync()
+        {
+            var sw = Stopwatch.StartNew();
+            var tcs = new TaskCompletionSource<bool>();
+            AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
+            {
+                // TestNo List
+                await InitializeSelectTestNoAsync().ConfigureAwait(true);
+                config.OK(LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS);
+                // Scale List
+                if (!InitializeSelectScale())
+                {
+                    // tell client how to do when any scale does not exit.
+                    BtnSetScale_Click(null, null);
+                    tcs.SetResult(true); // 这里需要根据业务决定是否设置结果
+                    return;
+                }
+                try
+                {
+                    // 通过观察者模式实现界面数据效果
+                    sortedIDs = blacknessMethodBLL.LoadOriginalResultFromDB(originalBlacknessResult, EDIT_METHOD_ID);
+                    if (!string.IsNullOrEmpty(EDIT_METHOD_ID))
+                    {
+                        // The order is very important.:)
+                        btnNext.Visible = true;
+                        btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != sortedIDs.Count - 1;
+                        btnPrint.Visible = true;
+                        btnPre.Visible = true;
+                        btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != 0;
+                        AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDIT_MODE(originalBlacknessResult));
+                        return;
+                    }
+                    else
+                    {
+                        btnNext.Visible = false;
+                        btnPrint.Visible = false;
+                        btnPre.Visible = false;
+                        AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
+                    }
+                    var result = cameraBLL.StartRendering();
+                    switch (result)
+                    {
+                        case CameraBLLStatusKind.NoCamera:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA, AntdUI.TAlignFrom.BR, Font);
+                            break;
+                        case CameraBLLStatusKind.NoCameraSettings:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
+                            // 延迟1秒
+                            await Task.Delay(1000).ConfigureAwait(true);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.NoCameraOpen:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
+                            // 延迟1秒
+                            await Task.Delay(1000).ConfigureAwait(true);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.NoCameraGrabbing:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
+                            // 延迟1秒
+                            await Task.Delay(1000).ConfigureAwait(true);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.TriggerMode:
+                            AntdUI.Message.success(form, LocalizeHelper.TRIGGER_MODE);
+                            break;
+                        case CameraBLLStatusKind.ContinuousMode:
+                            AntdUI.Message.success(form, LocalizeHelper.CONTINUOUS_MODE);
+                            break;
+                        default:
+                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.PLEASE_CONTACT_ADMIN, AntdUI.TAlignFrom.BR, Font);
+                            break;
+                    }
+                }
+                catch (CameraSDKException error)
+                {
+                    CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
+                }
+                catch (Exception error)
+                {
+                    AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                }
+                finally
+                {
+                    config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
+                    tcs.SetResult(true); // 标记整个异步操作完成
+                }
+            }, Font);
+            await tcs.Task.ConfigureAwait(true); // 这里才是真正的等待点
+            Console.WriteLine($"InitializeAsync took {sw.ElapsedMilliseconds}ms");
         }
 
         private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
@@ -318,98 +412,6 @@ namespace AI_Assistant_Win.Controls
             CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
         }
 
-        private async Task InitializeAsync()
-        {
-            var sw = Stopwatch.StartNew();
-            var tcs = new TaskCompletionSource<bool>();
-            AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
-            {
-                // TestNo List
-                await InitializeSelectTestNoAsync().ConfigureAwait(true);
-                config.OK(LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS);
-                // Scale List
-                if (!InitializeSelectScale())
-                {
-                    // tell client how to do when any scale does not exit.
-                    BtnSetScale_Click(null, null);
-                    tcs.SetResult(true); // 这里需要根据业务决定是否设置结果
-                    return;
-                }
-                try
-                {
-                    // 通过观察者模式实现界面数据效果
-                    sortedIDs = blacknessMethodBLL.LoadOriginalResultFromDB(originalBlacknessResult, EDIT_METHOD_ID);
-                    if (!string.IsNullOrEmpty(EDIT_METHOD_ID))
-                    {
-                        // The order is very important.:)
-                        btnNext.Visible = true;
-                        btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != sortedIDs.Count - 1;
-                        btnPrint.Visible = true;
-                        btnPre.Visible = true;
-                        btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != 0;
-                        AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDIT_MODE(originalBlacknessResult));
-                        return;
-                    }
-                    else
-                    {
-                        btnNext.Visible = false;
-                        btnPrint.Visible = false;
-                        btnPre.Visible = false;
-                        AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
-                    }
-                    var result = cameraBLL.StartRendering();
-                    switch (result)
-                    {
-                        case CameraBLLStatusKind.NoCamera:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA, AntdUI.TAlignFrom.BR, Font);
-                            break;
-                        case CameraBLLStatusKind.NoCameraSettings:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
-                            // 延迟1秒
-                            await Task.Delay(1000).ConfigureAwait(true);
-                            BtnCameraSetting_Click(null, null);
-                            break;
-                        case CameraBLLStatusKind.NoCameraOpen:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
-                            // 延迟1秒
-                            await Task.Delay(1000).ConfigureAwait(true);
-                            BtnCameraSetting_Click(null, null);
-                            break;
-                        case CameraBLLStatusKind.NoCameraGrabbing:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
-                            // 延迟1秒
-                            await Task.Delay(1000).ConfigureAwait(true);
-                            BtnCameraSetting_Click(null, null);
-                            break;
-                        case CameraBLLStatusKind.TriggerMode:
-                            AntdUI.Message.success(form, LocalizeHelper.TRIGGER_MODE);
-                            break;
-                        case CameraBLLStatusKind.ContinuousMode:
-                            AntdUI.Message.success(form, LocalizeHelper.CONTINUOUS_MODE);
-                            break;
-                        default:
-                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.PLEASE_CONTACT_ADMIN, AntdUI.TAlignFrom.BR, Font);
-                            break;
-                    }
-                }
-                catch (CameraSDKException error)
-                {
-                    CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
-                }
-                catch (Exception error)
-                {
-                    AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
-                }
-                finally
-                {
-                    config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
-                    tcs.SetResult(true); // 标记整个异步操作完成
-                }
-            }, Font);
-            await tcs.Task.ConfigureAwait(true); // 这里才是真正的等待点
-            Console.WriteLine($"InitializeAsync took {sw.ElapsedMilliseconds}ms");
-        }
-
         private bool InitializeSelectScale()
         {
             scaleList.Clear();
@@ -422,8 +424,6 @@ namespace AI_Assistant_Win.Controls
             scaleList["current"] = currentScaleFromDB;
             return true;
         }
-
-        private List<GetTestNoListResponse> testNoList;
 
         private async Task InitializeSelectTestNoAsync()
         {

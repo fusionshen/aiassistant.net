@@ -15,7 +15,7 @@ using YoloDotNet.Extensions;
 
 namespace AI_Assistant_Win.Controls
 {
-    public partial class CircularAreaMethod : UserControl
+    public partial class CircularAreaMethod : UserControl, IAsyncInit
     {
         public static string EDIT_ITEM_ID = string.Empty;
 
@@ -39,6 +39,8 @@ namespace AI_Assistant_Win.Controls
 
         private readonly ObservableDictionary<string, CalculateScale> scaleList = [];
 
+        private List<GetTestNoListResponse> testNoList;
+
         public CircularAreaMethod(MainWindow _form)
         {
             form = _form;
@@ -57,262 +59,11 @@ namespace AI_Assistant_Win.Controls
             tempCircularAreaResult = new CircularAreaResult();
             tempCircularAreaResult.PropertyChanged += TempCircularAreaResult_PropertyChanged;
             scaleList.Changed += ScaleList_Changed;
-            this.Load += async (s, e) => await InitializeAsync();
+            // this.Load += async (s, e) => await InitializeAsync();
             this.HandleDestroyed += async (s, e) => await DestoryAsync();
         }
 
-        private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
-        {
-            selectScale.Items.Clear();
-            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleItemName(t)}").ToArray());
-            if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Add)
-            {
-                Console.WriteLine($"Added: Key={e.Key}, Value={e.NewValue}");
-                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
-                selectScale.SelectedValue = text;
-                btnSetScale.Enabled = true;
-                AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
-            }
-            else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Remove)
-            {
-                Console.WriteLine($"Removed: Key={e.Key}, Value={e.OldValue}");
-            }
-            else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Update)
-            {
-                Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
-                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
-                selectScale.SelectedValue = text;
-                AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
-            }
-        }
-
-        private string FormatScaleItemName(KeyValuePair<string, CalculateScale> t)
-        {
-            var text = string.Empty;
-            var (topGraduations, _, areaScale, _, _) = gaugeBlockMethodBLL.GetScaleParts(t.Value);
-            switch (t.Key)
-            {
-                case "current":
-                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{topGraduations};{areaScale}]";
-                    break;
-                case "atThatTime":
-                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{topGraduations};{areaScale}]";
-                    break;
-                default:
-                    break;
-            }
-            return text;
-        }
-
-        private void OriginalCircularAreaResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Id")
-            {
-                tempCircularAreaResult.Id = originalCircularAreaResult.Id;
-            }
-            else if (e.PropertyName == "TestNo")
-            {
-                selectTestNo.SelectedValue = originalCircularAreaResult.TestNo;
-            }
-            else if (e.PropertyName == "CoilNumber")
-            {
-                inputCoilNumber.Text = originalCircularAreaResult.CoilNumber;
-            }
-            else if (e.PropertyName == "Position")
-            {
-                selectPosition.SelectedValue = originalCircularAreaResult.Position;
-            }
-            else if (e.PropertyName == "OriginImagePath")
-            {
-                imageProcessBLL.OriginImagePath = originalCircularAreaResult.OriginImagePath;
-            }
-            else if (e.PropertyName == "RenderImagePath")
-            {
-                imageProcessBLL.RenderImagePath = originalCircularAreaResult.RenderImagePath;
-            }
-            else if (e.PropertyName == "WorkGroup")
-            {
-                selectWorkGroup.SelectedValue = originalCircularAreaResult.WorkGroup;
-            }
-            else if (e.PropertyName == "Analyst")
-            {
-                inputAnalyst.Text = originalCircularAreaResult.Analyst;
-            }
-            else if (e.PropertyName == "CalculateScale")
-            {
-                if (originalCircularAreaResult.CalculateScale == null)
-                {
-                    selectScale.SelectedValue = null;
-                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.LOST_SCALE, AntdUI.TAlignFrom.BR, Font);
-                }
-                else
-                {
-                    // different scale
-                    if (!originalCircularAreaResult.CalculateScale.Equals(scaleList.FirstOrDefault(t => "current".Equals(t.Key)).Value))
-                    {
-                        scaleList["atThatTime"] = originalCircularAreaResult.CalculateScale;
-                    }
-                }
-            }
-            else if (e.PropertyName == "Item")
-            {
-                // 观察者模式虽好，但是跳来跳去，不好好考虑，真的容易多写代码
-                circularAreaPredict.Prediction = originalCircularAreaResult.Item?.Prediction;
-            }
-        }
-        private void TempCircularAreaResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (!originalCircularAreaResult.Equals(tempCircularAreaResult))
-            {
-                try
-                {
-                    CheckValid();
-                    btnSave.Enabled = true;
-                }
-                catch (Exception)
-                {
-                    btnSave.Enabled = false;
-                }
-            }
-            else
-            {
-                btnSave.Enabled = false;
-            }
-            MainWindow.SOMETHING_IS_UNDONE = btnSave.Enabled;
-        }
-        private void CheckValid()
-        {
-            // 数据验证
-            if (selectScale.SelectedValue == null)
-            {
-                throw new Exception(LocalizeHelper.PLEASE_SELECT_SCALE);
-            }
-            if (tempCircularAreaResult == null || tempCircularAreaResult.Item == null)
-            {
-                throw new Exception(LocalizeHelper.PLEASE_PREDICT_BEFORE_SAVING);
-            }
-            // 比例尺不一致
-            if (!tempCircularAreaResult.CalculateScale.Equals(tempCircularAreaResult.Item.CalculateScale))
-            {
-                throw new Exception(LocalizeHelper.PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING);
-            }
-            if (selectWorkGroup.SelectedValue == null)
-            {
-                throw new Exception(LocalizeHelper.PLEASE_SELECT_WORKBENCH);
-            }
-            if (selectTestNo.SelectedValue == null)
-            {
-                throw new Exception(LocalizeHelper.PLEASE_SELECT_TESTNO);
-            }
-            if (string.IsNullOrEmpty(inputCoilNumber.Text))
-            {
-                throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
-            }
-            if (selectPosition.SelectedValue == null)
-            {
-                throw new Exception(LocalizeHelper.PLEASE_SELECT_POSITION);
-            }
-            if (string.IsNullOrEmpty(inputAnalyst.Text))
-            {
-                throw new Exception(LocalizeHelper.PLEASE_INPUT_ANALYST);
-            }
-        }
-        private void CircularAreaPredict_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "Prediction")
-            {
-                if (circularAreaPredict.Prediction != null)
-                {
-                    OutputTexts();
-                    btnSetScale.Enabled = true;
-                    checkboxRedefine.Enabled = true;
-                    // for add scale firstly
-                    if (scaleList.Count == 0)
-                    {
-                        BtnSetScale_Click(null, null);
-                        return;
-                    }
-                    // call when edit
-                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
-                    {
-                        AntdUI.Message.success(form, LocalizeHelper.PREDICTED_SUCCESSFULLY);
-                    }
-                }
-                else
-                {
-                    checkboxRedefine.Checked = false;
-                    checkboxRedefine.Enabled = false;
-                    ClearTexts();
-                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
-                    {
-                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_USE_CORRECT_CIRCULAR_IMAGE, AntdUI.TAlignFrom.BR, Font);
-                    }
-                }
-            }
-        }
-        private void ImageProcessBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "OriginImagePath")
-            {
-                tempCircularAreaResult.OriginImagePath = imageProcessBLL.OriginImagePath;
-                btnPredict.Enabled = !string.IsNullOrEmpty(imageProcessBLL.OriginImagePath);
-                if (!string.IsNullOrEmpty(imageProcessBLL.OriginImagePath))
-                {
-                    avatarOriginImage.Image = Image.FromFile(imageProcessBLL.OriginImagePath);
-                    // cant predict automatically under the status of editing
-                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
-                    {
-                        BtnPredict_Click(btnPredict, null);  // auto predict
-                    }
-                }
-                else
-                {
-                    avatarOriginImage.Image = Properties.Resources.area_template;
-                }
-            }
-            else if (e.PropertyName == "RenderImagePath")
-            {
-                tempCircularAreaResult.RenderImagePath = imageProcessBLL.RenderImagePath;
-                if (!string.IsNullOrEmpty(imageProcessBLL.RenderImagePath))
-                {
-                    avatarRenderImage.Image = Image.FromFile(imageProcessBLL.RenderImagePath);
-                }
-                else
-                {
-                    avatarRenderImage.Image = Properties.Resources.area_template;
-                }
-            }
-        }
-        private void CameraBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == "IsGrabbing")
-            {
-                btnCameraRecover.Enabled = !cameraBLL.IsGrabbing;
-                btnCameraCapture.Enabled = cameraBLL.IsGrabbing;
-            }
-            else if (e.PropertyName == "IsConnected")
-            {
-                btnCameraRecover.Enabled = cameraBLL.IsConnected && !cameraBLL.IsGrabbing;
-                btnCameraCapture.Enabled = cameraBLL.IsConnected && cameraBLL.IsGrabbing;
-                if (cameraBLL.IsConnected)
-                {
-                    AntdUI.Message.success(form, LocalizeHelper.CAMERA_CONNECTED);
-                }
-                else
-                {
-                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.CAMERA_DISCONNECTED, AntdUI.TAlignFrom.BR, Font);
-                }
-            }
-        }
-        private async Task DestoryAsync()
-        {
-            sortedIDs = [];
-            EDIT_ITEM_ID = string.Empty;
-            await Task.Delay(50);
-            cameraBLL.CloseDevice();
-            CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
-        }
-        private async Task InitializeAsync()
+        public async Task InitializeAsync()
         {
             var sw = Stopwatch.StartNew();
             // 使用TaskCompletionSource创建可等待的Task
@@ -419,6 +170,265 @@ namespace AI_Assistant_Win.Controls
             await tcs.Task.ConfigureAwait(true); // 这里才是真正的等待点
             Console.WriteLine($"InitializeAsync took {sw.ElapsedMilliseconds}ms");
         }
+
+        private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
+        {
+            selectScale.Items.Clear();
+            selectScale.Items.AddRange(scaleList.Select(t => $"{FormatScaleItemName(t)}").ToArray());
+            if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Add)
+            {
+                Console.WriteLine($"Added: Key={e.Key}, Value={e.NewValue}");
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                selectScale.SelectedValue = text;
+                btnSetScale.Enabled = true;
+                AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
+            }
+            else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Remove)
+            {
+                Console.WriteLine($"Removed: Key={e.Key}, Value={e.OldValue}");
+            }
+            else if (e.Action == ObservableDictionary<string, CalculateScale>.ChangedAction.Update)
+            {
+                Console.WriteLine($"Updated: Key={e.Key}, OldValue={e.OldValue}, NewValue={e.NewValue}");
+                var text = FormatScaleItemName(new KeyValuePair<string, CalculateScale>(e.Key, e.NewValue));
+                selectScale.SelectedValue = text;
+                AntdUI.Message.success(form, $"{LocalizeHelper.SCALE_LOAD_SUCCESSED}{text}");
+            }
+        }
+
+        private string FormatScaleItemName(KeyValuePair<string, CalculateScale> t)
+        {
+            var text = string.Empty;
+            var (topGraduations, _, areaScale, _, _) = gaugeBlockMethodBLL.GetScaleParts(t.Value);
+            switch (t.Key)
+            {
+                case "current":
+                    text = $"{LocalizeHelper.CURRENT_SCALE_TITLE}[{topGraduations};{areaScale}]";
+                    break;
+                case "atThatTime":
+                    text = $"{LocalizeHelper.SCALE_TITLE_AT_THAT_TIME}[{topGraduations};{areaScale}]";
+                    break;
+                default:
+                    break;
+            }
+            return text;
+        }
+
+        private void OriginalCircularAreaResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Id")
+            {
+                tempCircularAreaResult.Id = originalCircularAreaResult.Id;
+            }
+            else if (e.PropertyName == "TestNo")
+            {
+                selectTestNo.SelectedValue = originalCircularAreaResult.TestNo;
+            }
+            else if (e.PropertyName == "CoilNumber")
+            {
+                inputCoilNumber.Text = originalCircularAreaResult.CoilNumber;
+            }
+            else if (e.PropertyName == "Position")
+            {
+                selectPosition.SelectedValue = originalCircularAreaResult.Position;
+            }
+            else if (e.PropertyName == "OriginImagePath")
+            {
+                imageProcessBLL.OriginImagePath = originalCircularAreaResult.OriginImagePath;
+            }
+            else if (e.PropertyName == "RenderImagePath")
+            {
+                imageProcessBLL.RenderImagePath = originalCircularAreaResult.RenderImagePath;
+            }
+            else if (e.PropertyName == "WorkGroup")
+            {
+                selectWorkGroup.SelectedValue = originalCircularAreaResult.WorkGroup;
+            }
+            else if (e.PropertyName == "Analyst")
+            {
+                inputAnalyst.Text = originalCircularAreaResult.Analyst;
+            }
+            else if (e.PropertyName == "CalculateScale")
+            {
+                if (originalCircularAreaResult.CalculateScale == null)
+                {
+                    selectScale.SelectedValue = null;
+                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.LOST_SCALE, AntdUI.TAlignFrom.BR, Font);
+                }
+                else
+                {
+                    // different scale
+                    if (!originalCircularAreaResult.CalculateScale.Equals(scaleList.FirstOrDefault(t => "current".Equals(t.Key)).Value))
+                    {
+                        scaleList["atThatTime"] = originalCircularAreaResult.CalculateScale;
+                    }
+                }
+            }
+            else if (e.PropertyName == "Item")
+            {
+                // 观察者模式虽好，但是跳来跳去，不好好考虑，真的容易多写代码
+                circularAreaPredict.Prediction = originalCircularAreaResult.Item?.Prediction;
+            }
+        }
+
+        private void TempCircularAreaResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (!originalCircularAreaResult.Equals(tempCircularAreaResult))
+            {
+                try
+                {
+                    CheckValid();
+                    btnSave.Enabled = true;
+                }
+                catch (Exception)
+                {
+                    btnSave.Enabled = false;
+                }
+            }
+            else
+            {
+                btnSave.Enabled = false;
+            }
+            MainWindow.SOMETHING_IS_UNDONE = btnSave.Enabled;
+        }
+
+        private void CheckValid()
+        {
+            // 数据验证
+            if (selectScale.SelectedValue == null)
+            {
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_SCALE);
+            }
+            if (tempCircularAreaResult == null || tempCircularAreaResult.Item == null)
+            {
+                throw new Exception(LocalizeHelper.PLEASE_PREDICT_BEFORE_SAVING);
+            }
+            // 比例尺不一致
+            if (!tempCircularAreaResult.CalculateScale.Equals(tempCircularAreaResult.Item.CalculateScale))
+            {
+                throw new Exception(LocalizeHelper.PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING);
+            }
+            if (selectWorkGroup.SelectedValue == null)
+            {
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_WORKBENCH);
+            }
+            if (selectTestNo.SelectedValue == null)
+            {
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_TESTNO);
+            }
+            if (string.IsNullOrEmpty(inputCoilNumber.Text))
+            {
+                throw new Exception(LocalizeHelper.PLEASE_INPUT_COIL_NUMBER);
+            }
+            if (selectPosition.SelectedValue == null)
+            {
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_POSITION);
+            }
+            if (string.IsNullOrEmpty(inputAnalyst.Text))
+            {
+                throw new Exception(LocalizeHelper.PLEASE_INPUT_ANALYST);
+            }
+        }
+
+        private void CircularAreaPredict_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Prediction")
+            {
+                if (circularAreaPredict.Prediction != null)
+                {
+                    OutputTexts();
+                    btnSetScale.Enabled = true;
+                    checkboxRedefine.Enabled = true;
+                    // for add scale firstly
+                    if (scaleList.Count == 0)
+                    {
+                        BtnSetScale_Click(null, null);
+                        return;
+                    }
+                    // call when edit
+                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
+                    {
+                        AntdUI.Message.success(form, LocalizeHelper.PREDICTED_SUCCESSFULLY);
+                    }
+                }
+                else
+                {
+                    checkboxRedefine.Checked = false;
+                    checkboxRedefine.Enabled = false;
+                    ClearTexts();
+                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
+                    {
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.PLEASE_USE_CORRECT_CIRCULAR_IMAGE, AntdUI.TAlignFrom.BR, Font);
+                    }
+                }
+            }
+        }
+
+        private void ImageProcessBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "OriginImagePath")
+            {
+                tempCircularAreaResult.OriginImagePath = imageProcessBLL.OriginImagePath;
+                btnPredict.Enabled = !string.IsNullOrEmpty(imageProcessBLL.OriginImagePath);
+                if (!string.IsNullOrEmpty(imageProcessBLL.OriginImagePath))
+                {
+                    avatarOriginImage.Image = Image.FromFile(imageProcessBLL.OriginImagePath);
+                    // cant predict automatically under the status of editing
+                    if (!originalCircularAreaResult.OriginImagePath.Equals(tempCircularAreaResult.OriginImagePath))
+                    {
+                        BtnPredict_Click(btnPredict, null);  // auto predict
+                    }
+                }
+                else
+                {
+                    avatarOriginImage.Image = Properties.Resources.area_template;
+                }
+            }
+            else if (e.PropertyName == "RenderImagePath")
+            {
+                tempCircularAreaResult.RenderImagePath = imageProcessBLL.RenderImagePath;
+                if (!string.IsNullOrEmpty(imageProcessBLL.RenderImagePath))
+                {
+                    avatarRenderImage.Image = Image.FromFile(imageProcessBLL.RenderImagePath);
+                }
+                else
+                {
+                    avatarRenderImage.Image = Properties.Resources.area_template;
+                }
+            }
+        }
+
+        private void CameraBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "IsGrabbing")
+            {
+                btnCameraRecover.Enabled = !cameraBLL.IsGrabbing;
+                btnCameraCapture.Enabled = cameraBLL.IsGrabbing;
+            }
+            else if (e.PropertyName == "IsConnected")
+            {
+                btnCameraRecover.Enabled = cameraBLL.IsConnected && !cameraBLL.IsGrabbing;
+                btnCameraCapture.Enabled = cameraBLL.IsConnected && cameraBLL.IsGrabbing;
+                if (cameraBLL.IsConnected)
+                {
+                    AntdUI.Message.success(form, LocalizeHelper.CAMERA_CONNECTED);
+                }
+                else
+                {
+                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.CAMERA_DISCONNECTED, AntdUI.TAlignFrom.BR, Font);
+                }
+            }
+        }
+
+        private async Task DestoryAsync()
+        {
+            sortedIDs = [];
+            EDIT_ITEM_ID = string.Empty;
+            await Task.Delay(50);
+            cameraBLL.CloseDevice();
+            CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
+        }
+
         private void InitializeSelectPostion()
         {
 
@@ -427,6 +437,7 @@ namespace AI_Assistant_Win.Controls
             var result = circularAreaMethodBLL.PositionList.Select(t => t.Value).ToList();
             selectPosition.Items.AddRange([.. result]);
         }
+
         private bool InitializeSelectScale()
         {
             scaleList.Clear();
@@ -439,7 +450,7 @@ namespace AI_Assistant_Win.Controls
             scaleList["current"] = currentScaleFromDB;
             return true;
         }
-        private List<GetTestNoListResponse> testNoList;
+
         private async Task InitializeSelectTestNoAsync()
         {
             try
@@ -463,14 +474,17 @@ namespace AI_Assistant_Win.Controls
                 selectTestNo.Items.AddRange(["test"]);
             }
         }
+
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image));
         }
+
         private void AvatarRenderImage_Click(object sender, EventArgs e)
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarRenderImage.Image));
         }
+
         private void BtnUploadImage_Click(object sender, System.EventArgs e)
         {
             if (areaMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
@@ -489,6 +503,7 @@ namespace AI_Assistant_Win.Controls
                 });
             }
         }
+
         private void BtnPredict_Click(object sender, EventArgs e)
         {
             AntdUI.Button btn = (AntdUI.Button)sender;
@@ -504,10 +519,12 @@ namespace AI_Assistant_Win.Controls
                 btn.Loading = false;
             });
         }
+
         private CalculateScale CurrentScale
         {
             get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
         }
+
         private void OutputTexts()
         {
             tempCircularAreaResult.Item = new(circularAreaPredict.Prediction, CurrentScale);
@@ -517,6 +534,7 @@ namespace AI_Assistant_Win.Controls
             inputCalculatedArea.Text = $"{tempCircularAreaResult.Item.CalculatedArea:F2}{tempCircularAreaResult.Item.Unit}";
             inputDiameter.Text = $"{tempCircularAreaResult.Item.Diameter:F2}{tempCircularAreaResult.Item.DiameterUnit}";
         }
+
         private void OutputScaleTexts(CalculateScale calculateScale)
         {
             if (calculateScale != null)
@@ -531,6 +549,7 @@ namespace AI_Assistant_Win.Controls
                 inputGrade.Text = string.Empty;
             }
         }
+
         private void ClearTexts()
         {
             tempCircularAreaResult.Item = null;
@@ -541,6 +560,7 @@ namespace AI_Assistant_Win.Controls
             inputCalculatedArea.Text = string.Empty;
             inputDiameter.Text = string.Empty;
         }
+
         /// <summary>
         /// 首先，我需要回忆一下C#中async/await的工作机制。当使用await关键字时，当前方法会异步等待任务完成，然后继续执行后续代码。
         /// 因此，如果在await InitializeAsync();之后直接写那两个语句，理论上是应该等待InitializeAsync完成后再执行的。那为什么用户会遇到这个问题呢？
@@ -616,6 +636,7 @@ namespace AI_Assistant_Win.Controls
                 });
             }
         }
+
         private void BtnCameraSetting_Click(object sender, EventArgs e)
         {
             try
@@ -631,11 +652,13 @@ namespace AI_Assistant_Win.Controls
             }
 
         }
+
         private void BtnCameraRecover_Click(object sender, EventArgs e)
         {
             // start realtime image render
             cameraBLL.StartGrabbing();
         }
+
         private void BtnCameraCapture_Click(object sender, EventArgs e)
         {
             imageProcessBLL.OriginImagePath = cameraBLL.SaveImage();
@@ -651,10 +674,12 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Message.success(form, LocalizeHelper.CAMERA_CAPTURED_SUCCESSFULLY);
             });
         }
+
         private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             tempCircularAreaResult.WorkGroup = selectWorkGroup.SelectedValue?.ToString();
         }
+
         private void SelectTestNo_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             tempCircularAreaResult.TestNo = selectTestNo.SelectedValue?.ToString();
@@ -668,18 +693,22 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
+
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)
         {
             tempCircularAreaResult.CoilNumber = inputCoilNumber.Text;
         }
+
         private void SelectPosition_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             tempCircularAreaResult.Position = selectPosition.SelectedValue?.ToString();
         }
+
         private void InputAnalyst_TextChanged(object sender, EventArgs e)
         {
             tempCircularAreaResult.Analyst = inputAnalyst.Text;
         }
+
         private void BtnClear_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
@@ -690,6 +719,7 @@ namespace AI_Assistant_Win.Controls
                 btnClear.Loading = false;
             }, LocalizeHelper.CLEAR_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
         }
+
         private void ConfirmUnderUnsaved(Action action, string content)
         {
             if (MainWindow.SOMETHING_IS_UNDONE)
@@ -716,6 +746,7 @@ namespace AI_Assistant_Win.Controls
                 BeginInvoke(action);
             }
         }
+
         private void BtnHistory_Click(object sender, EventArgs e)
         {
             if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.JUMP_TO_HISTORY) == DialogResult.OK)
@@ -730,6 +761,7 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
+
         private void BtnPre_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
@@ -744,6 +776,7 @@ namespace AI_Assistant_Win.Controls
                 btnPre.Loading = false;
             }, LocalizeHelper.PRE_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
         }
+
         private void BtnNext_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
@@ -759,6 +792,7 @@ namespace AI_Assistant_Win.Controls
             }, LocalizeHelper.NEXT_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
 
         }
+
         private void BtnPrint_Click(object sender, EventArgs e)
         {
             try
@@ -773,6 +807,7 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
         }
+
         private void BtnSetScale_Click(object sender, EventArgs e)
         {
             // for the first time or want to redefine the scale.
@@ -815,6 +850,7 @@ namespace AI_Assistant_Win.Controls
                 checkboxRedefine.Checked = false;
             }
         }
+
         private void SelectScale_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             if (selectScale.SelectedValue != null)
@@ -827,6 +863,7 @@ namespace AI_Assistant_Win.Controls
                 tempCircularAreaResult.CalculateScale = null;
             }
         }
+
         private void CheckboxRedefine_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
         {
             if (checkboxRedefine.Checked && !string.IsNullOrEmpty(tempCircularAreaResult.RenderImagePath) && tempCircularAreaResult.Item != null)

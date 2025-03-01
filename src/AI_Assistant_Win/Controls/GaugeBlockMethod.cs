@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace AI_Assistant_Win.Controls
 {
-    public partial class GaugeBlockMethod : UserControl
+    public partial class GaugeBlockMethod : UserControl, IAsyncInit
     {
         public static string EDIT_ITEM_ID = string.Empty;
 
@@ -52,8 +52,96 @@ namespace AI_Assistant_Win.Controls
             tempGaugeBlockResult = new GaugeBlockResult();
             tempGaugeBlockResult.PropertyChanged += TempGaugeBlockResult_PropertyChanged;
             scaleList.Changed += ScaleList_Changed;
-            this.Load += async (s, e) => await InitializeAsync();
+            // this.Load += async (s, e) => await InitializeAsync();
             this.HandleDestroyed += async (s, e) => await DestoryAsync();
+        }
+
+        public async Task InitializeAsync()
+        {
+            var sw = Stopwatch.StartNew();
+            // 使用TaskCompletionSource创建可等待的Task
+            var tcs = new TaskCompletionSource<bool>();
+            AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
+            {
+                // Scale List
+                if (!InitializeSelectScale())
+                {
+                    // tell client how to do when any scale does not exit.
+                    BtnSetScale_Click(null, null);
+                }
+                try
+                {
+                    // 通过观察者模式实现界面数据效果
+                    sortedIDs = gaugeBlockMethodBLL.LoadOriginalResultFromDB(originalGaugeBlockResult, EDIT_ITEM_ID);
+                    if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
+                    {
+                        // The order is very important.:)
+                        btnNext.Visible = true;
+                        btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != sortedIDs.Count - 1;
+                        btnPrint.Visible = true;
+                        btnPre.Visible = true;
+                        btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
+                        AntdUI.Message.success(form, LocalizeHelper.GAUGE_BLOCK_EDIT_MODE(originalGaugeBlockResult));
+                        return;
+                    }
+                    else
+                    {
+                        btnNext.Visible = false;
+                        btnPrint.Visible = false;
+                        btnPre.Visible = false;
+                        AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
+                    }
+                    var result = cameraBLL.StartRendering();
+                    switch (result)
+                    {
+                        case CameraBLLStatusKind.NoCamera:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA, AntdUI.TAlignFrom.BR, Font);
+                            break;
+                        case CameraBLLStatusKind.NoCameraSettings:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
+                            // 延迟1秒
+                            await Task.Delay(1000).ConfigureAwait(true);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.NoCameraOpen:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
+                            // 延迟1秒
+                            await Task.Delay(1000).ConfigureAwait(true);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.NoCameraGrabbing:
+                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
+                            // 延迟1秒
+                            await Task.Delay(1000).ConfigureAwait(true);
+                            BtnCameraSetting_Click(null, null);
+                            break;
+                        case CameraBLLStatusKind.TriggerMode:
+                            AntdUI.Message.success(form, LocalizeHelper.TRIGGER_MODE);
+                            break;
+                        case CameraBLLStatusKind.ContinuousMode:
+                            AntdUI.Message.success(form, LocalizeHelper.CONTINUOUS_MODE);
+                            break;
+                        default:
+                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.PLEASE_CONTACT_ADMIN, AntdUI.TAlignFrom.BR, Font);
+                            break;
+                    }
+                }
+                catch (CameraSDKException error)
+                {
+                    CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
+                }
+                catch (Exception error)
+                {
+                    AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
+                }
+                finally
+                {
+                    config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
+                    tcs.SetResult(true); // 标记整个异步操作完成
+                }
+            }, Font);
+            await tcs.Task.ConfigureAwait(true); // 这里才是真正的等待点
+            Console.WriteLine($"InitializeAsync took {sw.ElapsedMilliseconds}ms");
         }
 
         private void ScaleList_Changed(object sender, ObservableDictionary<string, CalculateScale>.ChangedEventArgs<string, CalculateScale> e)
@@ -151,6 +239,7 @@ namespace AI_Assistant_Win.Controls
                 gaugeBlockPredict.Prediction = originalGaugeBlockResult.Item?.Prediction;
             }
         }
+
         private void TempGaugeBlockResult_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (!originalGaugeBlockResult.Equals(tempGaugeBlockResult))
@@ -171,6 +260,7 @@ namespace AI_Assistant_Win.Controls
             }
             MainWindow.SOMETHING_IS_UNDONE = btnSave.Enabled;
         }
+
         private void CheckValid()
         {
             // 数据验证
@@ -204,6 +294,7 @@ namespace AI_Assistant_Win.Controls
                 throw new Exception(LocalizeHelper.PLEASE_INPUT_ANALYST);
             }
         }
+
         private void GaugeBlockPredict_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "Prediction")
@@ -236,6 +327,7 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
+
         private void ImageProcessBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "OriginImagePath")
@@ -269,6 +361,7 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
+
         private void CameraBLL_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (e.PropertyName == "IsGrabbing")
@@ -290,6 +383,7 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
+
         private async Task DestoryAsync()
         {
             sortedIDs = [];
@@ -297,93 +391,6 @@ namespace AI_Assistant_Win.Controls
             await Task.Delay(50);
             cameraBLL.CloseDevice();
             CameraHelper.CAMERA_DEVICES.Remove(cameraBLL);
-        }
-        private async Task InitializeAsync()
-        {
-            var sw = Stopwatch.StartNew();
-            // 使用TaskCompletionSource创建可等待的Task
-            var tcs = new TaskCompletionSource<bool>();
-            AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
-            {
-                // Scale List
-                if (!InitializeSelectScale())
-                {
-                    // tell client how to do when any scale does not exit.
-                    BtnSetScale_Click(null, null);
-                }
-                try
-                {
-                    // 通过观察者模式实现界面数据效果
-                    sortedIDs = gaugeBlockMethodBLL.LoadOriginalResultFromDB(originalGaugeBlockResult, EDIT_ITEM_ID);
-                    if (!string.IsNullOrEmpty(EDIT_ITEM_ID))
-                    {
-                        // The order is very important.:)
-                        btnNext.Visible = true;
-                        btnNext.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != sortedIDs.Count - 1;
-                        btnPrint.Visible = true;
-                        btnPre.Visible = true;
-                        btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_ITEM_ID)) != 0;
-                        AntdUI.Message.success(form, LocalizeHelper.GAUGE_BLOCK_EDIT_MODE(originalGaugeBlockResult));
-                        return;
-                    }
-                    else
-                    {
-                        btnNext.Visible = false;
-                        btnPrint.Visible = false;
-                        btnPre.Visible = false;
-                        AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
-                    }
-                    var result = cameraBLL.StartRendering();
-                    switch (result)
-                    {
-                        case CameraBLLStatusKind.NoCamera:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA, AntdUI.TAlignFrom.BR, Font);
-                            break;
-                        case CameraBLLStatusKind.NoCameraSettings:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_SETTING, AntdUI.TAlignFrom.BR, Font);
-                            // 延迟1秒
-                            await Task.Delay(1000).ConfigureAwait(true);
-                            BtnCameraSetting_Click(null, null);
-                            break;
-                        case CameraBLLStatusKind.NoCameraOpen:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_OPEN, AntdUI.TAlignFrom.BR, Font);
-                            // 延迟1秒
-                            await Task.Delay(1000).ConfigureAwait(true);
-                            BtnCameraSetting_Click(null, null);
-                            break;
-                        case CameraBLLStatusKind.NoCameraGrabbing:
-                            AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.NO_CAMERA_GRABBING, AntdUI.TAlignFrom.BR, Font);
-                            // 延迟1秒
-                            await Task.Delay(1000).ConfigureAwait(true);
-                            BtnCameraSetting_Click(null, null);
-                            break;
-                        case CameraBLLStatusKind.TriggerMode:
-                            AntdUI.Message.success(form, LocalizeHelper.TRIGGER_MODE);
-                            break;
-                        case CameraBLLStatusKind.ContinuousMode:
-                            AntdUI.Message.success(form, LocalizeHelper.CONTINUOUS_MODE);
-                            break;
-                        default:
-                            AntdUI.Notification.error(form, LocalizeHelper.ERROR, LocalizeHelper.PLEASE_CONTACT_ADMIN, AntdUI.TAlignFrom.BR, Font);
-                            break;
-                    }
-                }
-                catch (CameraSDKException error)
-                {
-                    CameraHelper.ShowErrorMsg(form, error.Message, error.ErrorCode);
-                }
-                catch (Exception error)
-                {
-                    AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
-                }
-                finally
-                {
-                    config.OK(LocalizeHelper.PAGE_LOADED_SUCCESS);
-                    tcs.SetResult(true); // 标记整个异步操作完成
-                }
-            }, Font);
-            await tcs.Task.ConfigureAwait(true); // 这里才是真正的等待点
-            Console.WriteLine($"InitializeAsync took {sw.ElapsedMilliseconds}ms");
         }
 
         private bool InitializeSelectScale()
@@ -403,10 +410,12 @@ namespace AI_Assistant_Win.Controls
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image));
         }
+
         private void AvatarRenderImage_Click(object sender, EventArgs e)
         {
             AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarRenderImage.Image));
         }
+
         private void BtnUploadImage_Click(object sender, System.EventArgs e)
         {
             if (gaugeMethod_OpenFileDialog.ShowDialog() == DialogResult.OK)
@@ -425,6 +434,7 @@ namespace AI_Assistant_Win.Controls
                 });
             }
         }
+
         private void BtnPredict_Click(object sender, EventArgs e)
         {
             AntdUI.Button btn = (AntdUI.Button)sender;
@@ -440,10 +450,12 @@ namespace AI_Assistant_Win.Controls
                 btn.Loading = false;
             });
         }
+
         private CalculateScale CurrentScale
         {
             get => checkboxRedefine.Checked || selectScale.SelectedValue == null ? null : scaleList.FirstOrDefault(t => selectScale.SelectedValue.Equals(FormatScaleItemName(t))).Value;
         }
+
         private void OutputTexts()
         {
             tempGaugeBlockResult.Item = new GaugeBlock(gaugeBlockPredict.Prediction, CurrentScale);
@@ -455,6 +467,7 @@ namespace AI_Assistant_Win.Controls
             inputEdgePixels.Text = string.Join(" ", tempGaugeBlockResult.Item.EdgePixels.Select(t => $"{t.Key}={t.Value:F2}"));
             inputCalculatdEdges.Text = string.Join(" ", tempGaugeBlockResult.Item.CalculatedEdgeLengths.Select(t => $"{t.Key}={t.Value:F2}{tempGaugeBlockResult.Item.LengthUnit}"));
         }
+
         private void OutputScaleTexts(CalculateScale calculateScale)
         {
             if (calculateScale != null)
@@ -471,6 +484,7 @@ namespace AI_Assistant_Win.Controls
                 inputGrade.Text = string.Empty;
             }
         }
+
         private void ClearTexts()
         {
             tempGaugeBlockResult.Item = null;
@@ -486,6 +500,7 @@ namespace AI_Assistant_Win.Controls
             selectEdge.SelectedValue = null;
             inputEdgeLength.Text = string.Empty;
         }
+
         private void BtnSave_Click(object sender, EventArgs e)
         {
             // double check
@@ -539,6 +554,7 @@ namespace AI_Assistant_Win.Controls
                 });
             }
         }
+
         private void BtnCameraSetting_Click(object sender, EventArgs e)
         {
             try
@@ -554,11 +570,13 @@ namespace AI_Assistant_Win.Controls
             }
 
         }
+
         private void BtnCameraRecover_Click(object sender, EventArgs e)
         {
             // start realtime image render
             cameraBLL.StartGrabbing();
         }
+
         private void BtnCameraCapture_Click(object sender, EventArgs e)
         {
             imageProcessBLL.OriginImagePath = cameraBLL.SaveImage();
@@ -574,6 +592,7 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Message.success(form, LocalizeHelper.CAMERA_CAPTURED_SUCCESSFULLY);
             });
         }
+
         private void SelectWorkGroup_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             tempGaugeBlockResult.WorkGroup = selectWorkGroup.SelectedValue?.ToString();
@@ -634,7 +653,6 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-
         private void BtnClear_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
@@ -645,6 +663,7 @@ namespace AI_Assistant_Win.Controls
                 btnClear.Loading = false;
             }, LocalizeHelper.CLEAR_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
         }
+
         private void ConfirmUnderUnsaved(Action action, string content)
         {
             if (MainWindow.SOMETHING_IS_UNDONE)
@@ -671,6 +690,7 @@ namespace AI_Assistant_Win.Controls
                 BeginInvoke(action);
             }
         }
+
         private void BtnHistory_Click(object sender, EventArgs e)
         {
             if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, LocalizeHelper.JUMP_TO_ACCURACY_TRACER) == DialogResult.OK)
@@ -685,6 +705,7 @@ namespace AI_Assistant_Win.Controls
                 }
             }
         }
+
         private void BtnPre_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
@@ -699,6 +720,7 @@ namespace AI_Assistant_Win.Controls
                 btnPre.Loading = false;
             }, LocalizeHelper.PRE_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
         }
+
         private void BtnNext_Click(object sender, EventArgs e)
         {
             ConfirmUnderUnsaved(async () =>
@@ -714,6 +736,7 @@ namespace AI_Assistant_Win.Controls
             }, LocalizeHelper.NEXT_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE);
 
         }
+
         private void BtnPrint_Click(object sender, EventArgs e)
         {
             try
@@ -728,6 +751,7 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
             }
         }
+
         private void BtnSetScale_Click(object sender, EventArgs e)
         {
             if ((string.IsNullOrEmpty(tempGaugeBlockResult.RenderImagePath) || tempGaugeBlockResult.Item == null) &&
@@ -767,6 +791,7 @@ namespace AI_Assistant_Win.Controls
                 checkboxRedefine.Checked = false;
             }
         }
+
         private void SelectScale_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             if (selectScale.SelectedValue != null)
@@ -779,6 +804,7 @@ namespace AI_Assistant_Win.Controls
                 tempGaugeBlockResult.CalculateScale = null;
             }
         }
+
         private void CheckboxRedefine_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
         {
             if (checkboxRedefine.Checked && !string.IsNullOrEmpty(tempGaugeBlockResult.RenderImagePath) && tempGaugeBlockResult.Item != null)
