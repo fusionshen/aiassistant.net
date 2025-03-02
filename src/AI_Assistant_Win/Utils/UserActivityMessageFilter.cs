@@ -15,12 +15,12 @@ namespace AI_Assistant_Win.Utils
 
         private static readonly int[] ValidMessages =
         {
-        0x0201, // WM_LBUTTONDOWN
-        0x0204, // WM_RBUTTONDOWN
-        0x0207, // WM_MBUTTONDOWN
-        0x0100, // WM_KEYDOWN
-        0x0104  // WM_SYSKEYDOWN (Alt组合键)
-    };
+            0x0201, // WM_LBUTTONDOWN
+            0x0204, // WM_RBUTTONDOWN
+            0x0207, // WM_MBUTTONDOWN
+            0x0100, // WM_KEYDOWN
+            0x0104  // WM_SYSKEYDOWN (Alt组合键)
+        };
 
         public event EventHandler RealUserActivity;
 

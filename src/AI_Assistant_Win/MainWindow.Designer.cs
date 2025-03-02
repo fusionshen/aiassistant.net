@@ -31,6 +31,8 @@ namespace AI_Assistant_Win
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainWindow));
             btn_mode = new AntdUI.Button();
             btn_global = new AntdUI.Dropdown();
             btn_setting = new AntdUI.Button();
@@ -39,7 +41,11 @@ namespace AI_Assistant_Win
             txt_search = new AntdUI.Input();
             avatarLoginUser = new AntdUI.Avatar();
             colorTheme = new AntdUI.ColorPicker();
+            notifyIcon1 = new NotifyIcon(components);
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            exitStripMenuItem = new ToolStripMenuItem();
             windowBar.SuspendLayout();
+            contextMenuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // btn_mode
@@ -160,6 +166,27 @@ namespace AI_Assistant_Win
             colorTheme.Value = Color.FromArgb(22, 119, 255);
             colorTheme.Visible = false;
             // 
+            // notifyIcon1
+            // 
+            notifyIcon1.ContextMenuStrip = contextMenuStrip1;
+            notifyIcon1.Icon = (Icon)resources.GetObject("notifyIcon1.Icon");
+            notifyIcon1.Text = "AI Assistant";
+            notifyIcon1.Visible = true;
+            notifyIcon1.DoubleClick += notifyIcon1_DoubleClick;
+            // 
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.Items.AddRange(new ToolStripItem[] { exitStripMenuItem });
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(101, 26);
+            contextMenuStrip1.ItemClicked += contextMenuStrip1_ItemClicked;
+            // 
+            // exitStripMenuItem
+            // 
+            exitStripMenuItem.Name = "exitStripMenuItem";
+            exitStripMenuItem.Size = new Size(100, 22);
+            exitStripMenuItem.Text = "退出";
+            // 
             // MainWindow
             // 
             BackColor = Color.White;
@@ -168,11 +195,13 @@ namespace AI_Assistant_Win
             Controls.Add(windowBar);
             Font = new Font("Microsoft YaHei UI", 12F);
             ForeColor = Color.Black;
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(660, 400);
             Name = "MainWindow";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "AI Assistant Workbench";
             windowBar.ResumeLayout(false);
+            contextMenuStrip1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -185,5 +214,8 @@ namespace AI_Assistant_Win
         private AntdUI.ColorPicker colorTheme;
         private AntdUI.Avatar avatarLoginUser;
         private AntdUI.Input txt_search;
+        private NotifyIcon notifyIcon1;
+        private ContextMenuStrip contextMenuStrip1;
+        private ToolStripMenuItem exitStripMenuItem;
     }
 }

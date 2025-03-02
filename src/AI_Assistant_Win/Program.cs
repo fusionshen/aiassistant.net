@@ -1,9 +1,11 @@
 using AI_Assistant_Win.Utils;
 using MvCameraControl;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AI_Assistant_Win
@@ -16,44 +18,85 @@ namespace AI_Assistant_Win
         [STAThread]
         static void Main(string[] arge)
         {
-            SDKSystem.Initialize();
-            ComWrappers.RegisterForMarshalling(WinFormsComInterop.WinFormsComWrappers.Instance);
-            var command = string.Join(" ", arge);
-            AntdUI.Localization.DefaultLanguage = "zh-CN";
-            var lang = AntdUI.Localization.CurrentLanguage;
-            if (lang.StartsWith("en")) AntdUI.Localization.Provider = new Localizer();
-            AntdUI.Config.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
-            Application.SetHighDpiMode(HighDpiMode.SystemAware);
-            Application.SetCompatibleTextRenderingDefault(false);
-            AntdUI.Config.SetCorrectionTextRendering("Microsoft YaHei UI");
-            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
-            Application.ThreadException += Application_ThreadException; // 处理托管线程中的未处理异常。
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException; // 处理非托管线程中的未处理异常
-            // 对于用户通过任务管理器结束进程的情况，由于任务管理器调用的是Windows API ExitProcess来终止进程，因此FormClosing和FormClosed事件不会被触发。
-            Application.ApplicationExit += new EventHandler(OnApplicationExit);
-            if (command == "m") Application.Run(new Main());
-            else if (command == "color") Application.Run(new Colors());
-            else if (command == "overview") Application.Run(new Overview(false));
-            else Application.Run(new MainWindow(command == "t"));
+            const string mutexName = "Global\\{1C87D98D-400E-46DD-9753-68C7F2337B45}";
+
+            using (Mutex mutex = new Mutex(true, mutexName, out bool createdNew))
+            {
+                if (!createdNew)
+                {
+                    ActivateExistingWindow();
+                    return;
+                }
+                SDKSystem.Initialize();
+                ComWrappers.RegisterForMarshalling(WinFormsComInterop.WinFormsComWrappers.Instance);
+                var command = string.Join(" ", arge);
+                AntdUI.Localization.DefaultLanguage = "zh-CN";
+                var lang = AntdUI.Localization.CurrentLanguage;
+                if (lang.StartsWith("en")) AntdUI.Localization.Provider = new Localizer();
+                AntdUI.Config.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAliasGridFit;
+                Application.SetHighDpiMode(HighDpiMode.SystemAware);
+                Application.SetCompatibleTextRenderingDefault(false);
+                AntdUI.Config.SetCorrectionTextRendering("Microsoft YaHei UI");
+                Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+                Application.ThreadException += async (s, e) => await HandleExceptionAsync(e.Exception); ; // 处理托管线程中的未处理异常。
+                AppDomain.CurrentDomain.UnhandledException += async (s, e) => await HandleExceptionAsync((Exception)e.ExceptionObject); // 处理非托管线程中的未处理异常
+                // 对于用户通过任务管理器结束进程的情况，由于任务管理器调用的是Windows API ExitProcess来终止进程，因此FormClosing和FormClosed事件不会被触发。
+                Application.ApplicationExit += new EventHandler(OnApplicationExit);
+                if (command == "m") Application.Run(new Main());
+                else if (command == "color") Application.Run(new Colors());
+                else if (command == "overview") Application.Run(new Overview(false));
+                else Application.Run(new MainWindow(command == "t"));
+                // 不需要手动 ReleaseMutex，using 会自动释放
+                //_mutex?.ReleaseMutex();
+            }
         }
 
-        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+
+        // 导入Windows API函数
+        [DllImport("user32.dll")]
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        static void ActivateExistingWindow()
         {
-            HandleException((Exception)e.ExceptionObject);
+            const int SW_RESTORE = 9;
+            Process currentProcess = Process.GetCurrentProcess();
+            string currentExePath = currentProcess.MainModule.FileName;
+
+            foreach (Process p in Process.GetProcessesByName(currentProcess.ProcessName))
+            {
+                if (p.Id == currentProcess.Id) continue;
+                try
+                {
+                    // 验证进程路径是否相同
+                    if (p.MainModule.FileName.Equals(currentExePath, StringComparison.OrdinalIgnoreCase))
+                    {
+                        IntPtr hWnd = p.MainWindowHandle;
+                        if (hWnd != IntPtr.Zero)
+                        {
+                            ShowWindow(hWnd, SW_RESTORE);
+                            SetForegroundWindow(hWnd);
+                            return;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // 处理权限不足导致的访问异常
+                    Debug.WriteLine($"访问进程 {p.Id} 失败: {ex.Message}");
+                }
+            }
         }
 
-        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
-        {
-            HandleException(e.Exception);
-        }
-
-        private static void HandleException(Exception ex)
+        private static async Task HandleExceptionAsync(Exception ex)
         {
             try
             {
                 // 记录错误日志
                 string logPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "error.log");
-                File.AppendAllText(logPath, $"{DateTime.Now}: {ex}{Environment.NewLine}");
+                await File.AppendAllTextAsync(logPath, $"{DateTime.Now}: {ex}{Environment.NewLine}");
 
                 // 显示提示框
                 //MessageBox.Show($"发生错误，请联系管理员。错误已记录到{logPath}。", "错误提示", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -83,8 +126,19 @@ namespace AI_Assistant_Win
         /// <param name="e"></param>
         private static void OnApplicationExit(object sender, EventArgs e)
         {
-            CameraHelper.CAMERA_DEVICES.ForEach(t => t.CloseDevice());
-            SDKSystem.Finalize();
+            try
+            {
+                CameraHelper.CAMERA_DEVICES.ForEach(t =>
+                {
+                    try { t.CloseDevice(); }
+                    catch { /* 记录日志 */ }
+                });
+                SDKSystem.Finalize();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"退出时释放资源失败: {ex}");
+            }
         }
     }
 }
