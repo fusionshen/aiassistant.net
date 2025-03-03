@@ -6,7 +6,7 @@ namespace AI_Assistant_Win.Models.Request
     public class GetTestNoListRequest
     {
         [JsonProperty("startTime")]
-        public string StartTime { get; set; } = DateTime.Now.AddYears(-2).ToString("yyyy-MM-dd 00:00:00");
+        public string StartTime { get; set; } = DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd 00:00:00");
 
         [JsonProperty("endTime")]
         public string EndTime { get; set; } = DateTime.Now.ToString("yyyy-MM-dd 23:59:59");

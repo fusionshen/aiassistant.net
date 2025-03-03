@@ -603,10 +603,10 @@ namespace AI_Assistant_Win.Controls
             // 
             // inputCoilNumber
             // 
-            inputCoilNumber.Enabled = false;
             inputCoilNumber.Font = new Font("Microsoft YaHei UI", 10F);
             inputCoilNumber.Location = new Point(96, -1);
             inputCoilNumber.Name = "inputCoilNumber";
+            inputCoilNumber.ReadOnly = true;
             inputCoilNumber.Size = new Size(243, 34);
             inputCoilNumber.TabIndex = 17;
             inputCoilNumber.TextChanged += InputCoilNumber_TextChanged;
@@ -651,6 +651,7 @@ namespace AI_Assistant_Win.Controls
             selectTestNo.Size = new Size(249, 33);
             selectTestNo.TabIndex = 18;
             selectTestNo.SelectedIndexChanged += SelectTestNo_SelectedIndexChanged;
+            selectTestNo.TextChanged += SelectTestNo_TextChanged;
             // 
             // labelTestNo
             // 

@@ -30,7 +30,7 @@ namespace AI_Assistant_Win.Utils
         public static string DELETE => Localization.Get("Delete", "删除");
         public static string UNDER_DEVELOPMENT => Localization.Get("This feature is currently under development.", "此功能目前正在开发中。");
         public static string LOADING_PAGE => Localization.Get("The page is loading...", "页面正在加载中...");
-        public static string TESTNO_LIST_LOADED_SUCCESS => Localization.Get("The Test List Loaded", "试验清单加载成功");
+        public static string TESTNO_LIST_LOADED_SUCCESS(int testNoCount) => Localization.Get($"The test sample list has been loaded successfully. There are {testNoCount} records within a month. If your test sample is not in the list, please enter the sample number and coil number manually.", $"试样清单加载成功，一个月内有{testNoCount}条数据，如果您所试验的样品不在列表中，请手动输入试样编号和钢卷号。");
         public static string OPENING_THE_CAMERA => Localization.Get("Opening The Camera...", "开启摄像头中...");
         public static string PAGE_LOADED_SUCCESS => Localization.Get("The Page Loaded", "页面加载成功");
         public static string IN_USE => Localization.Get("In use", "正在使用");
@@ -116,7 +116,7 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_PREDICT_BEFORE_SAVING => Localization.Get("Please predict before saving.", "请进行识别后再保存。");
         public static string PLEASE_PREDICT_WITH_NEW_SCALE_BEFORE_SAVING => Localization.Get("Please predict with the new scale before saving.", "请使用新的比例尺进行识别后再保存。");
         public static string PLEASE_SELECT_WORKBENCH => Localization.Get("Please select a workbench.", "请选择班组。");
-        public static string PLEASE_SELECT_TESTNO => Localization.Get("Please select a test no.", "请选择试样编号。");
+        public static string PLEASE_SELECT_OR_INPUT_TESTNO => Localization.Get("Please select or input a test no.", "请选择或者输入试样编号。");
         public static string PLEASE_SELECT_EDGE => Localization.Get("Select one edge of the identified quadrilateral.", "请选择识别出的四边形的某一条边。");
         public static string PLEASE_INPUT_COIL_NUMBER => Localization.Get("Please text a coil number.", "请输入钢卷号。");
         public static string PLEASE_INPUT_CORRECT_EDGE_LENGTH => Localization.Get("Please text a correct edge length.", "请输入正确的边长。");
@@ -133,6 +133,7 @@ namespace AI_Assistant_Win.Utils
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
         public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
         public static string WOULD_EDIT_BLACKNESS_RESULT => Localization.Get("Would you like to edit the blackness detection result?", "是否对本次黑度检测结果进行修改？");
+        public static string TESTNO_NOT_IN_THE_LIST(string testNo) => Localization.Get($"{testNo} is not a record from within the past month. To save this entry, please enter the coil number manually.", $"{testNo}不是一个月之内的数据，如果要保存本条记录，请手动输入钢卷号");
         public static string SURFACE_OP => Localization.Get("SurfaceOP-", "表面OP-");
         public static string SURFACE_CE => Localization.Get("SurfaceCE-", "表面CE-");
         public static string SURFACE_DR => Localization.Get("SurfaceDR-", "表面DR-");

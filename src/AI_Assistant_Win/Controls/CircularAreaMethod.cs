@@ -59,7 +59,6 @@ namespace AI_Assistant_Win.Controls
             tempCircularAreaResult = new CircularAreaResult();
             tempCircularAreaResult.PropertyChanged += TempCircularAreaResult_PropertyChanged;
             scaleList.Changed += ScaleList_Changed;
-            // this.Load += async (s, e) => await InitializeAsync();
             this.HandleDestroyed += async (s, e) => await DestoryAsync();
         }
 
@@ -85,9 +84,11 @@ namespace AI_Assistant_Win.Controls
             {
                 try
                 {
-                    // TestNo List
-                    await InitializeSelectTestNoAsync().ConfigureAwait(true);  // 添加.ConfigureAwait(true)保证后续代码在UI线程执行
-                    config.OK(LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS);
+                    BeginInvoke(async () =>
+                    {
+                        // TestNo List
+                        await InitializeSelectTestNoAsync();
+                    });
                     // Scale List
                     if (!InitializeSelectScale())
                     {
@@ -118,6 +119,8 @@ namespace AI_Assistant_Win.Controls
                         btnPre.Visible = false;
                         AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
                     }
+                    // when refresh、pre、next
+                    cameraBLL.CloseDevice();
                     var result = cameraBLL.StartRendering();
                     switch (result)
                     {
@@ -222,7 +225,8 @@ namespace AI_Assistant_Win.Controls
             }
             else if (e.PropertyName == "TestNo")
             {
-                selectTestNo.SelectedValue = originalCircularAreaResult.TestNo;
+                // selectTestNo.Items come slowerly than originalCircularAreaResult.TestNo;
+                selectTestNo.Text = originalCircularAreaResult.TestNo;
             }
             else if (e.PropertyName == "CoilNumber")
             {
@@ -312,9 +316,9 @@ namespace AI_Assistant_Win.Controls
             {
                 throw new Exception(LocalizeHelper.PLEASE_SELECT_WORKBENCH);
             }
-            if (selectTestNo.SelectedValue == null)
+            if (string.IsNullOrEmpty(selectTestNo.Text))
             {
-                throw new Exception(LocalizeHelper.PLEASE_SELECT_TESTNO);
+                throw new Exception(LocalizeHelper.PLEASE_SELECT_OR_INPUT_TESTNO);
             }
             if (string.IsNullOrEmpty(inputCoilNumber.Text))
             {
@@ -457,21 +461,36 @@ namespace AI_Assistant_Win.Controls
             {
                 selectTestNo.Items.Clear();
                 testNoList = await circularAreaMethodBLL.GetTestNoListAsync();
+                // select testNo
+                var result = testNoList?.Select(t => t.TestNo).Distinct().OrderDescending().ToList();
+                if (result != null && result.Count != 0)
+                {
+                    selectTestNo.Items.AddRange([.. result]);
+                    AntdUI.Message.success(form, $"{LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS(testNoList.Count)}");
+                }
+                else
+                {
+                    selectTestNo.Items.AddRange(["test"]);
+                    AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.ONLY_TEST_NO, AntdUI.TAlignFrom.BR, Font);
+                }
+                if (!string.IsNullOrEmpty(selectTestNo.Text))
+                {
+                    var target = testNoList?.FirstOrDefault(t => selectTestNo.Text.Equals(t.TestNo));
+                    if (target == null)
+                    {
+                        inputCoilNumber.ReadOnly = false;
+                        AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.TESTNO_NOT_IN_THE_LIST(selectTestNo.Text), AntdUI.TAlignFrom.BR, Font);
+                    }
+                    else
+                    {
+                        inputCoilNumber.ReadOnly = true;
+                    }
+                    selectTestNo.SelectedValue = target;
+                }
             }
             catch (Exception error)
             {
                 AntdUI.Notification.error(form, LocalizeHelper.ERROR, error.Message, AntdUI.TAlignFrom.BR, Font);
-            }
-            // select testNo
-            var result = testNoList.Select(t => t.TestNo).Distinct().OrderDescending().ToList();
-            if (result != null && result.Count != 0)
-            {
-                selectTestNo.Items.AddRange([.. result]);
-            }
-            else
-            {
-                AntdUI.Notification.warn(form, LocalizeHelper.PROMPT, LocalizeHelper.ONLY_TEST_NO, AntdUI.TAlignFrom.BR, Font);
-                selectTestNo.Items.AddRange(["test"]);
             }
         }
 
@@ -680,18 +699,40 @@ namespace AI_Assistant_Win.Controls
             tempCircularAreaResult.WorkGroup = selectWorkGroup.SelectedValue?.ToString();
         }
 
+
         private void SelectTestNo_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             tempCircularAreaResult.TestNo = selectTestNo.SelectedValue?.ToString();
-            if (tempCircularAreaResult.TestNo != null)
-            {
-                // coilNumber
-                var target = testNoList.FirstOrDefault(t => tempCircularAreaResult.TestNo.Equals(t.TestNo));
-                if (target != null)
-                {
-                    inputCoilNumber.Text = string.IsNullOrEmpty(target.CoilNumber) ? target.OtherCoilNumber : target.CoilNumber;
-                }
-            }
+            UpdateCoilNumberInput();
+        }
+
+        private void SelectTestNo_TextChanged(object sender, EventArgs e)
+        {
+            tempCircularAreaResult.TestNo = selectTestNo.Text;
+            UpdateCoilNumberInput();
+        }
+
+        /// <summary>
+        /// 统一更新钢卷号输入框的状态
+        /// </summary>
+        private void UpdateCoilNumberInput()
+        {
+            var hasValidTestNo = !string.IsNullOrEmpty(tempCircularAreaResult.TestNo);
+            var targetItem = hasValidTestNo && testNoList != null
+                ? testNoList.FirstOrDefault(t => t.TestNo == tempCircularAreaResult.TestNo)
+                : null;
+
+            var coilNumber = targetItem?.CoilNumber;
+            var otherCoilNumber = targetItem?.OtherCoilNumber;
+
+            // 优先级：CoilNumber > OtherCoilNumber > 空
+            inputCoilNumber.Text = !string.IsNullOrEmpty(coilNumber)
+                ? coilNumber
+                : otherCoilNumber ?? string.Empty;
+
+            // 设置只读状态：当找到有效数据且自动填充内容时锁定输入
+            inputCoilNumber.ReadOnly = targetItem != null &&
+                (!string.IsNullOrEmpty(coilNumber) || !string.IsNullOrEmpty(otherCoilNumber));
         }
 
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)
