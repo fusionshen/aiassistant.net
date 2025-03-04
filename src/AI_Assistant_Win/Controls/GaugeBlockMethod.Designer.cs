@@ -258,7 +258,7 @@ namespace AI_Assistant_Win.Controls
             btnPredict.TabIndex = 0;
             btnPredict.Text = "识别";
             btnPredict.Type = AntdUI.TTypeMini.Error;
-            btnPredict.Click += BtnPredict_Click;
+            btnPredict.Click += BtnPredict_ClickAsync;
             // 
             // lableRenderImageDisplayArea
             // 
