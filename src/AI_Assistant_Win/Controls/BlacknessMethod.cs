@@ -672,7 +672,7 @@ namespace AI_Assistant_Win.Controls
             // 优先级：CoilNumber > OtherCoilNumber > 空
             inputCoilNumber.Text = !string.IsNullOrEmpty(coilNumber)
                 ? coilNumber
-                : otherCoilNumber ?? string.Empty;
+                : otherCoilNumber ?? tempBlacknessResult.CoilNumber;
 
             // 设置只读状态：当找到有效数据且自动填充内容时锁定输入
             inputCoilNumber.ReadOnly = targetItem != null &&

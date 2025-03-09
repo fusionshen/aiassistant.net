@@ -134,6 +134,12 @@ namespace AI_Assistant_Win.Controls
                                         }));
                                         await tcs.Task; // 等待回调完成
                                         AntdUI.Message.success(form, LocalizeHelper.ONLY_PDF_REPORT_UPLOAD_SUCCESS);
+                                        // 安全释放资源
+                                        memoryImage?.Dispose();
+                                        if (!this.IsDisposed)
+                                        {
+                                            this.Dispose();
+                                        }
                                     }
                                     catch (Exception ex)
                                     {
@@ -142,12 +148,6 @@ namespace AI_Assistant_Win.Controls
                                     finally
                                     {
                                         btn.Loading = false;
-                                        // 安全释放资源
-                                        memoryImage?.Dispose();
-                                        if (!this.IsDisposed)
-                                        {
-                                            this.Dispose();
-                                        }
                                     }
                                 }
                                 break;

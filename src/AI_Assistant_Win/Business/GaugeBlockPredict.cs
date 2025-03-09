@@ -50,7 +50,7 @@ namespace AI_Assistant_Win.Business
         {
             var yolo = new Yolo(new YoloOptions
             {
-                OnnxModel = "./Resources/Gauge/model.onnx",
+                OnnxModel = "./Resources/Gauge/v5.onnx",
                 ModelType = ModelType.Segmentation,
                 Cuda = false
             });

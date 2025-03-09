@@ -154,7 +154,13 @@ namespace AI_Assistant_Win.Controls
                                         // 2.能捕获回调中抛出的异常并通过await传播到catch块
                                         // 3.适用于需要保持UI响应的长时间操作
                                         // 4.注意线程切换问题，回调中的UI操作不需要额外Invoke
+                                         // 安全释放资源
                                         AntdUI.Message.success(form, LocalizeHelper.REPORT_UPLOAD_SUCCESS);
+                                        memoryImage?.Dispose();
+                                        if (!this.IsDisposed)
+                                        {
+                                            this.Dispose();
+                                        }
                                         // 两种方案对比：
                                         // 特性       方案一（Invoke）	方案二（BeginInvoke + Task）
                                         // 线程阻塞          是           否
@@ -170,12 +176,6 @@ namespace AI_Assistant_Win.Controls
                                     finally
                                     {
                                         btn.Loading = false;
-                                        // 安全释放资源
-                                        memoryImage?.Dispose();
-                                        if (!this.IsDisposed)
-                                        {
-                                            this.Dispose();
-                                        }
                                     }
                                 }
                                 // 选择方案时应根据实际业务场景决定。如果回调操作耗时短（<200ms），建议使用方案一；如果包含复杂操作，推荐方案二以保证UI流畅性。

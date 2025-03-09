@@ -133,7 +133,7 @@ namespace AI_Assistant_Win.Utils
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
         public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
         public static string WOULD_EDIT_BLACKNESS_RESULT => Localization.Get("Would you like to edit the blackness detection result?", "是否对本次黑度检测结果进行修改？");
-        public static string TESTNO_NOT_IN_THE_LIST(string testNo) => Localization.Get($"{testNo} is not a record from within the past month. To save this entry, please enter the coil number manually.", $"{testNo}不是一个月之内的数据，如果要保存本条记录，请手动输入钢卷号");
+        public static string TESTNO_NOT_IN_THE_LIST(string testNo) => Localization.Get($"{testNo} is not a record from within the past month. To save this entry, please enter the coil number manually.", $"{testNo}不是一个月之内的数据，如果要修改本条记录，请手动输入试样编号和钢卷号");
         public static string SURFACE_OP => Localization.Get("SurfaceOP-", "表面OP-");
         public static string SURFACE_CE => Localization.Get("SurfaceCE-", "表面CE-");
         public static string SURFACE_DR => Localization.Get("SurfaceDR-", "表面DR-");
