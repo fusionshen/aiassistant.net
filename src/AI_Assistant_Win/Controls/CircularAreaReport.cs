@@ -149,12 +149,12 @@ namespace AI_Assistant_Win.Controls
                                             }
                                         }));
                                         await tcs.Task; // 等待回调完成
-                                        // 关键说明：
-                                        // 1.使用TaskCompletionSource将异步回调转换为可等待的Task
-                                        // 2.能捕获回调中抛出的异常并通过await传播到catch块
-                                        // 3.适用于需要保持UI响应的长时间操作
-                                        // 4.注意线程切换问题，回调中的UI操作不需要额外Invoke
-                                         // 安全释放资源
+                                                        // 关键说明：
+                                                        // 1.使用TaskCompletionSource将异步回调转换为可等待的Task
+                                                        // 2.能捕获回调中抛出的异常并通过await传播到catch块
+                                                        // 3.适用于需要保持UI响应的长时间操作
+                                                        // 4.注意线程切换问题，回调中的UI操作不需要额外Invoke
+                                                        // 安全释放资源
                                         AntdUI.Message.success(form, LocalizeHelper.REPORT_UPLOAD_SUCCESS);
                                         memoryImage?.Dispose();
                                         if (!this.IsDisposed)

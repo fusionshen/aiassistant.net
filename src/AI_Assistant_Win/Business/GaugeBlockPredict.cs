@@ -1,6 +1,8 @@
 ﻿using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Middle;
 using AI_Assistant_Win.Utils;
+using Emgu.CV;
+using Emgu.CV.CvEnum;
 using SkiaSharp;
 using System;
 using System.ComponentModel;
@@ -67,7 +69,7 @@ namespace AI_Assistant_Win.Business
                     Confidence = predictions[0].Confidence,
                     BoundingBox = predictions[0].BoundingBox,
                     SegmentedPixelsCount = predictions[0].SegmentedPixels.Length,
-                    Quadrilateral = ShapeHelper.GetRectangleVertices(predictions[0].SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList())
+                    Quadrilateral = EnhancedHybridDetector.DetectQuadrilateral([.. predictions[0].SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y))], new Mat(imageProcessBLL.OriginImagePath, ImreadModes.Color))
                 };
                 var rendered = DrawBoxes(image, currentScale, predictions[0]);
                 imageProcessBLL.SaveRenderImage(rendered);  // show render image 
@@ -234,7 +236,8 @@ namespace AI_Assistant_Win.Business
             //    canvas.DrawCircle(item.X, item.Y, 2, pointBgPaint);
             //}
             // quadrilateal
-            var quadrilateal = ShapeHelper.GetRectangleVertices(detection.SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList());
+            //var quadrilateal = ShapeHelper.GetRectangleVertices(detection.SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList());
+            var quadrilateal = prediction.Quadrilateral;
             // A background
             canvas.DrawCircle(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y, (int)paintText.MeasureText("A"), pointBgPaint);
             var a_x = quadrilateal.TopLeft.X - (int)paintText.MeasureText("A") / 2;
