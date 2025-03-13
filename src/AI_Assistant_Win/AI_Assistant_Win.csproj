@@ -11,7 +11,7 @@
     <Company>Fusionshen</Company>
     <Copyright>Copyright © Fusionshen 2024-2025</Copyright>
     <Product>aiassistant.net</Product>
-	<Version>0.8.0</Version>
+	<Version>0.8.1</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <AssemblyTitle>AI Assistant Winforms Client</AssemblyTitle>
     <Description>Winforms Client with antdUI and yolo.net</Description>
@@ -40,15 +40,15 @@
   <ItemGroup>
     <PackageReference Include="Emgu.CV" Version="4.10.0.5680" />
     <PackageReference Include="Emgu.CV.runtime.windows" Version="4.10.0.5680" />
-    <PackageReference Include="itext7" Version="9.0.0" />
-    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.0.0" />
-    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.19.2" />
+    <PackageReference Include="itext7" Version="9.1.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.1.0" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime.Gpu" Version="1.21.0" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.4" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.5" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
-    <PackageReference Include="VC-LTL" Version="5.1.1" />
+    <PackageReference Include="VC-LTL" Version="5.2.1" />
     <PackageReference Include="WinFormsComInterop" Version="0.5.0" />
-    <PackageReference Include="YY-Thunks" Version="1.1.4" />
+    <PackageReference Include="YY-Thunks" Version="1.1.6" />
     <RdXmlFile Include="rd.xml" />
   </ItemGroup>
 
@@ -173,6 +173,9 @@
     <None Update="Resources\Blackness\v3.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\tessdata\chi_sim.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Circular\model.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -192,7 +195,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\template.png">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\tessdata\eng.traineddata">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

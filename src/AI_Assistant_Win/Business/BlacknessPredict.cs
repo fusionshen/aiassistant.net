@@ -1,5 +1,7 @@
 ﻿using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Utils;
+using Emgu.CV;
+using Emgu.CV.Structure;
 using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -50,25 +52,47 @@ namespace AI_Assistant_Win.Business
         public void Predict(CalculateScale currentScale)
         {
             using var yolo = YoloV8Predictor.Create("./Resources/Blackness/v3.onnx", labels, false);
-            using var image = Image.Load(imageProcessBLL.OriginImagePath);
-            predictions = yolo.Predict(image);
-            if (predictions.Length == 6)
+
+            // **解决文件占用问题**
+            byte[] imageData = File.ReadAllBytes(imageProcessBLL.OriginImagePath); // 一次性读取，不再占用文件
+            using var imageStream = new MemoryStream(imageData);
+            using var image = Image.Load(imageStream); // 现在 `image` 依赖内存，而非原始文件
+
+            var yoloPredictions = yolo.Predict(image);
+
+            if (yoloPredictions.Length > 0 && yoloPredictions.Length <= 6)
             {
+                if (yoloPredictions.Length == 6)
+                {
+                    predictions = yoloPredictions.OrderBy(t => t.Rectangle.Y).ToArray();
+                }
+                else
+                {
+                    // 现在 `imageProcessBLL.OriginImagePath` 已经不被占用了！
+                    using var test = new Image<Bgr, byte>(imageProcessBLL.OriginImagePath);
+                    using var matcher = new OcrBasedMatcher();
+                    predictions = matcher.MatchRegions(test, yoloPredictions);
+                }
                 DrawBoxes(image, currentScale);
-                imageProcessBLL.SaveRenderImage(image);  // show render image 
+                imageProcessBLL.SaveRenderImage(image);
             }
             else
             {
                 predictions = []; // page clears inputs
-                imageProcessBLL.RenderImagePath = string.Empty; // clear render image 
+                imageProcessBLL.RenderImagePath = string.Empty; // clear render image
             }
-            OnPropertyChanged(nameof(Predictions)); //  page outputs/clears predictions
+
+            OnPropertyChanged(nameof(Predictions));
         }
 
         private void DrawBoxes(Image image, CalculateScale currentScale)
         {
             foreach (var pred in predictions)
             {
+                if (pred == null)
+                {
+                    continue;
+                }
                 var originalImageHeight = image.Height;
                 var originalImageWidth = image.Width;
 

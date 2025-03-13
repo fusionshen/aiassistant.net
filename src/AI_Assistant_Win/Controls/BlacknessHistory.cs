@@ -265,12 +265,33 @@ namespace AI_Assistant_Win.Controls
 
         private string FormatLevelDetail(BlacknessMethodResult blacknessMethodResult)
         {
-            return $"{LocalizeHelper.SURFACE_OP}{LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceOPLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceOPWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
-                   $"{LocalizeHelper.SURFACE_CE}{LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceCELevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceCEWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
-                   $"{LocalizeHelper.SURFACE_DR}{LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceDRLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceDRWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
-                   $"{LocalizeHelper.INSIDE_OP}{LocalizeHelper.LEVEL}{blacknessMethodResult.InsideOPLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideOPWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
-                   $"{LocalizeHelper.INSIDE_CE}{LocalizeHelper.LEVEL}{blacknessMethodResult.InsideCELevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideCEWidth:F2}{LocalizeHelper.MILLIMETER}\n" +
-                   $"{LocalizeHelper.INSIDE_DR}{LocalizeHelper.LEVEL}{blacknessMethodResult.InsideDRLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideDRWidth:F2}{LocalizeHelper.MILLIMETER}";
+            var resultList = new List<string>();
+            if (!string.IsNullOrEmpty(blacknessMethodResult.SurfaceOPLevel))
+            {
+                resultList.Add($"{LocalizeHelper.SURFACE_OP}({LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceOPLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceOPWidth:F2}{LocalizeHelper.MILLIMETER})");
+            }
+            if (!string.IsNullOrEmpty(blacknessMethodResult.SurfaceCELevel))
+            {
+                resultList.Add($"{LocalizeHelper.SURFACE_CE}({LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceCELevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceCEWidth:F2}{LocalizeHelper.MILLIMETER})");
+            }
+            if (!string.IsNullOrEmpty(blacknessMethodResult.SurfaceDRLevel))
+            {
+                resultList.Add($"{LocalizeHelper.SURFACE_DR}({LocalizeHelper.LEVEL}{blacknessMethodResult.SurfaceDRLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.SurfaceDRWidth:F2}{LocalizeHelper.MILLIMETER})");
+            }
+            if (!string.IsNullOrEmpty(blacknessMethodResult.InsideOPLevel))
+            {
+                resultList.Add($"{LocalizeHelper.INSIDE_OP}({LocalizeHelper.LEVEL}{blacknessMethodResult.InsideOPLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideOPWidth:F2}{LocalizeHelper.MILLIMETER})");
+            }
+            if (!string.IsNullOrEmpty(blacknessMethodResult.InsideCELevel))
+            {
+                resultList.Add($"{LocalizeHelper.INSIDE_CE}({LocalizeHelper.LEVEL}{blacknessMethodResult.InsideCELevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideCEWidth:F2}{LocalizeHelper.MILLIMETER})");
+            }
+            if (!string.IsNullOrEmpty(blacknessMethodResult.InsideDRLevel))
+            {
+                resultList.Add($"{LocalizeHelper.INSIDE_DR}({LocalizeHelper.LEVEL}{blacknessMethodResult.InsideDRLevel}{LocalizeHelper.BLACKNESS_WITH}{blacknessMethodResult.InsideDRWidth:F2}{LocalizeHelper.MILLIMETER})");
+            }
+
+            return string.Join("\n", resultList);
         }
 
         private List<AntdUI.CellTag> FormatCellTagList(BlacknessMethodResult blacknessMethodResult)

@@ -29,12 +29,12 @@ namespace AI_Assistant_Win.Models
         /// 置信度
         /// </summary>
         [Column("score")]
-        public double Score { get; set; }
+        public double? Score { get; set; }
         /// <summary>
         /// 计算过后的宽度，用于保存数据库和history、report展示
         /// </summary>
         [Column("width")]
-        public double Width { get; set; }
+        public double? Width { get; set; }
         /// <summary>
         /// 识别结果
         /// </summary>

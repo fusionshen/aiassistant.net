@@ -49,12 +49,12 @@ namespace AI_Assistant_Win.Models
         /// 表面OP侧宽度
         /// </summary>
         [Column("surface_op_width")]
-        public double SurfaceOPWidth { get; set; }
+        public double? SurfaceOPWidth { get; set; }
         /// <summary>
         /// 表面OP侧置信度
         /// </summary>
         [Column("surface_op_score")]
-        public double SurfaceOPScore { get; set; }
+        public double? SurfaceOPScore { get; set; }
         /// <summary>
         /// 表面CE侧等级
         /// </summary>
@@ -79,12 +79,12 @@ namespace AI_Assistant_Win.Models
         /// 表面DR侧宽度
         /// </summary>
         [Column("surface_dr_width")]
-        public double SurfaceDRWidth { get; set; }
+        public double? SurfaceDRWidth { get; set; }
         /// <summary>
         /// 表面DR侧置信度
         /// </summary>
         [Column("surface_dr_score")]
-        public double SurfaceDRScore { get; set; }
+        public double? SurfaceDRScore { get; set; }
         /// <summary>
         /// 里面OP侧等级
         /// </summary>
@@ -94,12 +94,12 @@ namespace AI_Assistant_Win.Models
         /// 里面OP侧宽度
         /// </summary>
         [Column("inside_op_width")]
-        public double InsideOPWidth { get; set; }
+        public double? InsideOPWidth { get; set; }
         /// <summary>
         /// 里面OP侧置信度
         /// </summary>
         [Column("inside_op_score")]
-        public double InsideOPScore { get; set; }
+        public double? InsideOPScore { get; set; }
         /// <summary>
         /// 里面CE侧等级
         /// </summary>
@@ -109,12 +109,12 @@ namespace AI_Assistant_Win.Models
         /// 里面CE侧宽度
         /// </summary>
         [Column("inside_ce_width")]
-        public double InsideCEWidth { get; set; }
+        public double? InsideCEWidth { get; set; }
         /// <summary>
         /// 里面CE侧置信度
         /// </summary>
         [Column("inside_ce_score")]
-        public double InsideCEScore { get; set; }
+        public double? InsideCEScore { get; set; }
         /// <summary>
         /// 里面DR侧等级
         /// </summary>
@@ -124,12 +124,12 @@ namespace AI_Assistant_Win.Models
         /// 里面DR侧宽度
         /// </summary>
         [Column("inside_dr_width")]
-        public double InsideDRWidth { get; set; }
+        public double? InsideDRWidth { get; set; }
         /// <summary>
         /// 里面DR侧置信度
         /// </summary>
         [Column("inside_dr_score")]
-        public double InsideDRScore { get; set; }
+        public double? InsideDRScore { get; set; }
         #endregion
         /// <summary>
         /// 是否上传至业务系统

@@ -520,14 +520,12 @@ namespace AI_Assistant_Win.Controls
 
         private void OutputTexts()
         {
-            var sorted = blacknessPredict.Predictions.OrderBy(t => t.Rectangle.Y).ToArray();
-            // TODO: 现场根据X具体位置判断，因为可能出现未贴完6个部位或者未识别出六个部位的情况
-            tempBlacknessResult.Items = [new(BlacknessLocationKind.SURFACE_OP, sorted[0], CurrentScale),
-                            new(BlacknessLocationKind.SURFACE_CE, sorted[1], CurrentScale),
-                            new(BlacknessLocationKind.SURFACE_DR, sorted[2],CurrentScale),
-                            new(BlacknessLocationKind.INSIDE_OP, sorted[3],CurrentScale),
-                            new(BlacknessLocationKind.INSIDE_CE, sorted[4], CurrentScale),
-                            new(BlacknessLocationKind.INSIDE_DR, sorted[5], CurrentScale)];
+            tempBlacknessResult.Items = [new(BlacknessLocationKind.SURFACE_OP, blacknessPredict.Predictions[0], CurrentScale),
+                            new(BlacknessLocationKind.SURFACE_CE, blacknessPredict.Predictions[1], CurrentScale),
+                            new(BlacknessLocationKind.SURFACE_DR, blacknessPredict.Predictions[2],CurrentScale),
+                            new(BlacknessLocationKind.INSIDE_OP, blacknessPredict.Predictions[3],CurrentScale),
+                            new(BlacknessLocationKind.INSIDE_CE, blacknessPredict.Predictions[4], CurrentScale),
+                            new(BlacknessLocationKind.INSIDE_DR, blacknessPredict.Predictions[5], CurrentScale)];
             inputSurfaceOP.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Description;
             inputSurfaceCE.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Description;
             inputSurfaceDR.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Description;

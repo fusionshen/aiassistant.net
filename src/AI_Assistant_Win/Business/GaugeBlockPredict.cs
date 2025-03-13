@@ -155,17 +155,15 @@ namespace AI_Assistant_Win.Business
             byte labelBoxAlpha = ImageConfig.DEFAULT_OPACITY;
 
             // Shadow paint
-            using var paintShadow = new SKPaint(font)
+            using var paintShadow = new SKPaint
             {
-                TextSize = fontSize, //ImageConfig.DEFAULT_FONT_SIZE,
                 Color = new SKColor(0, 0, 0, textShadowAlpha),
                 IsAntialias = true
             };
 
             // Text paint
-            using var paintText = new SKPaint(font)
+            using var paintText = new SKPaint
             {
-                TextSize = fontSize, //ImageConfig.DEFAULT_FONT_SIZE,
                 Color = SKColors.White,
                 IsAntialias = true
             };
@@ -201,18 +199,18 @@ namespace AI_Assistant_Win.Business
             var box = detection.BoundingBox;
             var boxColor = HexToRgbaSkia(detection.Label.Color, labelBoxAlpha);
             var labelText = LabelText(currentScale, detection);
-            var labelWidth = (int)paintText.MeasureText(labelText);
+            var labelWidth = font.MeasureText(labelText, paintText);
 
             labelBgPaint.Color = boxColor;
             boxPaint.Color = boxColor;
 
             // Calculate label background rect size
             var left = box.Left - labelOffset;
-            var top = box.Top - labelBoxHeight;
+            var top = box.Top - 2 * labelBoxHeight;
             var right = box.Left + labelWidth + (margin * 2);
-            var bottom = box.Top - labelOffset;
+            var bottom = box.Top - labelOffset - labelBoxHeight;
 
-            var labelBackground = new SKRectI(left, top, right, bottom);
+            var labelBackground = new SKRectI(left, top, (int)right, bottom);
 
             // Calculate label text coordinates
             var text_x = labelBackground.Left + margin;
@@ -225,10 +223,10 @@ namespace AI_Assistant_Win.Business
             canvas.DrawRect(labelBackground, labelBgPaint);
 
             // Text shadow
-            canvas.DrawText(labelText, text_x + shadowOffset, text_y + shadowOffset, paintShadow);
+            canvas.DrawText(labelText, text_x + shadowOffset, text_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
 
             // Label text
-            canvas.DrawText(labelText, text_x, text_y, paintText);
+            canvas.DrawText(labelText, text_x, text_y, SKTextAlign.Left, font, paintText);
             // Vertices
             //var points = ShapeHelper.ComputeConvexHull(detection.SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList());
             //foreach (var item in points)
@@ -239,77 +237,77 @@ namespace AI_Assistant_Win.Business
             //var quadrilateal = ShapeHelper.GetRectangleVertices(detection.SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y)).ToList());
             var quadrilateal = prediction.Quadrilateral;
             // A background
-            canvas.DrawCircle(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y, (int)paintText.MeasureText("A"), pointBgPaint);
-            var a_x = quadrilateal.TopLeft.X - (int)paintText.MeasureText("A") / 2;
+            canvas.DrawCircle(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y, font.MeasureText("A", paintText), pointBgPaint);
+            var a_x = quadrilateal.TopLeft.X - font.MeasureText("A", paintText) / 2;
             var a_y = quadrilateal.TopLeft.Y + margin / 2 + labelOffset;
             // A shadow
-            canvas.DrawText("A", a_x + shadowOffset, a_y + shadowOffset, paintShadow);
+            canvas.DrawText("A", a_x + shadowOffset, a_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // A text
-            canvas.DrawText("A", a_x, a_y, paintText);
+            canvas.DrawText("A", a_x, a_y, SKTextAlign.Left, font, paintText);
             // B background
-            canvas.DrawCircle(quadrilateal.TopRight.X, quadrilateal.TopRight.Y, (int)paintText.MeasureText("B"), pointBgPaint);
-            var b_x = quadrilateal.TopRight.X - (int)paintText.MeasureText("B") / 2;
+            canvas.DrawCircle(quadrilateal.TopRight.X, quadrilateal.TopRight.Y, font.MeasureText("B", paintText), pointBgPaint);
+            var b_x = quadrilateal.TopRight.X - font.MeasureText("B", paintText) / 2;
             var b_y = quadrilateal.TopRight.Y + margin / 2 + labelOffset;
             // B shadow
-            canvas.DrawText("B", b_x + shadowOffset, b_y + shadowOffset, paintShadow);
+            canvas.DrawText("B", b_x + shadowOffset, b_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // B text
-            canvas.DrawText("B", b_x, b_y, paintText);
+            canvas.DrawText("B", b_x, b_y, SKTextAlign.Left, font, paintText);
             // Line AB
             canvas.DrawLine(new SKPoint(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y), new SKPoint(quadrilateal.TopRight.X, quadrilateal.TopRight.Y), pointBgPaint);
             var ab_length = ShapeHelper.CalculateDistance(quadrilateal.TopLeft, quadrilateal.TopRight);
             var abText = EdgeText(currentScale, ab_length);
-            var ab_x = (quadrilateal.TopLeft.X + quadrilateal.TopRight.X - (int)paintText.MeasureText(abText)) / 2 + margin;
-            var ab_y = (quadrilateal.TopLeft.Y + quadrilateal.TopRight.Y) / 2 + textOffset;
+            var ab_x = (quadrilateal.TopLeft.X + quadrilateal.TopRight.X - font.MeasureText(abText, paintText)) / 2 + margin;
+            var ab_y = (quadrilateal.TopLeft.Y + quadrilateal.TopRight.Y) / 2 - textOffset;
             // AB shadow
-            canvas.DrawText(abText, ab_x + shadowOffset, ab_y + shadowOffset, paintShadow);
+            canvas.DrawText(abText, ab_x + shadowOffset, ab_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // AB text
-            canvas.DrawText(abText, ab_x, ab_y, paintText);
+            canvas.DrawText(abText, ab_x, ab_y, SKTextAlign.Left, font, paintText);
             // C background
-            canvas.DrawCircle(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y, (int)paintText.MeasureText("C"), pointBgPaint);
-            var c_x = quadrilateal.BottomRight.X - (int)paintText.MeasureText("C") / 2;
+            canvas.DrawCircle(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y, font.MeasureText("C", paintText), pointBgPaint);
+            var c_x = quadrilateal.BottomRight.X - font.MeasureText("C", paintText) / 2;
             var c_y = quadrilateal.BottomRight.Y + margin / 2 + labelOffset;
             // C shadow
-            canvas.DrawText("C", c_x + shadowOffset, c_y + shadowOffset, paintShadow);
+            canvas.DrawText("C", c_x + shadowOffset, c_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // C text
-            canvas.DrawText("C", c_x, c_y, paintText);
+            canvas.DrawText("C", c_x, c_y, SKTextAlign.Left, font, paintText);
             // Line BC
             canvas.DrawLine(new SKPoint(quadrilateal.TopRight.X, quadrilateal.TopRight.Y), new SKPoint(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y), pointBgPaint);
             var bc_length = ShapeHelper.CalculateDistance(quadrilateal.TopRight, quadrilateal.BottomRight);
             var bcText = EdgeText(currentScale, bc_length);
-            var bc_x = (quadrilateal.TopRight.X + quadrilateal.BottomRight.X) / 2 - (int)paintText.MeasureText(bcText) - margin;
+            var bc_x = (quadrilateal.TopRight.X + quadrilateal.BottomRight.X) / 2 + margin;
             var bc_y = (quadrilateal.TopRight.Y + quadrilateal.BottomRight.Y) / 2;
             // BC shadow
-            canvas.DrawText(bcText, bc_x + shadowOffset, bc_y + shadowOffset, paintShadow);
+            canvas.DrawText(bcText, bc_x + shadowOffset, bc_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // BC text
-            canvas.DrawText(bcText, bc_x, bc_y, paintText);
+            canvas.DrawText(bcText, bc_x, bc_y, SKTextAlign.Left, font, paintText);
             // D background
-            canvas.DrawCircle(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y, (int)paintText.MeasureText("D"), pointBgPaint);
-            var d_x = quadrilateal.BottomLeft.X - (int)paintText.MeasureText("D") / 2;
+            canvas.DrawCircle(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y, font.MeasureText("D", paintText), pointBgPaint);
+            var d_x = quadrilateal.BottomLeft.X - font.MeasureText("D", paintText) / 2;
             var d_y = quadrilateal.BottomLeft.Y + margin / 2 + labelOffset;
             // D shadow
-            canvas.DrawText("D", d_x + shadowOffset, d_y + shadowOffset, paintShadow);
+            canvas.DrawText("D", d_x + shadowOffset, d_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // D text
-            canvas.DrawText("D", d_x, d_y, paintText);
+            canvas.DrawText("D", d_x, d_y, SKTextAlign.Left, font, paintText);
             // Line CD
             canvas.DrawLine(new SKPoint(quadrilateal.BottomRight.X, quadrilateal.BottomRight.Y), new SKPoint(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y), pointBgPaint);
             var cd_length = ShapeHelper.CalculateDistance(quadrilateal.BottomRight, quadrilateal.BottomLeft);
             var cdText = EdgeText(currentScale, cd_length);
-            var cd_x = (quadrilateal.BottomRight.X + quadrilateal.BottomLeft.X - (int)paintText.MeasureText(bcText)) / 2 - margin;
-            var cd_y = (quadrilateal.BottomRight.Y + quadrilateal.BottomLeft.Y) / 2 - textOffset;
+            var cd_x = (quadrilateal.BottomRight.X + quadrilateal.BottomLeft.X - font.MeasureText(cdText, paintText)) / 2 - margin;
+            var cd_y = (quadrilateal.BottomRight.Y + quadrilateal.BottomLeft.Y) / 2 + textOffset;
             // CD shadow
-            canvas.DrawText(cdText, cd_x + shadowOffset, cd_y + shadowOffset, paintShadow);
+            canvas.DrawText(cdText, cd_x + shadowOffset, cd_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // CD text
-            canvas.DrawText(cdText, cd_x, cd_y, paintText);
+            canvas.DrawText(cdText, cd_x, cd_y, SKTextAlign.Left, font, paintText);
             // Lind DA
             canvas.DrawLine(new SKPoint(quadrilateal.BottomLeft.X, quadrilateal.BottomLeft.Y), new SKPoint(quadrilateal.TopLeft.X, quadrilateal.TopLeft.Y), pointBgPaint);
             var da_length = ShapeHelper.CalculateDistance(quadrilateal.BottomLeft, quadrilateal.TopLeft);
             var daText = EdgeText(currentScale, da_length);
-            var da_x = (quadrilateal.BottomLeft.X + quadrilateal.TopLeft.X) / 2 + margin;
+            var da_x = (quadrilateal.BottomLeft.X + quadrilateal.TopLeft.X) / 2 - font.MeasureText(daText, paintText) - margin;
             var da_y = (quadrilateal.BottomLeft.Y + quadrilateal.TopLeft.Y) / 2;
             // DA shadow
-            canvas.DrawText(daText, da_x + shadowOffset, da_y + shadowOffset, paintShadow);
+            canvas.DrawText(daText, da_x + shadowOffset, da_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
             // DA text
-            canvas.DrawText(daText, da_x, da_y, paintText);
+            canvas.DrawText(daText, da_x, da_y, SKTextAlign.Left, font, paintText);
 
             // Execute all pending draw operations
             canvas.Flush();

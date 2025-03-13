@@ -42,12 +42,12 @@ namespace AI_Assistant_Win
             {
                 imagePath = blacknessResult.RenderImagePath;
                 avatarCurrent.Image = Image.FromFile(imagePath);
-                textSurfaceOPPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Width.ToString("F2");
-                textSurfaceCEPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Width.ToString("F2");
-                textSurfaceDRPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Width.ToString("F2");
-                textInsideOPPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Width.ToString("F2");
-                textInsideCEPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Width.ToString("F2");
-                textInsideDRPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Width.ToString("F2");
+                textSurfaceOPPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP))?.Width?.ToString("F2");
+                textSurfaceCEPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_CE))?.Width?.ToString("F2");
+                textSurfaceDRPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_DR))?.Width?.ToString("F2");
+                textInsideOPPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_OP))?.Width?.ToString("F2");
+                textInsideCEPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Width?.ToString("F2");
+                textInsideDRPixels.Text = blacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Width?.ToString("F2");
             }
             else
             {

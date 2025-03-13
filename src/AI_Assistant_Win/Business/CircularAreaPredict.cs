@@ -150,17 +150,17 @@ namespace AI_Assistant_Win.Business
             byte labelBoxAlpha = ImageConfig.DEFAULT_OPACITY;
 
             // Shadow paint
-            using var paintShadow = new SKPaint(font)
+            using var paintShadow = new SKPaint
             {
-                TextSize = fontSize, //ImageConfig.DEFAULT_FONT_SIZE,
+                //Typeface = font.Typeface,  // 直接使用 SKFont 的 Typeface
                 Color = new SKColor(0, 0, 0, textShadowAlpha),
                 IsAntialias = true
             };
 
             // Text paint
-            using var paintText = new SKPaint(font)
+            using var paintText = new SKPaint
             {
-                TextSize = fontSize, //ImageConfig.DEFAULT_FONT_SIZE,
+                //TextSize = fontSize, //ImageConfig.DEFAULT_FONT_SIZE,
                 Color = SKColors.White,
                 IsAntialias = true
             };
@@ -189,7 +189,7 @@ namespace AI_Assistant_Win.Business
             var box = detection.BoundingBox;
             var boxColor = HexToRgbaSkia(detection.Label.Color, labelBoxAlpha);
             var labelText = LabelText(currentScale, detection);
-            var labelWidth = (int)paintText.MeasureText(labelText);
+            var labelWidth = font.MeasureText(labelText, paintText);
 
             labelBgPaint.Color = boxColor;
             boxPaint.Color = boxColor;
@@ -200,7 +200,7 @@ namespace AI_Assistant_Win.Business
             var right = box.Left + labelWidth + (margin * 2);
             var bottom = box.Top - labelOffset;
 
-            var labelBackground = new SKRectI(left, top, right, bottom);
+            var labelBackground = new SKRectI(left, top, (int)right, bottom);
 
             // Calculate label text coordinates
             var text_x = labelBackground.Left + margin;
@@ -213,10 +213,10 @@ namespace AI_Assistant_Win.Business
             canvas.DrawRect(labelBackground, labelBgPaint);
 
             // Text shadow
-            canvas.DrawText(labelText, text_x + shadowOffset, text_y + shadowOffset, paintShadow);
+            canvas.DrawText(labelText, text_x + shadowOffset, text_y + shadowOffset, SKTextAlign.Left, font, paintShadow);
 
             // Label text
-            canvas.DrawText(labelText, text_x, text_y, paintText);
+            canvas.DrawText(labelText, text_x, text_y, SKTextAlign.Left, font, paintText);
 
             // Execute all pending draw operations
             canvas.Flush();

@@ -122,8 +122,8 @@ namespace AI_Assistant_Win.Business
                 {
                     Location = t.Location,
                     Level = t.Level,
-                    Score = t.Score,
-                    Width = t.Width,
+                    Score = t.Score ?? 0f,
+                    Width = t.Width ?? 0f,
                     Prediction = t.Prediction
                 })
                 .OrderBy(t => t.Location)

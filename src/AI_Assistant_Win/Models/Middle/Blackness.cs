@@ -19,25 +19,25 @@ namespace AI_Assistant_Win.Models.Middle
         /// <summary>
         /// 黑度
         /// </summary>
-        public string Level { get => new(Prediction.Label.Name.Where(char.IsDigit).ToArray()); }
+        public string Level { get => new(Prediction?.Label.Name.Where(char.IsDigit).ToArray()); }
         /// <summary>
         /// 置信度
         /// </summary>
-        public float Score { get => Prediction.Score; }
+        public double? Score { get => Prediction?.Score; }
         /// <summary>
         /// 宽度，实际指图片像素高度，可以页面上可以更改比例尺重新计算，原始的像素值不能变化
         /// </summary>
-        public float Width { get => Prediction.Rectangle.Height; }
+        public double? Width { get => Prediction?.Rectangle.Height; }
         /// <summary>
         /// 计算过后的宽度，用于保存数据库和history、report展示
         /// </summary>
-        public double CalculatedWidth { get => CalculateScale == null ? Prediction.Rectangle.Height : Prediction.Rectangle.Height * CalculateScale.Value; }
+        public double? CalculatedWidth { get => Prediction == null ? null : CalculateScale == null ? Prediction.Rectangle.Height : Prediction.Rectangle.Height * CalculateScale.Value; }
         /// <summary>
         /// 表述，用于在结果判定区显示
         /// </summary>
         public string Description
         {
-            get => $"{LocalizeHelper.LEVEL}{Level}{LocalizeHelper.BLACKNESS_WITH}{CalculatedWidth:F2}{Unit}";
+            get => Prediction == null ? null : $"{LocalizeHelper.LEVEL}{Level}{LocalizeHelper.BLACKNESS_WITH}{CalculatedWidth:F2}{Unit}";
         }
 
         private string Unit
