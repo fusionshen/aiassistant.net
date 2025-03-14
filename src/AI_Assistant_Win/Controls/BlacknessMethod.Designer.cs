@@ -608,6 +608,7 @@ namespace AI_Assistant_Win.Controls
             inputCoilNumber.Size = new Size(243, 34);
             inputCoilNumber.TabIndex = 17;
             inputCoilNumber.TextChanged += InputCoilNumber_TextChanged;
+            inputCoilNumber.Leave += InputCoilNumber_Leave;
             // 
             // labelCoilNumber
             // 
@@ -650,6 +651,7 @@ namespace AI_Assistant_Win.Controls
             selectTestNo.TabIndex = 18;
             selectTestNo.SelectedIndexChanged += SelectTestNo_SelectedIndexChanged;
             selectTestNo.TextChanged += SelectTestNo_TextChanged;
+            selectTestNo.Leave += SelectTestNo_Leave;
             // 
             // labelTestNo
             // 

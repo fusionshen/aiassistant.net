@@ -134,6 +134,10 @@ namespace AI_Assistant_Win.Models.Middle
         }
 
         public bool IsUploaded { get; set; } = false;
+        /// <summary>
+        /// 第几次试验
+        /// </summary>
+        public int? Nth { get; set; } = 1;
 
         private CalculateScale calculateScale = new();
 

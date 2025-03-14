@@ -92,6 +92,7 @@ namespace AI_Assistant_Win.Controls
                         btnPrint.Visible = true;
                         btnPre.Visible = true;
                         btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != 0;
+                        labelTestNo.Badge = originalBlacknessResult.Nth.ToString();
                         AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDIT_MODE(originalBlacknessResult));
                         return;
                     }
@@ -100,6 +101,7 @@ namespace AI_Assistant_Win.Controls
                         btnNext.Visible = false;
                         btnPrint.Visible = false;
                         btnPre.Visible = false;
+                        labelTestNo.Badge = null;
                         AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
                     }
                     // when refresh、pre、next
@@ -220,7 +222,7 @@ namespace AI_Assistant_Win.Controls
             }
             else if (e.PropertyName == "TestNo")
             {
-                // selectTestNo.Items come slowerly than originalBlacknessResult.TestNo;
+                // selectTestNo.Items come less slowly than originalBlacknessResult.TestNo;
                 selectTestNo.Text = originalBlacknessResult.TestNo;
             }
             else if (e.PropertyName == "CoilNumber")
@@ -560,7 +562,7 @@ namespace AI_Assistant_Win.Controls
                 return;
             }
             if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalBlacknessResult.IsUploaded ?
-                LocalizeHelper.WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING :
+                LocalizeHelper.WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADED :
                 LocalizeHelper.WOULD_SAVE_BLACKNESS_RESULT) == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
@@ -654,6 +656,11 @@ namespace AI_Assistant_Win.Controls
             UpdateCoilNumberInput();
         }
 
+        private void SelectTestNo_Leave(object sender, EventArgs e)
+        {
+            UpdateNth();
+        }
+
         /// <summary>
         /// 统一更新钢卷号输入框的状态
         /// </summary>
@@ -680,6 +687,36 @@ namespace AI_Assistant_Win.Controls
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)
         {
             tempBlacknessResult.CoilNumber = inputCoilNumber.Text;
+        }
+
+        private void InputCoilNumber_Leave(object sender, EventArgs e)
+        {
+            UpdateNth();
+        }
+
+        private void UpdateNth()
+        {
+            // only when editing， not when initializing
+            if (string.IsNullOrEmpty(EDIT_METHOD_ID))
+            {
+                if (!string.IsNullOrEmpty(tempBlacknessResult.TestNo) && !string.IsNullOrEmpty(tempBlacknessResult.CoilNumber))
+                {
+                    var result = blacknessMethodBLL.GetNthOfMethod(tempBlacknessResult.TestNo, tempBlacknessResult.CoilNumber)?.ToString();
+                    labelTestNo.Badge = result;
+                    AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDITING_NTH(tempBlacknessResult));
+                }
+                else
+                {
+                    labelTestNo.Badge = null;
+                }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(tempBlacknessResult.TestNo) && !string.IsNullOrEmpty(tempBlacknessResult.CoilNumber))
+                {
+                    AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDITING_NTH(tempBlacknessResult));
+                }
+            }
         }
 
         private void InputSize_TextChanged(object sender, EventArgs e)

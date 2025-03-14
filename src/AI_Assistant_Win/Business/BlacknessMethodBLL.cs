@@ -64,7 +64,7 @@ namespace AI_Assistant_Win.Business
                 throw new Exception(LocalizeHelper.ID_IS_EMPTY);
             }
             // if t.Id.ToString().Equals(id), will throw not function toString(), funny!
-            var item = connection.Table<BlacknessMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
+            var item = connection.Table<BlacknessMethodResult>().FirstOrDefault(t => id.Equals(t.Id));
             return item;
         }
 
@@ -96,6 +96,7 @@ namespace AI_Assistant_Win.Business
                     WorkGroup = tempBlacknessResult.WorkGroup,
                     TestNo = tempBlacknessResult.TestNo,
                     CoilNumber = tempBlacknessResult.CoilNumber,
+                    Nth = GetNthOfMethod(tempBlacknessResult.TestNo, tempBlacknessResult.CoilNumber),
                     Size = tempBlacknessResult.Size,
                     Analyst = tempBlacknessResult.Analyst,
                     SurfaceOPLevel = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.SURFACE_OP)).Level,
@@ -210,6 +211,19 @@ namespace AI_Assistant_Win.Business
             }
         }
 
+        public int? GetNthOfMethod(string testNo, string coilNumber)
+        {
+            if (string.IsNullOrEmpty(testNo) || string.IsNullOrEmpty(coilNumber))
+            {
+                throw new Exception(LocalizeHelper.INVALID_PARAMETER);
+            }
+            var item = connection.Table<BlacknessMethodResult>()
+                .Where(t => testNo.Equals(t.TestNo) && coilNumber.Equals(t.CoilNumber))
+                .OrderByDescending(t => t.Nth)
+                .FirstOrDefault();
+            return item == null ? 1 : item.Nth + 1;
+        }
+
         public List<int> LoadOriginalResultFromDB(BlacknessResult originalBlacknessResult, string id)
         {
             if (string.IsNullOrEmpty(id))
@@ -225,7 +239,7 @@ namespace AI_Assistant_Win.Business
                 originalBlacknessResult.Items = [];
                 return [];
             }
-            var allSorted = connection.Table<BlacknessMethodResult>().OrderBy(t => t.Id).ToList();
+            var allSorted = connection.Table<BlacknessMethodResult>().OrderBy(t => t.TestNo).OrderBy(t => t.Nth).ToList();
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));
             var items = connection.Table<BlacknessMethodItem>()
@@ -243,6 +257,7 @@ namespace AI_Assistant_Win.Business
             originalBlacknessResult.WorkGroup = body.WorkGroup;
             originalBlacknessResult.TestNo = body.TestNo;
             originalBlacknessResult.CoilNumber = body.CoilNumber;
+            originalBlacknessResult.Nth = body.Nth;
             originalBlacknessResult.Size = body.Size;
             originalBlacknessResult.Analyst = body.Analyst;
             originalBlacknessResult.CalculateScale = scaleAtThatTime; // must before items

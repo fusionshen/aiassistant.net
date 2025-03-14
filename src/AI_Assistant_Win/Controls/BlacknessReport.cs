@@ -280,7 +280,7 @@ namespace AI_Assistant_Win.Controls
                 }
                 #endregion
                 label_Analyst.Text = target.Analyst.Split("-").LastOrDefault();
-                label_Coil_Number.Text = target.CoilNumber;
+                label_Coil_Number.Text = $"{target.CoilNumber}(µÚ{target.Nth}´Î)";
                 label_Size.Text = target.Size;
                 #region OK/NG
                 if (target.IsOK)

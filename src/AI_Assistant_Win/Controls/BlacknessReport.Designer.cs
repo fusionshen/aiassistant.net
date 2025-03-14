@@ -394,7 +394,7 @@ namespace AI_Assistant_Win.Controls
             label20.Name = "label20";
             label20.Size = new Size(45, 25);
             label20.TabIndex = 22;
-            label20.Text = "宽度";
+            label20.Text = "宽度(mm)";
             label20.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label19

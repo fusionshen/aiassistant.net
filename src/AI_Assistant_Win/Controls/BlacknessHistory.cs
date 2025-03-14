@@ -61,7 +61,7 @@ namespace AI_Assistant_Win.Controls
                 new AntdUI.ColumnCheck("check"){ Fixed = true },
                 new AntdUI.Column("id",LocalizeHelper.TABLE_HEADER_ID, AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("testNo",LocalizeHelper.TABLE_HEADER_TESTNO, AntdUI.ColumnAlign.Center){ Fixed = true },
-                new AntdUI.Column("size",LocalizeHelper.TABLE_HEADER_SIZE, AntdUI.ColumnAlign.Center){ Fixed = true },
+                new AntdUI.Column("nth",LocalizeHelper.TABLE_HEADER_NTH, AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("isOK","OK/NG", AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("isUploaded",LocalizeHelper.TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center){ Fixed = true },
                 //new AntdUI.ColumnSwitch("isUploaded",LocalizeHelper.BLACKNESS_TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center)
@@ -73,6 +73,7 @@ namespace AI_Assistant_Win.Controls
                 //    }
                 //},
                 new AntdUI.Column("coilNumber",LocalizeHelper.TABLE_HEADER_COILNUMBER, AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("size",LocalizeHelper.TABLE_HEADER_SIZE, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("levels",LocalizeHelper.TABLE_HEADER_LEVEL, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("analyst",LocalizeHelper.TABLE_HEADER_ANALYST,AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("workGroup",LocalizeHelper.TABLE_HEADER_WORKGROUP,AntdUI.ColumnAlign.Center),
@@ -98,7 +99,7 @@ namespace AI_Assistant_Win.Controls
             // if enable dragging column, columnIndex will change. but e only have the attribute: columnIndex, so must disable it.:)
             if (e.Record is IList<AntdUI.AntItem> data)
             {
-                if (e.RowIndex > 0 && e.ColumnIndex == 7) // levels
+                if (e.RowIndex > 0 && e.ColumnIndex == 8) // levels
                 {
                     var levelDatail = data.FirstOrDefault(t => "levelDetail".Equals(t.key))?.value.ToString();
                     AntdUI.Popover.open(new AntdUI.Popover.Config(tableBlacknessHistory, levelDatail) { Offset = e.Rect });
@@ -209,9 +210,10 @@ namespace AI_Assistant_Win.Controls
                     new("check", false),
                     new("id", t.Id),
                     new("testNo", t.TestNo),
-                    new("size", t.Size),
+                    new("nth", t.Nth),
                     new("isOK", t.IsOK ? new AntdUI.CellBadge(TState.Success, "OK") : new AntdUI.CellBadge(TState.Error, "NG")),
                     new("coilNumber", t.CoilNumber),
+                    new("size", t.Size),
                     new("isUploaded", CreateIsUploadedCellBadge(t)),
                     //new("isUploaded", t.IsUploaded),
                     new("levels", FormatCellTagList(t).ToArray()),

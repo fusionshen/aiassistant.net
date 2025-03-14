@@ -56,6 +56,7 @@ namespace AI_Assistant_Win.Utils
         #endregion
         #region check data 
         public static string ID_IS_EMPTY => Localization.Get("The ID is empty.", "编号为空。");
+        public static string INVALID_PARAMETER => Localization.Get("Invalid parameter.", "参数非法。");
         public static string ADD_SUBJECT_FAILED => Localization.Get("Failed to add a new subject.", "新增主体失败。");
         public static string SAVE_DETAILS_FAILED => Localization.Get("Failed to save the details.", "保存明细失败。");
         public static string ADD_SUMMARY_FAILED => Localization.Get("Failed to add a new summary.", "新增概要失败。");
@@ -128,7 +129,8 @@ namespace AI_Assistant_Win.Utils
         public static string LOST_SCALE => Localization.Get("The scale was lost at that time, please re-predict using a new scale and save it.", "当时比例尺丢失，请重新使用新的比例尺进行识别后保存。");
         public static string SETTING_SCALE_FIRSTLY_BEFORE_PREDICTING => Localization.Get("You have not set any scale yet. Please set the length scale before performing recognition.", "您还未设置过任何比例尺，在识别之前请先设置长度比例尺。");
         public static string RESETTING_SCALE_BEFORE_PREDICTING => Localization.Get("You have doubts about the accuracy of the scale, or you want to reset the scale due to platform adjustments. Please confirm:", "您对比例尺准确度抱有疑问，或者调整过平台想要重新设置比例尺。请确认：");
-        public static string BLACKNESS_EDIT_MODE(BlacknessResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo}]", $"修改模式[试样编号：{result.TestNo}]");
+        public static string BLACKNESS_EDIT_MODE(BlacknessResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo};CoilNumber:{result.CoilNumber};{result.Nth}th]", $"修改模式[试样编号：{result.TestNo}；钢卷号：{result.CoilNumber}；第{result.Nth}次]");
+        public static string BLACKNESS_EDITING_NTH(BlacknessResult result) => Localization.Get($"You are entering the results of the {result.Nth} experiment for [Sample Number: {result.TestNo}; Coil Number: {result.CoilNumber}].", $"您正在录入[试样编号：{result.TestNo}；钢卷号：{result.CoilNumber}]第{result.Nth}次试验结果。");
         public static string NEW_MODE => Localization.Get("New Mode", "新增模式");
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
         public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
@@ -156,7 +158,7 @@ namespace AI_Assistant_Win.Utils
         public static string RESULT_UPLOADED => Localization.Get("Uploaded", "已上传");
         public static string RESULT_NOT_UPLOADED => Localization.Get("Not Uploaded", "未上传");
         public static string RESULT_WAITING_REUPLOAD => Localization.Get("Awaiting re-upload", "待重新上传");
-        public static string WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the blackness report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次黑度报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
+        public static string WOULD_RESAVE_BLACKNESS_RESULT_AFTER_UPLOADED => Localization.Get($"The system has detected that the blackness report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次黑度报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
         public static string CLEAR_PAGE_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to clear this page with unsaved work?",
          "您有未保存的工作，确定要清空该页面吗？");
         public static string PRE_RECORD_CONFIRM_WHEN_SOMETHING_IS_UNDONE => Localization.Get("Are you sure you want to open the previous record with unsaved work?", "您有未保存的工作，确定要打开上一条记录吗？");
@@ -244,6 +246,7 @@ namespace AI_Assistant_Win.Utils
         public static string TABLE_HEADER_UPLOADED => Localization.Get("Uploaded", "是否上传");
         public static string TABLE_HEADER_IN_USE => Localization.Get("In Use", "使用");
         public static string TABLE_HEADER_COILNUMBER => Localization.Get("CoilNumber", "钢卷号");
+        public static string TABLE_HEADER_NTH => Localization.Get("NTH", "第几次");
         public static string TABLE_HEADER_MEASUREDLENGTH => Localization.Get("MeasuringLength", "测量长度");
         public static string TABLE_HEADER_LEVEL => Localization.Get("Level", "等级");
         public static string TABLE_HEADER_ANALYST => Localization.Get("Analyst", "分析人");
