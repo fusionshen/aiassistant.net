@@ -21,6 +21,11 @@ namespace AI_Assistant_Win.Models
         [Column("location")]
         public BlacknessLocationKind Location { get; set; }
         /// <summary>
+        /// 部位次数
+        /// </summary>
+        [Column("nth")]
+        public int? Nth { get; set; }
+        /// <summary>
         /// 黑度等级
         /// </summary>
         [Column("level")]

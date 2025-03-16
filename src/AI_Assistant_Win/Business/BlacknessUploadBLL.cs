@@ -22,41 +22,43 @@ namespace AI_Assistant_Win.Business
 
         public async Task Upload(Bitmap memoryImage, BlacknessMethodResult methodResult, BlacknessUploadResult lastUpload = null)
         {
-            var uploadResult = await UploadPDF(memoryImage, methodResult, lastUpload);
-            // call bussiness
-            BlacknessResultResponse info;
-            try
-            {
-                info = await UploadInfo(methodResult, uploadResult);
-            }
-            catch (Exception)
-            {
-                // cant delete the latest version in the server
-                throw;
-            }
-            // add uploadResult & update methodResult
+            BlacknessResultResponse info = new();
+            BlacknessUploadResult uploadResult = new();
             connection.BeginTransaction();
             try
             {
-                DoLocallyByTransaction(methodResult, uploadResult);
+                uploadResult = await UploadPDF(memoryImage, methodResult, lastUpload);
+                var ok = connection.Insert(uploadResult);
+                if (ok == 0)
+                {
+                    throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
+                }
+                info = await UploadInfo(methodResult, uploadResult);
+                methodResult.IsUploaded = true;
+                methodResult.Uploader = uploadResult.Uploader;
+                methodResult.UploadTime = uploadResult.UploadTime;
+                ok = connection.Update(methodResult);
+                if (ok == 0)
+                {
+                    throw new Exception(LocalizeHelper.UPDATE_SUBJECT_FAILED);
+                }
                 connection.Commit();
             }
             catch (Exception)
             {
                 connection.Rollback();
-                // should delete file at the server, but cant delete the latest version in the server
+                // should delete file at the server, but cant delete the latest version in the server, only delete FileManagerId.
+                if (uploadResult.FileManagerId != 0)
+                {
+                    await apiBLL.DeleteUploadedFileAsync(uploadResult.FileManagerId);
+                }
                 // delete info
-                await WithdrawInfo(info);
+                if (!string.IsNullOrEmpty(info.Id))
+                {
+                    info.EntityState = EntityStateKind.Delete;
+                    await apiBLL.UploadBlacknessResultAsync(info);
+                }
                 throw;
-            }
-        }
-
-        private async Task WithdrawInfo(BlacknessResultResponse info)
-        {
-            if (!string.IsNullOrEmpty(info.Id))
-            {
-                info.EntityState = EntityStateKind.Delete;
-                await apiBLL.UploadBlacknessResultAsync(info);
             }
         }
 
@@ -67,6 +69,7 @@ namespace AI_Assistant_Win.Business
             {
                 CoilNumber = methodResult.CoilNumber,
                 TestNo = methodResult.TestNo,
+                Source = methodResult.IsExternal ? 1 : 2,
                 OriginImagePath = methodResult.OriginImagePath,
                 RenderImagePath = methodResult.RenderImagePath,
                 Size = methodResult.Size,
@@ -115,13 +118,14 @@ namespace AI_Assistant_Win.Business
         private List<BlacknessItemResponse> CreateDetails(int id)
         {
             var items = connection.Table<BlacknessMethodItem>()
-                .Where(t => t.ResultId.Equals(id))
+                .Where(t => t.ResultId.Equals(id) && !string.IsNullOrEmpty(t.Level))
                 .Select(t => new BlacknessItemResponse
                 {
                     Location = t.Location,
                     Level = t.Level,
                     Score = t.Score ?? 0,
                     Width = t.Width ?? 0,
+                    Nth = t.Nth ?? 1,
                     Prediction = t.Prediction
                 })
                 .OrderBy(t => t.Location)
@@ -136,10 +140,11 @@ namespace AI_Assistant_Win.Business
                 ResultId = methodResult.Id,
                 TestNo = methodResult.TestNo,
                 CoilNumber = methodResult.CoilNumber,
+                Nth = methodResult.Nth,
                 Uploader = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}",
                 LocalFilePath = SaveLocallyAndReturnPath(memoryImage, methodResult), // first save locally
                 FileManagerId = lastUpload == null ? 0 : lastUpload.FileManagerId,
-                FileName = methodResult.TestNo + ".pdf",
+                FileName = $"{methodResult.TestNo}_{methodResult.CoilNumber}_{methodResult.Nth}.pdf",
                 FileCategory = FILE_CATEGORY_NAME,
                 FileCategoryId = await GetFileCategoryId(),
                 FileVersion = $"{DateTime.Now:yyyyMMddHHmmss}",
@@ -158,23 +163,6 @@ namespace AI_Assistant_Win.Business
             uploadResult.UploadFileId = uploadedFile.UploadFileId;
             uploadResult.UploadTime = DateTime.Now;
             return uploadResult;
-        }
-
-        private void DoLocallyByTransaction(BlacknessMethodResult methodResult, BlacknessUploadResult uploadResult)
-        {
-            methodResult.IsUploaded = true;
-            methodResult.Uploader = uploadResult.Uploader;
-            methodResult.UploadTime = uploadResult.UploadTime;
-            var ok = connection.Update(methodResult);
-            if (ok == 0)
-            {
-                throw new Exception(LocalizeHelper.UPDATE_SUBJECT_FAILED);
-            }
-            ok = connection.Insert(uploadResult);
-            if (ok == 0)
-            {
-                throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
-            }
         }
 
         private async Task<int> GetFileCategoryId()
@@ -203,8 +191,7 @@ namespace AI_Assistant_Win.Business
         public BlacknessUploadResult GetLastUploaded(BlacknessMethodResult target)
         {
             var item = connection.Table<BlacknessUploadResult>()
-                .Where(t => t.TestNo.Equals(target.TestNo) && t.CoilNumber.Equals(target.CoilNumber))
-                .OrderByDescending(t => t.FileVersion).FirstOrDefault();
+                .Where(t => target.Id.Equals(t.ResultId)).FirstOrDefault();
             return item;
         }
 

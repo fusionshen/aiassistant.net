@@ -16,6 +16,9 @@ namespace AI_Assistant_Win.Models.Response
         [JsonProperty("testNo")]
         public string TestNo { get; set; }
 
+        [JsonProperty("testSource")]
+        public int Source { get; set; }
+
         [JsonProperty("originImagePath")]
         public string OriginImagePath { get; set; }
 
@@ -118,6 +121,9 @@ namespace AI_Assistant_Win.Models.Response
 
     public class BlacknessItemResponse
     {
+        [JsonProperty("testCount")]
+        public int Nth { get; set; }
+
         [JsonProperty("location")]
         public BlacknessLocationKind Location { get; set; }
 

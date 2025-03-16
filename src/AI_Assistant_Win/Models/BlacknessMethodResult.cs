@@ -44,6 +44,11 @@ namespace AI_Assistant_Win.Models
         /// </summary>
         [Column("is_ok")]
         public bool IsOK { get; set; }
+        /// <summary>
+        /// 是否外部
+        /// </summary>
+        [Column("is_external")]
+        public bool IsExternal { get; set; }
         #region 结果快速预览
         /// <summary>
         /// 表面OP侧等级

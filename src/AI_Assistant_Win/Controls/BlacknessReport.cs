@@ -37,9 +37,9 @@ namespace AI_Assistant_Win.Controls
             InitializeComponent();
             LoadData(methodId);
             Disposed += BlacknessReport_Disposed;
-            AntdUI.ITask.Run(() =>
+            AntdUI.ITask.Run(async () =>
             {
-                System.Threading.Thread.Sleep(1000);
+                await Task.Delay(1000);
                 if (floatButton == null)
                 {
                     var config = new AntdUI.FloatButton.Config(form, [
@@ -86,7 +86,7 @@ namespace AI_Assistant_Win.Controls
                                 {
                                     Filter = "PDF文件|*.pdf",
                                     DefaultExt = "pdf",
-                                    FileName = $"{target.TestNo}_黑度检测报告.pdf",
+                                    FileName = $"{target.TestNo}_第{target.Nth}次_黑度检测报告.pdf",
                                     Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                 };
                                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -110,10 +110,10 @@ namespace AI_Assistant_Win.Controls
                                         AntdUI.TAlignFrom.BR, Font);
                                     return;
                                 }
-                                // check uploaded with the same test number
+                                // check uploaded with same test number, coil number and same nth, also id.
                                 var lastUploaded = uploadBlacknessBLL.GetLastUploaded(target);
                                 if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, lastUploaded != null ?
-                                    LocalizeHelper.WOULD_REUPLOAD_BLACKNESS_RESULT(target.TestNo) :
+                                    LocalizeHelper.WOULD_REUPLOAD_BLACKNESS_RESULT(target) :
                                     LocalizeHelper.WOULD_UPLOAD_BLACKNESS_RESULT) == DialogResult.OK)
                                 {
                                     try

@@ -1,6 +1,9 @@
-﻿using AI_Assistant_Win.Models.Enums;
+﻿using AI_Assistant_Win.Models;
+using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
 using AntdUI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AI_Assistant_Win.Utils
 {
@@ -31,6 +34,7 @@ namespace AI_Assistant_Win.Utils
         public static string UNDER_DEVELOPMENT => Localization.Get("This feature is currently under development.", "此功能目前正在开发中。");
         public static string LOADING_PAGE => Localization.Get("The page is loading...", "页面正在加载中...");
         public static string TESTNO_LIST_LOADED_SUCCESS(int testNoCount) => Localization.Get($"The test sample list has been loaded successfully. There are {testNoCount} records within a month. If your test sample is not in the list, please enter the sample number and coil number manually.", $"试样清单加载成功，一个月内有{testNoCount}条数据，如果您所试验的样品不在列表中，请手动输入试样编号和钢卷号。");
+        public static string TESTNO_LIST_LOADED_SUCCESS(List<TestItem> list) => Localization.Get($"The sample list has been successfully loaded. Within the past month, there are {list.Where(t => t.IsExternal == false).Count()} samples and {list.Where(t => t.IsExternal == true).Count()} outsourced samples. If the sample you are testing is not in the list, please enter the sample number and coil number manually.", $"试样清单加载成功，一个月内有{list.Where(t => t.IsExternal == false).Count()}条数据，{list.Where(t => t.IsExternal == true).Count()}条委外数据。如果您所试验的样品不在列表中，请手动输入试样编号和钢卷号。");
         public static string OPENING_THE_CAMERA => Localization.Get("Opening The Camera...", "开启摄像头中...");
         public static string PAGE_LOADED_SUCCESS => Localization.Get("The Page Loaded", "页面加载成功");
         public static string IN_USE => Localization.Get("In use", "正在使用");
@@ -152,7 +156,7 @@ namespace AI_Assistant_Win.Utils
         public static string CHOOSE_THE_LOCATION => Localization.Get("Choose the location to save the file", "选择保存文件的位置");
         public static string FILE_SAVED_LOCATION => Localization.Get("The PDF file has been successfully saved to:", "PDF文件已成功保存到: ");
         public static string WOULD_UPLOAD_BLACKNESS_RESULT => Localization.Get("Would you like to upload this blackness detection report and its results to the business system?", "是否将本次黑度检测报告及结果上传至业务系统？");
-        public static string WOULD_REUPLOAD_BLACKNESS_RESULT(string testNo) => Localization.Get($"The system has detected that the test number [{testNo}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到[{testNo}]已经上传，是否将本次黑度检测报告及结果重新上传至业务系统并更新版本？");
+        public static string WOULD_REUPLOAD_BLACKNESS_RESULT(BlacknessMethodResult result) => Localization.Get($"The system has detected that the report of the {result.Nth} experiment for [Sample Number: {result.TestNo}; Coil Number: {result.CoilNumber}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到[试样编号：{result.TestNo}；钢卷号：{result.CoilNumber}]第{result.Nth}次报告已经上传，是否将本次黑度检测报告及结果重新上传至业务系统并更新版本？");
         public static string REPORT_UPLOAD_SUCCESS => Localization.Get("Successfully uploaded! The report can be viewed in the [File Management] module; the data can be viewed in the [Sample Management - Data Entry] page.", "成功上传！报告可在【文件管理】模块中查看，数据可在【试样管理-数据录入】查看。");
         public static string ONLY_PDF_REPORT_UPLOAD_SUCCESS => Localization.Get("Successfully uploaded! The report can be viewed in the [File Management] module.", "成功上传！报告可在【文件管理】模块中查看。");
         public static string RESULT_UPLOADED => Localization.Get("Uploaded", "已上传");
@@ -243,6 +247,9 @@ namespace AI_Assistant_Win.Utils
         public static string TABLE_HEADER_TESTNO => Localization.Get("TestNo", "试样编号");
         public static string TABLE_HEADER_SCALE => Localization.Get("Scale", "比例尺");
         public static string TABLE_HEADER_SIZE => Localization.Get("Size", "尺寸");
+        public static string TABLE_HEADER_SOURCE => Localization.Get("Source", "来源");
+        public static string TABLE_HEADER_INTERNAL => Localization.Get("Internal", "内部");
+        public static string TABLE_HEADER_EXTERNAL => Localization.Get("External", "委外");
         public static string TABLE_HEADER_UPLOADED => Localization.Get("Uploaded", "是否上传");
         public static string TABLE_HEADER_IN_USE => Localization.Get("In Use", "使用");
         public static string TABLE_HEADER_COILNUMBER => Localization.Get("CoilNumber", "钢卷号");

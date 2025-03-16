@@ -485,7 +485,7 @@ namespace AI_Assistant_Win.Controls
                     {
                         inputCoilNumber.ReadOnly = true;
                     }
-                    selectTestNo.SelectedValue = target;
+                    selectTestNo.SelectedValue = target.TestNo;
                 }
             }
             catch (Exception error)

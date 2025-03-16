@@ -2,7 +2,6 @@ using AI_Assistant_Win.Business;
 using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
-using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using System;
 using System.Collections.Generic;
@@ -38,7 +37,7 @@ namespace AI_Assistant_Win.Controls
 
         private readonly ObservableDictionary<string, CalculateScale> scaleList = [];
 
-        private List<GetTestNoListResponse> testNoList;
+        private List<TestItem> testNoList;
 
         public BlacknessMethod(MainWindow _form)
         {
@@ -442,7 +441,7 @@ namespace AI_Assistant_Win.Controls
                 if (result != null && result.Count != 0)
                 {
                     selectTestNo.Items.AddRange([.. result]);
-                    AntdUI.Message.success(form, $"{LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS(testNoList.Count)}");
+                    AntdUI.Message.success(form, $"{LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS(testNoList)}");
                 }
                 else
                 {
@@ -461,7 +460,7 @@ namespace AI_Assistant_Win.Controls
                     {
                         inputCoilNumber.ReadOnly = true;
                     }
-                    selectTestNo.SelectedValue = target;
+                    selectTestNo.SelectedValue = target.TestNo;
                 }
             }
             catch (Exception error)
@@ -672,16 +671,13 @@ namespace AI_Assistant_Win.Controls
                 : null;
 
             var coilNumber = targetItem?.CoilNumber;
-            var otherCoilNumber = targetItem?.OtherCoilNumber;
 
-            // 优先级：CoilNumber > OtherCoilNumber > 空
             inputCoilNumber.Text = !string.IsNullOrEmpty(coilNumber)
                 ? coilNumber
-                : otherCoilNumber ?? tempBlacknessResult.CoilNumber;
+                : tempBlacknessResult.CoilNumber;
 
             // 设置只读状态：当找到有效数据且自动填充内容时锁定输入
-            inputCoilNumber.ReadOnly = targetItem != null &&
-                (!string.IsNullOrEmpty(coilNumber) || !string.IsNullOrEmpty(otherCoilNumber));
+            inputCoilNumber.ReadOnly = targetItem != null && !string.IsNullOrEmpty(coilNumber);
         }
 
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)

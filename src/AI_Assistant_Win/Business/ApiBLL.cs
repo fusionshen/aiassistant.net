@@ -173,6 +173,31 @@ namespace AI_Assistant_Win.Business
             return result.Data.Data.FirstOrDefault();
         }
 
+        public async Task<List<GetExternalTestNoListResponse>> GetExternalTestNoListAsync(string itemId = null, string sampleId = null)
+        {
+            var getExternalTestNoListUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("GetExternalTestNoListUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(getExternalTestNoListUrl))
+            {
+                throw new Exception("委外试样编号接口未指定，请联系管理员");
+            }
+
+            getExternalTestNoListUrl = $"{getExternalTestNoListUrl}?{HttpHelper.ToQueryString(new GetExternalTestNoListRequest { ItemId = itemId, SampleId = sampleId })}";
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+            var jsonStr = await httpClient.GetStringAsync(getExternalTestNoListUrl);
+            var result = JsonConvert.DeserializeObject<ResponseBody<List<GetExternalTestNoListResponse>>>(jsonStr) ?? throw new Exception("委外试样编号接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+            if (result.Data == null || result.Data == null)
+            {
+                throw new Exception("试样编号接口返回有误，请联系管理员");
+            }
+            return result.Data;
+        }
+
         public async Task<List<GetFileCategoryListResponse>> GetFileCategoryTreeAsync()
         {
             var getFileCategoryListUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("GetFileCategoryListUrl"))?.Value;
@@ -396,6 +421,33 @@ namespace AI_Assistant_Win.Business
             }
 
             return result.Data.Id;
+        }
+
+        public async Task DeleteUploadedFileAsync(int fileManagerId)
+        {
+            var deleteUploadedFileUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("DeleteUploadedFileUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(deleteUploadedFileUrl))
+            {
+                throw new Exception("删除已上传文件接口未指定，请联系管理员");
+            }
+
+            var json = JsonConvert.SerializeObject(new int[] { fileManagerId });
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+
+            var response = await httpClient.PostAsync(deleteUploadedFileUrl, data);
+
+            var jsonStr = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<string>>(jsonStr) ?? throw new Exception("删除已上传文件接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
         }
     }
 }

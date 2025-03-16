@@ -73,16 +73,17 @@ namespace AI_Assistant_Win.Controls
                 //    }
                 //},
                 new AntdUI.Column("coilNumber",LocalizeHelper.TABLE_HEADER_COILNUMBER, AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("size",LocalizeHelper.TABLE_HEADER_SIZE, AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("source",LocalizeHelper.TABLE_HEADER_SOURCE, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("levels",LocalizeHelper.TABLE_HEADER_LEVEL, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("analyst",LocalizeHelper.TABLE_HEADER_ANALYST,AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("size",LocalizeHelper.TABLE_HEADER_SIZE, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("workGroup",LocalizeHelper.TABLE_HEADER_WORKGROUP,AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("createTime",LocalizeHelper.TABLE_HEADER_CREATETIME,AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("uploader",LocalizeHelper.TABLE_HEADER_UPLOADER,AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("uploadTime",LocalizeHelper.TABLE_HEADER_UPLOADTIME,AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("lastReviser",LocalizeHelper.TABLE_HEADER_LASTREVISER,AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("lastModifiedTime",LocalizeHelper.TABLE_HEADER_LASTMODIFIEDTIME,AntdUI.ColumnAlign.Center),
-                new AntdUI.Column("btns",LocalizeHelper.TABLE_HEADER_OPERATIONS){ Fixed=true, Width="auto"},
+                new AntdUI.Column("btns",LocalizeHelper.TABLE_HEADER_OPERATIONS,AntdUI.ColumnAlign.Center){ Fixed=true, Width="auto"},
             ];
             #endregion
             LoadData(pagination1.Current);  // 1
@@ -213,11 +214,12 @@ namespace AI_Assistant_Win.Controls
                     new("nth", t.Nth),
                     new("isOK", t.IsOK ? new AntdUI.CellBadge(TState.Success, "OK") : new AntdUI.CellBadge(TState.Error, "NG")),
                     new("coilNumber", t.CoilNumber),
-                    new("size", t.Size),
+                    new("source", !t.IsExternal ? new AntdUI.CellBadge(TState.Success, LocalizeHelper.TABLE_HEADER_INTERNAL)
+                    : new AntdUI.CellBadge(TState.Default, LocalizeHelper.TABLE_HEADER_EXTERNAL)),
                     new("isUploaded", CreateIsUploadedCellBadge(t)),
-                    //new("isUploaded", t.IsUploaded),
                     new("levels", FormatCellTagList(t).ToArray()),
                     new("analyst", t.Analyst),
+                    new("size", t.Size),
                     new("workGroup", t.WorkGroup),
                     new("createTime", t.CreateTime),
                     new("uploader", t.Uploader),
