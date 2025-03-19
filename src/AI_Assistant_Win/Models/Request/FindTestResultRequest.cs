@@ -2,7 +2,7 @@
 
 namespace AI_Assistant_Win.Models.Request
 {
-    public class FindBlacknessResultRequest
+    public class FindTestResultRequest
     {
         [JsonProperty("coilNumber")]
         public string CoilNumber { get; set; }

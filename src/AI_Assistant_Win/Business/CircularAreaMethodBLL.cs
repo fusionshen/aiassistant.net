@@ -1,7 +1,6 @@
 ﻿using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
-using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using Newtonsoft.Json;
 using SQLite;
@@ -48,6 +47,8 @@ namespace AI_Assistant_Win.Business
                 result = result && (t.Summary.Id.ToString().Equals(text) ||
                     (!string.IsNullOrEmpty(t.Summary.TestNo) && t.Summary.TestNo.Contains(text)) ||
                     (!string.IsNullOrEmpty(t.Summary.CoilNumber) && t.Summary.CoilNumber.Contains(text)) ||
+                    (t.Summary.IsExternal && text.Contains("委外")) ||
+                    (!t.Summary.IsExternal && text.Contains("内部")) ||
                     (t.Summary.IsUploaded && text.Equals("已上传")) ||
                     (!t.Summary.IsUploaded && text.Equals("未上传")) ||
                     (!string.IsNullOrEmpty(t.Summary.Creator) && t.Summary.Creator.Contains(text)) ||
@@ -58,14 +59,53 @@ namespace AI_Assistant_Win.Business
             return result;
         }
 
+        public CircularAreaSummaryHistory GetSummaryHistoryById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new Exception(LocalizeHelper.ID_IS_EMPTY);
+            }
+            var item = connection.Table<CircularAreaMethodSummary>().ToList().Single(t => id.Equals(t.Id.ToString()));
+            var methodList = connection.Table<CircularAreaMethodResult>()
+                .Where(t => item.TestNo.Equals(t.TestNo) &&
+                            item.CoilNumber.Equals(t.CoilNumber) &&
+                            item.Nth.Equals(t.Nth))
+                .OrderBy(t => t.Position).ToList();
+            return new CircularAreaSummaryHistory
+            {
+                Summary = item,
+                MethodList = methodList
+            };
+        }
+
+        public CircularAreaSummaryHistory GetSummaryHistoryByMethodId(string methodId)
+        {
+            if (string.IsNullOrEmpty(methodId))
+            {
+                throw new Exception(LocalizeHelper.ID_IS_EMPTY);
+            }
+            var method = GetResultById(methodId) ?? throw new Exception(LocalizeHelper.FIND_SUBJECT_FAILED);
+            var item = connection.Table<CircularAreaMethodSummary>().ToList().Single(t => method.TestNo.Equals(t.TestNo) &&
+                            method.CoilNumber.Equals(t.CoilNumber) &&
+                            method.Nth.Equals(t.Nth));
+            var methodList = connection.Table<CircularAreaMethodResult>()
+                .Where(t => item.TestNo.Equals(t.TestNo) &&
+                            item.CoilNumber.Equals(t.CoilNumber) &&
+                            item.Nth.Equals(t.Nth))
+                .OrderBy(t => t.Position).ToList();
+            return new CircularAreaSummaryHistory
+            {
+                Summary = item,
+                MethodList = methodList
+            };
+        }
         public CircularAreaMethodResult GetResultById(string id)
         {
             if (string.IsNullOrEmpty(id))
             {
                 throw new Exception(LocalizeHelper.ID_IS_EMPTY);
             }
-            // if t.Id.ToString().Equals(id), will throw not function toString(), funny!
-            var item = connection.Table<CircularAreaMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
+            var item = connection.Table<CircularAreaMethodResult>().ToList().FirstOrDefault(t => id.Equals(t.Id.ToString()));
             return item;
         }
 
@@ -107,8 +147,8 @@ namespace AI_Assistant_Win.Business
 
         private CircularAreaMethodResult AddOrUpdateByTransaction(CircularAreaResult tempCircularAreaResult)
         {
-            var target = GetResultExitsInDB(tempCircularAreaResult);
-            if (target == null)
+            CircularAreaMethodResult target = new();
+            if (tempCircularAreaResult.Id == 0)
             {
                 target = new CircularAreaMethodResult
                 {
@@ -127,6 +167,7 @@ namespace AI_Assistant_Win.Business
                     TestNo = tempCircularAreaResult.TestNo,
                     CoilNumber = tempCircularAreaResult.CoilNumber,
                     Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key,
+                    Nth = tempCircularAreaResult.Nth,
                     Analyst = tempCircularAreaResult.Analyst,
                     CreateTime = DateTime.Now
                 };
@@ -138,6 +179,8 @@ namespace AI_Assistant_Win.Business
             }
             else // update
             {
+                // find result
+                target = GetResultById(tempCircularAreaResult.Id.ToString()) ?? throw new Exception(LocalizeHelper.FIND_SUBJECT_FAILED);
                 target.OriginImagePath = tempCircularAreaResult.OriginImagePath;
                 target.RenderImagePath = tempCircularAreaResult.RenderImagePath;
                 target.ScaleId = tempCircularAreaResult.Item.CalculateScale.Id; //tempBlacknessResult.CalculateScale.Id,
@@ -152,6 +195,7 @@ namespace AI_Assistant_Win.Business
                 target.WorkGroup = tempCircularAreaResult.WorkGroup;
                 target.TestNo = tempCircularAreaResult.TestNo;
                 target.CoilNumber = tempCircularAreaResult.CoilNumber;
+                target.Nth = tempCircularAreaResult.Nth;
                 target.Position = PositionList.FirstOrDefault(t => tempCircularAreaResult.Position.Equals(t.Value)).Key;
                 target.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
                 target.LastModifiedTime = DateTime.Now;
@@ -165,10 +209,36 @@ namespace AI_Assistant_Win.Business
             return target;
         }
 
-        private void AddOrUpdateSummary(CircularAreaMethodResult circularAreaMethodResult)
+        public int? GetNthOfMethod(string testNo, string coilNumber, string position, int originResultId = 0)
+        {
+            if (string.IsNullOrEmpty(testNo) || string.IsNullOrEmpty(coilNumber) || string.IsNullOrEmpty(position))
+            {
+                throw new Exception(LocalizeHelper.INVALID_PARAMETER);
+            }
+            var positonKey = PositionList.FirstOrDefault(t => position.Equals(t.Value)).Key;
+            if (originResultId != 0)
+            {
+                // find result
+                var result = GetResultById(originResultId.ToString()) ?? throw new Exception(LocalizeHelper.FIND_SUBJECT_FAILED);
+                if (testNo.Equals(result.TestNo) && coilNumber.Equals(result.CoilNumber) && positonKey.Equals(result.Position))
+                {
+                    return result.Nth;
+                }
+            }
+            var item = connection.Table<CircularAreaMethodResult>()
+                .Where(t => testNo.Equals(t.TestNo) && coilNumber.Equals(t.CoilNumber) && positonKey.Equals(t.Position))
+                .OrderByDescending(t => t.Nth)
+                .FirstOrDefault();
+            return item == null ? 1 : item.Nth + 1;
+        }
+
+        private CircularAreaMethodSummary AddOrUpdateSummary(CircularAreaMethodResult circularAreaMethodResult)
         {
             // 查询summary是否存在
-            var summary = connection.Table<CircularAreaMethodSummary>().FirstOrDefault(t => circularAreaMethodResult.TestNo.Equals(t.TestNo) && circularAreaMethodResult.CoilNumber.Equals(t.CoilNumber));
+            var summary = connection.Table<CircularAreaMethodSummary>()
+                .FirstOrDefault(t => circularAreaMethodResult.TestNo.Equals(t.TestNo) &&
+                                     circularAreaMethodResult.CoilNumber.Equals(t.CoilNumber) &&
+                                     circularAreaMethodResult.Nth.Equals(t.Nth));
             if (summary == null)
             {
                 // 构造summary
@@ -176,6 +246,8 @@ namespace AI_Assistant_Win.Business
                 {
                     TestNo = circularAreaMethodResult.TestNo,
                     CoilNumber = circularAreaMethodResult.CoilNumber,
+                    Nth = circularAreaMethodResult.Nth,
+                    IsExternal = TaskHelper.SafeExecuteAsync(apiBLL.GetExternalTestNoListAsync("DXCZLCW", circularAreaMethodResult.TestNo.Split("-")[0])).Result.Count != 0,
                     Creator = circularAreaMethodResult.Analyst,
                     CreateTime = DateTime.Now
                 };
@@ -189,12 +261,14 @@ namespace AI_Assistant_Win.Business
             {
                 summary.LastReviser = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}";
                 summary.LastModifiedTime = DateTime.Now;
+                summary.IsExternal = TaskHelper.SafeExecuteAsync(apiBLL.GetExternalTestNoListAsync("DXCZLCW", circularAreaMethodResult.TestNo.Split("-")[0])).Result.Count != 0;
                 var ok = connection.Update(summary);
                 if (ok == 0)
                 {
                     throw new Exception(LocalizeHelper.UPDATE_SUMMARY_FAILED);
                 }
             }
+            return summary;
         }
 
         public List<int> LoadOriginalResultFromDB(CircularAreaResult originalCircularAreaResult, string id)
@@ -204,6 +278,7 @@ namespace AI_Assistant_Win.Business
                 originalCircularAreaResult.Id = 0;
                 originalCircularAreaResult.TestNo = string.Empty;
                 originalCircularAreaResult.CoilNumber = string.Empty;
+                originalCircularAreaResult.Nth = null;
                 originalCircularAreaResult.Position = string.Empty;
                 originalCircularAreaResult.OriginImagePath = string.Empty;
                 originalCircularAreaResult.RenderImagePath = string.Empty;
@@ -213,50 +288,42 @@ namespace AI_Assistant_Win.Business
                 return [];
             }
             // sorted by testNo，then sorted by position
-            var allSorted = connection.Table<CircularAreaMethodResult>().OrderBy(t => t.CreateTime).ThenBy(t => t.TestNo).ThenBy(t => t.Position).ToList();
+            var allSorted = connection.Table<CircularAreaMethodResult>().OrderBy(t => t.TestNo).OrderBy(t => t.Nth).ThenBy(t => t.Position).ToList();
             var body = allSorted.FirstOrDefault(t => t.Id.ToString().Equals(id)) ?? throw new Exception($"{LocalizeHelper.CERTAIN_ID(id)}{LocalizeHelper.HAVE_NO_SUBJECT}，{LocalizeHelper.PLEASE_CONTACT_ADMIN}");
             var scaleAtThatTime = connection.Table<CalculateScale>().FirstOrDefault(x => x.Id.Equals(body.ScaleId));
             originalCircularAreaResult.Id = body.Id;
             originalCircularAreaResult.TestNo = body.TestNo;
             originalCircularAreaResult.Position = PositionList.FirstOrDefault(t => body.Position.Equals(t.Key)).Value;
             originalCircularAreaResult.CoilNumber = body.CoilNumber;
+            originalCircularAreaResult.Nth = body.Nth;
             originalCircularAreaResult.OriginImagePath = body.OriginImagePath;
             originalCircularAreaResult.RenderImagePath = body.RenderImagePath;
             originalCircularAreaResult.WorkGroup = body.WorkGroup;
             originalCircularAreaResult.Analyst = body.Analyst;
             originalCircularAreaResult.CalculateScale = scaleAtThatTime; // must before items
             originalCircularAreaResult.Item = new CircularArea(JsonConvert.DeserializeObject<SimpleSegmentation>(body.Prediction), scaleAtThatTime);
-            originalCircularAreaResult.IsUploaded = GetSummaryExitsInDB(body).IsUploaded; // promot before saving
+            originalCircularAreaResult.IsUploaded = AddOrUpdateSummary(body).IsUploaded; // promot before saving
             return allSorted.Select(t => t.Id).ToList();
         }
 
-        public CircularAreaMethodSummary GetSummaryExitsInDB(CircularAreaMethodResult result)
+        public async Task<List<TestItem>> GetTestNoListAsync()
         {
-            var target = connection.Table<CircularAreaMethodSummary>()
-                .FirstOrDefault(t => result.TestNo.Equals(t.TestNo) &&
-                                     result.CoilNumber.Equals(t.CoilNumber));
-            if (target == null)
+            var task = TaskHelper.SafeExecuteAsync(apiBLL.GetTestNoListAsync("G1SH"));
+            var externalTask = TaskHelper.SafeExecuteAsync(apiBLL.GetExternalTestNoListAsync("DXCZLCW"));
+            await Task.WhenAll(task, externalTask);
+            var list = task.Result.Select(t => new TestItem
             {
-                // 补齐summary
-                var summary = new CircularAreaMethodSummary
-                {
-                    TestNo = result.TestNo,
-                    CoilNumber = result.CoilNumber,
-                    Creator = result.Analyst,
-                    CreateTime = DateTime.Now
-                };
-                var ok = connection.Insert(summary);
-                if (ok == 0)
-                {
-                    throw new Exception(LocalizeHelper.ADD_SUMMARY_FAILED);
-                }
-            }
-            return target;
-        }
-
-        public async Task<List<GetTestNoListResponse>> GetTestNoListAsync()
-        {
-            var list = await apiBLL.GetTestNoListAsync();
+                TestNo = t.TestNo,
+                CoilNumber = string.IsNullOrEmpty(t.CoilNumber) ? t.OtherCoilNumber : t.CoilNumber
+            }).ToList();
+            // L32503140083-1T1P1C试片编号|SAMPLELOTNO(L32503140083)-试样号|SAMPLE_NO(1T1)试验项目代码|TEST_ITEM_CODE(P1)试验方向代码|TEST_DIRECT_CODE(C)
+            var externalList = externalTask.Result.Select(t => new TestItem
+            {
+                TestNo = $"{t.SampleId}-1{t.SamplePosition}1SH",
+                CoilNumber = t.MaterialId,
+                IsExternal = true
+            }).ToList();
+            list.AddRange(externalList);
             return list;
         }
 

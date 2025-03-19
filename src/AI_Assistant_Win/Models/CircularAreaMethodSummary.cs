@@ -20,6 +20,16 @@ namespace AI_Assistant_Win.Models
         [Column("coil_number")]
         public string CoilNumber { get; set; }
         /// <summary>
+        /// 是否外部
+        /// </summary>
+        [Column("is_external")]
+        public bool IsExternal { get; set; }
+        /// <summary>
+        /// 第几次试验
+        /// </summary>
+        [Column("nth")]
+        public int? Nth { get; set; } = 1;
+        /// <summary>
         /// 是否上传至业务系统
         /// </summary>
         [Column("is_uploaded")]

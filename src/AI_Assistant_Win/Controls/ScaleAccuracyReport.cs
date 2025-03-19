@@ -14,6 +14,8 @@ namespace AI_Assistant_Win.Controls
     {
         private Form form;
 
+        private readonly GaugeBlockMethodBLL gaugeBlockMethodBLL;
+
         Bitmap memoryImage;
 
         AntdUI.FormFloatButton floatButton = null;
@@ -22,13 +24,16 @@ namespace AI_Assistant_Win.Controls
 
         private readonly ScaleAccuracyUploadBLL scaleAccuracyUploadBLL;
 
+        private readonly string tracerId;
+
         private readonly Action callBack;
 
-        public ScaleAccuracyReport(Form _form, ScaleAccuracyTracerHistory _target, Action _callBack)
+        public ScaleAccuracyReport(Form _form, string _tracerId, Action _callBack)
         {
             form = _form;
-            target = _target;
+            tracerId = _tracerId;
             callBack = _callBack;
+            gaugeBlockMethodBLL = new GaugeBlockMethodBLL();
             scaleAccuracyUploadBLL = new ScaleAccuracyUploadBLL();
             InitializeComponent();
             LoadData();
@@ -178,6 +183,7 @@ namespace AI_Assistant_Win.Controls
         {
             try
             {
+                target = gaugeBlockMethodBLL.GetTracerHistoryById(tracerId);
                 labelDate.Text = target.Tracer.CreateTime?.ToString("yyyy Äê MM ÔÂ dd ÈÕ");
                 #region workGroup
                 switch (target.MethodList.FirstOrDefault()?.WorkGroup)

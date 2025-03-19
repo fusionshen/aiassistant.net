@@ -38,7 +38,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _coilNumber; }
             set
             {
-                if (!_coilNumber.Equals(value))
+                if (string.IsNullOrEmpty(_coilNumber) || !_coilNumber.Equals(value))
                 {
                     _coilNumber = value;
                     OnPropertyChanged(nameof(CoilNumber));
@@ -52,7 +52,7 @@ namespace AI_Assistant_Win.Models.Middle
             get { return _postion; }
             set
             {
-                if (!_postion.Equals(value))
+                if (string.IsNullOrEmpty(_postion) || !_postion.Equals(value))
                 {
                     _postion = value;
                     OnPropertyChanged(nameof(Position));
@@ -132,6 +132,23 @@ namespace AI_Assistant_Win.Models.Middle
 
         public bool IsUploaded { get; set; } = false;
 
+        /// <summary>
+        /// 第几次试验
+        /// </summary>
+        public int? _nth { get; set; } = null;
+        public int? Nth
+        {
+            get { return _nth; }
+            set
+            {
+                if (_nth == null || !_nth.Equals(value))
+                {
+                    _nth = value;
+                    OnPropertyChanged(nameof(Nth));
+                }
+            }
+        }
+
         private CalculateScale calculateScale = new();
 
         /// <summary>
@@ -161,14 +178,15 @@ namespace AI_Assistant_Win.Models.Middle
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             var param = (CircularAreaResult)obj;
-            var result = Id.Equals(param.Id) &&
+            var result = Id == param.Id &&
                 !string.IsNullOrEmpty(WorkGroup) && WorkGroup.Equals(param.WorkGroup) &&
                 !string.IsNullOrEmpty(OriginImagePath) && OriginImagePath.Equals(param.OriginImagePath) &&
                 !string.IsNullOrEmpty(RenderImagePath) && RenderImagePath.Equals(param.RenderImagePath) &&
                 !string.IsNullOrEmpty(TestNo) && TestNo.Equals(param.TestNo) &&
                 !string.IsNullOrEmpty(CoilNumber) && CoilNumber.Equals(param.CoilNumber) &&
-                !string.IsNullOrEmpty(Analyst) && Analyst.Equals(param.Analyst) &&
                 !string.IsNullOrEmpty(Position) && Position.Equals(param.Position) &&
+                Nth == param.Nth &&
+                !string.IsNullOrEmpty(Analyst) && Analyst.Equals(param.Analyst) &&
                 Item != null && Item.Equals(param.Item);
             return result;
         }

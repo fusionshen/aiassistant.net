@@ -68,8 +68,8 @@ namespace AI_Assistant_Win.Business
             var model = new BlacknessResultResponse
             {
                 CoilNumber = methodResult.CoilNumber,
-                TestNo = methodResult.TestNo,
-                Source = methodResult.IsExternal ? 1 : 2,
+                TestNo = methodResult.IsExternal ? methodResult.TestNo.Split("-")[0] : methodResult.TestNo,
+                Source = !methodResult.IsExternal ? 1 : 2,
                 OriginImagePath = methodResult.OriginImagePath,
                 RenderImagePath = methodResult.RenderImagePath,
                 Size = methodResult.Size,
@@ -191,7 +191,8 @@ namespace AI_Assistant_Win.Business
         public BlacknessUploadResult GetLastUploaded(BlacknessMethodResult target)
         {
             var item = connection.Table<BlacknessUploadResult>()
-                .Where(t => target.Id.Equals(t.ResultId)).FirstOrDefault();
+                .Where(t => target.Id.Equals(t.ResultId))
+                .OrderByDescending(t => t.FileVersion).FirstOrDefault();
             return item;
         }
 

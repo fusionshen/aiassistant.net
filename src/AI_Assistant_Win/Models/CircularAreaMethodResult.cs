@@ -68,6 +68,11 @@ namespace AI_Assistant_Win.Models
         [Column("coil_number")]
         public string CoilNumber { get; set; }
         /// <summary>
+        /// 第几次试验
+        /// </summary>
+        [Column("nth")]
+        public int? Nth { get; set; } = 1;
+        /// <summary>
         /// 位置
         /// </summary>
         [Column("position")]

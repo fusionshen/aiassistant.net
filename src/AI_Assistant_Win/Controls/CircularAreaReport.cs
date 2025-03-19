@@ -27,23 +27,23 @@ namespace AI_Assistant_Win.Controls
 
         private readonly CircularAreaUploadBLL uploadCircularAreaBLL;
 
-        private readonly string testNo;
+        private readonly string summaryId;
 
         private readonly Action callBack;
 
-        public CircularAreaReport(Form _form, string _testNo, Action _callBack)
+        public CircularAreaReport(Form _form, string _summaryId, Action _callBack)
         {
             form = _form;
-            testNo = _testNo;
+            summaryId = _summaryId;
             callBack = _callBack;
             circularAreaMethodBLL = new CircularAreaMethodBLL();
             uploadCircularAreaBLL = new CircularAreaUploadBLL();
             InitializeComponent();
-            LoadData(testNo);
+            LoadData();
             Disposed += BlacknessReport_Disposed;
-            AntdUI.ITask.Run(() =>
+            AntdUI.ITask.Run(async () =>
             {
-                System.Threading.Thread.Sleep(1000);
+                await Task.Delay(1000);
                 if (floatButton == null)
                 {
                     var config = new AntdUI.FloatButton.Config(form, [
@@ -85,12 +85,12 @@ namespace AI_Assistant_Win.Controls
                                         AntdUI.TAlignFrom.BR, Font);
                                     return;
                                 }
-                                // µ¯³öÎÄ¼ş±£´æ¶Ô»°¿ò
+                                // å¼¹å‡ºæ–‡ä»¶ä¿å­˜å¯¹è¯æ¡†
                                 SaveFileDialog saveFileDialog = new()
                                 {
-                                    Filter = "PDFÎÄ¼ş|*.pdf",
+                                    Filter = "PDFæ–‡ä»¶|*.pdf",
                                     DefaultExt = "pdf",
-                                    FileName = $"{target.Summary.TestNo}_Ô²ĞÎÃæ»ı¼ì²â±¨¸æ.pdf",
+                                    FileName = $"{target.Summary.TestNo}_åœ†å½¢é¢ç§¯æ£€æµ‹æŠ¥å‘Š.pdf",
                                     Title = LocalizeHelper.CHOOSE_THE_LOCATION
                                 };
                                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
@@ -117,7 +117,7 @@ namespace AI_Assistant_Win.Controls
                                 // check uploaded with the same coil number
                                 var lastUploaded = uploadCircularAreaBLL.GetLastUploaded(target);
                                 if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, lastUploaded != null ?
-                                    LocalizeHelper.WOULD_REUPLOAD_CIRCULAR_AREA_RESULT(target.Summary.TestNo) :
+                                    LocalizeHelper.WOULD_REUPLOAD_CIRCULAR_AREA_RESULT(target.Summary) :
                                     LocalizeHelper.WOULD_UPLOAD_CIRCULAR_AREA_RESULT) == DialogResult.OK)
                                 {
                                     try
@@ -125,16 +125,16 @@ namespace AI_Assistant_Win.Controls
                                         btn.Loading = true;
                                         await uploadCircularAreaBLL.Upload(memoryImage, target, lastUploaded);
                                         // refresh
-                                        LoadData(testNo);
+                                        LoadData();
                                         // refresh parent form
-                                        // ·½°¸Ò»£º¸ÄÓÃÍ¬²½µ÷ÓÃInvoke£¨ÍÆ¼ö£©
-                                        // Invoke(callBack); // ×¢Òâ£ºÕâÀï¸ÄÓÃÍ¬²½µ÷ÓÃ
-                                        // ¹Ø¼üËµÃ÷£º
-                                        // 1.InvokeÊÇÍ¬²½·½·¨£¬»á×èÈûµ±Ç°Ïß³ÌÖ±µ½»Øµ÷Ö´ĞĞÍê³É
-                                        // 2.È·±£callBackÖĞÃ»ÓĞËÀÑ­»·»ò³¤Ê±¼ä×èÈû²Ù×÷£¬·ñÔò»á¿¨×¡UIÏß³Ì
-                                        // 3. ÊÊÓÃÓÚĞèÒªÑÏ¸ñ±£Ö¤Ö´ĞĞË³ĞòµÄ³¡¾°
-                                        // ·½°¸¶ş£ºÒì²½µÈ´ıBeginInvokeÍê³É£¨¸´ÔÓ³¡¾°£©
-                                        // ½«BeginInvoke×ª»»Îª¿ÉµÈ´ıµÄTask
+                                        // æ–¹æ¡ˆä¸€ï¼šæ”¹ç”¨åŒæ­¥è°ƒç”¨Invokeï¼ˆæ¨èï¼‰
+                                        // Invoke(callBack); // æ³¨æ„ï¼šè¿™é‡Œæ”¹ç”¨åŒæ­¥è°ƒç”¨
+                                        // å…³é”®è¯´æ˜ï¼š
+                                        // 1.Invokeæ˜¯åŒæ­¥æ–¹æ³•ï¼Œä¼šé˜»å¡å½“å‰çº¿ç¨‹ç›´åˆ°å›è°ƒæ‰§è¡Œå®Œæˆ
+                                        // 2.ç¡®ä¿callBackä¸­æ²¡æœ‰æ­»å¾ªç¯æˆ–é•¿æ—¶é—´é˜»å¡æ“ä½œï¼Œå¦åˆ™ä¼šå¡ä½UIçº¿ç¨‹
+                                        // 3. é€‚ç”¨äºéœ€è¦ä¸¥æ ¼ä¿è¯æ‰§è¡Œé¡ºåºçš„åœºæ™¯
+                                        // æ–¹æ¡ˆäºŒï¼šå¼‚æ­¥ç­‰å¾…BeginInvokeå®Œæˆï¼ˆå¤æ‚åœºæ™¯ï¼‰
+                                        // å°†BeginInvokeè½¬æ¢ä¸ºå¯ç­‰å¾…çš„Task
                                         var tcs = new TaskCompletionSource<bool>();
                                         BeginInvoke(new Action(() =>
                                         {
@@ -148,26 +148,26 @@ namespace AI_Assistant_Win.Controls
                                                 tcs.SetException(ex);
                                             }
                                         }));
-                                        await tcs.Task; // µÈ´ı»Øµ÷Íê³É
-                                                        // ¹Ø¼üËµÃ÷£º
-                                                        // 1.Ê¹ÓÃTaskCompletionSource½«Òì²½»Øµ÷×ª»»Îª¿ÉµÈ´ıµÄTask
-                                                        // 2.ÄÜ²¶»ñ»Øµ÷ÖĞÅ×³öµÄÒì³£²¢Í¨¹ıawait´«²¥µ½catch¿é
-                                                        // 3.ÊÊÓÃÓÚĞèÒª±£³ÖUIÏìÓ¦µÄ³¤Ê±¼ä²Ù×÷
-                                                        // 4.×¢ÒâÏß³ÌÇĞ»»ÎÊÌâ£¬»Øµ÷ÖĞµÄUI²Ù×÷²»ĞèÒª¶îÍâInvoke
-                                                        // °²È«ÊÍ·Å×ÊÔ´
+                                        await tcs.Task; // ç­‰å¾…å›è°ƒå®Œæˆ
+                                                        // å…³é”®è¯´æ˜ï¼š
+                                                        // 1.ä½¿ç”¨TaskCompletionSourceå°†å¼‚æ­¥å›è°ƒè½¬æ¢ä¸ºå¯ç­‰å¾…çš„Task
+                                                        // 2.èƒ½æ•è·å›è°ƒä¸­æŠ›å‡ºçš„å¼‚å¸¸å¹¶é€šè¿‡awaitä¼ æ’­åˆ°catchå—
+                                                        // 3.é€‚ç”¨äºéœ€è¦ä¿æŒUIå“åº”çš„é•¿æ—¶é—´æ“ä½œ
+                                                        // 4.æ³¨æ„çº¿ç¨‹åˆ‡æ¢é—®é¢˜ï¼Œå›è°ƒä¸­çš„UIæ“ä½œä¸éœ€è¦é¢å¤–Invoke
+                                                        // å®‰å…¨é‡Šæ”¾èµ„æº
                                         AntdUI.Message.success(form, LocalizeHelper.REPORT_UPLOAD_SUCCESS);
                                         memoryImage?.Dispose();
                                         if (!this.IsDisposed)
                                         {
                                             this.Dispose();
                                         }
-                                        // Á½ÖÖ·½°¸¶Ô±È£º
-                                        // ÌØĞÔ       ·½°¸Ò»£¨Invoke£©	·½°¸¶ş£¨BeginInvoke + Task£©
-                                        // Ïß³Ì×èÈû          ÊÇ           ·ñ
-                                        // UIÏìÓ¦ĞÔ       ¿ÉÄÜ¿¨¶Ù       ±£³ÖÁ÷³©
-                                        // Òì³£´¦Àí        Ö±½ÓÅ×³ö     Í¨¹ıTask´«²¥
-                                        // ´úÂë¸´ÔÓ¶È        ¼òµ¥         ½Ï¸´ÔÓ
-                                        // ÊÊÓÃ³¡¾°         ¶Ì²Ù×÷        ³¤²Ù×÷
+                                        // ä¸¤ç§æ–¹æ¡ˆå¯¹æ¯”ï¼š
+                                        // ç‰¹æ€§       æ–¹æ¡ˆä¸€ï¼ˆInvokeï¼‰	æ–¹æ¡ˆäºŒï¼ˆBeginInvoke + Taskï¼‰
+                                        // çº¿ç¨‹é˜»å¡          æ˜¯           å¦
+                                        // UIå“åº”æ€§       å¯èƒ½å¡é¡¿       ä¿æŒæµç•…
+                                        // å¼‚å¸¸å¤„ç†        ç›´æ¥æŠ›å‡º     é€šè¿‡Taskä¼ æ’­
+                                        // ä»£ç å¤æ‚åº¦        ç®€å•         è¾ƒå¤æ‚
+                                        // é€‚ç”¨åœºæ™¯         çŸ­æ“ä½œ        é•¿æ“ä½œ
                                     }
                                     catch (Exception ex)
                                     {
@@ -178,7 +178,7 @@ namespace AI_Assistant_Win.Controls
                                         btn.Loading = false;
                                     }
                                 }
-                                // Ñ¡Ôñ·½°¸Ê±Ó¦¸ù¾İÊµ¼ÊÒµÎñ³¡¾°¾ö¶¨¡£Èç¹û»Øµ÷²Ù×÷ºÄÊ±¶Ì£¨<200ms£©£¬½¨ÒéÊ¹ÓÃ·½°¸Ò»£»Èç¹û°üº¬¸´ÔÓ²Ù×÷£¬ÍÆ¼ö·½°¸¶şÒÔ±£Ö¤UIÁ÷³©ĞÔ¡£
+                                // é€‰æ‹©æ–¹æ¡ˆæ—¶åº”æ ¹æ®å®é™…ä¸šåŠ¡åœºæ™¯å†³å®šã€‚å¦‚æœå›è°ƒæ“ä½œè€—æ—¶çŸ­ï¼ˆ<200msï¼‰ï¼Œå»ºè®®ä½¿ç”¨æ–¹æ¡ˆä¸€ï¼›å¦‚æœåŒ…å«å¤æ‚æ“ä½œï¼Œæ¨èæ–¹æ¡ˆäºŒä»¥ä¿è¯UIæµç•…æ€§ã€‚
                                 break;
                             case "setting":
                                 pageSetupDialog1.Document = printDocument1;
@@ -189,7 +189,7 @@ namespace AI_Assistant_Win.Controls
                         }
                     })
                     {
-                        Vertical = false,  //  ²»ÕÚµ²ÄÚÈİ
+                        Vertical = false,  //  ä¸é®æŒ¡å†…å®¹
                         TopMost = true
                     };
                     floatButton = AntdUI.FloatButton.open(config);
@@ -203,16 +203,16 @@ namespace AI_Assistant_Win.Controls
 
         }
 
-        private void LoadData(string testNo)
+        private void LoadData()
         {
             try
             {
-                target = circularAreaMethodBLL.GetSummaryListByConditions(null, null, testNo).Single();
-                labelDate.Text = target.Summary.CreateTime?.ToString("yyyy Äê MM ÔÂ dd ÈÕ");
+                target = circularAreaMethodBLL.GetSummaryHistoryById(summaryId);
+                labelDate.Text = target.Summary.CreateTime?.ToString("yyyy å¹´ MM æœˆ dd æ—¥");
                 #region workGroup
                 switch (target.MethodList.FirstOrDefault()?.WorkGroup)
                 {
-                    case "¼×-°×":
+                    case "ç”²-ç™½":
                         checkbox_Jia_Day.Checked = true;
                         checkbox_Jia_Night.Checked = false;
                         checkbox_Yi_Day.Checked = false;
@@ -222,7 +222,7 @@ namespace AI_Assistant_Win.Controls
                         checkbox_Ding_Day.Checked = false;
                         checkbox_Ding_Night.Checked = false;
                         break;
-                    case "¼×-Ò¹":
+                    case "ç”²-å¤œ":
                         checkbox_Jia_Day.Checked = false;
                         checkbox_Jia_Night.Checked = true;
                         checkbox_Yi_Day.Checked = false;
@@ -232,7 +232,7 @@ namespace AI_Assistant_Win.Controls
                         checkbox_Ding_Day.Checked = false;
                         checkbox_Ding_Night.Checked = false;
                         break;
-                    case "ÒÒ-°×":
+                    case "ä¹™-ç™½":
                         checkbox_Jia_Day.Checked = false;
                         checkbox_Jia_Night.Checked = false;
                         checkbox_Yi_Day.Checked = true;
@@ -242,7 +242,7 @@ namespace AI_Assistant_Win.Controls
                         checkbox_Ding_Day.Checked = false;
                         checkbox_Ding_Night.Checked = false;
                         break;
-                    case "ÒÒ-Ò¹":
+                    case "ä¹™-å¤œ":
                         checkbox_Jia_Day.Checked = false;
                         checkbox_Jia_Night.Checked = false;
                         checkbox_Yi_Day.Checked = false;
@@ -252,7 +252,7 @@ namespace AI_Assistant_Win.Controls
                         checkbox_Ding_Day.Checked = false;
                         checkbox_Ding_Night.Checked = false;
                         break;
-                    case "±û-°×":
+                    case "ä¸™-ç™½":
                         checkbox_Jia_Day.Checked = false;
                         checkbox_Jia_Night.Checked = false;
                         checkbox_Yi_Day.Checked = false;
@@ -262,7 +262,7 @@ namespace AI_Assistant_Win.Controls
                         checkbox_Ding_Day.Checked = false;
                         checkbox_Ding_Night.Checked = false;
                         break;
-                    case "±û-Ò¹":
+                    case "ä¸™-å¤œ":
                         checkbox_Jia_Day.Checked = false;
                         checkbox_Jia_Night.Checked = false;
                         checkbox_Yi_Day.Checked = false;
@@ -272,7 +272,7 @@ namespace AI_Assistant_Win.Controls
                         checkbox_Ding_Day.Checked = false;
                         checkbox_Ding_Night.Checked = false;
                         break;
-                    case "¶¡-°×":
+                    case "ä¸-ç™½":
                         checkbox_Jia_Day.Checked = false;
                         checkbox_Jia_Night.Checked = false;
                         checkbox_Yi_Day.Checked = false;
@@ -282,7 +282,7 @@ namespace AI_Assistant_Win.Controls
                         checkbox_Ding_Day.Checked = true;
                         checkbox_Ding_Night.Checked = false;
                         break;
-                    case "¶¡-Ò¹":
+                    case "ä¸-å¤œ":
                         checkbox_Jia_Day.Checked = false;
                         checkbox_Jia_Night.Checked = false;
                         checkbox_Yi_Day.Checked = false;
@@ -305,7 +305,7 @@ namespace AI_Assistant_Win.Controls
                 }
                 #endregion
                 label_Analyst.Text = target.Summary.Creator.Split("-").LastOrDefault();
-                labelCoilNumber.Text = target.Summary.CoilNumber;
+                labelCoilNumber.Text = $"{target.Summary.CoilNumber}(ç¬¬{target.Summary.Nth}æ¬¡)";
                 labelTestNo.Text = target.Summary.TestNo;
                 #region uploaded
                 checkboxUploaded.Checked = target.Summary.IsUploaded;
@@ -368,7 +368,7 @@ namespace AI_Assistant_Win.Controls
         }
 
         /// <summary>
-        /// TODO£ºÖ»ÄÜ¹Ì¶¨Ğ¡µÄ³¤¿í²ÅÄÜÔÚÒ³ÃæÍêÈ«ÏÔÊ¾£¬´òÓ¡ÏñËØÓÖ¹ıµÍ¡£´óµÄ³¤¿í£¬´òÓ¡ÓÖ²»ÄÜÏÔÊ¾ÍêÈ«£º£©
+        /// TODOï¼šåªèƒ½å›ºå®šå°çš„é•¿å®½æ‰èƒ½åœ¨é¡µé¢å®Œå…¨æ˜¾ç¤ºï¼Œæ‰“å°åƒç´ åˆè¿‡ä½ã€‚å¤§çš„é•¿å®½ï¼Œæ‰“å°åˆä¸èƒ½æ˜¾ç¤ºå®Œå…¨ï¼šï¼‰
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

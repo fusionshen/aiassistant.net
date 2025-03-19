@@ -750,7 +750,8 @@ namespace AI_Assistant_Win.Controls
         {
             try
             {
-                AntdUI.Drawer.open(form, new CircularAreaReport(form, originalGaugeBlockResult.Analyst, () => { })
+                var history = gaugeBlockMethodBLL.GetTracerHistoryByMethodId(originalGaugeBlockResult.Id.ToString());
+                AntdUI.Drawer.open(form, new ScaleAccuracyReport(form, history.Tracer.Id.ToString(), () => { })
                 {
                     Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                 }, AntdUI.TAlignMini.Right);

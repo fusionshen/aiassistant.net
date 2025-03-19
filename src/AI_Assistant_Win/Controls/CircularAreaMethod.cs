@@ -2,7 +2,6 @@
 using AI_Assistant_Win.Models;
 using AI_Assistant_Win.Models.Enums;
 using AI_Assistant_Win.Models.Middle;
-using AI_Assistant_Win.Models.Response;
 using AI_Assistant_Win.Utils;
 using System;
 using System.Collections.Generic;
@@ -39,7 +38,7 @@ namespace AI_Assistant_Win.Controls
 
         private readonly ObservableDictionary<string, CalculateScale> scaleList = [];
 
-        private List<GetTestNoListResponse> testNoList;
+        private List<TestItem> testNoList;
 
         public CircularAreaMethod(MainWindow _form)
         {
@@ -82,21 +81,22 @@ namespace AI_Assistant_Win.Controls
             // 现在，我需要将这些思考整理成一个解决方案，并给出具体的代码修改建议，确保`InitializeAsync`方法正确等待所有内部异步操作完成，从而使得调用`await InitializeAsync()`后的代码在正确的时间执行。
             AntdUI.Message.loading(form, LocalizeHelper.LOADING_PAGE, async (config) =>
             {
+
+                BeginInvoke(async () =>
+                {
+                    // TestNo List
+                    await InitializeSelectTestNoAsync();
+                });
+                // Scale List
+                if (!InitializeSelectScale())
+                {
+                    // tell client how to do when any scale does not exit.
+                    BtnSetScale_Click(null, null);
+                    tcs.SetResult(true); // 这里需要根据业务决定是否设置结果
+                    return;
+                }
                 try
                 {
-                    BeginInvoke(async () =>
-                    {
-                        // TestNo List
-                        await InitializeSelectTestNoAsync();
-                    });
-                    // Scale List
-                    if (!InitializeSelectScale())
-                    {
-                        // tell client how to do when any scale does not exit.
-                        BtnSetScale_Click(null, null);
-                        tcs.SetResult(true); // 这里需要根据业务决定是否设置结果
-                        return;
-                    }
                     // Position List
                     InitializeSelectPostion();
                     // 通过观察者模式实现界面数据效果
@@ -225,7 +225,7 @@ namespace AI_Assistant_Win.Controls
             }
             else if (e.PropertyName == "TestNo")
             {
-                // selectTestNo.Items come slowerly than originalCircularAreaResult.TestNo;
+                // selectTestNo.Items come more slowly than originalCircularAreaResult.TestNo;
                 selectTestNo.Text = originalCircularAreaResult.TestNo;
             }
             else if (e.PropertyName == "CoilNumber")
@@ -235,6 +235,11 @@ namespace AI_Assistant_Win.Controls
             else if (e.PropertyName == "Position")
             {
                 selectPosition.SelectedValue = originalCircularAreaResult.Position;
+            }
+            else if (e.PropertyName == "Nth")
+            {
+                labelLocation.Badge = originalCircularAreaResult.Nth?.ToString();
+                tempCircularAreaResult.Nth = originalCircularAreaResult.Nth;
             }
             else if (e.PropertyName == "OriginImagePath")
             {
@@ -466,7 +471,7 @@ namespace AI_Assistant_Win.Controls
                 if (result != null && result.Count != 0)
                 {
                     selectTestNo.Items.AddRange([.. result]);
-                    AntdUI.Message.success(form, $"{LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS(testNoList.Count)}");
+                    AntdUI.Message.success(form, $"{LocalizeHelper.TESTNO_LIST_LOADED_SUCCESS(testNoList)}");
                 }
                 else
                 {
@@ -485,7 +490,7 @@ namespace AI_Assistant_Win.Controls
                     {
                         inputCoilNumber.ReadOnly = true;
                     }
-                    selectTestNo.SelectedValue = target.TestNo;
+                    selectTestNo.SelectedValue = target?.TestNo;
                 }
             }
             catch (Exception error)
@@ -614,9 +619,7 @@ namespace AI_Assistant_Win.Controls
                 return;
             }
             if (AntdUI.Modal.open(form, LocalizeHelper.CONFIRM, originalCircularAreaResult.IsUploaded ?
-                LocalizeHelper.WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADING :
-                circularAreaMethodBLL.GetResultExitsInDB(tempCircularAreaResult) != null ?
-                  LocalizeHelper.WOULD_RESAVE_CIRCULAR_AREA_RESULT_ON_THIS_POSITION(tempCircularAreaResult.Position) :
+                LocalizeHelper.WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADED :
                 LocalizeHelper.WOULD_SAVE_CIRCULAR_AREA_RESULT) == DialogResult.OK)
             {
                 AntdUI.Button btn = (AntdUI.Button)sender;
@@ -711,6 +714,10 @@ namespace AI_Assistant_Win.Controls
             tempCircularAreaResult.TestNo = selectTestNo.Text;
             UpdateCoilNumberInput();
         }
+        private void SelectTestNo_Leave(object sender, EventArgs e)
+        {
+            UpdateNth();
+        }
 
         /// <summary>
         /// 统一更新钢卷号输入框的状态
@@ -723,16 +730,13 @@ namespace AI_Assistant_Win.Controls
                 : null;
 
             var coilNumber = targetItem?.CoilNumber;
-            var otherCoilNumber = targetItem?.OtherCoilNumber;
 
-            // 优先级：CoilNumber > OtherCoilNumber > 空
             inputCoilNumber.Text = !string.IsNullOrEmpty(coilNumber)
                 ? coilNumber
-                : otherCoilNumber ?? tempCircularAreaResult.CoilNumber;
+                : tempCircularAreaResult.CoilNumber;
 
             // 设置只读状态：当找到有效数据且自动填充内容时锁定输入
-            inputCoilNumber.ReadOnly = targetItem != null &&
-                (!string.IsNullOrEmpty(coilNumber) || !string.IsNullOrEmpty(otherCoilNumber));
+            inputCoilNumber.ReadOnly = targetItem != null && !string.IsNullOrEmpty(coilNumber);
         }
 
         private void InputCoilNumber_TextChanged(object sender, EventArgs e)
@@ -740,9 +744,39 @@ namespace AI_Assistant_Win.Controls
             tempCircularAreaResult.CoilNumber = inputCoilNumber.Text;
         }
 
+        private void InputCoilNumber_Leave(object sender, EventArgs e)
+        {
+            UpdateNth();
+        }
+        private void UpdateNth()
+        {
+            if (!string.IsNullOrEmpty(tempCircularAreaResult.TestNo) &&
+                   !string.IsNullOrEmpty(tempCircularAreaResult.CoilNumber) &&
+                   !string.IsNullOrEmpty(tempCircularAreaResult.Position))
+            {
+                var result = circularAreaMethodBLL.GetNthOfMethod(tempCircularAreaResult.TestNo,
+                    tempCircularAreaResult.CoilNumber,
+                    tempCircularAreaResult.Position,
+                    originalCircularAreaResult.Id);
+                tempCircularAreaResult.Nth = result;
+                labelLocation.Badge = result.ToString();
+                AntdUI.Message.success(form, LocalizeHelper.CIRCULAR_AREA_EDITING_NTH(tempCircularAreaResult));
+            }
+            else
+            {
+                tempCircularAreaResult.Nth = null;
+                labelLocation.Badge = null;
+            }
+        }
+
         private void SelectPosition_SelectedIndexChanged(object sender, AntdUI.IntEventArgs e)
         {
             tempCircularAreaResult.Position = selectPosition.SelectedValue?.ToString();
+        }
+
+        private void SelectPosition_Leave(object sender, EventArgs e)
+        {
+            UpdateNth();
         }
 
         private void InputAnalyst_TextChanged(object sender, EventArgs e)
@@ -838,7 +872,8 @@ namespace AI_Assistant_Win.Controls
         {
             try
             {
-                AntdUI.Drawer.open(form, new CircularAreaReport(form, originalCircularAreaResult.TestNo, () => { })
+                var history = circularAreaMethodBLL.GetSummaryHistoryByMethodId(originalCircularAreaResult.Id.ToString());
+                AntdUI.Drawer.open(form, new CircularAreaReport(form, history.Summary.Id.ToString(), () => { })
                 {
                     Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                 }, AntdUI.TAlignMini.Right);
@@ -912,5 +947,6 @@ namespace AI_Assistant_Win.Controls
                 BtnSetScale_Click(null, null);
             }
         }
+
     }
 }

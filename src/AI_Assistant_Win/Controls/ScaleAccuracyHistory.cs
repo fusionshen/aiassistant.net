@@ -231,11 +231,11 @@ namespace AI_Assistant_Win.Controls
 
                         break;
                     case "report":
-                        if (data.FirstOrDefault(t => "cellItem".Equals(t.key))?.value is ScaleAccuracyTracerHistory tracer)
+                        if (data.FirstOrDefault(t => "cellItem".Equals(t.key))?.value is ScaleAccuracyTracerHistory history)
                         {
                             try
                             {
-                                AntdUI.Drawer.open(form, new ScaleAccuracyReport(form, tracer, () => { BtnSearch_Click(null, null); })
+                                AntdUI.Drawer.open(form, new ScaleAccuracyReport(form, history.Tracer.Id.ToString(), () => { BtnSearch_Click(null, null); })
                                 {
                                     Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                                 }, AntdUI.TAlignMini.Right);

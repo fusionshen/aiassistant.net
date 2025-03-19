@@ -21,5 +21,10 @@ namespace AI_Assistant_Win.Models
         /// </summary>
         [Column("coil_number")]
         public string CoilNumber { get; set; }
+        /// <summary>
+        /// 第几次
+        /// </summary>
+        [Column("nth")]
+        public int? Nth { get; set; }
     }
 }

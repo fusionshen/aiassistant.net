@@ -147,7 +147,7 @@ namespace AI_Assistant_Win.Business
             LoginUserInfo = null;
         }
 
-        public async Task<List<GetTestNoListResponse>> GetTestNoListAsync()
+        public async Task<List<GetTestNoListResponse>> GetTestNoListAsync(string testCode)
         {
             var getTestNoListUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("GetTestNoListUrl"))?.Value;
 
@@ -156,7 +156,7 @@ namespace AI_Assistant_Win.Business
                 throw new Exception("试样编号接口未指定，请联系管理员");
             }
 
-            getTestNoListUrl = $"{getTestNoListUrl}?{HttpHelper.ToQueryString(new GetTestNoListRequest { })}";
+            getTestNoListUrl = $"{getTestNoListUrl}?{HttpHelper.ToQueryString(new GetTestNoListRequest { TestCode = testCode })}";
             httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
             var jsonStr = await httpClient.GetStringAsync(getTestNoListUrl);
 
@@ -362,7 +362,7 @@ namespace AI_Assistant_Win.Business
                 throw new Exception("查询黑度试验接口未指定，请联系管理员");
             }
 
-            var json = JsonConvert.SerializeObject(new FindBlacknessResultRequest { CoilNumber = coilNumber, TestNo = testNo });
+            var json = JsonConvert.SerializeObject(new FindTestResultRequest { CoilNumber = coilNumber, TestNo = testNo });
 
             var data = new StringContent(json, Encoding.UTF8, "application/json");
 
@@ -448,6 +448,76 @@ namespace AI_Assistant_Win.Business
             {
                 throw new Exception(result.Message);
             }
+        }
+
+        public async Task<CircularAreaResultResponse> FindCircularAreaResultAsync(string testNo, string coilNumber)
+        {
+            var findCircularAreaResultUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("FindCircularAreaResultUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(findCircularAreaResultUrl))
+            {
+                throw new Exception("查询圆片面积试验接口未指定，请联系管理员");
+            }
+
+            var json = JsonConvert.SerializeObject(new FindTestResultRequest { CoilNumber = coilNumber, TestNo = testNo });
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+
+            var response = await httpClient.PostAsync(findCircularAreaResultUrl, data);
+
+            var jsonStr = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<List<CircularAreaResultResponse>>>(jsonStr) ?? throw new Exception("查询圆片面积试验接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+            if (result.Data == null)
+            {
+                throw new Exception("查询圆片面积试验接口返回有误，请联系管理员");
+            }
+            if (result.Data.Count > 1)
+            {
+                throw new Exception("业务系统中圆片面积试验数据重复，请联系管理员");
+            }
+            return result.Data.FirstOrDefault();
+        }
+
+        public async Task<string> UploadCircularAreaResultAsync(CircularAreaResultResponse uploadInfo)
+        {
+            var uploadCircularAreaResultUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("UploadCircularAreaResultUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(uploadCircularAreaResultUrl))
+            {
+                throw new Exception("上传圆片面积试验接口未指定，请联系管理员");
+            }
+
+            var json = JsonConvert.SerializeObject(uploadInfo);
+
+            var data = new StringContent(json, Encoding.UTF8, "application/json");
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+
+            var response = await httpClient.PostAsync(uploadCircularAreaResultUrl, data);
+
+            var jsonStr = await response.Content.ReadAsStringAsync();
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<CircularAreaResultResponse>>(jsonStr) ?? throw new Exception("上传圆片面积试验接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+
+            if (result.Data == null || string.IsNullOrEmpty(result.Data.Id))
+            {
+                throw new Exception("上传圆片面积试验接口返回有误，请联系管理员");
+            }
+
+            return result.Data.Id;
         }
     }
 }

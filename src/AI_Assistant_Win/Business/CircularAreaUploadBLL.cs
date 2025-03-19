@@ -23,110 +23,94 @@ namespace AI_Assistant_Win.Business
 
         public async Task Upload(Bitmap memoryImage, CircularAreaSummaryHistory history, CircularAreaUploadResult lastUpload = null)
         {
-            var uploadResult = await UploadPDF(memoryImage, history, lastUpload);
-            // call bussiness
-            BlacknessResultResponse info;
-            try
-            {
-                info = await UploadInfo(history, uploadResult);
-            }
-            catch (Exception)
-            {
-                // cant delete the latest version in the server
-                throw;
-            }
-            // add uploadResult & update methodResult
+            CircularAreaResultResponse info = new();
+            CircularAreaUploadResult uploadResult = new();
             connection.BeginTransaction();
+            // call bussiness
             try
             {
-                DoLocallyByTransaction(history, uploadResult);
+                uploadResult = await UploadPDF(memoryImage, history, lastUpload);
+                var ok = connection.Insert(uploadResult);
+                if (ok == 0)
+                {
+                    throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
+                }
+                info = await UploadInfo(history, uploadResult);
+                history.Summary.IsUploaded = true;
+                history.Summary.Uploader = uploadResult.Uploader;
+                history.Summary.UploadTime = uploadResult.UploadTime;
+                ok = connection.Update(history.Summary);
+                if (ok == 0)
+                {
+                    throw new Exception(LocalizeHelper.UPDATE_SUBJECT_FAILED);
+                }
                 connection.Commit();
+
             }
             catch (Exception)
             {
                 connection.Rollback();
-                // should delete file at the server, but cant delete the latest version in the server
+                // should delete file at the server, but cant delete the latest version in the server, only delete FileManagerId.
+                if (uploadResult.FileManagerId != 0)
+                {
+                    await apiBLL.DeleteUploadedFileAsync(uploadResult.FileManagerId);
+                }
                 // delete info
-                await WithdrawInfo(info);
+                if (!string.IsNullOrEmpty(info.Id))
+                {
+                    info.EntityState = EntityStateKind.Delete;
+                    await apiBLL.UploadCircularAreaResultAsync(info);
+                }
                 throw;
             }
         }
 
-        private async Task WithdrawInfo(BlacknessResultResponse info)
-        {
-            if (!string.IsNullOrEmpty(info.Id))
-            {
-                info.EntityState = EntityStateKind.Delete;
-                await apiBLL.UploadBlacknessResultAsync(info);
-            }
-        }
-
-        private async Task<BlacknessResultResponse> UploadInfo(CircularAreaSummaryHistory methodResult, CircularAreaUploadResult uploadResult)
+        private async Task<CircularAreaResultResponse> UploadInfo(CircularAreaSummaryHistory history, CircularAreaUploadResult uploadResult)
         {
             // create a model
-            //var model = new BlacknessResultResponse
-            //{
-            //    CoilNumber = methodResult.Summary.CoilNumber,
-            //    TestNo = methodResult.Summary.TestNo,
-            //    OriginImagePath = methodResult.OriginImagePath,
-            //    RenderImagePath = methodResult.RenderImagePath,
-            //    Size = methodResult.Size,
-            //    IsOK = methodResult.IsOK,
-            //    SurfaceOPLevel = methodResult.SurfaceOPLevel,
-            //    SurfaceOPWidth = methodResult.SurfaceOPWidth,
-            //    SurfaceOPScore = methodResult.SurfaceOPScore,
-            //    SurfaceCELevel = methodResult.SurfaceCELevel,
-            //    SurfaceCEWidth = methodResult.SurfaceCEWidth,
-            //    SurfaceCEScore = methodResult.SurfaceCEScore,
-            //    SurfaceDRLevel = methodResult.SurfaceDRLevel,
-            //    SurfaceDRWidth = methodResult.SurfaceDRWidth,
-            //    SurfaceDRScore = methodResult.SurfaceDRScore,
-            //    InsideOPLevel = methodResult.InsideOPLevel,
-            //    InsideOPWidth = methodResult.InsideOPWidth,
-            //    InsideOPScore = methodResult.InsideOPScore,
-            //    InsideCELevel = methodResult.InsideCELevel,
-            //    InsideCEWidth = methodResult.InsideCEWidth,
-            //    InsideCEScore = methodResult.InsideCEScore,
-            //    InsideDRLevel = methodResult.InsideDRLevel,
-            //    InsideDRWidth = methodResult.InsideDRWidth,
-            //    InsideDRScore = methodResult.InsideDRScore,
-            //    IsUploaded = methodResult.IsUploaded,
-            //    Uploader = methodResult.Uploader,
-            //    UploadTime = methodResult.UploadTime,
-            //    WorkGroup = methodResult.WorkGroup,
-            //    Analyst = methodResult.Analyst,
-            //    CreateTime = methodResult.CreateTime,
-            //    LastReviser = methodResult.LastReviser,
-            //    LastModifiedTime = methodResult.LastModifiedTime,
-            //    ReportFileId = uploadResult.UploadFileId,
-            //    Details = CreateDetails(methodResult.Id),
-            //    EntityState = EntityStateKind.Insert,
-            //};
-            //// find it exits
-            //var finded = await apiBLL.FindBlacknessResultAsync(methodResult.TestNo, methodResult.CoilNumber);
-            //if (finded != null)
-            //{
-            //    model.Id = finded.Id;
-            //    model.EntityState = EntityStateKind.Update;
-            //}
-            //model.Id = await apiBLL.UploadBlacknessResultAsync(model);
-            //return model;
-            return await Task.FromResult(new BlacknessResultResponse());
+            var model = new CircularAreaResultResponse
+            {
+                TestNo = history.Summary.IsExternal ? history.Summary.TestNo.Split("-")[0] : history.Summary.TestNo,
+                CoilNumber = history.Summary.CoilNumber,
+                Source = !history.Summary.IsExternal ? 1 : 2,
+                Items = CreateDetails(history.MethodList),
+                Creator = history.Summary.Creator,
+                CreateTime = history.Summary.CreateTime,
+                LastReviser = history.Summary.LastReviser,
+                LastModifiedTime = history.Summary.LastModifiedTime,
+                EntityState = EntityStateKind.Insert,
+            };
+            // find it exits
+            var finded = await apiBLL.FindCircularAreaResultAsync(history.Summary.TestNo, history.Summary.CoilNumber);
+            if (finded != null)
+            {
+                model.Id = finded.Id;
+                model.EntityState = EntityStateKind.Update;
+            }
+            model.Id = await apiBLL.UploadCircularAreaResultAsync(model);
+            return model;
         }
 
-        private List<BlacknessItemResponse> CreateDetails(int id)
+        private List<CircularAreaItemResponse> CreateDetails(List<CircularAreaMethodResult> methodList)
         {
-            var items = connection.Table<BlacknessMethodItem>()
-                .Where(t => t.ResultId.Equals(id))
-                .Select(t => new BlacknessItemResponse
-                {
-                    Location = t.Location,
-                    Level = t.Level,
-                    Score = t.Score ?? 0f,
-                    Width = t.Width ?? 0f,
-                    Prediction = t.Prediction
-                })
-                .OrderBy(t => t.Location)
+            var items = methodList.Select(t => new CircularAreaItemResponse
+            {
+                WorkGroup = t.WorkGroup,
+                ScaleId = t.ScaleId.Value,
+                Position = t.Position,
+                Nth = t.Nth ?? 1,
+                Pixels = t.Pixels,
+                Confidence = t.Confidence,
+                Area = t.Area,
+                Diameter = t.Diameter,
+                Prediction = t.Prediction,
+                Analyst = t.Analyst,
+                CreateTime = t.CreateTime,
+                LastReviser = t.LastReviser ?? t.Analyst,
+                LastModifiedTime = t.LastModifiedTime ?? t.CreateTime,
+                EntityState = EntityStateKind.Insert,
+            })
+                .OrderBy(t => t.Position)
                 .ToList();
             return items;
         }
@@ -138,10 +122,11 @@ namespace AI_Assistant_Win.Business
                 SummaryId = history.Summary.Id,
                 TestNo = history.Summary.TestNo,
                 CoilNumber = history.Summary.CoilNumber,
+                Nth = history.Summary.Nth,
                 Uploader = $"{apiBLL.LoginUserInfo.Username}-{apiBLL.LoginUserInfo.Nickname}",
                 LocalFilePath = SaveLocallyAndReturnPath(memoryImage, history), // first save locally
                 FileManagerId = lastUpload == null ? 0 : lastUpload.FileManagerId,
-                FileName = history.Summary.TestNo + ".pdf",
+                FileName = $"{history.Summary.TestNo}_{history.Summary.CoilNumber}_{history.Summary.Nth}.pdf",
                 FileCategory = FILE_CATEGORY_NAME,
                 FileCategoryId = await GetFileCategoryId(),
                 FileVersion = $"{DateTime.Now:yyyyMMddHHmmss}",
@@ -160,23 +145,6 @@ namespace AI_Assistant_Win.Business
             uploadResult.UploadFileId = uploadedFile.UploadFileId;
             uploadResult.UploadTime = DateTime.Now;
             return uploadResult;
-        }
-
-        private void DoLocallyByTransaction(CircularAreaSummaryHistory methodResult, CircularAreaUploadResult uploadResult)
-        {
-            methodResult.Summary.IsUploaded = true;
-            methodResult.Summary.Uploader = uploadResult.Uploader;
-            methodResult.Summary.UploadTime = uploadResult.UploadTime;
-            var ok = connection.Update(methodResult.Summary);
-            if (ok == 0)
-            {
-                throw new Exception(LocalizeHelper.UPDATE_SUBJECT_FAILED);
-            }
-            ok = connection.Insert(uploadResult);
-            if (ok == 0)
-            {
-                throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
-            }
         }
 
         private async Task<int> GetFileCategoryId()
@@ -205,7 +173,7 @@ namespace AI_Assistant_Win.Business
         public CircularAreaUploadResult GetLastUploaded(CircularAreaSummaryHistory target)
         {
             var item = connection.Table<CircularAreaUploadResult>()
-                .Where(t => t.TestNo.Equals(target.Summary.TestNo) && t.CoilNumber.Equals(target.Summary.CoilNumber))
+                .Where(t => target.Summary.Id.Equals(t.SummaryId))
                 .OrderByDescending(t => t.FileVersion).FirstOrDefault();
             return item;
         }

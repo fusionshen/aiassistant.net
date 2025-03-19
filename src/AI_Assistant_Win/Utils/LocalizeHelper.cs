@@ -112,7 +112,7 @@ namespace AI_Assistant_Win.Utils
         public static string CAMERA_CAPTURED_SUCCESSFULLY => Localization.Get("Captured successfully!", "拍摄成功！");
 
         #endregion
-        #region blackness method
+        #region method
         public static string LEVEL => Localization.Get("Level:", "等级：");
         public static string BLACKNESS_WITH => Localization.Get(",Width:", "，宽度：");
         public static string MILLIMETER => Localization.Get("mm", "毫米");
@@ -139,7 +139,7 @@ namespace AI_Assistant_Win.Utils
         public static string ONLY_TEST_NO => Localization.Get("Due to interface issues, only a test sample number is provided.", "因接口问题，仅提供测试试样编号。");
         public static string WOULD_SAVE_BLACKNESS_RESULT => Localization.Get("Would you like to save the blackness detection result?", "是否保存本次黑度检测结果？");
         public static string WOULD_EDIT_BLACKNESS_RESULT => Localization.Get("Would you like to edit the blackness detection result?", "是否对本次黑度检测结果进行修改？");
-        public static string TESTNO_NOT_IN_THE_LIST(string testNo) => Localization.Get($"{testNo} is not a record from within the past month. To save this entry, please enter the coil number manually.", $"{testNo}不是一个月之内的数据，如果要修改本条记录，请手动输入试样编号和钢卷号");
+        public static string TESTNO_NOT_IN_THE_LIST(string testNo) => Localization.Get($"{testNo} is not found in the system-retrieved sample list. If you need to modify this record, please enter the sample number and coil number manually.", $"{testNo}不存在系统抓取的试样清单中，如果要修改本条记录，请手动输入试样编号和钢卷号。");
         public static string SURFACE_OP => Localization.Get("SurfaceOP", "表面OP");
         public static string SURFACE_CE => Localization.Get("SurfaceCE", "表面CE");
         public static string SURFACE_DR => Localization.Get("SurfaceDR", "表面DR");
@@ -184,6 +184,7 @@ namespace AI_Assistant_Win.Utils
         public static string PLEASE_SET_CIRCULAR_AREA_SCALE => Localization.Get("Please set the scale for calculating the correct area of circular.", "请设置比例尺用于计算正确的圆形检测面积。");
         public static string PLEASE_SET_SCALE => Localization.Get("Please set the scale for methods.", "请设置比例尺用于计算真实值。");
         public static string CIRCULAR_POSITION_TITLE => Localization.Get("Position:", "部位：");
+        public static string NTH_TIME_TITLE => Localization.Get("The nth time:", "第几次：");
         public static string CIRCULAR_POSITION(CircularPositionKind position) => Localization.Get(position.ToString(), EnumHelper.GetDescriptionOfEnum<CircularPositionKind>(position.ToString()));
         public static string AREA_TITLE => Localization.Get(",Area:", "，面积：");
         public static string CIRCULAR_DIAMETER_TITLE => Localization.Get(",Diameter:", "，直径：");
@@ -201,16 +202,15 @@ namespace AI_Assistant_Win.Utils
         public static string GAUGE_SCALE_SETTINGS_MODAL_TITLE => Localization.Get("Scale Setting", "比例尺设置");
         public static string AUTO_CALCULATE => Localization.Get("Auto Calculate", "自动计算");
         public static string NO_TOP_GRADUATIONS => Localization.Get("Please enter the platform scale on the upper surface of the sample at this time.", "请输入此时样品上表面的平台刻度。");
-        public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the area report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次面积报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
+        public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_AFTER_UPLOADED => Localization.Get($"The system has detected that the area report has already been uploaded. Do you confirm to modify this result? If so, please remember to re-upload this report and its results to the business system.", $"系统检测到本次面积报告已经上传，是否确认修改本次结果？如果是，请记得将本次报告及结果重新上传至业务系统。");
         public static string WOULD_RESAVE_SCALE_PRECISION_RESULT_AFTER_UPLOADING => Localization.Get($"The system has detected that the accuracy report for this scale has already been uploaded. Do you confirm saving the current measurement results for updating the scale accuracy? If yes, please remember to upload this report and results again to the business system.", $"系统检测到本比例尺精度报告已经上传，是否确认保存本次测量结果，用于比例尺精度更新？如果是，请记得将本次报告及结果重新上传至业务系统。");
         public static string WOULD_SAVE_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to save the area detection result?", "是否保存本次面积检测结果？");
         public static string WOULD_SAVE_SCALE_PRECISION_RESULT => Localization.Get("Do you want to save the current scale accuracy test results and perform the accuracy update?", "是否保存本次比例尺准确度检测结果并进行精度更新？");
-
-        public static string WOULD_RESAVE_CIRCULAR_AREA_RESULT_ON_THIS_POSITION(string position) => Localization.Get($"The system has detected an existing area report for the {position} section. Do you confirm to overwrite and update it?", $"系统检测到已存在{position}部位的面积报告，是否确认覆盖更新？");
         public static string WOULD_RESAVE_SCALE_PRECISION_RESULT_ON_THIS_GRADE(string grade) => Localization.Get($"The system has detected that accuracy test results already exist for this scale at the [{grade}] level. Do you confirm saving the current measurement results for updating the scale accuracy?", $"系统检测到本比例尺在【{grade}】刻度下已存在准确度检测结果，是否确认保存本次测量结果，用于比例尺精度更新？");
         public static string PLEASE_USE_CORRECT_CIRCULAR_IMAGE => Localization.Get("Please use the correct circular image for identification.", "请使用正确的圆形图片进行识别。");
         public static string PLEASE_USE_CORRECT_GAUGE_IMAGE => Localization.Get("Please use the correct gauge image for identification.", "请使用正确的量块图片进行识别。");
-        public static string CIRCULAR_AREA_EDIT_MODE(CircularAreaResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo},Position:{result.Position}]", $"修改模式[试样编号：{result.TestNo}，部位：{result.Position}]");
+        public static string CIRCULAR_AREA_EDIT_MODE(CircularAreaResult result) => Localization.Get($"Edit Mode[TestNo:{result.TestNo};CoilNumber:{result.CoilNumber};Position:{result.Position};{result.Nth}th]]", $"修改模式[试样编号：{result.TestNo}；钢卷号：{result.CoilNumber}；部位：{result.Position}；第{result.Nth}次]");
+        public static string CIRCULAR_AREA_EDITING_NTH(CircularAreaResult result) => Localization.Get($"You are entering the results of the {result.Nth} experiment for [Sample Number: {result.TestNo}; Coil Number: {result.CoilNumber}; Position: {result.Position}].", $"您正在录入[试样编号：{result.TestNo}；钢卷号：{result.CoilNumber}；部位：{result.Position}]第{result.Nth}次试验结果。");
         public static string GAUGE_BLOCK_EDIT_MODE(GaugeBlockResult result) => Localization.Get($"Edit Mode[ID:{result.Id},Length:{result.InputEdgeLength}]", $"修改模式[编号：{result.Id}，测量长度：{result.InputEdgeLength}mm]");
         public static string TABLE_MPE => Localization.Get("MPE(Maximum Permissible Error)", "MPE(最大允许误差)");
         public static string TABLE_AVERAGE => Localization.Get("Average", "平均值");
@@ -227,7 +227,7 @@ namespace AI_Assistant_Win.Utils
         public static string WOULD_EDIT_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to edit the circular area detection result?", "是否对本次圆片面积检测结果进行修改？");
         public static string WOULD_EDIT_SCALE_ACCURACY_RESULT => Localization.Get("Would you like to edit the gauge block detection result?", "是否对该比例尺下的量块长度检测结果进行修改？");
         public static string WOULD_UPLOAD_CIRCULAR_AREA_RESULT => Localization.Get("Would you like to upload this circular area detection report and its results to the business system?", "是否将本次圆片面积检测报告及结果上传至业务系统？");
-        public static string WOULD_REUPLOAD_CIRCULAR_AREA_RESULT(string testNo) => Localization.Get($"The system has detected that the test number [{testNo}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到[{testNo}]已经上传，是否将本次圆片面积检测报告及结果重新上传至业务系统并更新版本？");
+        public static string WOULD_REUPLOAD_CIRCULAR_AREA_RESULT(CircularAreaMethodSummary summary) => Localization.Get($"The system has detected that the report of the {summary.Nth} experiment for [Sample Number: {summary.TestNo}; Coil Number: {summary.CoilNumber}] has already been uploaded. Would you like to re-upload this report and its results to the business system and update the version?", $"系统检测到[试样编号：{summary.TestNo}；钢卷号：{summary.CoilNumber}]第{summary.Nth}次报告已经上传，是否将本次圆片面积检测报告及结果重新上传至业务系统并更新版本？");
         public static string WOULD_UPLOAD_SCALE_ACCURACY_RESULT => Localization.Get("Would you like to upload this scale accuracy report to the business system?", "是否将本次比例尺精度报告及结果上传至业务系统？");
         public static string WOULD_REUPLOAD_SCALE_ACCURACY_RESULT(ScaleAccuracyTracerHistory history) => Localization.Get($"The system has detected that the accuracy report[{history.Scale.Value:F2}mm/pixel size scale under {history.Tracer.MeasuredLength}mm] has already been uploaded. Would you like to re-upload this report and update the version?", $"系统检测到精度报告[在{history.Tracer.MeasuredLength}mm下的{history.Scale.Value:F2}毫米/像素边长比例尺]已经上传，是否将本次报告重新上传至业务系统并更新版本？");
 
@@ -267,6 +267,7 @@ namespace AI_Assistant_Win.Utils
         public static string TABLE_HEADER_CREATOR => Localization.Get("Creator", "创建人");
         public static string CIRCULAR_AREA_DIAMETER => Localization.Get("Diameter:", "类圆直径：");
         public static string CELL_AREA_OF_PIXELS => Localization.Get("Pixels:", "像素面积：");
+        public static string CELL_TITLE_WORKGROUP => Localization.Get("WorkGroup:", "班组：");
         public static string CELL_TITLE_ANALYST => Localization.Get("Analyst:", "分析人：");
         public static string CELL_HEADER_CREATETIME => Localization.Get("CreateTime:", "创建时间：");
         public static string CELL_HEADER_LASTREVISER => Localization.Get("LastReviser:", "最近修改人：");

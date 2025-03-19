@@ -67,7 +67,7 @@ namespace AI_Assistant_Win.Controls
                 new AntdUI.ColumnCheck("check"){ Fixed = true },
                 new AntdUI.Column("id",LocalizeHelper.TABLE_HEADER_ID, AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("testNo",LocalizeHelper.TABLE_HEADER_TESTNO, AntdUI.ColumnAlign.Center){ Fixed = true },
-                new AntdUI.Column("coilNumber",LocalizeHelper.TABLE_HEADER_COILNUMBER, AntdUI.ColumnAlign.Center){ Fixed = true },
+                new AntdUI.Column("nth",LocalizeHelper.TABLE_HEADER_NTH, AntdUI.ColumnAlign.Center){ Fixed = true },
                 new AntdUI.Column("isUploaded",LocalizeHelper.TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center){ Fixed = true },
                 //new AntdUI.ColumnSwitch("isUploaded",LocalizeHelper.TABLE_HEADER_UPLOADED,AntdUI.ColumnAlign.Center)
                 //{
@@ -77,6 +77,8 @@ namespace AI_Assistant_Win.Controls
                 //        return value;
                 //    }
                 //},
+                new AntdUI.Column("coilNumber",LocalizeHelper.TABLE_HEADER_COILNUMBER, AntdUI.ColumnAlign.Center),
+                new AntdUI.Column("source",LocalizeHelper.TABLE_HEADER_SOURCE, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("upperSurfaceOP",LocalizeHelper.TABLE_UPPER_SURFACE_OP, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("upperSurfaceCE",LocalizeHelper.TABLE_UPPER_SURFACE_CE, AntdUI.ColumnAlign.Center),
                 new AntdUI.Column("upperSurfaceDR",LocalizeHelper.TABLE_UPPER_SURFACE_DR, AntdUI.ColumnAlign.Center),
@@ -111,22 +113,22 @@ namespace AI_Assistant_Win.Controls
                     string postionDetail = string.Empty;
                     switch (e.ColumnIndex)
                     {
-                        case 5:
+                        case 7:
                             postionDetail = FormatPositionDetail(methodList, CircularPositionKind.UPPER_SURFACE_OP);
                             break;
-                        case 6:
+                        case 8:
                             postionDetail = FormatPositionDetail(methodList, CircularPositionKind.UPPER_SURFACE_CE);
                             break;
-                        case 7:
+                        case 9:
                             postionDetail = FormatPositionDetail(methodList, CircularPositionKind.UPPER_SURFACE_DR);
                             break;
-                        case 8:
+                        case 10:
                             postionDetail = FormatPositionDetail(methodList, CircularPositionKind.LOWER_SURFACE_OP);
                             break;
-                        case 9:
+                        case 11:
                             postionDetail = FormatPositionDetail(methodList, CircularPositionKind.LOWER_SURFACE_CE);
                             break;
-                        case 10:
+                        case 12:
                             postionDetail = FormatPositionDetail(methodList, CircularPositionKind.LOWER_SURFACE_DR);
                             break;
                         default:
@@ -147,14 +149,15 @@ namespace AI_Assistant_Win.Controls
             if (method != null)
             {
                 text = $"{LocalizeHelper.CIRCULAR_POSITION_TITLE}{LocalizeHelper.CIRCULAR_POSITION(method.Position)}\n" +
-                    $"{LocalizeHelper.CELL_AREA_OF_PIXELS}{method.Pixels}" +
-                    $"{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{method.Confidence.ToPercent()}%\n" +
-                    $"{LocalizeHelper.AREA_PREDICTION_TITLE}{method.Area:F2}{LocalizeHelper.SQUARE_MILLIMETER}\n" +
-                    $"{LocalizeHelper.CIRCULAR_AREA_DIAMETER}{method.Diameter:F2}{LocalizeHelper.MILLIMETER}\n" +
-                    $"{LocalizeHelper.CELL_TITLE_ANALYST}{method.Analyst}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_CREATETIME}{method.CreateTime}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_LASTREVISER}{method.LastReviser}\n" +
-                    $"{LocalizeHelper.CELL_HEADER_LASTMODIFIEDTIME}{method.LastModifiedTime}";
+                       $"{LocalizeHelper.CELL_AREA_OF_PIXELS}{method.Pixels}" +
+                       $"{LocalizeHelper.AREA_PREDICTION_CONFIDENCE}{method.Confidence.ToPercent()}%\n" +
+                       $"{LocalizeHelper.AREA_PREDICTION_TITLE}{method.Area:F2}{LocalizeHelper.SQUARE_MILLIMETER}\n" +
+                       $"{LocalizeHelper.CIRCULAR_AREA_DIAMETER}{method.Diameter:F2}{LocalizeHelper.MILLIMETER}\n" +
+                       $"{LocalizeHelper.CELL_TITLE_WORKGROUP}{method.WorkGroup}\n" +
+                       $"{LocalizeHelper.CELL_TITLE_ANALYST}{method.Analyst}\n" +
+                       $"{LocalizeHelper.CELL_HEADER_CREATETIME}{method.CreateTime}\n" +
+                       $"{LocalizeHelper.CELL_HEADER_LASTREVISER}{method.LastReviser}\n" +
+                       $"{LocalizeHelper.CELL_HEADER_LASTMODIFIEDTIME}{method.LastModifiedTime}";
             }
             return text;
         }
@@ -214,10 +217,10 @@ namespace AI_Assistant_Win.Controls
 
                         break;
                     case "report":
-                        var testNo = data.FirstOrDefault(t => "testNo".Equals(t.key))?.value.ToString();
+                        var id = data.FirstOrDefault(t => "id".Equals(t.key))?.value.ToString();
                         try
                         {
-                            AntdUI.Drawer.open(form, new CircularAreaReport(form, testNo, () => { BtnSearch_Click(null, null); })
+                            AntdUI.Drawer.open(form, new CircularAreaReport(form, id, () => { BtnSearch_Click(null, null); })
                             {
                                 Size = new Size(420, 596)  // 常用到的纸张规格为A4，即21cm×29.7cm（210mm×297mm）
                             }, AntdUI.TAlignMini.Right);
@@ -272,7 +275,10 @@ namespace AI_Assistant_Win.Controls
                     new("check", false),
                     new("id", t.Summary.Id),
                     new("testNo", t.Summary.TestNo),
+                    new("nth", t.Summary.Nth),
                     new("coilNumber", t.Summary.CoilNumber),
+                    new("source", !t.Summary.IsExternal ? new AntdUI.CellBadge(TState.Success, LocalizeHelper.TABLE_HEADER_INTERNAL)
+                    : new AntdUI.CellBadge(TState.Default, LocalizeHelper.TABLE_HEADER_EXTERNAL)),
                     new("isUploaded", CreateIsUploadedCellBadge(t.Summary)),
                     new("upperSurfaceOP", FormatPositionArea(t.MethodList, CircularPositionKind.UPPER_SURFACE_OP)),
                     new("upperSurfaceCE", FormatPositionArea(t.MethodList, CircularPositionKind.UPPER_SURFACE_CE)),

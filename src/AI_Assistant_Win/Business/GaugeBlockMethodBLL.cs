@@ -18,7 +18,7 @@ namespace AI_Assistant_Win.Business
         public List<ScaleAccuracyTracerHistory> GetTracerListByConditions(DateTime? startDate, DateTime? endDate, string text)
         {
             var allTracers = connection.Table<ScaleAccuracyTracer>().ToList();
-            var allScales = connection.Table<CalculateScale>().Where(t => "GaugeBlock".Equals(t.Key)).ToList();
+            var allScales = connection.Table<CalculateScale>().ToList().Where(t => "GaugeBlock".Equals(t.Key)).ToList();
             var allMethods = connection.Table<GaugeBlockMethodResult>().ToList();
             var all = allTracers.Select(t => new ScaleAccuracyTracerHistory
             {
@@ -31,6 +31,48 @@ namespace AI_Assistant_Win.Business
             var filtered = all.Where(t => Filter(t, startDate, endDate, text)).ToList();
             var sorted = filtered.OrderByDescending(t => t.Tracer.ScaleId).ToList();
             return sorted;
+        }
+
+        public ScaleAccuracyTracerHistory GetTracerHistoryById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                throw new Exception(LocalizeHelper.ID_IS_EMPTY);
+            }
+            var item = connection.Table<ScaleAccuracyTracer>().ToList().Single(t => id.Equals(t.Id.ToString()));
+            var scale = connection.Table<CalculateScale>().FirstOrDefault(x => item.ScaleId.Equals(x.Id));
+            var allScales = connection.Table<CalculateScale>().Where(t => "GaugeBlock".Equals(t.Key)).ToList();
+            var allMethods = connection.Table<GaugeBlockMethodResult>().ToList();
+            return new ScaleAccuracyTracerHistory
+            {
+                Tracer = item,
+                Scale = scale,
+                InUse = item.ScaleId == allScales.Max(x => x.Id),
+                MPEList = [.. allMethods.Where(x => item.ScaleId.Equals(x.ScaleId)).OrderByDescending(x => x.CreateTime)],
+                MethodList = [.. allMethods.Where(x => item.ScaleId.Equals(x.ScaleId) && item.MeasuredLength.Equals(x.InputLength)).OrderByDescending(x => x.CreateTime)]
+            };
+        }
+
+        public ScaleAccuracyTracerHistory GetTracerHistoryByMethodId(string methodId)
+        {
+            if (string.IsNullOrEmpty(methodId))
+            {
+                throw new Exception(LocalizeHelper.ID_IS_EMPTY);
+            }
+            var method = GetResultById(methodId) ?? throw new Exception(LocalizeHelper.FIND_SUBJECT_FAILED);
+            var item = connection.Table<ScaleAccuracyTracer>().ToList().Single(t => method.ScaleId.Equals(t.ScaleId) && 
+                                                                                    method.InputLength.Equals(t.MeasuredLength));
+            var scale = connection.Table<CalculateScale>().FirstOrDefault(x => item.ScaleId.Equals(x.Id));
+            var allScales = connection.Table<CalculateScale>().Where(t => "GaugeBlock".Equals(t.Key)).ToList();
+            var allMethods = connection.Table<GaugeBlockMethodResult>().ToList();
+            return new ScaleAccuracyTracerHistory
+            {
+                Tracer = item,
+                Scale = scale,
+                InUse = item.ScaleId == allScales.Max(x => x.Id),
+                MPEList = [.. allMethods.Where(x => item.ScaleId.Equals(x.ScaleId)).OrderByDescending(x => x.CreateTime)],
+                MethodList = [.. allMethods.Where(x => item.ScaleId.Equals(x.ScaleId) && item.MeasuredLength.Equals(x.InputLength)).OrderByDescending(x => x.CreateTime)]
+            };
         }
 
         private bool Filter(ScaleAccuracyTracerHistory t, DateTime? startDate, DateTime? endDate, string text)
@@ -65,8 +107,7 @@ namespace AI_Assistant_Win.Business
             {
                 throw new Exception(LocalizeHelper.ID_IS_EMPTY);
             }
-            // if t.Id.ToString().Equals(id), will throw not function toString(), funny!
-            var item = connection.Table<GaugeBlockMethodResult>().FirstOrDefault(t => t.Id.Equals(id));
+            var item = connection.Table<GaugeBlockMethodResult>().ToList().FirstOrDefault(t => id.Equals(t.Id.ToString()));
             return item;
         }
 

@@ -574,6 +574,7 @@ namespace AI_Assistant_Win.Controls
             selectPosition.Size = new Size(249, 33);
             selectPosition.TabIndex = 18;
             selectPosition.SelectedIndexChanged += SelectPosition_SelectedIndexChanged;
+            selectPosition.Leave += SelectPosition_Leave;
             // 
             // labelLocation
             // 
@@ -610,6 +611,7 @@ namespace AI_Assistant_Win.Controls
             inputCoilNumber.Size = new Size(243, 34);
             inputCoilNumber.TabIndex = 17;
             inputCoilNumber.TextChanged += InputCoilNumber_TextChanged;
+            inputCoilNumber.Leave += InputCoilNumber_Leave;
             // 
             // labelCoilNumber
             // 
@@ -652,6 +654,7 @@ namespace AI_Assistant_Win.Controls
             selectTestNo.TabIndex = 18;
             selectTestNo.SelectedIndexChanged += SelectTestNo_SelectedIndexChanged;
             selectTestNo.TextChanged += SelectTestNo_TextChanged;
+            selectTestNo.Leave += SelectTestNo_Leave;
             // 
             // labelTestNo
             // 

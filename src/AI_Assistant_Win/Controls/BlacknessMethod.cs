@@ -91,7 +91,6 @@ namespace AI_Assistant_Win.Controls
                         btnPrint.Visible = true;
                         btnPre.Visible = true;
                         btnPre.Enabled = sortedIDs.Count > 0 && sortedIDs.FindIndex(t => t.ToString().Equals(EDIT_METHOD_ID)) != 0;
-                        labelTestNo.Badge = originalBlacknessResult.Nth.ToString();
                         AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDIT_MODE(originalBlacknessResult));
                         return;
                     }
@@ -100,7 +99,6 @@ namespace AI_Assistant_Win.Controls
                         btnNext.Visible = false;
                         btnPrint.Visible = false;
                         btnPre.Visible = false;
-                        labelTestNo.Badge = null;
                         AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
                     }
                     // when refresh¡¢pre¡¢next
@@ -227,6 +225,11 @@ namespace AI_Assistant_Win.Controls
             else if (e.PropertyName == "CoilNumber")
             {
                 inputCoilNumber.Text = originalBlacknessResult.CoilNumber;
+            }
+            else if (e.PropertyName == "Nth")
+            {
+                labelTestNo.Badge = originalBlacknessResult.Nth?.ToString();
+                tempBlacknessResult.Nth = originalBlacknessResult.Nth;
             }
             else if (e.PropertyName == "Size")
             {
@@ -460,7 +463,7 @@ namespace AI_Assistant_Win.Controls
                     {
                         inputCoilNumber.ReadOnly = true;
                     }
-                    selectTestNo.SelectedValue = target.TestNo;
+                    selectTestNo.SelectedValue = target?.TestNo;
                 }
             }
             catch (Exception error)
@@ -692,26 +695,17 @@ namespace AI_Assistant_Win.Controls
 
         private void UpdateNth()
         {
-            // only when editing£¬ not when initializing
-            if (string.IsNullOrEmpty(EDIT_METHOD_ID))
+            if (!string.IsNullOrEmpty(tempBlacknessResult.TestNo) && !string.IsNullOrEmpty(tempBlacknessResult.CoilNumber))
             {
-                if (!string.IsNullOrEmpty(tempBlacknessResult.TestNo) && !string.IsNullOrEmpty(tempBlacknessResult.CoilNumber))
-                {
-                    var result = blacknessMethodBLL.GetNthOfMethod(tempBlacknessResult.TestNo, tempBlacknessResult.CoilNumber)?.ToString();
-                    labelTestNo.Badge = result;
-                    AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDITING_NTH(tempBlacknessResult));
-                }
-                else
-                {
-                    labelTestNo.Badge = null;
-                }
+                var result = blacknessMethodBLL.GetNthOfMethod(tempBlacknessResult.TestNo, tempBlacknessResult.CoilNumber, originalBlacknessResult.Id);
+                tempBlacknessResult.Nth = result;
+                labelTestNo.Badge = result.ToString();
+                AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDITING_NTH(tempBlacknessResult));
             }
             else
             {
-                if (!string.IsNullOrEmpty(tempBlacknessResult.TestNo) && !string.IsNullOrEmpty(tempBlacknessResult.CoilNumber))
-                {
-                    AntdUI.Message.success(form, LocalizeHelper.BLACKNESS_EDITING_NTH(tempBlacknessResult));
-                }
+                tempBlacknessResult.Nth = null;
+                labelTestNo.Badge = null;
             }
         }
 
