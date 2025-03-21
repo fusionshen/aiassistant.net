@@ -48,7 +48,7 @@ namespace AI_Assistant_Win.Controls
                     switch (id)
                     {
                         case "download":
-                            //�ҵ�������ذ�ť
+                            //�ҵ�������ذ��?
                             break;
                     }
                 }

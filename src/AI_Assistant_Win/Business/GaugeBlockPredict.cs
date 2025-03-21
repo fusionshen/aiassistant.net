@@ -69,7 +69,7 @@ namespace AI_Assistant_Win.Business
                     Confidence = predictions[0].Confidence,
                     BoundingBox = predictions[0].BoundingBox,
                     SegmentedPixelsCount = predictions[0].SegmentedPixels.Length,
-                    Quadrilateral = EnhancedHybridDetector.DetectQuadrilateral([.. predictions[0].SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y))], new Mat(imageProcessBLL.OriginImagePath, ImreadModes.Color))
+                    Quadrilateral = HybridQuadrilateralDetector.DetectQuadrilateral([.. predictions[0].SegmentedPixels.ToList().Select(t => new PointF(t.X, t.Y))], new Mat(imageProcessBLL.OriginImagePath, ImreadModes.Color))
                 };
                 var rendered = DrawBoxes(image, currentScale, predictions[0]);
                 imageProcessBLL.SaveRenderImage(rendered);  // show render image 

@@ -60,7 +60,7 @@ namespace AI_Assistant_Win.Business
                 throw new Exception(LocalizeHelper.ID_IS_EMPTY);
             }
             var method = GetResultById(methodId) ?? throw new Exception(LocalizeHelper.FIND_SUBJECT_FAILED);
-            var item = connection.Table<ScaleAccuracyTracer>().ToList().Single(t => method.ScaleId.Equals(t.ScaleId) && 
+            var item = connection.Table<ScaleAccuracyTracer>().ToList().Single(t => method.ScaleId.Equals(t.ScaleId) &&
                                                                                     method.InputLength.Equals(t.MeasuredLength));
             var scale = connection.Table<CalculateScale>().FirstOrDefault(x => item.ScaleId.Equals(x.Id));
             var allScales = connection.Table<CalculateScale>().Where(t => "GaugeBlock".Equals(t.Key)).ToList();

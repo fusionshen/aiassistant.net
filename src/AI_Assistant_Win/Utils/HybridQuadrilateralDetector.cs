@@ -17,7 +17,7 @@ namespace AI_Assistant_Win.Utils
     /// 各种情况下，两者会互补去取顶点，现在黑度工作台应该没有啥大问题了，圆片面积主要受采光的影响。(如果量块表面光滑反光一些也都没太大问题)
     /// 问题到这里：导致量块分割波浪形毛刺也可能主要是量块表面设计特质。
     /// </summary>
-    public class EnhancedHybridDetector
+    public class HybridQuadrilateralDetector
     {
         public class DetectionParams
         {
