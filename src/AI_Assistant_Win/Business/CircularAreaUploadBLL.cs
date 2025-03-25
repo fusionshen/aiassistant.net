@@ -101,7 +101,7 @@ namespace AI_Assistant_Win.Business
                 Nth = t.Nth ?? 1,
                 Pixels = t.Pixels,
                 Confidence = t.Confidence,
-                Area = t.Area,
+                Area = t.Area / 1000000, // 平方毫米转换成平方米
                 Diameter = t.Diameter,
                 Prediction = t.Prediction,
                 Analyst = t.Analyst,

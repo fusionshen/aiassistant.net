@@ -91,6 +91,8 @@ namespace AI_Assistant_Win.Controls
                         btnPre.Visible = false;
                         AntdUI.Message.success(form, LocalizeHelper.NEW_MODE);
                     }
+                    // when refresh、pre、next
+                    cameraBLL.CloseDevice();
                     var result = cameraBLL.StartRendering();
                     switch (result)
                     {

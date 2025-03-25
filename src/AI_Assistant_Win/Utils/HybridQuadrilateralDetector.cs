@@ -79,7 +79,7 @@ namespace AI_Assistant_Win.Utils
 
             using var vop = new VectorOfPoint(expandedHull.Select(p => new Point((int)p.X, (int)p.Y)).ToArray());
             CvInvoke.FillConvexPoly(mask, vop, new MCvScalar(255));
-            CvInvoke.Imwrite("1-mask.png", mask);
+            CvInvoke.Imwrite("Gauge_1_Yolo-Mask.png", mask);
             return mask;
         }
 
@@ -93,13 +93,17 @@ namespace AI_Assistant_Win.Utils
             using var processed = new Mat();
             CvInvoke.CvtColor(roiMat, processed, ColorConversion.Bgr2Gray);
             CvInvoke.GaussianBlur(processed, processed, new Size(param.GaussianSize, param.GaussianSize), 1.5);
-            CvInvoke.Canny(processed, processed, param.CannyThreshold1, param.CannyThreshold2);
+            // 自动Canny阈值
+            double median = ShapeHelper.ComputeMedian(processed);
+            CvInvoke.Canny(processed, processed, (int)Math.Max(0, median * 0.4), (int)Math.Min(255, median * 1.2));
+            //CvInvoke.Canny(processed, processed, param.CannyThreshold1, param.CannyThreshold2);
+            CvInvoke.Imwrite("Gauge_2_Canny-Improved.png", processed);
 
             // 形态学闭合填充
             var kernel = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(3, 3), new Point(-1, -1));
             CvInvoke.MorphologyEx(processed, processed, MorphOp.Close, kernel, new Point(-1, -1), iterations: 2, BorderType.Default, default);
 
-            CvInvoke.Imwrite("2-processed.png", processed);
+            CvInvoke.Imwrite("Gauge_3_Morphology.png", processed);
 
             // 提取并筛选轮廓
             var contours = new VectorOfVectorOfPoint();
