@@ -157,6 +157,7 @@ namespace AI_Assistant_Win.Controls
             bnSetParam.TabIndex = 7;
             bnSetParam.Text = "参数设置";
             bnSetParam.Type = AntdUI.TTypeMini.Error;
+            bnSetParam.Click += BnSetParam_Click;
             // 
             // bnGetParam
             // 

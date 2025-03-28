@@ -60,6 +60,29 @@ namespace AI_Assistant_Win.Utils
 
             // 阶段2：在YOLO区域内提取主轮廓
             var mainContour = ExtractDominantContour(originalImage, yoloMask, param);
+            // +++ 新增代码：绘制轮廓并保存 +++
+            if (mainContour != null)
+            {
+                // 创建原始图像的副本进行绘制操作
+                using (Mat imageWithContour = originalImage.Clone())
+                {
+                    // 将轮廓转换为绘制所需的格式
+                    Point[][] contoursArray = new Point[][] { mainContour.ToArray() };
+                    using (var contours = new VectorOfVectorOfPoint(contoursArray))
+                    {
+                        // 绘制绿色轮廓（BGR颜色空间，线宽2）
+                        CvInvoke.DrawContours(
+                            imageWithContour,
+                            contours,
+                            contourIdx: -1,  // -1表示绘制所有轮廓
+                            new MCvScalar(0, 255, 0), // 绿色
+                            thickness: 2);
+                    }
+
+                    // 保存带轮廓的图像
+                    CvInvoke.Imwrite("Gauge_4_Contour.png", imageWithContour);
+                }
+            }
 
             // 阶段3：几何校正与顶点优化
             return RefineQuadrilateral(mainContour, yoloPoints, param);
@@ -71,7 +94,7 @@ namespace AI_Assistant_Win.Utils
             mask.SetTo(new MCvScalar(0));
 
             // 生成带边距的凸包区域
-            var expandedHull = ComputeConvexHull(points)
+            var expandedHull = ShapeHelper.ComputeConvexHull(points)
                 .Select(p => new PointF(
                     p.X + margin * Math.Sign(p.X - size.Width / 2f),
                     p.Y + margin * Math.Sign(p.Y - size.Height / 2f)
@@ -95,8 +118,8 @@ namespace AI_Assistant_Win.Utils
             CvInvoke.GaussianBlur(processed, processed, new Size(param.GaussianSize, param.GaussianSize), 1.5);
             // 自动Canny阈值
             double median = ShapeHelper.ComputeMedian(processed);
-            CvInvoke.Canny(processed, processed, (int)Math.Max(0, median * 0.4), (int)Math.Min(255, median * 1.2));
-            //CvInvoke.Canny(processed, processed, param.CannyThreshold1, param.CannyThreshold2);
+            //CvInvoke.Canny(processed, processed, (int)Math.Max(0, median * 0.4), (int)Math.Min(255, median * 1.2));
+            CvInvoke.Canny(processed, processed, param.CannyThreshold1, param.CannyThreshold2);
             CvInvoke.Imwrite("Gauge_2_Canny-Improved.png", processed);
 
             // 形态学闭合填充
@@ -136,7 +159,7 @@ namespace AI_Assistant_Win.Utils
         {
             if (contour == null)
             {
-                return SortPointsToRectangle(FindBestQuadrilateral(ComputeConvexHull(yoloPoints)));
+                return SortPointsToRectangle(FindBestQuadrilateral(ShapeHelper.ComputeConvexHull(yoloPoints)));
             }
             // 多边形逼近优化
             var approx = new VectorOfPoint();
@@ -148,7 +171,7 @@ namespace AI_Assistant_Win.Utils
             if (vertices.Count != 4 || !IsQuadrilateralApproximatelyRectangle(vertices))
             {
                 // 使用YOLO点生成备用四边形
-                vertices = FindBestQuadrilateral(ComputeConvexHull(yoloPoints));
+                vertices = FindBestQuadrilateral(ShapeHelper.ComputeConvexHull(yoloPoints));
             }
             return SortPointsToQuadrilateral(vertices);
         }
@@ -370,36 +393,6 @@ namespace AI_Assistant_Win.Utils
                 .Select(p => new Point(p.X + offset.X, p.Y + offset.Y)).ToArray());
         }
 
-        private static List<PointF> ComputeConvexHull(List<PointF> points)
-        {
-            // 优化后的Andrew算法实现
-            points = points.Distinct().ToList();
-            if (points.Count < 3) return points;
-
-            var sorted = points.OrderBy(p => p.X).ThenBy(p => p.Y).ToList();
-
-            List<PointF> lower = new List<PointF>();
-            foreach (var p in sorted)
-            {
-                while (lower.Count >= 2 && Cross(lower[lower.Count - 2], lower[lower.Count - 1], p) <= 0)
-                    lower.RemoveAt(lower.Count - 1);
-                lower.Add(p);
-            }
-
-            List<PointF> upper = new List<PointF>();
-            foreach (var p in sorted.AsEnumerable().Reverse())
-            {
-                while (upper.Count >= 2 && Cross(upper[upper.Count - 2], upper[upper.Count - 1], p) <= 0)
-                    upper.RemoveAt(upper.Count - 1);
-                upper.Add(p);
-            }
-
-            lower.RemoveAt(lower.Count - 1);
-            upper.RemoveAt(upper.Count - 1);
-
-            return lower.Concat(upper).ToList();
-        }
-
         private static Quadrilateral SortPointsToQuadrilateral(List<PointF> points)
         {
             // 计算质心
@@ -427,11 +420,6 @@ namespace AI_Assistant_Win.Utils
 
             // 返回按照左上、右上、左下、右下排序的四个点
             return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
-        }
-
-        private static float Cross(PointF a, PointF b, PointF c)
-        {
-            return (b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X);
         }
     }
 }

@@ -397,5 +397,48 @@ namespace AI_Assistant_Win.Controls
                 AntdUI.Notification.error(form, " ß∞‹", "…„œÒÕ∑≈‰÷√±£¥Ê ß∞‹£°", AntdUI.TAlignFrom.BR, Font);
             }
         }
+
+        private void BnSetParam_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                float.Parse(tbExposure.Text);
+                float.Parse(tbGain.Text);
+                float.Parse(tbFrameRate.Text);
+            }
+            catch
+            {
+                CameraHelper.ShowErrorMsg(form, "Please enter correct type!", 0);
+                return;
+            }
+            var device = cameraBLL.GetDevice();
+            device.Parameters.SetEnumValue("ExposureAuto", 0);
+            int result = device.Parameters.SetFloatValue("ExposureTime", float.Parse(tbExposure.Text));
+            if (result != MvError.MV_OK)
+            {
+                CameraHelper.ShowErrorMsg(form, "Set Exposure Time Fail!", result);
+            }
+
+            device.Parameters.SetEnumValue("GainAuto", 0);
+            result = device.Parameters.SetFloatValue("Gain", float.Parse(tbGain.Text));
+            if (result != MvError.MV_OK)
+            {
+                CameraHelper.ShowErrorMsg(form, "Set Gain Fail!", result);
+            }
+
+            result = device.Parameters.SetBoolValue("AcquisitionFrameRateEnable", true);
+            if (result != MvError.MV_OK)
+            {
+                CameraHelper.ShowErrorMsg(form, "Set AcquisitionFrameRateEnable Fail!", result);
+            }
+            else
+            {
+                result = device.Parameters.SetFloatValue("AcquisitionFrameRate", float.Parse(tbFrameRate.Text));
+                if (result != MvError.MV_OK)
+                {
+                    CameraHelper.ShowErrorMsg(form, "Set Frame Rate Fail!", result);
+                }
+            }
+        }
     }
 }

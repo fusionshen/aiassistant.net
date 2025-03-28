@@ -1,5 +1,4 @@
-﻿using AI_Assistant_Win.Models.Middle;
-using Emgu.CV;
+﻿using Emgu.CV;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -57,5 +56,39 @@ namespace AI_Assistant_Win.Utils
             return area;
         }
 
+        public static List<PointF> ComputeConvexHull(List<PointF> points)
+        {
+            // 优化后的Andrew算法实现
+            points = points.Distinct().ToList();
+            if (points.Count < 3) return points;
+
+            var sorted = points.OrderBy(p => p.X).ThenBy(p => p.Y).ToList();
+
+            List<PointF> lower = new List<PointF>();
+            foreach (var p in sorted)
+            {
+                while (lower.Count >= 2 && Cross(lower[lower.Count - 2], lower[lower.Count - 1], p) <= 0)
+                    lower.RemoveAt(lower.Count - 1);
+                lower.Add(p);
+            }
+
+            List<PointF> upper = new List<PointF>();
+            foreach (var p in sorted.AsEnumerable().Reverse())
+            {
+                while (upper.Count >= 2 && Cross(upper[upper.Count - 2], upper[upper.Count - 1], p) <= 0)
+                    upper.RemoveAt(upper.Count - 1);
+                upper.Add(p);
+            }
+
+            lower.RemoveAt(lower.Count - 1);
+            upper.RemoveAt(upper.Count - 1);
+
+            return lower.Concat(upper).ToList();
+        }
+
+        private static float Cross(PointF a, PointF b, PointF c)
+        {
+            return (b.X - a.X) * (c.Y - a.Y) - (b.Y - a.Y) * (c.X - a.X);
+        }
     }
 }
