@@ -7,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Numerics;
 
 namespace AI_Assistant_Win.Utils
 {
@@ -29,9 +28,6 @@ namespace AI_Assistant_Win.Utils
             public int CannyThreshold1 = 30;
             public int CannyThreshold2 = 90;
             public int GaussianSize = 5;            // 高斯模糊核尺寸
-
-            // 几何参数
-            public double EpsilonFactor = 0.015;    // 多边形逼近精度系数
         }
 
         /// <summary>
@@ -60,34 +56,39 @@ namespace AI_Assistant_Win.Utils
 
             // 阶段2：在YOLO区域内提取主轮廓
             var mainContour = ExtractDominantContour(originalImage, yoloMask, param);
+
             // +++ 新增代码：绘制轮廓并保存 +++
             if (mainContour != null)
             {
                 // 创建原始图像的副本进行绘制操作
-                using (Mat imageWithContour = originalImage.Clone())
+                using Mat imageWithContour = originalImage.Clone();
+                // 将轮廓转换为绘制所需的格式
+                Point[][] contoursArray = [mainContour.ToArray()];
+                using (var contours = new VectorOfVectorOfPoint(contoursArray))
                 {
-                    // 将轮廓转换为绘制所需的格式
-                    Point[][] contoursArray = new Point[][] { mainContour.ToArray() };
-                    using (var contours = new VectorOfVectorOfPoint(contoursArray))
-                    {
-                        // 绘制绿色轮廓（BGR颜色空间，线宽2）
-                        CvInvoke.DrawContours(
-                            imageWithContour,
-                            contours,
-                            contourIdx: -1,  // -1表示绘制所有轮廓
-                            new MCvScalar(0, 255, 0), // 绿色
-                            thickness: 2);
-                    }
-
-                    // 保存带轮廓的图像
-                    CvInvoke.Imwrite("Gauge_4_Contour.png", imageWithContour);
+                    // 绘制绿色轮廓（BGR颜色空间，线宽2）
+                    CvInvoke.DrawContours(
+                        imageWithContour,
+                        contours,
+                        contourIdx: -1,  // -1表示绘制所有轮廓
+                        new MCvScalar(0, 255, 0), // 绿色
+                        thickness: 2);
                 }
+                // 保存带轮廓的图像
+                CvInvoke.Imwrite("Gauge_4_Contour.png", imageWithContour);
             }
 
-            // 阶段3：几何校正与顶点优化
-            return RefineQuadrilateral(mainContour, yoloPoints, param);
-        }
+            // 当主轮廓有效时，使用旋转矩形
+            if (mainContour != null)
+            {
+                var rotatedRect = CvInvoke.MinAreaRect(mainContour);
+                return new Quadrilateral(rotatedRect);
+            }
 
+            // 降级使用YOLO点
+            return SortPointsToRectangle(FindBestQuadrilateral(
+                ShapeHelper.ComputeConvexHull(yoloPoints)));
+        }
         private static Mat CreateYoloRegionMask(List<PointF> points, Size size, int margin)
         {
             var mask = new Mat(size, DepthType.Cv8U, 1);
@@ -105,7 +106,6 @@ namespace AI_Assistant_Win.Utils
             CvInvoke.Imwrite("Gauge_1_Yolo-Mask.png", mask);
             return mask;
         }
-
         private static VectorOfPoint ExtractDominantContour(Mat image, Mat mask, DetectionParams param)
         {
             // ROI限定处理
@@ -154,111 +154,6 @@ namespace AI_Assistant_Win.Utils
                 ? OffsetContour(bestContour, boundingRect.Location)
                 : null;
         }
-
-        private static Quadrilateral RefineQuadrilateral(VectorOfPoint contour, List<PointF> yoloPoints, DetectionParams param)
-        {
-            if (contour == null)
-            {
-                return SortPointsToRectangle(FindBestQuadrilateral(ShapeHelper.ComputeConvexHull(yoloPoints)));
-            }
-            // 多边形逼近优化
-            var approx = new VectorOfPoint();
-            var epsilon = param.EpsilonFactor * CvInvoke.ArcLength(contour, true);
-            CvInvoke.ApproxPolyDP(contour, approx, epsilon, true);
-
-            // 顶点数验证与校正
-            var vertices = approx.ToArray().Select(p => new PointF(p.X, p.Y)).ToList();
-            if (vertices.Count != 4 || !IsQuadrilateralApproximatelyRectangle(vertices))
-            {
-                // 使用YOLO点生成备用四边形
-                vertices = FindBestQuadrilateral(ShapeHelper.ComputeConvexHull(yoloPoints));
-            }
-            return SortPointsToQuadrilateral(vertices);
-        }
-        /// <summary>
-        /// 1. 计算四条边的长度，检查是否接近矩形比例
-        ///    计算对边长度的比值，要求比值接近 1。
-        /// 2. 计算四个角的角度，检查是否接近 90°
-        ///    计算每个角的夹角，确保角度在 85° ~ 95° 之间。
-        /// 3. 检查对边是否平行
-        ///    计算两对对边的方向向量，确保其余弦相似度接近 1。
-        /// </summary>
-        /// <param name="vertices"></param>
-        /// <param name="angleTolerance"></param>
-        /// <param name="lengthRatioTolerance"></param>
-        /// <returns></returns>
-        private static bool IsQuadrilateralApproximatelyRectangle(List<PointF> vertices, double angleTolerance = 5.0, double lengthRatioTolerance = 0.2)
-        {
-            if (vertices.Count != 4) return false;
-
-            // 计算四条边的向量
-            double[] edgeLengths = new double[4];
-            for (int i = 0; i < 4; i++)
-            {
-                int next = (i + 1) % 4;
-                edgeLengths[i] = Distance(vertices[i], vertices[next]);
-            }
-
-            // 长边和短边
-            double length1 = (edgeLengths[0] + edgeLengths[2]) / 2.0;
-            double length2 = (edgeLengths[1] + edgeLengths[3]) / 2.0;
-
-            // **1. 检查对边长度比值是否接近 1**
-            double ratio1 = edgeLengths[0] / edgeLengths[2];
-            double ratio2 = edgeLengths[1] / edgeLengths[3];
-
-            if (Math.Abs(ratio1 - 1) > lengthRatioTolerance || Math.Abs(ratio2 - 1) > lengthRatioTolerance)
-                return false;
-
-            // **2. 检查四个角是否接近 90°**
-            for (int i = 0; i < 4; i++)
-            {
-                int prev = (i - 1 + 4) % 4;
-                int next = (i + 1) % 4;
-                double angle = CalculateAngle(vertices[prev], vertices[i], vertices[next]);
-                if (Math.Abs(angle - 90) > angleTolerance) return false;
-            }
-
-            // **3. 检查对边是否平行**
-            Vector2 v1 = new Vector2(vertices[1].X - vertices[0].X, vertices[1].Y - vertices[0].Y);
-            Vector2 v2 = new Vector2(vertices[3].X - vertices[2].X, vertices[3].Y - vertices[2].Y);
-            Vector2 v3 = new Vector2(vertices[2].X - vertices[1].X, vertices[2].Y - vertices[1].Y);
-            Vector2 v4 = new Vector2(vertices[0].X - vertices[3].X, vertices[0].Y - vertices[3].Y);
-
-            if (!AreVectorsParallel(v1, v2) || !AreVectorsParallel(v3, v4))
-                return false;
-
-            return true;
-        }
-
-        // 计算两点之间的欧几里得距离
-        private static double Distance(PointF p1, PointF p2)
-        {
-            return Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2));
-        }
-
-        // 计算向量夹角（单位：度）
-        private static double CalculateAngle(PointF a, PointF b, PointF c)
-        {
-            double abX = a.X - b.X, abY = a.Y - b.Y;
-            double cbX = c.X - b.X, cbY = c.Y - b.Y;
-
-            double dotProduct = (abX * cbX) + (abY * cbY);
-            double magnitudeAB = Math.Sqrt(abX * abX + abY * abY);
-            double magnitudeCB = Math.Sqrt(cbX * cbX + cbY * cbY);
-
-            double cosTheta = dotProduct / (magnitudeAB * magnitudeCB);
-            return Math.Acos(cosTheta) * (180.0 / Math.PI);
-        }
-
-        // 判断两个向量是否近似平行（余弦相似度接近 1）
-        private static bool AreVectorsParallel(Vector2 v1, Vector2 v2, double tolerance = 0.1)
-        {
-            v1 = Vector2.Normalize(v1);
-            v2 = Vector2.Normalize(v2);
-            return Math.Abs(Vector2.Dot(v1, v2)) > (1 - tolerance);
-        }
-
         // 从凸包中找出最佳四边形的四个顶点
         private static List<PointF> FindBestQuadrilateral(List<PointF> convexHull)
         {
@@ -293,7 +188,6 @@ namespace AI_Assistant_Win.Utils
 
             return bestQuadrilateralPoints;
         }
-
         // 获取四个点的具体位置（左上、右上、左下、右下）
         public static Quadrilateral SortPointsToRectangle(List<PointF> points)
         {
@@ -323,7 +217,6 @@ namespace AI_Assistant_Win.Utils
             // 返回按照左上、右上、左下、右下排序的四个点
             return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
         }
-
         // 计算四边形的面积
         public static double CalculateQuadrilateralArea(PointF p1, PointF p2, PointF p3, PointF p4)
         {
@@ -391,35 +284,6 @@ namespace AI_Assistant_Win.Utils
         {
             return new VectorOfPoint(contour.ToArray()
                 .Select(p => new Point(p.X + offset.X, p.Y + offset.Y)).ToArray());
-        }
-
-        private static Quadrilateral SortPointsToQuadrilateral(List<PointF> points)
-        {
-            // 计算质心
-            PointF centroid = new PointF(
-                points.Average(p => p.X),
-                points.Average(p => p.Y)
-            );
-
-            // 计算每个点相对于质心的角度
-            var sortedPoints = points
-                .Select(p => new
-                {
-                    Point = p,
-                    Angle = Math.Atan2(p.Y - centroid.Y, p.X - centroid.X)  // 计算点相对于质心的角度
-                })
-                .OrderBy(p => p.Angle)  // 按角度排序
-                .Select(p => p.Point)
-                .ToList();
-
-            // 按顺时针顺序排列四个点
-            PointF topLeft = sortedPoints[0];
-            PointF topRight = sortedPoints[1];
-            PointF bottomRight = sortedPoints[2];
-            PointF bottomLeft = sortedPoints[3];
-
-            // 返回按照左上、右上、左下、右下排序的四个点
-            return new Quadrilateral(topLeft, topRight, bottomLeft, bottomRight);
         }
     }
 }

@@ -21,9 +21,6 @@ namespace AI_Assistant_Win.Utils
             public int CannyThreshold1 = 30;
             public int CannyThreshold2 = 90;
             public int GaussianSize = 5;            // 高斯模糊核尺寸
-
-            // 几何参数
-            public double EpsilonFactor = 0.015;    // 多边形逼近精度系数
         }
 
         public static (List<PointF> dominantContour, double area) DetectCircular(
@@ -98,8 +95,8 @@ namespace AI_Assistant_Win.Utils
             CvInvoke.GaussianBlur(processed, processed, new Size(param.GaussianSize, param.GaussianSize), 1.5);
             // 自动Canny阈值
             double median = ShapeHelper.ComputeMedian(processed);
-            CvInvoke.Canny(processed, processed, (int)Math.Max(0, median * 0.4), (int)Math.Min(255, median * 1.2));
-            //CvInvoke.Canny(processed, processed, param.CannyThreshold1, param.CannyThreshold2);
+            //CvInvoke.Canny(processed, processed, (int)Math.Max(0, median * 0.4), (int)Math.Min(255, median * 1.2));
+            CvInvoke.Canny(processed, processed, param.CannyThreshold1, param.CannyThreshold2);
             CvInvoke.Imwrite("Circle_2_Canny-Improved.png", processed);
 
             // 形态学闭合填充
