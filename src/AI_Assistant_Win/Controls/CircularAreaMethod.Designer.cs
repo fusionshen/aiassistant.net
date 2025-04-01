@@ -428,13 +428,13 @@ namespace AI_Assistant_Win.Controls
             label3.Dock = DockStyle.Fill;
             label3.Font = new Font("Microsoft YaHei UI", 10F);
             label3.ForeColor = Color.Red;
-            label3.LocalizationText = "Note: This test applies to detecting circular corrosion area on galvanized steel samples. Keep the sample's top surface constant on the platform scale under the same scale.";
+            label3.LocalizationText = "Note: This test applies to detecting circular area on galvanized steel samples. Keep the sample's top surface constant on the platform scale under the same scale.";
             label3.Location = new Point(9, 436);
             label3.Name = "label3";
             label3.Padding = new Padding(2, 0, 2, 0);
             label3.Size = new Size(342, 99);
             label3.TabIndex = 29;
-            label3.Text = "注：此测试适用于镀锌钢板样本腐蚀圆形面积检测。在相同的比例尺下，请确保样本上表面在平台刻度值恒定。";
+            label3.Text = "注：此测试适用于镀锌钢板样本圆形面积检测。在相同的比例尺下，请确保样本上表面在平台刻度值恒定。";
             label3.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // panel17

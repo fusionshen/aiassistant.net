@@ -439,7 +439,12 @@ namespace AI_Assistant_Win.Controls
 
         private async void BtnPredict_ClickAsync(object sender, EventArgs e)
         {
-            AntdUI.Button btn = (AntdUI.Button)sender;
+            await ExecutePredictAsync();
+        }
+
+        private async Task ExecutePredictAsync()
+        {
+            AntdUI.Button btn = btnPredict;
             btn.LoadingWaveValue = 0;
             btn.Loading = true;
 
@@ -459,7 +464,14 @@ namespace AI_Assistant_Win.Controls
                 btn.Loading = false;
                 tcs.TrySetResult(true); // 标记任务完成
             });
-            await tcs.Task; // 等待预测完成
+            try
+            {
+                await tcs.Task;
+            }
+            catch (TaskCanceledException)
+            {
+                // 页面关闭时任务被取消，忽略异常
+            }
         }
 
         private CalculateScale CurrentScale
@@ -814,12 +826,12 @@ namespace AI_Assistant_Win.Controls
             }
         }
 
-        private void CheckboxRedefine_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
+        private async void CheckboxRedefine_CheckedChanged(object sender, AntdUI.BoolEventArgs e)
         {
             // 取消比例尺重新识别一次，避免使用已经依靠比例尺识别过一次的图片作为比例尺图片
             if (checkboxRedefine.Checked && !string.IsNullOrEmpty(tempGaugeBlockResult.OriginImagePath))
             {
-                BtnPredict_ClickAsync(btnPredict, null);  // auto predict
+                await ExecutePredictAsync();  // auto predict
                 BtnSetScale_Click(null, null);
             }
         }
