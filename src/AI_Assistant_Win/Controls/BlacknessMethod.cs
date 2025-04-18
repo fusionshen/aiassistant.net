@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -474,12 +475,64 @@ namespace AI_Assistant_Win.Controls
 
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
         {
-            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image));
+            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image)
+            {
+                Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
+                OnBtns = (id, config) =>
+                {
+                    switch (id)
+                    {
+                        case "download":
+                            var testNo = string.IsNullOrEmpty(tempBlacknessResult.TestNo) ? string.Empty : $"{tempBlacknessResult.TestNo}_";
+                            // 弹出文件保存对话框
+                            SaveFileDialog saveFileDialog = new()
+                            {
+                                //Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                //DefaultExt = "jpg",
+                                FileName = $"{testNo}黑度检测_原图_{DateTime.Now:yyyyMMddHHmmssfff}.jpg",
+                                Title = LocalizeHelper.CHOOSE_THE_LOCATION
+                            };
+                            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                            {
+                                string directoryPath = saveFileDialog.FileName;
+                                avatarOriginImage.Image.Save(directoryPath, ImageFormat.Jpeg);
+                                AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + directoryPath);
+                            }
+                            break;
+                    }
+                }
+            });
         }
 
         private void AvatarRenderImage_Click(object sender, EventArgs e)
         {
-            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarRenderImage.Image));
+            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarRenderImage.Image)
+            {
+                Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
+                OnBtns = (id, config) =>
+                {
+                    switch (id)
+                    {
+                        case "download":
+                            var testNo = string.IsNullOrEmpty(tempBlacknessResult.TestNo) ? string.Empty : $"{tempBlacknessResult.TestNo}_";
+                            // 弹出文件保存对话框
+                            SaveFileDialog saveFileDialog = new()
+                            {
+                                //Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                //DefaultExt = "jpg",
+                                FileName = $"{testNo}黑度检测_渲染图_{DateTime.Now:yyyyMMddHHmmssfff}.jpg",
+                                Title = LocalizeHelper.CHOOSE_THE_LOCATION
+                            };
+                            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                            {
+                                string directoryPath = saveFileDialog.FileName;
+                                avatarRenderImage.Image.Save(directoryPath, ImageFormat.Jpeg);
+                                AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + directoryPath);
+                            }
+                            break;
+                    }
+                }
+            });
         }
 
         private void BtnUploadImage_Click(object sender, System.EventArgs e)
@@ -537,6 +590,7 @@ namespace AI_Assistant_Win.Controls
             inputInsideCE.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_CE))?.Description;
             inputInsideDR.Text = tempBlacknessResult.Items.FirstOrDefault(t => t.Location.Equals(BlacknessLocationKind.INSIDE_DR))?.Description;
             radioResultOK.Checked = tempBlacknessResult.Items.All(t => new List<string> { "3", "4", "5" }.Contains(t.Level)); // [1，2] not exit，otherwise，NG is checked
+            radioResultNG.Checked = !radioResultOK.Checked;
         }
 
         private void ClearTexts()

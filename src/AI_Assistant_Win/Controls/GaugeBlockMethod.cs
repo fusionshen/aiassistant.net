@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -410,12 +411,62 @@ namespace AI_Assistant_Win.Controls
 
         private void AvatarOriginImage_Click(object sender, System.EventArgs e)
         {
-            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image));
+            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarOriginImage.Image)
+            {
+                Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
+                OnBtns = (id, config) =>
+                {
+                    switch (id)
+                    {
+                        case "download":
+                            // 弹出文件保存对话框
+                            SaveFileDialog saveFileDialog = new()
+                            {
+                                //Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                //DefaultExt = "jpg",
+                                FileName = $"比例尺设置_原图_{DateTime.Now:yyyyMMddHHmmssfff}.jpg",
+                                Title = LocalizeHelper.CHOOSE_THE_LOCATION
+                            };
+                            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                            {
+                                string directoryPath = saveFileDialog.FileName;
+                                avatarOriginImage.Image.Save(directoryPath, ImageFormat.Jpeg);
+                                AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + directoryPath);
+                            }
+                            break;
+                    }
+                }
+            });
         }
 
         private void AvatarRenderImage_Click(object sender, EventArgs e)
         {
-            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarRenderImage.Image));
+            AntdUI.Preview.open(new AntdUI.Preview.Config(form, avatarRenderImage.Image)
+            {
+                Btns = [new AntdUI.Preview.Btn("download", Properties.Resources.btn_download)],
+                OnBtns = (id, config) =>
+                {
+                    switch (id)
+                    {
+                        case "download":
+                            // 弹出文件保存对话框
+                            SaveFileDialog saveFileDialog = new()
+                            {
+                                //Filter = "JPEG Image Files|*.jpg;*.jpeg|All Files|*.*",
+                                //DefaultExt = "jpg",
+                                FileName = $"比例尺设置_渲染图_{DateTime.Now:yyyyMMddHHmmssfff}.jpg",
+                                Title = LocalizeHelper.CHOOSE_THE_LOCATION
+                            };
+                            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                            {
+                                string directoryPath = saveFileDialog.FileName;
+                                avatarRenderImage.Image.Save(directoryPath, ImageFormat.Jpeg);
+                                AntdUI.Message.success(form, LocalizeHelper.FILE_SAVED_LOCATION + directoryPath);
+                            }
+                            break;
+                    }
+                }
+            });
         }
 
         private void BtnUploadImage_Click(object sender, System.EventArgs e)
