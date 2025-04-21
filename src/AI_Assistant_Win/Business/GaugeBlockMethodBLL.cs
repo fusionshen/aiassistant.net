@@ -243,7 +243,7 @@ namespace AI_Assistant_Win.Business
                 // 获取相同scale下所有的测量数据
                 var resultsInSameScale = connection.Table<GaugeBlockMethodResult>().Where(t => scaleTracer.ScaleId == t.ScaleId).ToList();
                 // mpe
-                var mpe = resultsInSameScale.Max(t => Math.Abs(t.CalculatedLength - scaleTracer.MeasuredLength));
+                var mpe = resultsInSameScale.Max(t => Math.Abs(t.CalculatedLength - t.InputLength));
                 scaleTracer.MPE = mpe;
                 // 获取相同scale下相同(scaleTracer.MeasuredLength)的测量数据
                 var resultsInMeasurement = connection.Table<GaugeBlockMethodResult>().Where(t => scaleTracer.ScaleId == t.ScaleId && scaleTracer.MeasuredLength == t.InputLength).ToList();
