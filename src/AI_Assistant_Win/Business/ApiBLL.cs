@@ -519,5 +519,32 @@ namespace AI_Assistant_Win.Business
 
             return result.Data.Id;
         }
+
+        public async Task<GetBatchInfoResponse> GetBatchInfoAsync(string testNo)
+        {
+            var getBatchInfoUrl = connection.Table<SystemConfig>().LastOrDefault(t => t.Key.Equals("GetBatchInfoUrl"))?.Value;
+
+            if (string.IsNullOrEmpty(getBatchInfoUrl))
+            {
+                throw new Exception("试批信息接口未指定，请联系管理员");
+            }
+
+            getBatchInfoUrl = $"{getBatchInfoUrl}?{HttpHelper.ToQueryString(new GetBatchInfoRequest { WhereString = $" and SAMPLELOTNO = '{testNo.Split("-")[0]}' " })}";
+
+            httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", loginToken.AccessToken);
+            var jsonStr = await httpClient.GetStringAsync(getBatchInfoUrl);
+
+            var result = JsonConvert.DeserializeObject<ResponseBody<PagableBody<List<List<GetBatchInfoResponse>>>>>(jsonStr) ?? throw new Exception("试批信息接口解析有误，请联系管理员");
+
+            if (result.Status != 200)
+            {
+                throw new Exception(result.Message);
+            }
+            if (result.Data == null || result.Data.Data == null)
+            {
+                throw new Exception("试批信息接口返回有误，请联系管理员");
+            }
+            return result.Data.Data.FirstOrDefault().FirstOrDefault();
+        }
     }
 }

@@ -324,5 +324,19 @@ namespace AI_Assistant_Win.Business
                 throw new Exception(LocalizeHelper.ADD_SUBJECT_FAILED);
             }
         }
+
+        public async Task<string> GetSizeOfCoilAsync(string testNo)
+        {
+            if (string.IsNullOrEmpty(testNo))
+            {
+                return string.Empty;
+            }
+            var batchInfo = await apiBLL.GetBatchInfoAsync(testNo);
+            if (batchInfo != null)
+            {
+                return $"{batchInfo.Thick:F1}*{batchInfo.Width:F0}";
+            }
+            return string.Empty;
+        }
     }
 }

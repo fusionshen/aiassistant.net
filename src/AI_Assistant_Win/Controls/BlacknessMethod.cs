@@ -710,6 +710,10 @@ namespace AI_Assistant_Win.Controls
         {
             tempBlacknessResult.TestNo = selectTestNo.Text;
             UpdateCoilNumberInput();
+            Invoke(async () =>
+            {
+                inputSize.Text = await blacknessMethodBLL.GetSizeOfCoilAsync(tempBlacknessResult.TestNo);
+            });
         }
 
         private void SelectTestNo_Leave(object sender, EventArgs e)
