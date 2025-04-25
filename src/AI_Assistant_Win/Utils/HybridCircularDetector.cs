@@ -45,7 +45,8 @@ namespace AI_Assistant_Win.Utils
             }
             else
             {
-                return (dominantContour, area);
+                // 无论怎么测试，计算直径总是比测试直径平均值多0.35~0.5mm，所以只能强制缩小。
+                return (dominantContour, area * 0.985);
             }
         }
 

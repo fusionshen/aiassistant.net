@@ -98,7 +98,7 @@ namespace AI_Assistant_Win.Business
             var color = HexToRgbaSkia(segmentation.Label.Color, ImageConfig.SEGMENTATION_MASK_OPACITY);
 
             var pixelSpan = segmentation.SegmentedPixels.AsSpan();
-
+#if DEBUG
             unsafe
             {
                 // Access pixel data directly from memory for higher performance
@@ -134,6 +134,7 @@ namespace AI_Assistant_Win.Business
                     pixelData[index + 3] = alpha; // Preserve the original alpha
                 }
             }
+#endif
 
             return DrawBoundingBoxes(SKImage.FromBitmap(bitmap), segmentation, currentScale);
         }
