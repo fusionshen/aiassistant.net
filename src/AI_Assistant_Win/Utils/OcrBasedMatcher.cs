@@ -56,7 +56,6 @@ namespace AI_Assistant_Win.Utils
                     result[nearest.Index] = prediction;
                 }
             }
-
             return result;
         }
 
@@ -191,7 +190,6 @@ namespace AI_Assistant_Win.Utils
                     }
                 }
             });
-
             // 添加后处理
             return PostProcessResults([.. result], image.Size);
         }
@@ -306,67 +304,133 @@ namespace AI_Assistant_Win.Utils
                 }
             }
 
+            // 新增文本识别结果可视化调试
+            using (var debugImage = _cachedProcessed.Copy())
+            {
+                foreach (var item in finalMarkers)
+                {
+                    CvInvoke.Rectangle(debugImage, item.BoundingBox, new MCvScalar(0, 255, 0), 2);
+                }
+                CvInvoke.Imwrite("6-PostRegionMarkers.png", debugImage);
+            }
+
             // 确保关键标记数量
             return EnsureRequiredMarkers(finalMarkers, imageSize);
         }
 
         /// <summary>
-        /// 确保必需标记存在
+        /// 确保必需标记存在（精确到表面/里面定位）
         /// </summary>
         private List<RegionMarker> EnsureRequiredMarkers(List<RegionMarker> markers, Size imageSize)
         {
-            var required = new Dictionary<string, int>
+            var surfaceAreaHeight = CalculateSurfaceBoundary(markers);
+            var required = new Dictionary<string, (int Surface, int Inside)>
             {
-                { "OP", 2 },
-                { "CE", 2 },
-                { "DR", 2 }
+                { "OP", (1, 1) },
+                { "CE", (1, 1) },
+                { "DR", (1, 1) }
             };
 
-            // 分组统计
-            var groups = markers
+            // 统计表面/里面现有标记数量
+            var surfaceMarkers = markers
+                .Where(m => m.BoundingBox.Y < surfaceAreaHeight)
                 .GroupBy(m => m.Name)
-                .ToDictionary(g => g.Key, g => g.ToList());
+                .ToDictionary(g => g.Key, g => g.Count());
 
-            // 补充缺失项
+            var insideMarkers = markers
+                .Where(m => m.BoundingBox.Y >= surfaceAreaHeight)
+                .GroupBy(m => m.Name)
+                .ToDictionary(g => g.Key, g => g.Count());
+
+            // 生成需要补充的虚拟标记
+            var virtualMarkers = new List<RegionMarker>();
+
             foreach (var key in required.Keys)
             {
-                if (!groups.ContainsKey(key) || groups[key].Count < required[key])
+                // 计算表面缺失数量
+                int surfaceNeed = required[key].Surface - surfaceMarkers.GetValueOrDefault(key, 0);
+                for (int i = 0; i < surfaceNeed; i++)
                 {
-                    // 根据已知位置生成虚拟标记（示例坐标需调整）
-                    var virtualMarkers = GenerateVirtualMarkers(key, imageSize);
-                    markers.AddRange(virtualMarkers.Take(required[key]));
+                    virtualMarkers.Add(CreateVirtualMarker(key, imageSize, isSurface: true));
+                }
+
+                // 计算里面缺失数量
+                int insideNeed = required[key].Inside - insideMarkers.GetValueOrDefault(key, 0);
+                for (int i = 0; i < insideNeed; i++)
+                {
+                    virtualMarkers.Add(CreateVirtualMarker(key, imageSize, isSurface: false));
                 }
             }
 
-            return markers
-                .OrderBy(m => m.BoundingBox.Y)
-                .ToList();
+            markers.AddRange(virtualMarkers);
+            return markers.OrderBy(m => m.BoundingBox.Y).ToList();
         }
 
-        private IEnumerable<RegionMarker> GenerateVirtualMarkers(string name, Size imageSize)
+        /// <summary>
+        /// 动态计算表面区域分界阈值
+        /// </summary>
+        private int CalculateSurfaceBoundary(List<RegionMarker> markers)
         {
-            // 示例位置映射，需根据实际样板调整
-            var positions = new Dictionary<string, List<Rectangle>>
+            // 步骤1：按名称分组并筛选有效组
+            var validGroups = markers
+                .GroupBy(m => m.Name)
+                .Where(g => g.Count() == 2) // 只保留包含两个元素的组
+                .ToList();
+
+            if (validGroups.Count == 0)
             {
-                { "OP", [
-                    new Rectangle(imageSize.Width/5, imageSize.Height*2/8, 60, 40),
-                    new Rectangle(imageSize.Width/5, imageSize.Height*5/8, 60, 40)
-                ]},
-                { "CE", [
-                    new Rectangle(imageSize.Width/5, imageSize.Height*3/8, 60, 40),
-                    new Rectangle(imageSize.Width/5, imageSize.Height*6/8, 60, 40)
-                ]},
-                { "DR", [
-                    new Rectangle(imageSize.Width/5, imageSize.Height*4/8, 60, 40),
-                    new Rectangle(imageSize.Width/5, imageSize.Height*7/8, 60, 40)
-                ]},
+                // 无有效数据时返回图像中线（示例默认值）
+                return _cachedProcessed?.Height / 2 ?? 0;
+            }
+
+            // 步骤2：收集表面和里面区域的Y坐标
+            var surfaceYValues = new List<int>();
+            var insideYValues = new List<int>();
+
+            foreach (var group in validGroups)
+            {
+                // 按Y坐标排序，确定表面和里面位置
+                var orderedMarkers = group
+                    .OrderBy(m => m.BoundingBox.Top)
+                    .ToList();
+
+                // 第一个为表面位置，第二个为里面位置
+                surfaceYValues.Add(orderedMarkers[0].BoundingBox.Top);
+                insideYValues.Add(orderedMarkers[1].BoundingBox.Top);
+            }
+
+            // 步骤3：计算平均值
+            double avgSurfaceY = surfaceYValues.Average();
+            double avgInsideY = insideYValues.Average();
+
+            // 步骤4：计算分界阈值（取两者中间值）
+            return (int)((avgSurfaceY + avgInsideY) / 2);
+        }
+
+        /// <summary>
+        /// 动态创建虚拟标记位置
+        /// </summary>
+        private RegionMarker CreateVirtualMarker(string name, Size imageSize, bool isSurface)
+        {
+            // 根据实际样板布局参数化坐标
+            var basePositions = new Dictionary<string, (int X, int SurfaceY, int InsideY, int Width, int Height)>
+            {
+                { "OP", (1238, 346, 1754, 67, 40) },
+                { "CE", (1227, 812, 2217, 65, 40) },
+                { "DR", (1214, 1275, 2700, 66, 41) }
             };
 
-            return positions[name].Select(r => new RegionMarker
+            var pos = basePositions[name];
+            return new RegionMarker
             {
                 Name = name,
-                BoundingBox = r
-            });
+                BoundingBox = new Rectangle(
+                    pos.X,
+                    isSurface ? pos.SurfaceY : pos.InsideY,
+                    pos.Width,
+                    pos.Height
+                )
+            };
         }
 
         // 改进文本修正方法

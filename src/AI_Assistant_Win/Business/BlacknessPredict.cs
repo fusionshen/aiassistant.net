@@ -60,7 +60,7 @@ namespace AI_Assistant_Win.Business
 
             var yoloPredictions = yolo.Predict(image);
 
-            if (yoloPredictions.Length > 0 && yoloPredictions.Length <= 6)
+            if (yoloPredictions.Length > 0)
             {
                 if (yoloPredictions.Length == 6)
                 {
